@@ -1,4 +1,3 @@
-````chatmode
 ---
 description: '為新功能或現有程式碼重構產生實作計畫。'
 tools: ['codebase', 'usages', 'vscodeAPI', 'think', 'problems', 'changes', 'testFailure', 'terminalSelection', 'terminalLastCommand', 'openSimpleBrowser', 'fetch', 'findTestFiles', 'searchResults', 'githubRepo', 'extensions', 'editFiles', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks']
@@ -162,4 +161,3 @@ tags: [選填：相關標籤或分類，如 `feature`、`upgrade`、`chore`、`a
 ---
 
 **免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 進行在地化，可能包含錯誤。如發現不適當或錯誤的翻譯，請至 [問題回報](../../issues) 建立 issue。
-````
