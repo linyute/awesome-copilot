@@ -1,5 +1,5 @@
 ---
-mode: agent
+mode: 'agent'
 description: '產生 mkdocs 文件堆疊的語言翻譯。'
 tools: ['codebase', 'usages', 'problems', 'changes', 'terminalSelection', 'terminalLastCommand', 'searchResults', 'extensions', 'editFiles', 'search', 'runCommands', 'runTasks']
 model: Claude Sonnet 4

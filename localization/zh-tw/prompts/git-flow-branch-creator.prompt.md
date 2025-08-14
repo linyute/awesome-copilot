@@ -1,7 +1,7 @@
-````prompt
 ---
 description: '智慧型 Git Flow 分支建立工具，分析 git 狀態與差異，依 nvie Git Flow 分支模型自動建立語意分支。'
 tools: ['run_in_terminal', 'get_terminal_output']
+mode: 'agent'
 ---
 
 ### 指南
@@ -291,8 +291,6 @@ tools: ['run_in_terminal', 'get_terminal_output']
 	</merge-strategy>
 </gitflow-reference>
 ```
-
-````
 
 ---
 
