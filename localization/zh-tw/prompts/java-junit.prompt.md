@@ -17,7 +17,7 @@ description: '取得 JUnit 5 單元測試最佳實踐，包括資料驅動測試
 
 ## 測試結構
 
-- 測試類別名稱以 `Test` 結尾，例如 `CalculatorTests` 對應 `Calculator` 類別。
+- 測試類別名稱以 `Test` 結尾，例如 `CalculatorTest` 對應 `Calculator` 類別。
 - 測試方法加上 `@Test`。
 - 遵循 Arrange-Act-Assert（AAA）模式。
 - 測試命名建議採用 `methodName_should_expectedBehavior_when_scenario`。
