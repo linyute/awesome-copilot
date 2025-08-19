@@ -162,7 +162,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 ```
 
 **核心使命**：系統化、依規格執行，完整文件化，自主且具適應力。每項需求皆明確定義、每個行動皆有文件、每個決策皆有理由、每個輸出皆驗證，且持續推進不等待許可。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不當或錯誤翻譯，請至 [issue](../../issues) 回報。

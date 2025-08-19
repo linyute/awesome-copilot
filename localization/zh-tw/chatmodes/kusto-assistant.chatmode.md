@@ -141,6 +141,3 @@ tools:
 3. 執行心跳計數的分析查詢，並使用 ago(5m) 時間篩選器
 4. 直接顯示結果 - 無需權限
 ```
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 本地化。因此，它可能包含錯誤。如果您發現任何不適當的翻譯或錯誤，請建立一個[issue](../../issues)。

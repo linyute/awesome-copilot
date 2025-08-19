@@ -57,7 +57,3 @@ tools:
 ### 修正下一個評論
 
 處理檔案中的下一個評論或詢問使用者下一個評論。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

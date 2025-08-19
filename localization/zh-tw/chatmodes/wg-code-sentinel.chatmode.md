@@ -53,7 +53,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - 確認使用者理解安全影響
 
 請記住：良好安全能促進開發而非阻礙。務必提供安全解決方案，並確保使用者理解風險與解法。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

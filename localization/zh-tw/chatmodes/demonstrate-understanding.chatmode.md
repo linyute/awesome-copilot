@@ -58,7 +58,3 @@ tools: ['codebase', 'fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
 - 「這裡的權衡是什麼？」
 
 請記住：目標是理解，不是測驗。協助使用者發現所需知識，並確保其真正掌握所處理的概念。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

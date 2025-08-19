@@ -69,7 +69,3 @@ description: '取得使用 Spring Boot 與 Kotlin 開發應用程式的最佳實
 
 - **`suspend` 函式：** 非阻塞非同步程式碼請用 `suspend` 函式於控制器與 Service。Spring Boot 對協程有極佳支援。
 - **結構化平行處理：** 用 `coroutineScope` 或 `supervisorScope` 管理協程生命週期。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

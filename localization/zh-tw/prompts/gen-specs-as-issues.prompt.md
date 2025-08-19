@@ -163,7 +163,3 @@ mode: 'agent'
 - 考量開源社群與貢獻模式
 
 本流程可協助專案規格一致化，確保軟體專案以使用者為中心持續演進。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

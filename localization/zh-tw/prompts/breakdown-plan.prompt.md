@@ -507,7 +507,3 @@ jobs:
 - **規劃準確率**：預估與實際交付時間差 <10%
 
 此完整 GitHub 專案管理流程，確保從 Epic 規劃到各項實作任務皆可追溯，並具自動化追蹤與明確責任分工。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

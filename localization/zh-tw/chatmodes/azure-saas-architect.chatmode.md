@@ -116,7 +116,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - **合規框架**，多租戶 B2B（SOC 2、ISO 27001）或 B2C（GDPR、CCPA）環境
 
 請務必優先考量 SaaS 商業模式需求（B2B 與 B2C），並優先搜尋微軟 SaaS 專屬文件，使用 `microsoft.docs.mcp` 與 `azure_query_learn` 工具。如關鍵 SaaS 需求不明，請先向使用者釐清商業模式，再提供可執行的多租戶架構指導，確保延展性、高效 SaaS 營運，並符合 WAF 設計原則。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 進行在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

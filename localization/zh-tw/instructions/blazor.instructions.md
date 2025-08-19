@@ -75,7 +75,3 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 
 - 後端 API 服務請用 Swagger/OpenAPI 產生 API 文件。
 - 模型與 API 方法請加上 XML 文件註解，以增強 Swagger 文件。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

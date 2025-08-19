@@ -188,7 +188,3 @@ description: '以漸進式追蹤與變更記錄實作任務計畫的指引 - 由
 {{任何特定部署考量或步驟}}
 ```
 <!-- </changes-template> -->
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

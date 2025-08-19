@@ -301,7 +301,3 @@ WHERE order_date >= '2024-01-01'
 3. **[程式碼品質]**：改善命名規範與文件
 
 請針對各資料庫平台提供可執行、具體建議，並強調平台專屬最佳化與實務。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 進行在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

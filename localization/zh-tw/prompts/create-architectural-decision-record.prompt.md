@@ -95,7 +95,3 @@ superseded_by: ""
 - **REF-002**：[外部文件]
 - **REF-003**：[引用標準或框架]
 ```
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

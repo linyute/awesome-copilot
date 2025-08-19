@@ -160,7 +160,3 @@ applyTo: '**/*.jsx, **/*.tsx, **/*.js, **/*.ts, **/*.css, **/*.scss'
 - Provider 模式分享 context 狀態
 - 容器/展示型元件分離
 - 自訂 hooks 抽取可重用邏輯
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

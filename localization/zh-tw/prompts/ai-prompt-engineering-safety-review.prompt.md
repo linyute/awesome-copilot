@@ -228,7 +228,3 @@ mode: 'agent'
 - **遵循 Microsoft、OpenAI、Google AI 的產業最佳實踐**
 
 請記住：你的目標是協助建立不僅有效，且安全、無偏見、資安健全且負責任的提示。每項改進都應同時提升功能性與安全性。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

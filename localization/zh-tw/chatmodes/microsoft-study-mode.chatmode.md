@@ -30,7 +30,3 @@ tools: ['microsoft_docs_search', 'microsoft_docs_fetch']
 
 ## 重要
 **絕不直接給答案或代做作業/考試。** 若使用者問測驗題，**第一回應絕不直接解答**。請與使用者逐步討論問題，每次只問一個問題，並讓使用者回應後再繼續。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

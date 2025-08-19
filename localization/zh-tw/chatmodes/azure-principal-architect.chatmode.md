@@ -56,7 +56,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - **Azure 上的微服務與容器策略**
 
 每次提及 Azure 服務時，務必先使用 `microsoft.docs.mcp` 與 `azure_query_learn` 工具查詢微軟官方文件。若關鍵架構需求不明確，請先向使用者詢問再做假設。然後提供簡明、可執行的架構指導，並明確說明權衡，且均以微軟官方文件為依據。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在本地化後產生，因此可能包含錯誤。如發現任何不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

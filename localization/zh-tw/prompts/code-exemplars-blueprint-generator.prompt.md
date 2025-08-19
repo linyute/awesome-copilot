@@ -124,7 +124,3 @@ ${SCAN_DEPTH == "全面" ? `### 6. 其他文件
 
 ## 預期輸出
 執行本提示後，GitHub Copilot 會掃描你的程式碼庫並產生 exemplars.md，內容包含儲存庫中高品質程式碼範例的真實引用，並依你選定參數組織。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

@@ -22,7 +22,3 @@ description: '確保 Java 型別皆有 Javadoc 註解，並遵循最佳文件化
 - 使用 `@version` 標註成員版本。
 - 使用 `@author` 標註程式作者。
 - 若成員已棄用，請加上 `@deprecated` 並提供替代方案。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

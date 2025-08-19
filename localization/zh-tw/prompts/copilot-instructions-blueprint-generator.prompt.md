@@ -292,7 +292,3 @@ ${VERSIONING == "自訂" ?
 ## 預期輸出
 
 一份完整的 copilot-instructions.md 文件，能指引 GitHub Copilot 產生完全相容現有技術版本且遵循既有模式與架構的程式碼。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

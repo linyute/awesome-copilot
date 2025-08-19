@@ -46,7 +46,3 @@ tools: ['changes', 'codebase', 'editFiles', 'fetch', 'runCommands', 'azure_get_d
 - 僅使用 MCR tags API 取得版本資訊
 - 解析 JSON tags 陣列並依語意版本排序
 - 維持 Bicep 檔案有效性及 lint 檢查通過
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 進行在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

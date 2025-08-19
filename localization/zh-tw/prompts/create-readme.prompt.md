@@ -19,7 +19,3 @@ description: '為專案建立 README.md 文件'
 4. 不要包含「LICENSE」、「CONTRIBUTING」、「CHANGELOG」等章節，這些有專屬文件。
 5. 使用 GFM（GitHub Flavored Markdown）格式，並在適當處使用 GitHub admonition 語法（https://github.com/orgs/community/discussions/16925）。
 6. 若有專案 logo 或 icon，請在 readme 標頭中使用。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

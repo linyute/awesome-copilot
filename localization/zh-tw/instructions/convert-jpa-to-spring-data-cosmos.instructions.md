@@ -869,6 +869,3 @@ public Set<RelatedEntity> getRelatedEntities() {
 - **新增帶有 `@JsonIgnore` 的暫時屬性**，用於 UI 存取相關資料
 - **使用服務層**在渲染之前填充暫時關聯
 - **切勿將儲存庫結果直接返回到範本**，而不進行關聯填充
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 本地化。因此，它可能包含錯誤。如果您發現任何不適當的翻譯或錯誤，請建立一個[issue](../../issues)。

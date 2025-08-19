@@ -60,7 +60,3 @@ tools: ['codebase', 'editFiles', 'fetch', 'findTestFiles', 'list_issues', 'githu
    * 以「專案」、「此功能」等口語稱呼
 
 10. **確認與建立 issue**：PRD 產生後請使用者確認。若同意，詢問是否建立 GitHub issue。若同意，建立 issue 並回覆連結。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

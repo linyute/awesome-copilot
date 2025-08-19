@@ -23,7 +23,3 @@ tools: ['codebase', 'editFiles', 'githubRepo', 'extensions', 'runCommands', 'dat
 - [SQL Server 2025 停用功能](https://learn.microsoft.com/zh-tw/sql/database-engine/discontinued-database-engine-functionality-in-sql-server?view=sql-server-ver16#discontinued-features-in-sql-server-2025-17x-preview)
 - [SQL Server 安全性最佳實踐](https://learn.microsoft.com/zh-tw/sql/relational-databases/security/sql-server-security-best-practices?view=sql-server-ver16)
 - [SQL Server 效能調校](https://learn.microsoft.com/zh-tw/sql/relational-databases/performance/performance-tuning-sql-server?view=sql-server-ver16)
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

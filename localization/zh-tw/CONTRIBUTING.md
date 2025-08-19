@@ -152,7 +152,3 @@ tools: ['codebase', 'terminalCommand']
 ## 授權
 
 貢獻至本儲存庫即表示你同意你的貢獻將以 MIT 授權條款釋出。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現任何不當或錯誤翻譯，請至 [issue](../../issues) 回報。

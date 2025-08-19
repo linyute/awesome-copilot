@@ -404,7 +404,3 @@ SELECT * FROM category_tree ORDER BY level, name;
 ```
 
 聚焦於提供具體、可執行的 PostgreSQL 最佳化建議，提升查詢效能、安全性與維護性，並善用 PostgreSQL 進階功能。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

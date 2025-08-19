@@ -40,7 +40,3 @@ description: '建立具備正確 OpenAPI 文件的 ASP.NET Minimal API 端點'
 - 正確設定請求與回應的內容型別
 - 用文件轉換器加入伺服器、標籤與安全機制等元素
 - 用 schema 轉換器自訂 OpenAPI schema
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

@@ -363,7 +363,3 @@ description: '測試規劃與品質保證提示，產生完整測試策略、任
 - **文件完整率**：所有測試議題皆有完整範本資訊
 
 此完整測試規劃流程，確保品質驗證符合業界標準，並兼顧專案管理效率與測試責任分工。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

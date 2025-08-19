@@ -120,7 +120,3 @@ applyTo: '**/*.rb'
 - 避免脆弱測試，勿依賴特定時間戳、隨機資料或順序，除非必要。
 - 跨層流程請寫整合測試，涵蓋 Model、View、Controller。
 - 測試需保持快速、可靠且如生產程式碼般 DRY。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

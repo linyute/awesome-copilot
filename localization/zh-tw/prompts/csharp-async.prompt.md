@@ -48,7 +48,3 @@ description: '取得 C# 非同步程式設計最佳實踐'
 - 公開 API 請考慮使用以任務為基礎的非同步模式（TAP）
 
 當你檢查我的 C# 程式碼時，請找出上述問題並提出符合最佳實踐的改進建議。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

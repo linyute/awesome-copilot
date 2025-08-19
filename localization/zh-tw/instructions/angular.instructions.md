@@ -102,7 +102,3 @@ applyTo: '**/*.ts, **/*.html, **/*.scss, **/*.css'
 - 國際化請用 Angular 內建 i18n（如有指定）
 - 請用可重用工具與共用模組保持程式碼 DRY
 - 狀態管理請一律用 signals，確保反應式更新
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

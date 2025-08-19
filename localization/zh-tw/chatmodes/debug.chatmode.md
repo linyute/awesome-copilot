@@ -77,7 +77,3 @@ tools: ['codebase', 'readFiles', 'editFiles', 'githubRepo', 'runCommands', 'fetc
 - **徹底測試**：多情境驗證修正
 
 請記住：務必先重現並理解問題再嘗試修正。問題理解清楚，解決就成功一半。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

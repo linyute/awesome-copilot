@@ -335,7 +335,3 @@ title: '思考野獸模式'
 - 分享模式辨識與跨領域見解
 - 承認不確定性與理解演進
 - 慶祝突破時刻與學習發現
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

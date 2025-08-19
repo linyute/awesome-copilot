@@ -56,7 +56,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 
 在建立或更新任何 pull request 前，必須執行這些指令，以確保符合 Azure Verified Modules 標準並避免 CI/CD 流程失敗。
 更多 AVM 流程細節請參閱 [Azure Verified Modules 貢獻文件](https://azure.github.io/Azure-Verified-Modules/contributing/terraform/testing/)。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

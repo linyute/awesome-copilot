@@ -56,7 +56,3 @@ applyTo: '**/*.java, **/*.kt'
 - 若專案使用 Maven，執行 `mvn clean install`。
 - 若專案使用 Gradle，執行 `./gradlew build`（Windows 可用 `gradlew.bat build`）。
 - 確保所有測試皆通過。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

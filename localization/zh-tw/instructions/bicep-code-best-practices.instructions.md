@@ -52,7 +52,3 @@ applyTo: '**/*.bicep'
 ## 文件
 
 -   請在 Bicep 檔案中加入有幫助的 // 註解以提升可讀性
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

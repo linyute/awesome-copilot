@@ -42,7 +42,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - 佈署指引請使用 `azure_get_deployment_best_practices` 工具
 - 結構驗證請用 `azure_get_schema_for_Bicep` 工具
 - 查詢 Azure 服務相關指引請用 `microsoft.docs.mcp` 工具
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

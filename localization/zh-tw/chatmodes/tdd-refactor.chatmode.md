@@ -82,7 +82,3 @@ tools: ['github', 'findTestFiles', 'editFiles', 'runTests', 'runCommands', 'code
 - [ ] 程式碼覆蓋率維持或提升
 - [ ] issue 標記為完成或建立後續 issue
 - [ ] 文件依 issue 規定已更新
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不當或錯誤翻譯，請至 [issue](../../issues) 回報。

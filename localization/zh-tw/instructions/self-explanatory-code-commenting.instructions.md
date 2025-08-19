@@ -11,7 +11,7 @@ applyTo: '**'
 
 ## 註解指引
 
-### F6AB 避免以下註解類型
+### ❌ 避免以下註解類型
 
 **明顯註解**
 ```javascript
@@ -35,7 +35,7 @@ function getUserName() {
 const tax = price * 0.08;  // 實際為 8%
 ```
 
-### F197 應撰寫以下註解類型
+### ✅ 應撰寫以下註解類型
 
 **複雜商業邏輯**
 ```javascript
@@ -160,7 +160,3 @@ function processData() {
 ## 總結
 
 請記住：**最好的註解是程式碼本身已自我說明，無需額外註解。**
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

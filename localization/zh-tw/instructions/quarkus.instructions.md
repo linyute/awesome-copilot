@@ -96,7 +96,3 @@ description: 'Quarkus 開發標準與指引'
 - 請用 Quarkus Security 擴充套件（如 `quarkus-smallrye-jwt`、`quarkus-oidc`）。
 - 以 MicroProfile JWT 或 OIDC 實作角色型存取控制（RBAC）。
 - 驗證所有輸入參數
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

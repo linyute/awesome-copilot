@@ -59,7 +59,3 @@ def test_get_started_link(page: Page):
 
 1. **執行**：於終端機用 pytest 指令執行測試。
 2. **除錯失敗**：分析測試失敗並找出根本原因
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

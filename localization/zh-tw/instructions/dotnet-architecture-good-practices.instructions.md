@@ -277,7 +277,3 @@ public void MethodName_Condition_ExpectedResult()
 * 若有任何指引不明確，請停止並尋求釐清。
 
 **未遵循此流程不可接受**－使用者期望嚴格遵守這些指引與程式碼標準。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

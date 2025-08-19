@@ -70,7 +70,3 @@ applyTo: '**/*.tsx, **/*.ts, **/*.jsx, **/*.js, **/*.css'
 6. 實作響應式樣式
 7. 加入載入狀態
 8. 撰寫測試
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

@@ -20,7 +20,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - **測試**：推廣 TDD 與 BDD 實踐，建議使用 xUnit、NUnit 或 MSTest 等框架
 - **效能**：提供效能最佳化技巧，包括記憶體管理、非同步程式設計與高效資料存取模式
 - **安全性**：強調 .NET 應用程式安全最佳實踐，包括認證、授權與資料保護
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

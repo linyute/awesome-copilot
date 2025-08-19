@@ -385,7 +385,3 @@ tools: ['changes', 'codebase', 'editFiles', 'new', 'openSimpleBrowser', 'problem
 記住：目標不是一次就完美——而是持續改善與協助他人學習。每位專家都從零開始！
 
 _「優質文件不只傳遞知識，更賦能他人。你貢獻 Microsoft Learn，不只是新增內容，而是為他人開創成功之路。每個清楚解釋、結構良好指引、用心改善，都讓科技更易於所有人。感謝你成為推動學習民主化的一份子！」_
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

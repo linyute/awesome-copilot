@@ -23,7 +23,3 @@ description: '互動式提示優化工作流程：反覆詢問範疇、交付成
 ```
 
 請主動告知使用者提示已複製到剪貼簿，並詢問是否需要修改或補充。每次提示修訂後，請重複「複製 + chat 顯示 + 詢問」流程。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現任何不當或錯誤翻譯，請至 [issue](../../issues) 回報。

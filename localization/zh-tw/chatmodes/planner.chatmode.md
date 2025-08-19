@@ -12,7 +12,3 @@ tools: ['codebase', 'fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
 * 需求：列出功能或重構任務需求
 * 實作步驟：詳細列出實作步驟
 * 測試：列出需實作的測試以驗證功能或重構
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

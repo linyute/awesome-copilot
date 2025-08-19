@@ -47,7 +47,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - 建立新 issue 前請先用 `search_issues` 查詢
 - 修復任務請用 `/.github/ISSUE_TEMPLATE/chore_request.yml` 樣板
 - 有關聯時請引用現有 issue
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

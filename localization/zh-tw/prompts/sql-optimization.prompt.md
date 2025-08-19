@@ -296,7 +296,3 @@ ORDER BY avg_elapsed_time DESC;
 6. **迭代**：定期效能回顧與優化
 
 聚焦於可衡量的效能提升，並務必以真實資料量與查詢模式測試所有最佳化。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

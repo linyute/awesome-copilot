@@ -194,7 +194,3 @@ title: 'Rust 野獸模式'
 「使用 `thiserror` 提升錯誤處理，這是更新後的 enum。」
 「糟了，這裡用 `unwrap()` 會在輸入無效時 panic。改用 `match` 重構。」
 </examples>
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在本地化後產生，因此可能包含錯誤。如發現任何不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

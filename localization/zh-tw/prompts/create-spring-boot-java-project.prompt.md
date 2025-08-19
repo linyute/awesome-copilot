@@ -154,7 +154,3 @@ spring.data.mongodb.database=test
 - （選用）可執行 `docker-compose up -d` 啟動服務，`./mvnw spring-boot:run` 執行 Spring Boot 專案，`docker-compose rm -sf` 停止服務。
 
 ## 讓我們一步一步完成
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

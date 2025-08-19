@@ -17,7 +17,7 @@ ${FOCUS_ON_EXTENSIBILITY=true|false} <!-- 是否強調延展點與模式 -->
 
 ## 產生的提示
 
-「請建立一份完整的 'Project_Architecture_Blueprint.md' 文件，徹底分析程式碼庫中的架構模式，作為維持架構一致性的權威參考。請依下列方式進行：
+"請建立一份完整的 'Project_Architecture_Blueprint.md' 文件，徹底分析程式碼庫中的架構模式，作為維持架構一致性的權威參考。請依下列方式進行：
 
 ### 1. 架構偵測與分析
 - ${PROJECT_TYPE == "自動偵測" ? "分析專案結構以辨識所有使用中的技術堆疊與框架，方法包括：
@@ -321,7 +321,3 @@ ${INCLUDES_DECISION_RECORDS ?
 
 請註明本藍圖產生時間，並提供架構演進時的更新建議。
 "
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

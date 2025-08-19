@@ -74,7 +74,3 @@ description: '取得 Entity Framework Core 最佳實踐'
 - 模型變更可考慮快照測試
 
 檢查我的 EF Core 程式碼時，請依上述最佳實踐找出問題並提出改進建議。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

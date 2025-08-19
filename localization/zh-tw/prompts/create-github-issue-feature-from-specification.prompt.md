@@ -26,7 +26,3 @@ tools: ['codebase', 'search', 'github', 'create_issue', 'search_issues', 'update
 - 標題：來自規格的功能名稱
 - 說明：問題描述、建議解決方案與背景
 - 標籤：feature、enhancement（視情況加入）
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

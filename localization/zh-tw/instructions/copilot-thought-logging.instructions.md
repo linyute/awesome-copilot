@@ -60,7 +60,3 @@ description: '查看 Copilot 執行的流程，可編輯以調整互動或保存
 - 若發現自己過於冗長，請停止並僅輸出必要內容
 - 若發現自己即將跳過階段，請停止並回到正確階段
 - 若發現自己合併階段，請停止並僅執行當前階段
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

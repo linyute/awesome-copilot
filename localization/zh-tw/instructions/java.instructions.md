@@ -62,7 +62,3 @@ applyTo: '**/*.java'
 - 若用 Maven，執行 `mvn clean install`。
 - 若用 Gradle，執行 `./gradlew build`（Windows 可用 `gradlew.bat build`）。
 - 確保所有測試皆通過。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

@@ -62,7 +62,3 @@ description: '取得 JUnit 5 單元測試最佳實踐，包括資料驅動測試
 - 嚴格需要時可用 `@TestMethodOrder(MethodOrderer.OrderAnnotation.class)` 與 `@Order` 控制測試執行順序。
 - 使用 `@Disabled` 暫時略過測試方法或類別，並註明原因。
 - 使用 `@Nested` 以巢狀類別分組測試，提升組織與結構。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

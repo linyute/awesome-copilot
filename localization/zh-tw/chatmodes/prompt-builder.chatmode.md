@@ -350,7 +350,3 @@ tools: ['codebase', 'editFiles', 'fetch', 'githubRepo', 'problems', 'runCommands
 - CRITICAL：標記極重要指令
 - MANDATORY：標記必須步驟
 <!-- </imperative-terms> -->
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

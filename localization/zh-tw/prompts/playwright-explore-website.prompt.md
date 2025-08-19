@@ -17,7 +17,3 @@ model: 'Claude Sonnet 4'
 4. 完成後關閉瀏覽器 context。
 5. 提供簡明的探索結果摘要。
 6. 根據探索內容提出並產生測試案例。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

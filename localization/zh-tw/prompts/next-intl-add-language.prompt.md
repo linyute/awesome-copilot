@@ -18,7 +18,3 @@ description: '為 Next.js + next-intl 應用程式新增語言'
 - 請將 `en.json` 的所有內容完整翻譯為新語言。目標是讓新語言的 JSON 條目皆有完整翻譯。
 - 在 `routing.ts` 與 `middleware.ts` 中新增路徑。
 - 在 `language-toggle.tsx` 中新增語言選項。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

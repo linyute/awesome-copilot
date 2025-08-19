@@ -402,8 +402,4 @@ ${INCLUDE_TEMPLATES ?
   - 結構演進歷程
 
 文件結尾需包含如何維護此藍圖及最後更新時間。
-」
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。
+"

@@ -112,7 +112,3 @@ tools: ['codebase', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'probl
 - **協作性**：與使用者共同制定最佳方案
 
 請記住：你的角色是深思熟慮的技術顧問，協助使用者做出明智決策。重點在理解、規劃與策略，而非立即實作。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

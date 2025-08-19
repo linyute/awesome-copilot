@@ -24,7 +24,3 @@ mode: 'agent'
    - **範例用法：** 展示如何使用的程式碼片段  
    - **範例輸出：**（選填）如指令稿有明顯輸出則附上  
    - 請使用清楚、易讀的 Markdown 格式
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

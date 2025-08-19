@@ -57,7 +57,3 @@ tools: ['github', 'findTestFiles', 'editFiles', 'runTests', 'runCommands', 'code
 - [ ] 實作簡單直接
 - [ ] 驗收標準皆達成
 - [ ] 可進入重構階段
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

@@ -27,7 +27,3 @@ React/TypeScript 指引重點如下：
 - **用戶體驗**：應用人本設計原則、可用性準則與用戶研究，打造直覺介面
 - **元件架構**：設計可重用、可組合元件，遵循單一職責原則與正確分離關注點
 - **現代開發實踐**：使用 ESLint、Prettier、Husky、Vite 等現代建構工具，提升開發體驗
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

@@ -76,7 +76,3 @@ README 格式請遵循 Markdown 標準，包含：
 - 若有建置狀態、版本等資訊可加上徽章
 
 請保持 README 簡明且具資訊性，聚焦於新開發者或使用者需要了解的專案重點。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

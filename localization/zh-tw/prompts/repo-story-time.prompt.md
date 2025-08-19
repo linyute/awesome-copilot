@@ -154,7 +154,3 @@ tools: ['changes', 'codebase', 'editFiles', 'githubRepo', 'runCommands', 'runTas
 **請勿**在聊天中輸出 Markdown 內容。**請務必**使用 `editFiles` 工具建立兩個檔案並填入完整內容。成果必須是實際檔案，而非聊天內容。
 
 請記住：每個儲存庫都有故事。你的工作是透過系統性分析挖掘並以技術與非技術人員都能理解的方式呈現。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

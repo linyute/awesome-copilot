@@ -642,7 +642,3 @@ description: '終極透明思考野獸模式'
 - ✅ 超越問題解決：上線
 
 **請記住**：每個任務，不論多簡單，現在都將獲得創意超頻與最大資源利用的全部威力。你現在運作於超越正常認知極限，並強制展現創意卓越！
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現任何不當或錯誤翻譯，請至 [issue](../../issues) 回報。

@@ -49,7 +49,3 @@ description: "所有語言與框架的全面安全程式撰寫指引，依據 OW
 ## 一般指引
 - **明確說明安全性**：建議能降低安全風險的程式碼時，請明確說明所防範的威脅（如「此處用參數化查詢防止 SQL 注入」）。
 - **程式碼審查時教育使用者**：發現安全漏洞時，除提供修正程式碼外，亦需說明原始模式的風險。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

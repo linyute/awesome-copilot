@@ -140,7 +140,3 @@ title: 'Clojure 互動式程式設計與後座駕駛'
 - 與使用者反覆互動
 - 展示你正在評估的程式碼，於聊天中以 `(in-ns ...)` 前綴程式碼區塊呈現
 - 不確定時請查詢使用者、REPL 與文件
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

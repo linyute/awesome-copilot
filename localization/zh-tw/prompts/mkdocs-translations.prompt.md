@@ -106,7 +106,3 @@ model: Claude Sonnet 4
 - 在 `docs/docs/includes/` 下建立新資料夾，名稱用指定語言地區碼。
 - 每個檔案依上述規則翻譯。
 - 結構與檔名完全一致，儲存至對應語言資料夾。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

@@ -274,7 +274,3 @@ graph TD
 5. **交叉參照**：用連結取代重複資訊
 
 請專注於建立同時具備文件與工作流程更新範本功能的規格。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

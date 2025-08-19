@@ -428,7 +428,3 @@ applyTo: '**/*.{json,md}'
 - 檢查操作回應是否符合預期 schema，避免執行時錯誤
 
 請記住：這些 schema 可確保你的 Power Platform 連接器格式正確，並能在 Power Platform 生態系統中正常運作。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

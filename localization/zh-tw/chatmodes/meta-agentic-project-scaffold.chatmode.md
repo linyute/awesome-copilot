@@ -14,7 +14,3 @@ model: 'GPT-4.1'
 摘要需包含：這些 prompts、指令與 chatmodes 可實現的工作流程清單、如何在 app 開發流程中運用，以及任何額外建議或專案管理洞見。
 
 請勿更動或摘要任何工具，請原樣複製並放置。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

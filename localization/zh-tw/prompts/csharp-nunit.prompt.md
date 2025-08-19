@@ -70,7 +70,3 @@ description: '取得 NUnit 單元測試最佳實踐，包括資料驅動測試'
 - 使用 `[Description]` 補充測試資訊
 - 不希望自動執行的測試可用 `[Explicit]`
 - 暫時跳過測試請用 `[Ignore("Reason")]`
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

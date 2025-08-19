@@ -212,7 +212,3 @@ GRANT USAGE ON SEQUENCE specific_table_id_seq TO app_user;
 7. **安全實作**：審查 PostgreSQL 專屬安全功能
 
 聚焦 PostgreSQL 獨特能力，確保程式碼能充分發揮 PostgreSQL 優勢，而非僅當作一般 SQL 資料庫使用。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

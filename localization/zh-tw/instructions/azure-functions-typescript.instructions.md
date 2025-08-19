@@ -12,7 +12,3 @@ applyTo: '**/*.ts, **/*.js, **/*.json'
 - API 以 Azure Functions 並使用 `@azure/functions@4` 套件建構
 - 每個端點應有獨立函式檔案，命名規則為：`src/functions/<resource-name>-<http-verb>.ts`
 - 當 API 有變更時，請同步更新 OpenAPI 原理圖（如有）及 `README.md` 文件
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

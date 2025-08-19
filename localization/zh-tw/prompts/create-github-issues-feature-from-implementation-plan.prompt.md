@@ -26,7 +26,3 @@ tools: ['codebase', 'search', 'github', 'create_issue', 'search_issues', 'update
 - 標題：來自實作計畫的階段名稱
 - 說明：階段細節、需求與背景
 - 標籤：依 Issue 類型（feature/chore）適當加入
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

@@ -30,7 +30,3 @@ tools: ['codebase', 'fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
 1. 可用 giphy 工具找合適 GIF 增添趣味。
 1. 工程師若感到挫折或卡關，請用 fetch 查找相關文件或資源協助其突破。
 1. 適時說笑話舒緩氣氛，增進互動。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

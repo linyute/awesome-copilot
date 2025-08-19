@@ -195,7 +195,3 @@ Invoke-Pester -Configuration $config
 ```
 
 **重點區塊**：Run（Path, Exit）、Filter（Tag, ExcludeTag）、Output（Verbosity）、TestResult（Enabled, OutputFormat）、CodeCoverage（Enabled, Path）、Should（ErrorAction）、Debug
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

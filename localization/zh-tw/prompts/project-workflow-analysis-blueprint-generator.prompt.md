@@ -292,7 +292,3 @@ ${PROJECT_TYPE == "React" || PROJECT_TYPE == "自動偵測" ?
 **結論：**
 以摘要方式說明新增功能時應遵循的最重要模式，
 以維持程式碼庫的一致性。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

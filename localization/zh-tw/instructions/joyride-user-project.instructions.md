@@ -43,7 +43,3 @@ applyTo: 'scripts/**/*.cljs,src/**/*.cljs,deps.edn,.joyride/**/*.cljs'
 最重要的是，請一步一步逐步建構解決方案。這能讓我看到你正在開發的解決方案，也能讓使用者引導其發展。
 
 在更新檔案前，請務必先在 REPL 驗證 API 用法。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

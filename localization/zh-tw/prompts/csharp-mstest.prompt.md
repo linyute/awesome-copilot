@@ -65,7 +65,3 @@ description: '取得 MSTest 單元測試最佳實踐，包括資料驅動測試'
 - 使用 `[TestCategory("Category")]` 指定測試分類
 - 使用 `[Priority(1)]` 標示重要測試
 - 使用 `[Owner("DeveloperName")]` 標示負責人
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

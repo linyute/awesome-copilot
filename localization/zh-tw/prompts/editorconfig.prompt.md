@@ -62,7 +62,3 @@ trim_trailing_whitespace = false
 - `insert_final_newline = true`：確保每個檔案結尾有一個換行字元，符合 POSIX 標準，避免腳本或串接問題。
 - `[*.md]`：此 glob 模式僅套用於 Markdown 檔案。
 - `trim_trailing_whitespace = false`：覆蓋通用設定，Markdown 檔案不移除尾端空白，因為尾端空白在 Markdown 中可能有特殊意義（如強制換行）。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

@@ -29,7 +29,3 @@ GitHub 非常重視我們軟體產品與服務的安全性，包括所有由 Git
 ## 政策
 
 請參閱 [GitHub 安全港政策](https://docs.github.com/en/site-policy/security-policies/github-bug-bounty-program-legal-safe-harbor#1-safe-harbor-terms)
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

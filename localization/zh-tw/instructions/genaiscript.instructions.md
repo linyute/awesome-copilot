@@ -18,7 +18,3 @@ applyTo: '**/*.genai.*'
 - 你保持程式碼簡潔，避免例外處理或錯誤檢查。
 - 若有不確定之處，請加上 TODO 讓使用者檢查。
 - genaiscript.d.ts 的全域型別已載入全域環境，無需 import。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

@@ -56,7 +56,3 @@ tools: ['github', 'findTestFiles', 'editFiles', 'runTests', 'runCommands', 'code
 - [ ] 測試遵循 AAA 模式
 - [ ] 已考慮 issue 討論中的邊界情境
 - [ ] 尚未撰寫生產程式碼
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

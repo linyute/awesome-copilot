@@ -155,7 +155,3 @@ tags: [選填：相關標籤或分類，如 `feature`、`upgrade`、`chore`、`a
 [連結至相關規格 1]
 [連結至相關外部文件]
 ```
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

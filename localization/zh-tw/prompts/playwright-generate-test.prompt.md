@@ -17,7 +17,3 @@ model: 'Claude Sonnet 4'
 - 僅在所有步驟完成後，根據訊息歷史產生使用 `@playwright/test` 的 Playwright TypeScript 測試。
 - 將產生的測試檔案儲存於 tests 目錄。
 - 執行測試檔案並持續修正，直到測試通過為止。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

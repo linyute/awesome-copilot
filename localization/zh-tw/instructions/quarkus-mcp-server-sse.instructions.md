@@ -47,7 +47,3 @@ quarkus create app --no-code -x rest-client-jackson,qute,mcp-server-sse your-dom
 - MCP 工具請勿丟出例外（請回傳錯誤字串）
 - 請勿忘記驗證輸入參數
 - 請用邊界案例測試（null、空輸入等）
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

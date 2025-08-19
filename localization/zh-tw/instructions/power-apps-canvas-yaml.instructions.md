@@ -825,7 +825,3 @@ Properties:
 ```
 
 請注意：本指南涵蓋 Power Apps Canvas Apps YAML 結構與 Power Fx 公式的完整內容。請務必依官方 schema 驗證 YAML，並於 Power Apps Studio 測試公式。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤或不當之處。如發現翻譯不妥或有誤，請至 [問題回報](../../issues) 提出。

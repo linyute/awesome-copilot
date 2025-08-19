@@ -131,7 +131,3 @@ tools: ['changes', 'codebase', 'fetch', 'githubRepo', 'openSimpleBrowser', 'prob
 ```
 
 記住：這階段重點在**點子與需求**，不是技術實作。請保持有趣、視覺化，聚焦使用者想要創造的內容！🌈
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不當或錯誤翻譯，請至 [issue](../../issues) 回報。

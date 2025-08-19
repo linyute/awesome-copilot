@@ -11,7 +11,3 @@ model: Claude Sonnet 4
 3.  **測試產生**：探索網站後，開始撰寫結構良好且易維護的 Playwright TypeScript 測試。
 4.  **測試執行與修正**：執行產生的測試，診斷失敗原因，反覆修正直到所有測試穩定通過。
 5.  **文件撰寫**：清楚摘要測試功能與結構。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

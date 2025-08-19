@@ -148,13 +148,13 @@ Tailwind 用於響應式設計：
 優先使用語意化 HTML，僅在無語意等價時加 ARIA：
 
 ```typescript
-// F197 良好：語意化 HTML 並最小化 ARIA
+// ✅ 良好：語意化 HTML 並最小化 ARIA
 <button onClick={toggleMenu}>
   <MenuIcon aria-hidden="true" />
   <span className="sr-only">切換選單</span>
 </button>
 
-// F197 良好：僅在需要時加 ARIA（動態狀態）
+// ✅ 良好：僅在需要時加 ARIA（動態狀態）
 <button
   aria-expanded={isOpen}
   aria-controls="menu"
@@ -163,7 +163,7 @@ Tailwind 用於響應式設計：
   選單
 </button>
 
-// F197 良好：語意化表單元件
+// ✅ 良好：語意化表單元件
 <label htmlFor="email">電子郵件地址</label>
 <input id="email" type="email" />
 {errors.email && (
@@ -186,11 +186,11 @@ src/
 所有內部匯入皆用 `@/` 別名：
 
 ```typescript
-// F197 良好
+// ✅ 良好
 import { Button } from '@/components/ui/button'
 import { userSchema } from '@/lib/schemas'
 
-// F6AB 不佳
+// ❌  不佳
 import { Button } from '../components/ui/button'
 ```
 
@@ -210,7 +210,3 @@ npx shadcn@latest add button card input dialog
 - 優先使用 Shadcn 元件
 - 一致使用 `@/` 匯入
 - 遵循無障礙最佳實務
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

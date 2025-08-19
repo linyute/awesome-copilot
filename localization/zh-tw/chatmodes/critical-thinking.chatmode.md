@@ -21,7 +21,3 @@ tools: ['codebase', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'probl
 - 對問題有強烈看法，但保持彈性，能因新資訊或觀點而調整
 - 策略性思考長期影響，並鼓勵工程師也如此
 - 不要一次問多個問題。一次只問一個，鼓勵深入思考與反省，並保持簡潔。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

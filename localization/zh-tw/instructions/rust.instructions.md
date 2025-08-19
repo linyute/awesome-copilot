@@ -133,7 +133,3 @@ applyTo: '**/*.rs'
 - [ ] **API 設計**：函式可預測、彈性且型別安全
 - [ ] **前瞻性**：結構欄位私有、trait sealed
 - [ ] **工具**：程式通過 `cargo fmt`、`cargo clippy`、`cargo test`
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤或不當之處。如發現翻譯不妥或有誤，請至 [問題回報](../../issues) 提出。

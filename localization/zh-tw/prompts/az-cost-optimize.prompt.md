@@ -303,7 +303,3 @@ description: '分析應用程式所用的 Azure 資源（IaC 檔案及/或目標
 - ✅ 優先分數有助於 ROI 導向執行
 - ✅ 架構原理圖忠實反映現況
 - ✅ 使用者確認避免不必要的 issue 建立
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化。故可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

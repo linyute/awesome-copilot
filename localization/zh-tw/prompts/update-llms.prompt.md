@@ -210,7 +210,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'githubRepo',
 6. 保持合理組織，便於 LLM 使用
 7. 全文使用清楚、無歧義語言
 8. 持續同時適合人類與機器閱讀
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 進行在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

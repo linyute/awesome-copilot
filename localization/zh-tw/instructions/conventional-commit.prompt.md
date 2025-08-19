@@ -71,7 +71,3 @@ git commit -m "type(scope): description"
 	<note>請以你撰寫的訊息取代。若有 body 與 footer 也請一併加入。</note>
 </final-step>
 ```
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

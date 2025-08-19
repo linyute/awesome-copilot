@@ -72,7 +72,3 @@ title: '無障礙模式'
 ## 重要事項
 
 每次修改程式碼庫時，請執行 pa11y 與 axe-core，以確保符合無障礙標準。這有助於及早發現問題，並在專案中持續維持高標準的無障礙品質。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 進行在地化，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

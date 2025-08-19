@@ -64,7 +64,3 @@ description: '取得 Spring Boot 應用程式開發最佳實踐。'
 - **Spring Security：** 使用 Spring Security 處理認證與授權。
 - **密碼編碼：** 密碼一律採用強雜湊演算法（如 BCrypt）編碼。
 - **輸入清理：** SQL 注入防範建議用 Spring Data JPA 或參數化查詢。XSS 防範則需正確編碼輸出。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

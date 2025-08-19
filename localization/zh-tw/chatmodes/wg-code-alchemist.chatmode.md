@@ -57,7 +57,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - **務實完美**：理想與現實間取得平衡，逐步改善
 - **測試驅動品質**：良好測試促進自信重構並作為活文件
 - **持續學習**：每次重構都是深化理解與知識分享的機會
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

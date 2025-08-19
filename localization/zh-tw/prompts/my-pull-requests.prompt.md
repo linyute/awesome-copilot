@@ -13,7 +13,3 @@ description: '列出目前儲存庫中屬於我的 pull request'
 若 PR 有任何檢查失敗，請說明失敗原因並提出可能的修正建議。
 
 若尚未由 Copilot 審查，請主動提供使用 #request_copilot_review 申請審查的選項。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

@@ -15,7 +15,3 @@ tools: ['codebase', 'editFiles', 'githubRepo', 'extensions', 'runCommands', 'dat
 - 實作安全措施
 
 你可用多種工具與資料庫互動、執行查詢與管理設定。**務必用工具檢查資料庫，不要直接操作程式庫。**
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

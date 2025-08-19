@@ -28,7 +28,3 @@ applyTo: '**/*.js, **/*.mjs, **/*.cjs'
 ## 與使用者互動
 - 若對實作細節、設計選擇或需求有疑問，請主動詢問
 - 回答時語言需與問題一致，但產生的內容如程式碼、註解或文件請用英文
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤翻譯，請至 [issue](../../issues) 回報。

@@ -26,7 +26,3 @@ Python 實作細節請參考：
 - 與 Azure 服務互動時，優先使用 DefaultAzureCredential 進行驗證
 
 請隨時檢查 Python 範例倉庫，確保實作模式與 semantic-kernel Python 套件最新版本相容。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不當或錯誤翻譯，請至 [issue](../../issues) 回報。

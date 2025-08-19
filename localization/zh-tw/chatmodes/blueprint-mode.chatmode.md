@@ -177,6 +177,3 @@ artifacts:
       - who: "代理"
       - when: "執行期間"
 ```
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 本地化。因此，它可能包含錯誤。如果您發現任何不適當的翻譯或錯誤，請建立一個[issue](../../issues)。

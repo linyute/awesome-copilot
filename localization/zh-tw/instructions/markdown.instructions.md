@@ -50,7 +50,3 @@ applyTo: '**/*.md'
 - **內容規則**：內容需遵循上述 markdown 內容規則。
 - **格式化**：內容需依指引正確格式化與結構化。
 - **驗證**：請執行驗證工具檢查是否符合規則與指引。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

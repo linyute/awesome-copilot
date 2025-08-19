@@ -22,7 +22,3 @@ description: '確保 C# 型別以 XML 註解文件化，並遵循文件最佳實
 - 行內程式碼片段請使用 `<c>`。
 - 程式碼區塊請使用 `<code>`。
 - 語言特定保留字如 `null`、`true`、`false`、`int`、`bool` 等請使用 `<see langword>`。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

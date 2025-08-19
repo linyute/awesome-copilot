@@ -99,7 +99,3 @@ description: '取得 TUnit 單元測試最佳實踐，包括資料驅動測試'
 **為什麼選擇 TUnit 而非 xUnit？**
 
 TUnit 提供現代化、快速且彈性的測試體驗，具備 xUnit 所沒有的進階功能，如非同步斷言、更細緻的生命週期掛鉤，以及更強大的資料驅動測試能力。TUnit 的 fluent 斷言讓測試驗證更清晰易懂，特別適合複雜的 .NET 專案。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

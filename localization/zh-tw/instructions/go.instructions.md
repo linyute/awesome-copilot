@@ -290,7 +290,3 @@ applyTo: '**/*.go,**/go.mod,**/go.sum'
 - 不必要用全域變數
 - 過度使用空介面（`interface{}`）
 - 忽略型別零值
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 在地化產生，因此可能包含錯誤。如發現任何不適當或錯誤的翻譯，請至 [issue](../../issues) 回報。

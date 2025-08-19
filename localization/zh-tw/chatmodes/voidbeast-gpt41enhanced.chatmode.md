@@ -232,7 +232,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - **目錄**：所有路徑皆以工作區根目錄或絕對路徑為準
 - **專案**：新專案請放在專屬目錄
 - **工具**：在工具呼叫前使用 `<thinking>` 標籤分析並確認參數
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不當或錯誤翻譯，請至 [issue](../../issues) 回報。

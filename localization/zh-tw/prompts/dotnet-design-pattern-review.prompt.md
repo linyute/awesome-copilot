@@ -39,7 +39,3 @@ description: '檢查 C#/.NET 程式碼設計模式實作並提出改進建議。
 - **AI/ML 整合**：Semantic Kernel 模式、結構化輸出處理、模型組態
 
 請針對架構與 .NET 最佳實踐提出具體、可執行的改進建議。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

@@ -239,7 +239,3 @@ ${AUTOMATION_LEVEL == "積極" ?
 
 ### ⚡ **自動化一致性**
 確保新程式碼自動遵循新慣例，避免架構回退，維持程式碼演進一致性。
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 進行在地化，可能包含錯誤。如發現不適當或錯誤的翻譯，請至 [問題回報](../../issues) 建立 issue。

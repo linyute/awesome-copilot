@@ -251,7 +251,3 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 - 簡要說明影響實作的關鍵發現
 - 呈現單一解決方案及實作準備評估與後續步驟
 - 清楚交接至規劃階段並提供可執行建議
-
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 翻譯為繁體中文，可能包含錯誤。如發現不適當或錯誤之翻譯，請至 [issue](../../issues) 回報。

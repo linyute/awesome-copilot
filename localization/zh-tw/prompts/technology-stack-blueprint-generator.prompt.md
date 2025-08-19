@@ -18,7 +18,7 @@ ${CATEGORIZATION="技術類型|層級|用途"} <!-- 組織方式 -->
 
 ## 產生提示
 
-「請分析程式碼庫並產生一份 ${DEPTH_LEVEL} 技術堆疊原理圖，完整記錄技術與實作模式，以利一致性程式碼產生。請依下列步驟進行：
+"請分析程式碼庫並產生一份 ${DEPTH_LEVEL} 技術堆疊原理圖，完整記錄技術與實作模式，以利一致性程式碼產生。請依下列步驟進行：
 
 ### 1. 技術識別階段
 - ${PROJECT_TYPE == "自動偵測" ? "掃描程式碼庫的專案檔、設定檔及相依性，判斷所有使用的技術堆疊" : "聚焦於 ${PROJECT_TYPE} 技術"}
@@ -239,7 +239,4 @@ ${INCLUDE_DIAGRAMS ?
 請以 ${OUTPUT_FORMAT} 格式輸出，並依 ${CATEGORIZATION} 分類技術。
 
 請將結果儲存為 'Technology_Stack_Blueprint.${OUTPUT_FORMAT == "Markdown" ? "md" : OUTPUT_FORMAT.toLowerCase()}'
-」
----
-
-**免責聲明**：本文件由 [GitHub Copilot](https://docs.github.com/copilot/about-github-copilot/what-is-github-copilot) 進行在地化，可能包含錯誤。如發現不適當或錯誤翻譯，請至 [issue](../../issues) 回報。
+"
