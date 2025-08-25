@@ -113,6 +113,8 @@ tools: ['codebase', 'terminalCommand']
    - 簡要說明你的指令／提示用途
    - 任何相關背景或使用說明
 
+**注意**：一旦您的貢獻被合併，您將自動被添加到我們的[貢獻者](#contributors-)部分！我們使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來識別對專案的所有類型貢獻。
+
 ## 我們接受什麼內容
 
 我們歡迎涵蓋任何技術、框架或開發實踐的貢獻，只要能協助開發者更有效率地使用 GitHub Copilot，包括：
@@ -144,6 +146,21 @@ tools: ['codebase', 'terminalCommand']
 - **聚焦主題**：每個檔案應聚焦於特定技術、框架或情境
 - **清楚易懂**：使用簡單、直接的語言
 - **推廣最佳實踐**：鼓勵安全、可維護且合乎倫理的開發實踐
+
+## 貢獻者認可
+
+本專案使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來認可貢獻者。當您做出貢獻時，您將自動在我們的貢獻者列表中獲得認可！
+
+我們歡迎所有類型的貢獻，包括：
+- 📝 文件改進
+- 💻 程式碼貢獻
+- 🐛 錯誤報告和修復
+- 🎨 設計改進
+- 💡 想法和建議
+- 🤔 回答問題
+- 📢 推廣專案
+
+您的貢獻有助於使這個資源對整個 GitHub Copilot 社群更好！
 
 ## 行為準則
 
