@@ -15,28 +15,62 @@
 - **[![Awesome Instructions](https://img.shields.io/badge/Awesome-Instructions-blue?logo=githubcopilot)](README.instructions.md)** - 適用於特定檔案模式或整個專案的綜合程式碼標準和最佳實踐
 - **[![Awesome Chat Modes](https://img.shields.io/badge/Awesome-Chat_Modes-blue?logo=githubcopilot)](README.chatmodes.md)** - 針對不同角色和上下文的專門 AI 人格和對話模式
 
+## MCP 伺服器
+
+為了讓您輕鬆地將這些自訂項目新增至您的編輯器，我們建立了一個 [MCP 伺服器](https://developer.microsoft.com/blog/announcing-awesome-copilot-mcp-server)，它提供了一個提示，用於直接從此儲存庫搜尋和安裝提示、說明和聊天模式。
+
+[![在 VS Code 中安裝](https://img.shields.io/badge/VS_Code-Install-0098FF?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode) [![在 VS Code Insiders 中安裝](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode-insiders)
+
+<details>
+<summary>顯示 MCP 伺服器 JSON 配置</summary>
+
+```json
+{
+  "servers": {
+    "awesome-copilot": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest"
+      ]
+    }
+  }
+}
+```
+
+</details>
+
 ## 🔧 如何使用
 
 ### 🎯 提示
+
 在 GitHub Copilot Chat 中使用 `/` 命令來存取提示：
+
 ```
 /awesome-copilot create-readme
 ```
 
 ### 📋 指令
+
 指令會根據其模式自動應用於檔案，並為程式碼標準、框架和最佳實踐提供上下文指導。
 
 ### 💭 聊天模式
+
 啟用聊天模式以從針對特定角色（如架構師、DBA 或安全專家）量身定制的 AI 人格獲得專業協助。
 
 ## 🤝 貢獻
 
 我們歡迎貢獻！請參閱我們的 [貢獻指南](CONTRIBUTING.md) 以了解如何：
+
 - 添加新的提示、指令或聊天模式
 - 改進現有內容
 - 報告問題或提出增強功能
 
 ### 快速貢獻指南
+
 1. 遵循我們的檔案命名約定和前置碼要求
 2. 徹底測試您的貢獻
 3. 更新適當的 README 表格
