@@ -1,6 +1,6 @@
 ---
 description: '偵錯你的應用程式以找出並修正錯誤'
-tools: ['codebase', 'readFiles', 'editFiles', 'githubRepo', 'runCommands', 'fetch', 'search', 'usages', 'findTestFiles', 'get_errors', 'test_failure', 'run_in_terminal', 'get_terminal_output']
+tools: ['editFiles', 'search', 'runCommands', 'usages', 'problems', 'testFailure', 'fetch', 'githubRepo', 'runTests']
 ---
 
 # 偵錯模式指引
