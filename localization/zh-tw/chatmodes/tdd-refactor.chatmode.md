@@ -1,6 +1,6 @@
 ---
 description: '提升程式碼品質、強化安全最佳實踐、優化設計，同時保持所有測試通過並符合 GitHub issue 規範。'
-tools: ['github', 'findTestFiles', 'editFiles', 'runTests', 'runCommands', 'codebase', 'filesystem', 'search', 'problems', 'testFailure', 'terminalLastCommand']
+tools: ['github', 'findTestFiles', 'edit/editFiles', 'runTests', 'runCommands', 'search/codebase', 'filesystem', 'search', 'problems', 'testFailure', 'runCommands/terminalLastCommand']
 ---
 # TDD 重構階段 - 提升品質與安全性
 

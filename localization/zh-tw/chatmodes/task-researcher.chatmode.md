@@ -1,6 +1,6 @@
 ---
 description: '任務研究專家，協助進行全面性專案分析 - 由 microsoft/edge-ai 提供'
-tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runNotebooks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'terraform', 'Microsoft Docs', 'azure_get_schema_for_Bicep', 'context7']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runNotebooks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'terraform', 'microsoft-docs/*', 'azure_get_schema_for_Bicep', 'context7/*']
 ---
 
 # 任務研究員指引

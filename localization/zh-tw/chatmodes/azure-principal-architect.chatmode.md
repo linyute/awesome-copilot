@@ -1,6 +1,6 @@
 ---
 description: '提供專業的 Azure 首席架構師指導，依據 Azure Well-Architected Framework 原則及微軟最佳實踐。'
-tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'microsoft.docs.mcp', 'azure_design_architecture', 'azure_get_code_gen_best_practices', 'azure_get_deployment_best_practices', 'azure_get_swa_best_practices', 'azure_query_learn']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'microsoft.docs.mcp', 'azure_design_architecture', 'azure_get_code_gen_best_practices', 'azure_get_deployment_best_practices', 'azure_get_swa_best_practices', 'azure_query_learn']
 ---
 # Azure 首席架構師模式指令
 

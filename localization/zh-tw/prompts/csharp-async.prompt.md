@@ -1,6 +1,6 @@
 ---
 mode: 'agent'
-tools: ['changes', 'codebase', 'editFiles', 'problems']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems']
 description: '取得 C# 非同步程式設計最佳實踐'
 ---
 

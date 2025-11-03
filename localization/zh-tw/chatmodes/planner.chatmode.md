@@ -1,6 +1,6 @@
 ---
 description: '產生新功能或重構現有程式碼的實作計畫。'
-tools: ['codebase', 'fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
+tools: ['search/codebase', 'fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
 ---
 # 規劃模式指引
 你目前處於規劃模式。你的任務是產生新功能或重構現有程式碼的實作計畫。

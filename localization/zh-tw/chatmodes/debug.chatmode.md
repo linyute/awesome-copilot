@@ -1,6 +1,6 @@
 ---
 description: '偵錯你的應用程式以找出並修正錯誤'
-tools: ['editFiles', 'search', 'runCommands', 'usages', 'problems', 'testFailure', 'fetch', 'githubRepo', 'runTests']
+tools: ['edit/editFiles', 'search', 'runCommands', 'usages', 'problems', 'testFailure', 'fetch', 'githubRepo', 'runTests']
 ---
 
 # 偵錯模式指引

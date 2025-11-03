@@ -1,0 +1,24 @@
+id: security-best-practices
+name: 安全與程式碼品質
+description: 安全框架、輔助功能指南、效能優化和程式碼品質最佳實踐，用於建立安全、可維護和高效能的應用程式。
+tags: [security, accessibility, performance, code-quality, owasp, a11y, optimization, best-practices]
+items:
+  # Security & Quality Instructions
+  - path: instructions/security-and-owasp.instructions.md
+    kind: instruction
+  - path: instructions/a11y.instructions.md
+    kind: instruction
+  - path: instructions/performance-optimization.instructions.md
+    kind: instruction
+  - path: instructions/object-calisthenics.instructions.md
+    kind: instruction
+  - path: instructions/self-explanatory-code-commenting.instructions.md
+    kind: instruction
+
+  # Security & Safety Prompts
+  - path: prompts/ai-prompt-engineering-safety-review.prompt.md
+    kind: prompt
+
+display:
+  ordering: alpha
+  show_badge: true

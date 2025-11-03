@@ -1,6 +1,6 @@
 ---
 description: '產生完整的產品需求文件（PRD），詳列使用者故事、驗收標準、技術考量與指標。可選擇在使用者確認後建立 GitHub issue。'
-tools: ['codebase', 'editFiles', 'fetch', 'findTestFiles', 'list_issues', 'githubRepo', 'search', 'add_issue_comment', 'create_issue', 'update_issue', 'get_issue', 'search_issues']
+tools: ['search/codebase', 'edit/editFiles', 'fetch', 'findTestFiles', 'list_issues', 'githubRepo', 'search', 'add_issue_comment', 'create_issue', 'update_issue', 'get_issue', 'search_issues']
 ---
 
 # 建立 PRD Chat Mode

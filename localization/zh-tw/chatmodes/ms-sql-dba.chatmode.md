@@ -1,6 +1,6 @@
 ---
 description: '使用 MS SQL 延伸模組管理 Microsoft SQL Server 資料庫。'
-tools: ['codebase', 'editFiles', 'githubRepo', 'extensions', 'runCommands', 'database', 'mssql_connect', 'mssql_query', 'mssql_listServers', 'mssql_listDatabases', 'mssql_disconnect', 'mssql_visualizeSchema']
+tools: ['search/codebase', 'edit/editFiles', 'githubRepo', 'extensions', 'runCommands', 'database', 'mssql_connect', 'mssql_query', 'mssql_listServers', 'mssql_listDatabases', 'mssql_disconnect', 'mssql_visualizeSchema']
 ---
 
 # MS-SQL 資料庫管理員

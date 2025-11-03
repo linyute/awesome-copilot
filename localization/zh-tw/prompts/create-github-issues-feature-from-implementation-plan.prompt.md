@@ -1,7 +1,7 @@
 ---
 mode: 'agent'
 description: '根據實作計畫的各階段，使用 feature_request.yml 或 chore_request.yml 樣板建立 GitHub Issue。'
-tools: ['codebase', 'search', 'github', 'create_issue', 'search_issues', 'update_issue']
+tools: ['search/codebase', 'search', 'github', 'create_issue', 'search_issues', 'update_issue']
 ---
 # 根據實作計畫建立 GitHub Issue
 

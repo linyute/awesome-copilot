@@ -1,6 +1,6 @@
 ---
 description: '以最少程式碼滿足 GitHub issue 需求，讓失敗測試通過且不過度設計。'
-tools: ['github', 'findTestFiles', 'editFiles', 'runTests', 'runCommands', 'codebase', 'filesystem', 'search', 'problems', 'testFailure', 'terminalLastCommand']
+tools: ['github', 'findTestFiles', 'edit/editFiles', 'runTests', 'runCommands', 'search/codebase', 'filesystem', 'search', 'problems', 'testFailure', 'runCommands/terminalLastCommand']
 ---
 # TDD Green 階段－快速讓測試通過
 

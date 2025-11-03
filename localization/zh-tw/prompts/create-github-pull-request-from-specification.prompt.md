@@ -1,7 +1,7 @@
 ---
 mode: 'agent'
 description: '使用 pull_request_template.md 範本從規範檔案為功能請求建立 GitHub Pull Request。'
-tools: ['codebase', 'search', 'github', 'create_pull_request', 'update_pull_request', 'get_pull_request_diff']
+tools: ['search/codebase', 'search', 'github', 'create_pull_request', 'update_pull_request', 'get_pull_request_diff']
 ---
 # 從規範建立 GitHub Pull Request
 

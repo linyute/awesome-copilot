@@ -1,24 +1,23 @@
 ---
 mode: 'agent'
-tools: ['changes', 'codebase', 'editFiles', 'findTestFiles', 'problems', 'runCommands', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'testFailure', 'usages']
 description: '建立 Spring Boot Kotlin 專案骨架'
 ---
 
 # 建立 Spring Boot Kotlin 專案提示
 
-- 請確保你的系統已安裝下列軟體：
+- 請確保您的系統上安裝了以下軟體：
 
   - Java 21
   - Docker
   - Docker Compose
 
-- 若需自訂專案名稱，請在 [下載 Spring Boot 專案範本](./create-spring-boot-kotlin-project.prompt.md#download-spring-boot-project-template) 章節修改 `artifactId` 與 `packageName`。
+- 如果您需要自訂專案名稱，請在 [下載 Spring Boot 專案範本](./create-spring-boot-kotlin-project.prompt.md#download-spring-boot-project-template) 中更改 `artifactId` 和 `packageName`。
 
-- 若需更新 Spring Boot 版本，請在 [下載 Spring Boot 專案範本](./create-spring-boot-kotlin-project.prompt.md#download-spring-boot-project-template) 章節修改 `bootVersion`。
+- 如果您需要更新 Spring Boot 版本，請在 [下載 Spring Boot 專案範本](./create-spring-boot-kotlin-project.prompt.md#download-spring-boot-project-template) 中更改 `bootVersion`。
 
 ## 檢查 Java 版本
 
-- 在終端機執行下列指令，檢查 Java 版本
+- 在終端機中執行以下命令並檢查 Java 版本
 
 ```shell
 java -version
@@ -26,11 +25,11 @@ java -version
 
 ## 下載 Spring Boot 專案範本
 
-- 在終端機執行下列指令下載 Spring Boot 專案範本
+- 在終端機中執行以下命令以下載 Spring Boot 專案範本
 
 ```shell
 curl https://start.spring.io/starter.zip \
-  -d artifactId=demo \
+  -d artifactId=${input:projectName:demo-kotlin} \
   -d bootVersion=3.4.5 \
   -d dependencies=configuration-processor,webflux,data-r2dbc,postgresql,data-redis-reactive,data-mongodb-reactive,validation,cache,testcontainers \
   -d javaVersion=21 \
@@ -43,23 +42,31 @@ curl https://start.spring.io/starter.zip \
 
 ## 解壓縮下載的檔案
 
-- 在終端機執行下列指令解壓縮下載的檔案
+- 在終端機中執行以下命令以解壓縮下載的檔案
 
 ```shell
-unzip starter.zip -d .
+unzip starter.zip -d ./${input:projectName:demo-kotlin}
 ```
 
-## 刪除下載的 zip 檔案
+## 移除下載的 zip 檔案
 
-- 在終端機執行下列指令刪除下載的 zip 檔案
+- 在終端機中執行以下命令以刪除下載的 zip 檔案
 
 ```shell
 rm -f starter.zip
 ```
 
-## 新增額外相依套件
+## 解壓縮下載的檔案
 
-- 在 `build.gradle.kts` 檔案中加入 `springdoc-openapi-starter-webmvc-ui` 與 `archunit-junit5` 相依套件
+- 在終端機中執行以下命令以解壓縮下載的檔案
+
+```shell
+unzip starter.zip -d ./${input:projectName:demo-kotlin}
+```
+
+## 新增額外依賴項
+
+- 將 `springdoc-openapi-starter-webmvc-ui` 和 `archunit-junit5` 依賴項插入 `build.gradle.kts` 檔案
 
 ```gradle.kts
 dependencies {
@@ -68,28 +75,30 @@ dependencies {
 }
 ```
 
-- 在 `application.properties` 檔案中加入 SpringDoc 設定
+## 新增 SpringDoc、Redis、JPA 和 MongoDB 配置
+
+- 將 SpringDoc 配置插入 `application.properties` 檔案
 
 ```properties
-# SpringDoc 設定
+# SpringDoc configurations
 springdoc.swagger-ui.doc-expansion=none
 springdoc.swagger-ui.operations-sorter=alpha
 springdoc.swagger-ui.tags-sorter=alpha
 ```
 
-- 在 `application.properties` 檔案中加入 Redis 設定
+- 將 Redis 配置插入 `application.properties` 檔案
 
 ```properties
-# Redis 設定
+# Redis configurations
 spring.data.redis.host=localhost
 spring.data.redis.port=6379
 spring.data.redis.password=rootroot
 ```
 
-- 在 `application.properties` 檔案中加入 R2DBC 設定
+- 將 R2DBC 配置插入 `application.properties` 檔案
 
 ```properties
-# R2DBC 設定
+# R2DBC configurations
 spring.r2dbc.url=r2dbc:postgresql://localhost:5432/postgres
 spring.r2dbc.username=postgres
 spring.r2dbc.password=rootroot
@@ -99,10 +108,10 @@ spring.sql.init.platform=postgres
 spring.sql.init.continue-on-error=true
 ```
 
-- 在 `application.properties` 檔案中加入 MongoDB 設定
+- 將 MongoDB 配置插入 `application.properties` 檔案
 
 ```properties
-# MongoDB 設定
+# MongoDB configurations
 spring.data.mongodb.host=localhost
 spring.data.mongodb.port=27017
 spring.data.mongodb.authentication-database=admin
@@ -111,30 +120,30 @@ spring.data.mongodb.password=rootroot
 spring.data.mongodb.database=test
 ```
 
-- 在專案根目錄建立 `docker-compose.yaml`，並新增下列服務：`redis:6`、`postgresql:17`、`mongo:8`。
+- 在專案根目錄建立 `docker-compose.yaml` 並新增以下服務：`redis:6`、`postgresql:17` 和 `mongo:8`。
 
-  - redis 服務需設定
+  - redis 服務應具有
     - 密碼 `rootroot`
-    - 對應埠 6379 到 6379
-    - 掛載目錄 `./redis_data` 到 `/data`
-  - postgresql 服務需設定
+    - 將埠 6379 映射到 6379
+    - 將卷 `./redis_data` 掛載到 `/data`
+  - postgresql 服務應具有
     - 密碼 `rootroot`
-    - 對應埠 5432 到 5432
-    - 掛載目錄 `./postgres_data` 到 `/var/lib/postgresql/data`
-  - mongo 服務需設定
-    - initdb root 使用者 `root`
-    - initdb root 密碼 `rootroot`
-    - 對應埠 27017 到 27017
-    - 掛載目錄 `./mongo_data` 到 `/data/db`
+    - 將埠 5432 映射到 5432
+    - 將卷 `./postgres_data` 掛載到 `/var/lib/postgresql/data`
+  - mongo 服務應具有
+    - initdb 根使用者名稱 `root`
+    - initdb 根密碼 `rootroot`
+    - 將埠 27017 映射到 27017
+    - 將卷 `./mongo_data` 掛載到 `/data/db`
 
-- 在 `.gitignore` 檔案中加入 `redis_data`、`postgres_data`、`mongo_data` 目錄
+- 將 `redis_data`、`postgres_data` 和 `mongo_data` 目錄插入 `.gitignore` 檔案
 
-- 執行 gradle clean test 指令，檢查專案是否正常
+- 執行 gradle clean test 命令以檢查專案是否正常運作
 
 ```shell
 ./gradlew clean test
 ```
 
-- （選用）可執行 `docker-compose up -d` 啟動服務，`./gradlew spring-boot:run` 執行 Spring Boot 專案，`docker-compose rm -sf` 停止服務。
+- (可選) `docker-compose up -d` 啟動服務，`./gradlew spring-boot:run` 執行 Spring Boot 專案，`docker-compose rm -sf` 停止服務。
 
-讓我們一步一步完成。
+讓我們一步一步來。

@@ -1,6 +1,6 @@
 ---
 description: '專注於深思熟慮的分析與規劃，協助開發者理解程式庫、釐清需求並制定全面實作策略。'
-tools: ['codebase', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'problems', 'search', 'searchResults', 'usages', 'vscodeAPI']
+tools: ['search/codebase', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'problems', 'search', 'search/searchResults', 'usages', 'vscodeAPI']
 ---
 
 # 規劃模式——策略規劃與架構助理

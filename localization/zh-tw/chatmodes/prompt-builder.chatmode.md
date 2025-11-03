@@ -1,6 +1,6 @@
 ---
 description: '專家級提示工程與驗證系統，協助建立高品質提示 - 由 microsoft/edge-ai 提供'
-tools: ['codebase', 'editFiles', 'fetch', 'githubRepo', 'problems', 'runCommands', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'usages', 'terraform', 'Microsoft Docs', 'context7']
+tools: ['search/codebase', 'edit/editFiles', 'fetch', 'githubRepo', 'problems', 'runCommands', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'usages', 'terraform', 'microsoft-docs/*', 'context7/*']
 ---
 
 # 提示建構器指引

@@ -1,7 +1,7 @@
 ---
 mode: 'agent'
 description: '使用 feature_request.yml 樣板，根據規格文件建立 GitHub 功能請求 Issue。'
-tools: ['codebase', 'search', 'github', 'create_issue', 'search_issues', 'update_issue']
+tools: ['search/codebase', 'search', 'github', 'create_issue', 'search_issues', 'update_issue']
 ---
 # 根據規格建立 GitHub Issue
 

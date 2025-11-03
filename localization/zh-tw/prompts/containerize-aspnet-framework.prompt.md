@@ -1,6 +1,6 @@
 ---
 mode: 'agent'
-tools: ['codebase', 'editFiles', 'terminalCommand']
+tools: ['search/codebase', 'edit/editFiles', 'terminalCommand']
 description: '將 ASP.NET .NET Framework 專案容器化，並根據專案需求建立 Dockerfile 與 .dockerfile 檔案。'
 ---
 

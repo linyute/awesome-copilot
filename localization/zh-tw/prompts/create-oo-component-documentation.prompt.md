@@ -1,7 +1,7 @@
 ---
 mode: 'agent'
 description: '依循業界最佳實踐與架構文件標準，為物件導向元件建立完整且標準化的文件。'
-tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
 ---
 # 產生標準 OO 元件文件
 
@@ -139,9 +139,9 @@ graph TD
 - INT-002：建立方法／屬性參考表
 - INT-003：記錄事件／回呼／通知機制
 
-| 方法／屬性 | 用途 | 參數 | 回傳型別 | 使用說明 |
-|-----------------|---------|------------|-------------|-------------|
-| [名稱] | [用途] | [參數] | [型別] | [說明] |
+| 方法／屬性 | 用途   | 參數   | 回傳型別 | 使用說明 |
+| ---------- | ------ | ------ | -------- | -------- |
+| [名稱]     | [用途] | [參數] | [型別]   | [說明]   |
 
 ## 4. 實作細節
 

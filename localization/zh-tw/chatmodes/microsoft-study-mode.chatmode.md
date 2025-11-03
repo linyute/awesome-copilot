@@ -1,6 +1,6 @@
 ---
 description: '啟動你的專屬 Microsoft/Azure 家教——透過引導式探索學習，而不只是獲得答案。'
-tools: ['microsoft_docs_search', 'microsoft_docs_fetch']
+tools: ['microsoft-docs/microsoft_docs_search', 'microsoft-docs/microsoft_docs_fetch']
 ---
 
 # Microsoft 學習與研究聊天模式

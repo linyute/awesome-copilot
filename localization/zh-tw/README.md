@@ -1,25 +1,37 @@
-# 🤖 超棒的 GitHub Copilot 客製化
+# 🤖 Awesome GitHub Copilot 客製化
 
 [![Powered by Awesome Copilot](https://img.shields.io/badge/Powered_by-Awesome_Copilot-blue?logo=githubcopilot)](https://aka.ms/awesome-github-copilot)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-86-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-90-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-精選的提示、指令和聊天模式集合，可大幅提升您在不同領域、語言和使用案例中的 GitHub Copilot 體驗。
+一個精選的提示、指令和聊天模式集合，旨在提升您在不同領域、語言和使用案例中的 GitHub Copilot 體驗。
 
-## 🚀 什麼是超棒的 GitHub Copilot？
+## 🚀 什麼是 Awesome GitHub Copilot？
 
-此儲存庫提供了一個全面的工具包，用於透過以下方式增強 GitHub Copilot：
+此儲存庫提供了一個全面的工具包，用於透過以下專業功能增強 GitHub Copilot：
 
-- **[![Awesome Prompts](https://img.shields.io/badge/Awesome-Prompts-blue?logo=githubcopilot)](README.prompts.md)** - 專注於任務的提示，用於生成程式碼、文件和解決特定問題
-- **[![Awesome Instructions](https://img.shields.io/badge/Awesome-Instructions-blue?logo=githubcopilot)](README.instructions.md)** - 適用於特定檔案模式或整個專案的綜合程式碼標準和最佳實踐
-- **[![Awesome Chat Modes](https://img.shields.io/badge/Awesome-Chat_Modes-blue?logo=githubcopilot)](README.chatmodes.md)** - 針對不同角色和上下文的專門 AI 人格和對話模式
+- **👉 [Awesome Agents](docs/README.agents.md)** - 專門的 GitHub Copilot 代理程式，與 MCP 伺服器整合，為特定工作流程和工具提供增強功能
+- **👉 [Awesome Prompts](docs/README.prompts.md)** - 專注於任務的提示，用於產生程式碼、文件和解決特定問題
+- **👉 [Awesome Instructions](docs/README.instructions.md)** - 適用於特定檔案模式或整個專案的全面程式碼標準和最佳實踐
+- **👉 [Awesome Chat Modes](docs/README.chatmodes.md)** - 針對不同角色和情境的專業 AI 人格和對話模式
+- **👉 [Awesome Collections](docs/README.collections.md)** - 圍繞特定主題和工作流程組織的相關提示、指令和聊天模式的精選集合
+
+## 🌟 精選集合
+
+探索我們圍繞特定主題和工作流程組織的精選提示、指令和聊天模式集合。
+
+| 名稱 | 描述 | 項目 | 標籤 |
+| ---- | ----------- | ----- | ---- |
+| [Awesome Copilot](collections/awesome-copilot.md) | 協助您發現和產生精選 GitHub Copilot 聊天模式、集合、指令、提示和代理程式的元提示。 | 6 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
+| [Partners](collections/partners.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 11 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
+
 
 ## MCP 伺服器
 
-為了讓您輕鬆地將這些自訂項目新增至您的編輯器，我們建立了一個 [MCP 伺服器](https://developer.microsoft.com/blog/announcing-awesome-copilot-mcp-server)，它提供了一個提示，用於直接從此儲存庫搜尋和安裝提示、說明和聊天模式。
+為了方便將這些客製化功能新增到您的編輯器中，我們建立了一個 [MCP 伺服器](https://developer.microsoft.com/blog/announcing-awesome-copilot-mcp-server)，它提供了一個提示，用於直接從此儲存庫搜尋和安裝提示、指令和聊天模式。您需要安裝並執行 Docker 才能執行伺服器。
 
-[![在 VS Code 中安裝](https://img.shields.io/badge/VS_Code-Install-0098FF?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode) [![在 VS Code Insiders 中安裝](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode-insiders)
+[![在 VS Code 中安裝](https://img.shields.io/badge/VS_Code-Install-0098FF?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode) [![在 VS Code Insiders 中安裝](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode-insiders) [![在 Visual Studio 中安裝](https://img.shields.io/badge/Visual_Studio-Install-C16FDE?logo=visualstudio&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vs)
 
 <details>
 <summary>顯示 MCP 伺服器 JSON 配置</summary>
@@ -45,51 +57,56 @@
 
 ## 🔧 如何使用
 
+### 🤖 自訂代理程式
+
+自訂代理程式可用於 Copilot 程式碼代理程式 (CCA)、VS Code 和 Copilot CLI (即將推出)。對於 CCA，當將問題指派給 Copilot 時，從提供的清單中選取自訂代理程式。在 VS Code 中，您可以在代理程式會話中啟用自訂代理程式，以及內建代理程式（例如 Plan 和 Agent）。
+
 ### 🎯 提示
 
 在 GitHub Copilot Chat 中使用 `/` 命令來存取提示：
 
-```
+```plaintext
 /awesome-copilot create-readme
 ```
 
 ### 📋 指令
 
-指令會根據其模式自動應用於檔案，並為程式碼標準、框架和最佳實踐提供上下文指導。
+指令會根據其模式自動套用到檔案，並為程式碼標準、框架和最佳實踐提供上下文指導。
 
 ### 💭 聊天模式
 
-啟用聊天模式以從針對特定角色（如架構師、DBA 或安全專家）量身定制的 AI 人格獲得專業協助。
+啟用聊天模式以從針對特定角色（例如架構師、DBA 或安全專家）量身定制的 AI 人格獲得專業協助。
 
 ## 🤝 貢獻
 
 我們歡迎貢獻！請參閱我們的 [貢獻指南](CONTRIBUTING.md) 以了解如何：
 
-- 添加新的提示、指令或聊天模式
+- 新增提示、指令或聊天模式
 - 改進現有內容
-- 報告問題或提出增強功能
+- 報告問題或建議增強功能
 
 ### 快速貢獻指南
 
-1. 遵循我們的檔案命名約定和前置碼要求
+1. 遵循我們的檔案命名慣例和前置內容要求
 2. 徹底測試您的貢獻
 3. 更新適當的 README 表格
-4. 提交帶有清晰描述的拉取請求
+4. 提交包含清晰描述的拉取請求
 
 ## 📖 儲存庫結構
 
-```
-├── prompts/          # 任務特定提示 (.prompt.md)
+```plaintext
+├── prompts/          # 任務專屬提示 (.prompt.md)
 ├── instructions/     # 程式碼標準和最佳實踐 (.instructions.md)
-├── chatmodes/        # AI 人格和專門模式 (.chatmode.md)
-└── scripts/          # 維護工具腳本
+├── chatmodes/        # AI 人格和專業模式 (.chatmode.md)
+├── collections/      # 相關項目的精選集合 (.collection.yml)
+└── scripts/          # 維護公用程式指令碼
 ```
 
 ## 🌟 開始使用
 
-1. **瀏覽集合**：查看我們全面的 [提示](README.prompts.md)、[指令](README.instructions.md) 和 [聊天模式](README.chatmodes.md) 列表。
-2. **添加到您的編輯器**：點擊「安裝」按鈕以安裝到 VS Code，或複製檔案內容以用於其他編輯器。
-3. **開始使用**：複製提示以與 `/` 命令一起使用，讓指令增強您的編碼體驗，或啟用聊天模式以獲得專業協助。
+1. **瀏覽集合**：查看我們全面的 [提示](docs/README.prompts.md)、[指令](docs/README.instructions.md)、[聊天模式](docs/README.chatmodes.md) 和 [集合](docs/README.collections.md) 清單。
+2. **新增到您的編輯器**：按一下「安裝」按鈕以安裝到 VS Code，或複製檔案內容以用於其他編輯器。
+3. **開始使用**：複製提示以與 `/` 命令一起使用，讓指令增強您的程式碼體驗，或啟用聊天模式以獲得專業協助。
 
 ## 📄 授權
 
@@ -98,19 +115,19 @@
 ## 🛡️ 安全與支援
 
 - **安全問題**：請參閱我們的 [安全政策](SECURITY.md)
-- **支援**：查看我們的 [支援指南](SUPPORT.md) 以獲取幫助
-- **行為準則**：我們遵循 [貢獻者盟約](CODE_OF_CONDUCT.md)
+- **支援**：查看我們的 [支援指南](SUPPORT.md) 以獲得協助
+- **行為準則**：我們遵循 [貢獻者公約](CODE_OF_CONDUCT.md)
 
-## 🎯 為何使用超棒的 GitHub Copilot？
+## 🎯 為何使用 Awesome GitHub Copilot？
 
 - **生產力**：預建的提示和指令可節省時間並提供一致的結果
 - **最佳實踐**：受益於社群策劃的程式碼標準和模式
-- **專業協助**：透過專門的聊天模式存取專家級指導
-- **持續學習**：隨時了解最新技術的模式和實踐
+- **專業協助**：透過專業聊天模式獲得專家級指導
+- **持續學習**：隨時了解跨技術的最新模式和實踐
 
 ---
 
-**準備好大幅提升您的編碼體驗了嗎？** 開始探索我們的 [提示](README.prompts.md)、[指令](README.instructions.md) 和 [聊天模式](README.chatmodes.md)！
+**準備好提升您的程式碼體驗了嗎？** 開始探索我們的 [提示](docs/README.prompts.md)、[指令](docs/README.instructions.md) 和 [聊天模式](docs/README.chatmodes.md)！
 
 ## 貢獻者 ✨
 
@@ -232,6 +249,10 @@
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://linktr.ee/lukemurray"><img src="https://avatars.githubusercontent.com/u/24467442?v=4?s=100" width="100px;" alt="Luke Murray"/><br /><sub><b>Luke Murray</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=lukemurraynz" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://marknoble.com/"><img src="https://avatars.githubusercontent.com/u/3819700?v=4?s=100" width="100px;" alt="Mark Noble"/><br /><sub><b>Mark Noble</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=marknoble" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://soderlind.no"><img src="https://avatars.githubusercontent.com/u/1649452?v=4?s=100" width="100px;" alt="Per Søderlind"/><br /><sub><b>Per Søderlind</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=soderlind" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/riqueufmg"><img src="https://avatars.githubusercontent.com/u/108551585?v=4?s=100" width="100px;" alt="Henrique Nunes"/><br /><sub><b>Henrique Nunes</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=riqueufmg" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jeremiah-snee-openx"><img src="https://avatars.githubusercontent.com/u/113928685?v=4?s=100" width="100px;" alt="Jeremiah Snee"/><br /><sub><b>Jeremiah Snee</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=jeremiah-snee-openx" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/spectatora"><img src="https://avatars.githubusercontent.com/u/1385755?v=4?s=100" width="100px;" alt="spectatora"/><br /><sub><b>spectatora</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=spectatora" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
@@ -261,6 +282,6 @@
 
 ## ™️ 商標
 
-此專案可能包含專案、產品或服務的商標或標誌。Microsoft 商標或標誌的授權使用受 [Microsoft 商標與品牌指南](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general) 的約束並必須遵循該指南。
-在修改後的專案版本中使用 Microsoft 商標或標誌不得造成混淆或暗示 Microsoft 贊助。
+此專案可能包含專案、產品或服務的商標或標誌。Microsoft 商標或標誌的授權使用受 [Microsoft 商標與品牌指南](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general) 的約束並必須遵循。
+在修改版本的此專案中使用 Microsoft 商標或標誌不得造成混淆或暗示 Microsoft 贊助。
 任何第三方商標或標誌的使用均受該第三方政策的約束。

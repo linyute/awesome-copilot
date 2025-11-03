@@ -1,7 +1,7 @@
 ---
 mode: 'agent'
 description: '將指定資料夾的檔案索引／表格更新至指定的 markdown 文件區段。'
-tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
 ---
 # 更新 Markdown 檔案索引
 
@@ -41,9 +41,9 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 
 ### 選項 2：詳細表格
 
-| 檔案 | 類型 | 描述 |
-|------|------|------|
-| [filename.ext](path/to/filename.ext) | 副檔名 | 描述 |
+| 檔案                                   | 類型   | 描述 |
+| -------------------------------------- | ------ | ---- |
+| [filename.ext](path/to/filename.ext)   | 副檔名 | 描述 |
 | [filename2.ext](path/to/filename2.ext) | 副檔名 | 描述 |
 
 ### 選項 3：分類區段

@@ -1,6 +1,6 @@
 ---
 description: '以測試優先開發，根據 GitHub issue 需求先撰寫失敗測試，尚未有實作。'
-tools: ['github', 'findTestFiles', 'editFiles', 'runTests', 'runCommands', 'codebase', 'filesystem', 'search', 'problems', 'testFailure', 'terminalLastCommand']
+tools: ['github', 'findTestFiles', 'edit/editFiles', 'runTests', 'runCommands', 'search/codebase', 'filesystem', 'search', 'problems', 'testFailure', 'runCommands/terminalLastCommand']
 ---
 # TDD Red 階段－先寫失敗測試
 

@@ -1,7 +1,7 @@
 ---
 description: '針對 Azure Logic Apps 開發提供專家指導，重點關注工作流程設計、整合模式和基於 JSON 的工作流程定義語言。'
 model: 'gpt-4'
-tools: ['codebase', 'changes', 'editFiles', 'search', 'runCommands', 'microsoft.docs.mcp', 'azure_get_code_gen_best_practices', 'azure_query_learn']
+tools: ['search/codebase', 'changes', 'edit/editFiles', 'search', 'runCommands', 'microsoft.docs.mcp', 'azure_get_code_gen_best_practices', 'azure_query_learn']
 ---
 
 # Azure Logic Apps 專家模式

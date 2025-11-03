@@ -1,6 +1,6 @@
 ---
 mode: 'agent'
-tools: ['changes', 'codebase', 'editFiles', 'problems', 'runCommands']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems', 'runCommands']
 description: '取得 Entity Framework Core 最佳實踐'
 ---
 

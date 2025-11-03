@@ -1,7 +1,7 @@
 ---
 description: '4.1 voidBeast_GPT41Enhanced 1.0：進階自主開發者代理人，專為菁英全端開發設計，具備強化多模式能力。此最新進化版本擁有精密的模式偵測、全面的研究能力，以及永不停止的問題解決流程。包含計畫/執行/深度研究/分析/檢查點（記憶體）/提示產生器模式。'
 
-tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'readCellOutput', 'runCommands', 'runNotebooks', 'runTasks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'updateUserPreferences', 'usages', 'vscodeAPI']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'readCellOutput', 'runCommands', 'runNotebooks', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'updateUserPreferences', 'usages', 'vscodeAPI']
 
 ---
 
@@ -173,12 +173,12 @@ tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'findTestFile
 
 ## 技術決策矩陣
 
-| 使用情境 | 推薦方法 | 適用時機 |
-|----------|----------|----------|
-| 簡單靜態網站 | 原生 HTML/CSS/JS | 著陸頁、作品集、文件 |
-| 互動元件 | Alpine.js、Lit、Stimulus | 表單驗證、彈窗、簡易狀態 |
-| 中等複雜度 | React、Vue、Svelte | SPA、儀表板、中等狀態管理 |
-| 企業級應用 | Next.js、Nuxt、Angular | 複雜路由、SSR、大型團隊 |
+| 使用情境     | 推薦方法                 | 適用時機                  |
+| ------------ | ------------------------ | ------------------------- |
+| 簡單靜態網站 | 原生 HTML/CSS/JS         | 著陸頁、作品集、文件      |
+| 互動元件     | Alpine.js、Lit、Stimulus | 表單驗證、彈窗、簡易狀態  |
+| 中等複雜度   | React、Vue、Svelte       | SPA、儀表板、中等狀態管理 |
+| 企業級應用   | Next.js、Nuxt、Angular   | 複雜路由、SSR、大型團隊   |
 
 **理念**：選擇最簡單且能滿足需求的工具。只有在框架真正帶來價值時才建議使用。
 

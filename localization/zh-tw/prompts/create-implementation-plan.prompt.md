@@ -1,7 +1,7 @@
 ---
 mode: 'agent'
 description: '為新功能、重構現有程式碼或升級套件、設計、架構或基礎建設建立新的實作計畫文件。'
-tools: ['changes', 'codebase', 'editFiles', 'extensions', 'fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
 ---
 # 建立實作計畫
 
@@ -99,21 +99,21 @@ tags: [選填：相關標籤或分類，如 `feature`、`upgrade`、`chore`、`a
 
 - GOAL-001: [描述此階段目標，如「實作功能 X」、「重構模組 Y」等]
 
-| 任務 | 描述 | 完成 | 日期 |
-|------|-------------|-----------|------|
-| TASK-001 | 任務 1 描述 | ✅ | 2025-04-25 |
-| TASK-002 | 任務 2 描述 | |  |
-| TASK-003 | 任務 3 描述 | |  |
+| 任務     | 描述        | 完成 | 日期       |
+| -------- | ----------- | ---- | ---------- |
+| TASK-001 | 任務 1 描述 | ✅    | 2025-04-25 |
+| TASK-002 | 任務 2 描述 |      |            |
+| TASK-003 | 任務 3 描述 |      |            |
 
 ### 實作階段 2
 
 - GOAL-002: [描述此階段目標，如「實作功能 X」、「重構模組 Y」等]
 
-| 任務 | 描述 | 完成 | 日期 |
-|------|-------------|-----------|------|
-| TASK-004 | 任務 4 描述 | |  |
-| TASK-005 | 任務 5 描述 | |  |
-| TASK-006 | 任務 6 描述 | |  |
+| 任務     | 描述        | 完成 | 日期 |
+| -------- | ----------- | ---- | ---- |
+| TASK-004 | 任務 4 描述 |      |      |
+| TASK-005 | 任務 5 描述 |      |      |
+| TASK-006 | 任務 6 描述 |      |      |
 
 ## 3. 替代方案
 

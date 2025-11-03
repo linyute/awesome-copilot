@@ -1,183 +1,183 @@
----
-title: Power Platform 連接器 Schema 開發指引
-description: 'Power Platform 自訂連接器 JSON Schema 開發完整指南，涵蓋 API 定義（Swagger 2.0）、API 屬性與設定檔，並說明 Microsoft 擴充設定。'
+--- 
+title: Power Platform 連接器結構描述開發說明
+description: 'Power Platform 自訂連接器使用 JSON 結構描述定義的綜合開發指南。涵蓋 API 定義 (Swagger 2.0)、API 屬性和使用 Microsoft 擴充功能的設定組態。'
 applyTo: '**/*.{json,md}'
 ---
 
-# Power Platform 連接器 Schema 開發指引
+# Power Platform 連接器結構描述開發說明
 
-## 專案概述
-本工作區包含 Power Platform 自訂連接器的 JSON Schema 定義，特別針對 `paconn`（Power Apps Connector）工具。這些 schema 用於驗證並提供 IntelliSense，涵蓋：
+## 專案概觀
+此工作區包含 Power Platform 自訂連接器的 JSON 結構描述定義，特別是針對 `paconn` (Power Apps 連接器) 工具。這些結構描述驗證並提供以下項目的 IntelliSense：
 
-- **API 定義**（Swagger 2.0 格式）
-- **API 屬性**（連接器 metadata 與設定）
-- **設定檔**（環境與部署設定）
+- **API 定義** (Swagger 2.0 格式)
+- **API 屬性** (連接器中繼資料和組態)
+- **設定** (環境和部署組態)
 
-## 檔案結構說明
+## 檔案結構理解
 
 ### 1. apiDefinition.swagger.json
-- **用途：** 此檔案包含 Swagger 2.0 API 定義，並含 Power Platform 擴充。
-- **重點特色：**
-  - 標準 Swagger 2.0 屬性（info、paths、definitions 等）
-  - Microsoft 專屬擴充（`x-ms-*` 前綴）
-  - Power Platform 專用格式（如 `date-no-tz`、`html`）
-  - 支援動態 schema，提升執行時彈性
-  - 支援 OAuth2、API Key、Basic Auth 等安全性定義
+- **目的**：此檔案包含具有 Power Platform 擴充功能的 Swagger 2.0 API 定義。
+- **主要功能**：
+  - 標準 Swagger 2.0 屬性，包括資訊、路徑、定義等。
+  - 以 `x-ms-*` 前綴開頭的 Microsoft 特定擴充功能。
+  - 專為 Power Platform 設計的自訂格式類型，例如 `date-no-tz` 和 `html`。
+  - 提供執行階段彈性的動態結構描述支援。
+  - 支援 OAuth2、API 金鑰和基本驗證方法的安全性定義。
 
 ### 2. apiProperties.json
-- **用途：** 定義連接器 metadata、認證設定與政策設定。
-- **重點組件：**
-  - **連線參數：** 支援多種認證（OAuth、API Key、Gateway）
-  - **政策範本實例：** 處理資料轉換與路由政策
-  - **連接器 metadata：** 包含發行者、功能、品牌等資訊
+- **目的**：此檔案定義連接器中繼資料、驗證組態和原則組態。
+- **主要元件**：
+  - **連線參數**：這些支援各種驗證類型，包括 OAuth、API 金鑰和閘道組態。
+  - **原則範本實例**：這些處理連接器的資料轉換和路由原則。
+  - **連接器中繼資料**：這包括發行者資訊、功能和品牌元素。
 
 ### 3. settings.json
-- **用途：** 提供 paconn 工具的環境與部署設定。
-- **設定選項：**
-  - 目標環境 GUID
-  - 連接器資產與設定檔路徑
-  - API 端點 URL（生產/測試）
-  - API 版本規格，確保與 Power Platform 相容
+- **目的**：此檔案提供 paconn 工具的環境和部署組態設定。
+- **組態選項**：
+  - 針對特定 Power Platform 環境的環境 GUID 目標設定。
+  - 連接器資產和組態檔案的檔案路徑對應。
+  - 生產和測試環境 (PROD/TIP1) 的 API 端點 URL。
+  - API 版本規格，以確保與 Power Platform 服務的相容性。
 
-## 開發指引
+## 開發指南
 
-### API 定義（Swagger）
-1. **務必遵循 Swagger 2.0 規範** - schema 嚴格檢查規範
+### 使用 API 定義 (Swagger) 時
+1. **始終根據 Swagger 2.0 規格進行驗證** - 結構描述強制執行嚴格的 Swagger 2.0 合規性
 
-2. **Microsoft 操作擴充：**
-   - `x-ms-summary`：用於顯示友善名稱，需採用標題格式
-   - `x-ms-visibility`：控制參數顯示（`important`、`advanced`、`internal`）
-   - `x-ms-trigger`：標記操作為觸發器（`batch` 或 `single`）
-   - `x-ms-trigger-hint`：提供觸發器提示文字
-   - `x-ms-trigger-metadata`：定義觸發器設定（kind、mode）
-   - `x-ms-notification`：設定 webhook 操作即時通知
-   - `x-ms-pageable`：指定 `nextLinkName` 啟用分頁
-   - `x-ms-safe-operation`：POST 操作無副作用時標記安全
-   - `x-ms-no-generic-test`：停用自動測試
-   - `x-ms-operation-context`：設定操作模擬測試
+2. **操作的 Microsoft 擴充功能**：
+   - `x-ms-summary`：使用此項提供使用者友善的顯示名稱，並確保使用標題大小寫格式。
+   - `x-ms-visibility`：使用此項控制參數可見性，其值為 `important`、`advanced` 或 `internal`。
+   - `x-ms-trigger`：使用此項將操作標記為觸發器，其值為 `batch` 或 `single`。
+   - `x-ms-trigger-hint`：使用此項提供有用的提示文字，引導使用者使用觸發器。
+   - `x-ms-trigger-metadata`：使用此項定義觸發器組態設定，包括種類和模式屬性。
+   - `x-ms-notification`：使用此項組態 Webhook 操作以進行即時通知。
+   - `x-ms-pageable`：使用此項透過指定 `nextLinkName` 屬性來啟用分頁功能。
+   - `x-ms-safe-operation`：使用此項將沒有副作用的 POST 操作標記為安全。
+   - `x-ms-no-generic-test`：使用此項停用特定操作的自動測試。
+   - `x-ms-operation-context`：使用此項組態用於測試目的的操作模擬設定。
 
-3. **Microsoft 參數擴充：**
-   - `x-ms-dynamic-list`：啟用 API 呼叫動態下拉選單
-   - `x-ms-dynamic-values`：設定動態值來源
-   - `x-ms-dynamic-tree`：建立階層式選擇器
-   - `x-ms-dynamic-schema`：根據選擇動態變更 schema
-   - `x-ms-dynamic-properties`：依情境動態設定屬性
-   - `x-ms-enum-values`：加強 enum 定義並顯示友善名稱
-   - `x-ms-test-value`：提供測試範例值，勿含機密
-   - `x-ms-trigger-value`：指定觸發器參數值（`value-collection`、`value-path`）
-   - `x-ms-url-encoding`：指定 URL 編碼方式（`single` 或 `double`，預設 `single`）
-   - `x-ms-parameter-location`：API 參數位置提示（AutoRest 擴充，Power Platform 忽略）
-   - `x-ms-localizeDefaultValue`：啟用預設值在地化
-   - `x-ms-skip-url-encoding`：跳過路徑參數 URL 編碼（AutoRest 擴充，Power Platform 忽略）
+3. **參數的 Microsoft 擴充功能**：
+   - `x-ms-dynamic-list`：使用此項啟用從 API 呼叫填充的動態下拉式清單。
+   - `x-ms-dynamic-values`：使用此項組態填充參數選項的動態值來源。
+   - `x-ms-dynamic-tree`：使用此項為巢狀資料結構建立階層式選取器。
+   - `x-ms-dynamic-schema`：使用此項允許根據使用者選取進行執行階段結構描述變更。
+   - `x-ms-dynamic-properties`：使用此項進行適應內容的動態屬性組態。
+   - `x-ms-enum-values`：使用此項提供增強的列舉定義，並帶有顯示名稱以提供更好的使用者體驗。
+   - `x-ms-test-value`：使用此項提供用於測試的範例值，但絕不包含機密或敏感資料。
+   - `x-ms-trigger-value`：使用此項指定觸發器參數的特定值，並帶有 `value-collection` 和 `value-path` 屬性。
+   - `x-ms-url-encoding`：使用此項指定 URL 編碼樣式為 `single` 或 `double` (預設為 `single`)。
+   - `x-ms-parameter-location`：使用此項提供 API 的參數位置提示 (AutoRest 擴充功能 - Power Platform 忽略)。
+   - `x-ms-localizeDefaultValue`：使用此項啟用預設參數值的本地化。
+   - `x-ms-skip-url-encoding`：使用此項跳過路徑參數的 URL 編碼 (AutoRest 擴充功能 - Power Platform 忽略)。
 
-4. **Microsoft Schema 擴充：**
-   - `x-ms-notification-url`：標記 schema 屬性為 webhook 通知 URL
-   - `x-ms-media-kind`：指定內容媒體型態（`image` 或 `audio`）
-   - `x-ms-enum`：加強 enum metadata（AutoRest 擴充，Power Platform 忽略）
-   - 以上參數擴充也可用於 schema 屬性
+4. **結構描述的 Microsoft 擴充功能**：
+   - `x-ms-notification-url`：使用此項將結構描述屬性標記為 Webhook 組態的通知 URL。
+   - `x-ms-media-kind`：使用此項指定內容的媒體類型，支援的值為 `image` 或 `audio`。
+   - `x-ms-enum`：使用此項提供增強的列舉中繼資料 (AutoRest 擴充功能 - Power Platform 忽略)。
+   - 請注意，上面列出的所有參數擴充功能也適用於結構描述屬性，並可在結構描述定義中使用。
 
-5. **根層級擴充：**
-   - `x-ms-capabilities`：定義連接器功能（如檔案選取、testConnection）
-   - `x-ms-connector-metadata`：補充連接器 metadata
-   - `x-ms-docs`：設定文件與參考
-   - `x-ms-deployment-version`：追蹤部署版本
-   - `x-ms-api-annotation`：API 層級註記
+5. **根層級擴充功能**：
+   - `x-ms-capabilities`：使用此項定義連接器功能，例如檔案選擇器和 testConnection 功能。
+   - `x-ms-connector-metadata`：使用此項提供超出標準屬性的額外連接器中繼資料。
+   - `x-ms-docs`：使用此項組態連接器的文件設定和參考。
+   - `x-ms-deployment-version`：使用此項追蹤部署管理的版本資訊。
+   - `x-ms-api-annotation`：使用此項新增 API 層級註釋以增強功能。
 
-6. **路徑層級擴充：**
-   - `x-ms-notification-content`：定義 webhook 路徑通知內容 schema
+6. **路徑層級擴充功能**：
+   - `x-ms-notification-content`：使用此項定義 Webhook 路徑項目的通知內容結構描述。
 
-7. **操作層級功能：**
-   - `x-ms-capabilities`（操作層級）：啟用如 `chunkTransfer` 等功能
+7. **操作層級功能**：
+   - `x-ms-capabilities` (在操作層級)：使用此項啟用操作特定功能，例如用於大型檔案傳輸的 `chunkTransfer`。
 
-8. **安全性考量：**
-   - API 需定義適當 `securityDefinitions`，確保認證
-   - **最多可定義兩種認證方式**（如 oauth2 + apiKey, basic + apiKey）
-   - **例外：** 若用「None」認證，不能有其他安全性定義
-   - 建議現代 API 用 `oauth2`，簡單 token 用 `apiKey`，`basic` 僅限內部/舊系統
-   - 每個安全性定義僅能有一種型態（oneOf 驗證）
+8. **安全性考量**：
+   - 您應該為您的 API 定義適當的 `securityDefinitions` 以確保正確的驗證。
+   - **允許多個安全性定義** - 您最多可以定義兩種驗證方法 (例如，oauth2 + apiKey，basic + apiKey)。
+   - **例外**：如果使用「無」驗證，則同一連接器中不能存在其他安全性定義。
+   - 您應該為現代 API 使用 `oauth2`，為簡單的權杖驗證使用 `apiKey`，並且只考慮用於內部/舊版系統的 `basic` 驗證。
+   - 每個安全性定義必須恰好是一種類型 (此約束由 oneOf 驗證強制執行)。
 
-9. **參數最佳實踐：**
-   - 參數 `description` 需具描述性，便於理解
-   - 實作 `x-ms-summary` 提升使用體驗（需標題格式）
-   - 必要參數務必標記 `required`
-   - 適當使用 `format`（含 Power Platform 擴充）
-   - 善用動態擴充提升體驗與驗證
+9. **參數最佳實務**：
+   - 您應該使用描述性 `description` 欄位來幫助使用者理解每個參數的目的。
+   - 您應該實作 `x-ms-summary` 以提供更好的使用者體驗 (需要標題大小寫)。
+   - 您必須正確標記必要的參數以確保正確的驗證。
+   - 您應該使用適當的 `format` 值 (包括 Power Platform 擴充功能) 以啟用正確的資料處理。
+   - 您應該利用動態擴充功能以提供更好的使用者體驗和資料驗證。
 
-10. **Power Platform 格式擴充：**
-   - `date-no-tz`：無時區資訊的日期時間
-   - `html`：編輯時顯示 HTML 編輯器，檢視時顯示 HTML 檢視器
-   - 標準格式：`int32`、`int64`、`float`、`double`、`byte`、`binary`、`date`、`date-time`、`password`、`email`、`uri`、`uuid`
+10. **Power Platform 格式擴充功能**：
+    - `date-no-tz`：這表示沒有時區資訊的日期時間。
+    - `html`：此格式告知用戶端在編輯時發出 HTML 編輯器，在檢視內容時發出 HTML 檢視器。
+    - 標準格式包括：`int32`、`int64`、`float`、`double`、`byte`、`binary`、`date`、`date-time`、`password`、`email`、`uri`、`uuid`。
 
-### API 屬性
-1. **連線參數：**
-   - 適當選用 `string`、`securestring`、`oauthSetting` 等型別
-   - OAuth 設定需正確指定身分提供者
-   - 下拉選單用 `allowedValues`
-   - 參數依賴可用於條件式參數
+### 使用 API 屬性時
+1. **連線參數**：
+   - 您應該選擇適當的參數類型，例如 `string`、`securestring` 或 `oauthSetting`。
+   - 您應該使用正確的身份提供者組態 OAuth 設定。
+   - 適當時，您應該使用 `allowedValues` 作為下拉式選項。
+   - 您應該在需要條件參數時實作參數相依性。
 
-2. **政策範本：**
-   - 後端路由用 `routerequesttoendpoint`
-   - 查詢參數預設值用 `setqueryparameter`
-   - 分頁用 `updatenextlink` 處理分頁
-   - 觸發器需輪詢行為用 `pollingtrigger`
+2. **原則範本**：
+   - 您應該使用 `routerequesttoendpoint` 將後端路由到不同的 API 端點。
+   - 您應該實作 `setqueryparameter` 以設定查詢參數的預設值。
+   - 您應該使用 `updatenextlink` 進行分頁情境以正確處理分頁。
+   - 您應該為需要輪詢行為的觸發器操作應用 `pollingtrigger`。
 
-3. **品牌與 metadata：**
-   - 必須指定 `iconBrandColor`（所有連接器必備）
-   - 適當定義 `capabilities`（支援動作或觸發器）
-   - `publisher` 與 `stackOwner` 需具意義，明確標示連接器歸屬
+3. **品牌和中繼資料**：
+   - 您必須始終指定 `iconBrandColor`，因為此屬性是所有連接器都需要的。
+   - 您應該定義適當的 `capabilities` 以指定您的連接器是否支援動作或觸發器。
+   - 您應該設定有意義的 `publisher` 和 `stackOwner` 值以識別連接器的所有權。
 
-### 設定檔
-1. **環境設定：**
-   - `environment` 需用正確 GUID 格式
-   - `powerAppsUrl`、`flowUrl` 需正確指向目標環境
-   - API 版本需符合需求
+### 使用設定時
+1. **環境組態**：
+   - 您應該為 `environment` 使用符合驗證模式的正確 GUID 格式。
+   - 您應該為目標環境設定正確的 `powerAppsUrl` 和 `flowUrl`。
+   - 您應該將 API 版本與您的特定要求相符。
 
-2. **檔案參照：**
-   - 檔名需與預設一致（`apiProperties.json`、`apiDefinition.swagger.json`）
-   - 本地開發用相對路徑
-   - icon 檔案需存在且正確參照
+2. **檔案參考**：
+   - 您應該保持與 `apiProperties.json` 和 `apiDefinition.swagger.json` 預設值一致的檔案命名。
+   - 您應該為本機開發環境使用相對路徑。
+   - 您應該確保圖示檔案存在並在您的組態中正確參考。
 
-## Schema 驗證規則
+## 結構描述驗證規則
 
 ### 必要屬性
-- **API 定義：** `swagger: "2.0"`、`info`（含 `title`、`version`）、`paths`
-- **API 屬性：** `properties` 且含 `iconBrandColor`
-- **設定檔：** 無必要屬性（皆為選填，預設值）
+- **API 定義**：`swagger: "2.0"`、`info` (帶有 `title` 和 `version`)、`paths`
+- **API 屬性**：`properties` 帶有 `iconBrandColor`
+- **設定**：沒有必要屬性 (所有都是可選的，帶有預設值)
 
-### 格式驗證
-- **Vendor 擴充：** 非 Microsoft 擴充需符合 `^x-(?!ms-)` 格式
-- **路徑項目：** API 路徑需以 `/` 開頭
-- **環境 GUID：** 需符合 UUID 格式 `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`
-- **URL：** 端點設定需為合法 URI
-- **Host 格式：** 需符合 `^[^{}/ :\\]+(?::\d+)?$`（不可含空格、協定或路徑）
+### 模式驗證
+- **廠商擴充功能**：非 Microsoft 擴充功能必須符合 `^x-(?!ms-)` 模式
+- **路徑項目**：API 路徑必須以 `/` 開頭
+- **環境 GUID**：必須符合 UUID 格式模式 `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`
+- **URL**：端點組態必須是有效的 URI
+- **主機模式**：必須符合 `^[^{}/ :\\]+(?::\d+)?$` (無空格、協定或路徑)
 
-### 型別限制
-- **安全性定義：**
-  - `securityDefinitions` 最多兩種
-  - 每個安全性定義僅能有一種型別（oneOf 驗證：`basic`、`apiKey`、`oauth2`）
-  - **例外：** 「None」認證不可與其他安全性定義共存
-- **參數型別：** 僅限特定 enum（`string`、`number`、`integer`、`boolean`、`array`、`file`）
-- **政策範本：** 依型別有特定參數需求
-- **格式值：** 包含 Power Platform 擴充
-- **顯示值：** 僅限 `important`、`advanced`、`internal`
-- **觸發器型別：** 僅限 `batch` 或 `single`
+### 類型約束
+- **安全性定義**：
+  - `securityDefinitions` 物件中最多允許兩個安全性定義
+  - 每個單獨的安全性定義必須恰好是一種類型 (oneOf 驗證：`basic`、`apiKey`、`oauth2`)
+  - **例外**：「無」驗證不能與其他安全性定義共存
+- **參數類型**：限於特定的列舉值 (`string`、`number`、`integer`、`boolean`、`array`、`file`)
+- **原則範本**：類型特定的參數要求
+- **格式值**：擴展集，包括 Power Platform 格式
+- **可見性值**：必須是 `important`、`advanced` 或 `internal` 之一
+- **觸發器類型**：必須是 `batch` 或 `single`
 
 ### 其他驗證規則
-- **$ref 參照：** 僅能指向 `#/definitions/`、`#/parameters/`、`#/responses/`
-- **路徑參數：** 必須標記 `required: true`
-- **Info 物件：** description 不可與 title 相同
-- **Contact 物件：** email 需為合法 email，URL 需為合法 URI
-- **License 物件：** name 必填，URL 若有需為合法 URI
-- **External Docs：** URL 必填且需為合法 URI
-- **Tags：** 陣列內名稱需唯一
-- **Schemes：** 僅限合法 HTTP 協定（`http`、`https`、`ws`、`wss`）
-- **MIME 型別：** `consumes`、`produces` 需為合法 MIME 格式
+- **$ref 參考**：應僅指向 `#/definitions/`、`#/parameters/` 或 `#/responses/`
+- **路徑參數**：必須標記為 `required: true`
+- **資訊物件**：描述應與標題不同
+- **聯絡人物件**：電子郵件必須是有效的電子郵件格式，URL 必須是有效的 URI
+- **授權物件**：名稱是必要的，如果提供，URL 必須是有效的 URI
+- **外部文件**：URL 是必要的，並且必須是有效的 URI
+- **標籤**：陣列中必須具有唯一的名稱
+- **方案**：必須是有效的 HTTP 方案 (`http`、`https`、`ws`、`wss`)
+- **MIME 類型**：必須遵循 `consumes` 和 `produces` 中的有效 MIME 類型格式
 
-## 常見模式與範例
+## 常見模式和範例
 
 ### API 定義範例
 
-#### 基本操作含 Microsoft 擴充
+#### 帶有 Microsoft 擴充功能的基本操作
 ```json
 {
   "get": {
@@ -222,7 +222,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-#### 觸發器操作設定
+#### 觸發器操作組態
 ```json
 {
   "get": {
@@ -241,7 +241,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-#### 動態 schema 範例
+#### 動態結構描述範例
 ```json
 {
   "name": "dynamicSchema",
@@ -260,7 +260,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-#### 檔案選取器功能
+#### 檔案選擇器功能
 ```json
 {
   "x-ms-capabilities": {
@@ -290,7 +290,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-#### 測試連線功能（注意：自訂連接器不支援）
+#### 測試連線功能 (注意：自訂連接器不支援)
 ```json
 {
   "x-ms-capabilities": {
@@ -304,7 +304,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-#### 操作模擬設定
+#### 用於模擬的操作內容
 ```json
 {
   "x-ms-operation-context": {
@@ -320,7 +320,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-### 基本 OAuth 設定
+### 基本 OAuth 組態
 ```json
 {
   "type": "oauthSetting",
@@ -333,7 +333,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-#### 多重安全性定義範例
+#### 多個安全性定義範例
 ```json
 {
   "securityDefinitions": {
@@ -356,7 +356,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-**注意：** 最多僅能有兩種安全性定義，「None」認證不可與其他方式共存。
+**注意**：最多兩個安全性定義可以共存，但「無」驗證不能與其他方法結合。
 
 ### 動態參數設定
 ```json
@@ -369,7 +369,7 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-### 路由政策範本
+### 用於路由的原則範本
 ```json
 {
   "templateId": "routerequesttoendpoint",
@@ -381,50 +381,50 @@ applyTo: '**/*.{json,md}'
 }
 ```
 
-## 最佳實踐
+## 最佳實務
 
-1. **善用 IntelliSense：** schema 提供自動完成與驗證，提升開發效率。
-2. **遵循命名慣例：** 操作與參數名稱具描述性，提升可讀性。
-3. **實作錯誤處理：** 定義適當回應 schema 與錯誤碼，妥善處理失敗情境。
-4. **徹底測試：** 部署前驗證 schema，及早發現問題。
-5. **註解擴充設定：** Microsoft 專屬擴充需加註解，便於團隊理解與維護。
-6. **版本管理：** API info 用語意化版本追蹤變更與相容性。
-7. **安全優先：** API 端點務必實作適當認證機制。
+1. **使用 IntelliSense**：這些結構描述提供豐富的自動完成和驗證功能，有助於開發。
+2. **遵循命名慣例**：為操作和參數使用描述性名稱，以提高程式碼可讀性。
+3. **實作錯誤處理**：定義適當的回應結構描述和錯誤程式碼，以正確處理失敗情境。
+4. **徹底測試**：在部署前驗證結構描述，以在開發過程早期發現問題。
+5. **文件擴充功能**：註解 Microsoft 特定擴充功能，以供團隊理解和未來維護。
+6. **版本管理**：在 API 資訊中使用語義版本控制來追蹤變更和相容性。
+7. **安全性優先**：始終實作適當的驗證機制來保護您的 API 端點。
 
 ## 疑難排解
 
-### 常見 Schema 違規
-- **缺少必要屬性：** `swagger: "2.0"`、`info.title`、`info.version`、`paths`
-- **格式錯誤：**
-  - GUID 需完全符合 `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`
-  - URL 需為合法 URI 且含正確協定
-  - 路徑需以 `/` 開頭
-  - Host 不可含協定、路徑或空格
-- **Vendor 擴充命名錯誤：** Microsoft 用 `x-ms-*`，其他用 `^x-(?!ms-)`
-- **安全性定義型別不符：** 每個安全性定義僅能有一種型別
-- **enum 值錯誤：** 檢查 `x-ms-visibility`、`x-ms-trigger`、參數型別
-- **$ref 指向錯誤位置：** 只能指向 `#/definitions/`、`#/parameters/`、`#/responses/`
-- **路徑參數未標記 required：** 所有路徑參數必須 `required: true`
-- **file 型別用錯位置：** 僅能用於 formData 參數，schema 不可用
+### 常見結構描述違規
+- **缺少必要屬性**：`swagger: "2.0"`、`info.title`、`info.version`、`paths`
+- **無效模式格式**：
+  - GUID 必須符合確切格式 `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`
+  - URL 必須是具有正確方案的有效 URI
+  - 路徑必須以 `/` 開頭
+  - 主機不得包含協定、路徑或空格
+- **不正確的廠商擴充功能命名**：Microsoft 擴充功能使用 `x-ms-*`，其他使用 `^x-(?!ms-)`
+- **不匹配的安全性定義類型**：每個安全性定義必須恰好是一種類型
+- **無效的列舉值**：檢查 `x-ms-visibility`、`x-ms-trigger`、參數類型的允許值
+- **$ref 指向無效位置**：必須指向 `#/definitions/`、`#/parameters/` 或 `#/responses/`
+- **路徑參數未標記為必要**：所有路徑參數都必須具有 `required: true`
+- **錯誤內容中的「file」類型**：僅允許在 `formData` 參數中，不允許在結構描述中
 
-### API 定義常見問題
-- **動態 schema 衝突：** `x-ms-dynamic-schema` 不可與固定 schema 屬性並用
-- **觸發器設定錯誤：** `x-ms-trigger-metadata` 需同時有 kind 與 mode
-- **分頁設定：** `x-ms-pageable` 需有 `nextLinkName`
-- **檔案選取器設定錯誤：** 必須同時有 open 操作與必要屬性
-- **功能衝突：** 某些功能可能與參數型別衝突
-- **測試值安全：** `x-ms-test-value` 不可含機密或個資
-- **操作模擬設定：** `x-ms-operation-context` 需有 simulate 物件與 operationId
-- **通知內容 schema：** 路徑層級 `x-ms-notification-content` 需正確定義 schema
-- **媒體型別限制：** `x-ms-media-kind` 僅支援 `image` 或 `audio`
-- **觸發器值設定：** `x-ms-trigger-value` 至少需有一個屬性（`value-collection` 或 `value-path`）
+### API 定義特定問題
+- **動態結構描述衝突**：不能將 `x-ms-dynamic-schema` 與固定結構描述屬性一起使用
+- **觸發器組態錯誤**：`x-ms-trigger-metadata` 需要 `kind` 和 `mode`
+- **分頁設定**：`x-ms-pageable` 需要 `nextLinkName` 屬性
+- **檔案選擇器組態錯誤**：必須包含 `open` 操作和必要屬性
+- **功能衝突**：某些功能可能與某些參數類型衝突
+- **測試值安全性**：絕不將機密或 PII 包含在 `x-ms-test-value` 中
+- **操作內容設定**：`x-ms-operation-context` 需要一個帶有 `operationId` 的 `simulate` 物件
+- **通知內容結構描述**：路徑層級 `x-ms-notification-content` 必須定義適當的結構描述結構
+- **媒體種類限制**：`x-ms-media-kind` 僅支援 `image` 或 `audio` 值
+- **觸發器值組態**：`x-ms-trigger-value` 必須至少有一個屬性 (`value-collection` 或 `value-path`)
 
 ### 驗證工具
-- 用 JSON Schema 驗證工具檢查 schema 合規性
-- 善用 VS Code 內建 schema 驗證
-- 部署前用 paconn CLI 測試：`paconn validate --api-def apiDefinition.swagger.json`
-- 驗證 Power Platform 連接器需求，確保相容
-- 用 Power Platform Connector portal 驗證與測試
-- 檢查操作回應是否符合預期 schema，避免執行時錯誤
+- 使用 JSON 結構描述驗證器檢查您的結構描述定義是否符合規範。
+- 利用 VS Code 的內建結構描述驗證在開發期間發現錯誤。
+- 在部署前使用 paconn CLI 進行測試：`paconn validate --api-def apiDefinition.swagger.json`
+- 根據 Power Platform 連接器要求進行驗證，以確保相容性。
+- 使用 Power Platform 連接器入口網站進行目標環境中的驗證和測試。
+- 檢查操作回應是否與預期結構描述相符，以防止執行階段錯誤。
 
-請記住：這些 schema 可確保你的 Power Platform 連接器格式正確，並能在 Power Platform 生態系統中正常運作。
+請記住：這些結構描述可確保您的 Power Platform 連接器格式正確，並在 Power Platform 生態系統中正常運作。

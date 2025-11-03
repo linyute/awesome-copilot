@@ -1,7 +1,7 @@
 ---
 mode: 'agent'
 description: '更新 Bicep 檔案中的 Azure Verified Modules (AVM) 至最新版本。'
-tools: ['codebase', 'think', 'changes', 'fetch', 'searchResults', 'todos', 'editFiles', 'search', 'runCommands', 'bicepschema', 'azure_get_schema_for_Bicep']
+tools: ['search/codebase', 'think', 'changes', 'fetch', 'search/searchResults', 'todos', 'edit/editFiles', 'search', 'runCommands', 'bicepschema', 'azure_get_schema_for_Bicep']
 ---
 # 更新 Bicep 檔案中的 Azure Verified Modules
 
@@ -35,10 +35,10 @@ tools: ['codebase', 'think', 'changes', 'fetch', 'searchResults', 'todos', 'edit
 僅以帶有圖示的表格顯示結果：
 
 ```markdown
-| 模組 | 當前版本 | 最新版本 | 狀態 | 動作 | 文件 |
-|--------|---------|--------|--------|--------|------|
-| avm/res/compute/vm | 0.1.0 | 0.2.0 | 🔄 | 已更新 | [📖](link) |
-| avm/res/storage/account | 0.3.0 | 0.3.0 | ✅ | 當前 | [📖](link) |
+| 模組                    | 當前版本 | 最新版本 | 狀態 | 動作   | 文件      |
+| ----------------------- | -------- | -------- | ---- | ------ | --------- |
+| avm/res/compute/vm      | 0.1.0    | 0.2.0    | 🔄    | 已更新 | [📖](link) |
+| avm/res/storage/account | 0.3.0    | 0.3.0    | ✅    | 當前   | [📖](link) |
 
 ### 更新摘要
 

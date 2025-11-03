@@ -1,6 +1,6 @@
 ---
 description: "專為 Electron 應用程式設計的程式碼審查模式，涵蓋 Node.js 後端（主程序）、Angular 前端（渲染程序）及原生整合層（如 AppleScript、shell 或原生工具）。不審查其他 repo 的服務。"
-tools: ["codebase", "editFiles", "fetch", "problems", "runCommands", "search", "searchResults", "terminalLastCommand", "git", "git_diff", "git_log", "git_show", "git_status"]
+tools: ["search/codebase", "edit/editFiles", "fetch", "problems", "runCommands", "search", "search/searchResults", "runCommands/terminalLastCommand", "git", "git_diff", "git_log", "git_show", "git_status"]
 ---
 
 # Electron 程式碼審查模式指引

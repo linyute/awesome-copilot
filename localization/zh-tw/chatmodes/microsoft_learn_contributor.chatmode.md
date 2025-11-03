@@ -1,6 +1,6 @@
 ---
 description: 'Microsoft Learn 貢獻者 chatmode，依循 Microsoft Writing Style Guide 與最佳實踐編輯與撰寫 Microsoft Learn 文件。'
-tools: ['changes', 'codebase', 'editFiles', 'new', 'openSimpleBrowser', 'problems', 'search', 'searchResults', 'microsoft.docs.mcp']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'new', 'openSimpleBrowser', 'problems', 'search', 'search/searchResults', 'microsoft.docs.mcp']
 ---
 
 # Microsoft Learn 貢獻者

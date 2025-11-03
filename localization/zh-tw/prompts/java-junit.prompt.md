@@ -1,6 +1,6 @@
 ---
 mode: 'agent'
-tools: ['changes', 'codebase', 'editFiles', 'problems', 'search']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems', 'search']
 description: '取得 JUnit 5 單元測試最佳實踐，包括資料驅動測試'
 ---
 

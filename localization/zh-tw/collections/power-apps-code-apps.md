@@ -1,0 +1,16 @@
+# Power Apps 程式碼應用程式開發
+
+Power Apps 程式碼應用程式開發的完整工具包，包括專案鷹架、開發標準和專家指導，用於建立與 Power Platform 整合的程式碼優先應用程式。
+
+**標籤：** power-apps, power-platform, typescript, react, code-apps, dataverse, connectors
+
+## 此集合中的項目
+
+| Title | Type | Description |
+| ----- | ---- | ----------- |
+| [Power Apps Code Apps 專案鷹架](../prompts/power-apps-code-app-scaffold.prompt.md)<br />[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/prompt?url=vscode%3Achat-prompt%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fgithub%2Fawesome-copilot%2Fmain%2Fprompts%2Fpower-apps-code-app-scaffold.prompt.md)<br />[![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/prompt?url=vscode-insiders%3Achat-prompt%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fgithub%2Fawesome-copilot%2Fmain%2Fprompts%2Fpower-apps-code-app-scaffold.prompt.md) | Prompt | 無描述 |
+| [Power Apps 程式碼應用程式開發說明](../instructions/power-apps-code-apps.instructions.md)<br />[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/instructions?url=vscode%3Achat-instructions%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fgithub%2Fawesome-copilot%2Fmain%2Finstructions%2Fpower-apps-code-apps.instructions.md)<br />[![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/instructions?url=vscode-insiders%3Achat-instructions%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fgithub%2Fawesome-copilot%2Fmain%2Finstructions%2Fpower-apps-code-apps.instructions.md) | Instruction | Power Apps 程式碼應用程式開發標準與最佳實務，用於 TypeScript、React 和 Power Platform 整合 |
+| [Power Platform 專家](../chatmodes/power-platform-expert.chatmode.md)<br />[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/chatmode?url=vscode%3Achat-mode%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fgithub%2Fawesome-copilot%2Fmain%2Fchatmodes%2Fpower-platform-expert.chatmode.md)<br />[![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/chatmode?url=vscode-insiders%3Achat-mode%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fgithub%2Fawesome-copilot%2Fmain%2Fchatmodes%2Fpower-platform-expert.chatmode.md) | Chat Mode | Power Platform 專家，提供 Code Apps、畫布應用程式、Dataverse、連接器和 Power Platform 最佳實務的指導 |
+
+---
+*此集合包含 **Power Apps 程式碼應用程式開發** 的 3 個精選項目。*

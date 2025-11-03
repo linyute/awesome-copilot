@@ -1,157 +1,236 @@
-# 貢獻至 Awesome GitHub Copilot
+# 貢獻 Awesome GitHub Copilot
 
-感謝你有興趣為 Awesome GitHub Copilot 儲存庫貢獻！我們歡迎社群的貢獻，協助擴充自訂指令與提示的收藏。
+感謝您有興趣貢獻 Awesome GitHub Copilot 儲存庫！我們歡迎社群的貢獻，以協助擴展我們的自訂指令和提示集合。
 
 ## 如何貢獻
 
 ### 新增指令
 
-指令可用來自訂 GitHub Copilot 在特定技術、程式設計習慣或領域的行為。
+指令有助於為特定技術、程式碼實踐或領域客製化 GitHub Copilot 的行為。
 
-1. **建立你的指令檔案**：在 `instructions/` 目錄下新增一個 `.md` 檔案
-2. **遵循命名規則**：使用具描述性、全小寫並以連字號分隔的檔名（例如：`python-django.instructions.md`）
-3. **組織內容結構**：以明確標題開頭，並有條理地組織指令內容
-4. **測試你的指令**：確保你的指令能與 GitHub Copilot 良好運作
+1. **建立您的指令檔案**：在 `instructions/` 目錄中新增一個 `.md` 檔案
+2. **遵循命名慣例**：使用描述性、小寫檔名並以連字號分隔 (例如：`python-django.instructions.md`)
+3. **組織您的內容**：以清晰的標題開頭，並有邏輯地組織您的指令
+4. **測試您的指令**：確保您的指令與 GitHub Copilot 運作良好
 
-#### 指令範例格式：
+#### 指令格式範例
+
 ```markdown
 ---
-description: '自訂 GitHub Copilot 行為的技術與實踐指令'
+description: '用於為特定技術和實踐客製化 GitHub Copilot 行為的指令'
 ---
 
-# 你的技術／框架名稱
+# 您的技術/框架名稱
 
 ## 指令
 
-- 提供明確、具體的 Copilot 指引
-- 包含最佳實踐與慣例
-- 使用條列式方便閱讀
+- 為 GitHub Copilot 提供清晰、具體的指導
+- 包含最佳實踐和慣例
+- 使用項目符號以便於閱讀
 
-## 其他指引
+## 其他準則
 
-- 任何額外的背景或範例
+- 任何額外的上下文或範例
 ```
 
 ### 新增提示
 
-提示是針對特定開發情境與任務的即用範本。
+提示是針對特定開發情境和任務的即用型範本。
 
-1. **建立你的提示檔案**：在 `prompts/` 目錄下新增一個 `.prompt.md` 檔案
-2. **遵循命名規則**：使用具描述性、全小寫並以連字號分隔且副檔名為 `.prompt.md`（例如：`react-component-generator.prompt.md`）
-3. **加入前置資料**：在檔案頂部加入 metadata（可選但建議）
-4. **組織提示內容**：提供明確的情境與具體指令
+1. **建立您的提示檔案**：在 `prompts/` 目錄中新增一個 `.prompt.md` 檔案
+2. **遵循命名慣例**：使用描述性、小寫檔名並以連字號分隔，並加上 `.prompt.md` 副檔名 (例如：`react-component-generator.prompt.md`)
+3. **包含前置內容**：在檔案頂部新增中繼資料 (可選但建議)
+4. **組織您的提示**：提供清晰的上下文和具體指令
 
-#### 提示範例格式：
+#### 提示格式範例
+
 ```markdown
 ---
 mode: 'agent'
-tools: ['codebase', 'terminalCommand']
-description: '簡要說明此提示用途'
+tools: ['search/codebase', 'terminalCommand']
+description: '此提示功能的簡要描述'
 ---
 
 # 提示標題
 
-你的目標是...
+您的目標是...
 
 ## 具體指令
 
-- 明確、可執行的指令
-- 有需要時可加入範例
+- 清晰、可執行的指令
+- 在有幫助的地方包含範例
 ```
 
 ### 新增聊天模式
 
-聊天模式是專為特定開發情境設計的 Copilot Chat 配置，可將 Copilot 轉化為領域專家或特定角色。
+聊天模式是專門的配置，可將 GitHub Copilot Chat 轉換為特定開發情境的領域特定助理或角色。
 
-1. **建立你的聊天模式檔案**：在 `chatmodes/` 目錄下新增一個 `.chatmode.md` 檔案
-2. **遵循命名規則**：使用具描述性、全小寫並以連字號分隔且副檔名為 `.chatmode.md`（例如：`react-performance-expert.chatmode.md`）
-3. **加入前置資料**：在檔案頂部加入必要欄位的 metadata
-4. **定義角色**：建立明確的身份與專業領域
-5. **測試聊天模式**：確保聊天模式能在其領域提供有幫助且正確的回應
+1. **建立您的聊天模式檔案**：在 `chatmodes/` 目錄中新增一個 `.chatmode.md` 檔案
+2. **遵循命名慣例**：使用描述性、小寫檔名並以連字號分隔，並加上 `.chatmode.md` 副檔名 (例如：`react-performance-expert.chatmode.md`)
+3. **包含前置內容**：在檔案頂部新增包含必要欄位的中繼資料
+4. **定義角色**：為聊天模式建立清晰的身份和專業領域
+5. **測試您的聊天模式**：確保聊天模式在其領域中提供有用的、準確的回應
 
-#### 聊天模式範例格式：
+#### 聊天模式格式範例
+
 ```markdown
 ---
-description: '簡要說明聊天模式及其用途'
+description: '聊天模式及其目的的簡要描述'
 model: 'gpt-5'
-tools: ['codebase', 'terminalCommand']
+tools: ['search/codebase', 'terminalCommand']
 ---
 
 # 聊天模式標題
 
-你是一位 [領域／角色] 專家，精通 [特定領域]。
+您是具有 [特定領域] 深入知識的專家 [領域/角色]。
 
-## 你的專長
+## 您的專業知識
 
-- [專業技能 1]
-- [專業技能 2]
-- [專業技能 3]
+- [特定技能 1]
+- [特定技能 2]
+- [特定技能 3]
 
-## 你的協助方式
+## 您的方法
 
-- [你如何協助使用者]
-- [你的溝通風格]
-- [你的優先事項]
+- [您如何協助使用者]
+- [您的溝通風格]
+- [您優先考慮的事項]
 
-## 指引
+## 準則
 
 - [回應的具體指令]
-- [限制或注意事項]
-- [建議遵循的最佳實踐]
+- [限制或局限]
+- [要遵循的最佳實踐]
 ```
 
-## 提交你的貢獻
+### 新增集合
 
-1. **Fork 本儲存庫**
-2. **建立新分支**以提交你的貢獻
-3. **依上述指引新增指令或提示檔案**
-4. **執行更新腳本**（可選）：`node update-readme.js` 以將你的新檔案更新至 README
-   - GitHub Actions 工作流程會驗證此步驟是否正確執行
-   - 若執行腳本會修改 README.md，PR 檢查會失敗並顯示所需變更
-5. **提交 Pull Request**，內容包含：
-   - 清楚描述你的貢獻標題
-   - 簡要說明你的指令／提示用途
-   - 任何相關背景或使用說明
+集合將相關的提示、指令和聊天模式圍繞特定主題或工作流程分組，讓使用者更容易發現和採用全面的工具包。
 
-**注意**：一旦您的貢獻被合併，您將自動被添加到我們的[貢獻者](#contributors-)部分！我們使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來識別對專案的所有類型貢獻。
+1. **建立您的集合清單**：在 `collections/` 目錄中新增一個 `.collection.yml` 檔案
+2. **遵循命名慣例**：使用描述性、小寫檔名並以連字號分隔 (例如：`python-web-development.collection.yml`)
+3. **參考現有項目**：集合應僅參考儲存庫中已存在的檔案
+4. **測試您的集合**：驗證所有參考的檔案都存在並能良好協同運作
 
-## 我們接受什麼內容
+#### 建立集合
 
-我們歡迎涵蓋任何技術、框架或開發實踐的貢獻，只要能協助開發者更有效率地使用 GitHub Copilot，包括：
+```bash
+# 使用建立指令碼
+node create-collection.js my-collection-id
 
-- 程式語言與框架
-- 開發方法論與最佳實踐
-- 架構模式與設計原則
-- 測試策略與品質保證
-- DevOps 與部署實踐
-- 無障礙與包容性設計
-- 效能優化技巧
+# 或使用 VS Code 任務：Ctrl+Shift+P > "Tasks: Run Task" > "create-collection"
+```
 
-## 我們不接受什麼內容
+#### 集合格式範例
 
-為維護安全、負責且建設性的社群，我們**不接受**以下內容：
+```yaml
+id: my-collection-id
+name: 我的集合名稱
+description: 此集合提供什麼以及誰應該使用的簡要描述。
+tags: [tag1, tag2, tag3] # 可選的發現標籤
+items:
+  - path: prompts/my-prompt.prompt.md
+    kind: prompt
+  - path: instructions/my-instructions.instructions.md
+    kind: instruction
+  - path: chatmodes/my-chatmode.chatmode.md
+    kind: chat-mode
+    usage: |
+     recommended # 或 "optional" 如果不是工作流程的必要部分
 
-- **違反負責任 AI 原則**：企圖規避 Microsoft/GitHub 負責任 AI 指引或推廣有害 AI 用途的內容
+     此聊天模式需要以下指令/提示/MCP：
+      - 指令 1
+      - 提示 1
+      - MCP 1
+
+     此聊天模式非常適合...
+      - 使用案例 1
+      - 使用案例 2
+    
+      以下是如何使用它的範例：
+      ```markdown, task-plan.prompt.md
+      ---
+      mode: task-planner
+      title: Plan microsoft fabric realtime intelligence terraform support
+      ---
+      #file: <file including in chat context>
+      Do an action to achieve goal.
+      ```
+
+      為了獲得最佳結果，請考慮...
+      - 提示 1
+      - 提示 2
+    
+display:
+  ordering: alpha # 或 "manual" 以保留上述順序
+  show_badge: false # 設定為 true 以顯示集合徽章
+```
+
+有關完整的使用範例，請查看 edge-ai 任務集合：
+- [edge-ai-tasks.collection.yml](./collections/edge-ai-tasks.collection.yml)
+- [edge-ai-tasks.md](./collections/edge-ai-tasks.md)
+
+#### 集合準則
+
+- **專注於工作流程**：將協同運作的項目分組以用於特定使用案例
+- **合理的大小**：通常 3-10 個項目效果良好
+- **測試組合**：確保項目有效互補
+- **明確的目的**：集合應解決特定問題或工作流程
+- **提交前驗證**：執行 `node validate-collections.js` 以確保您的清單有效
+
+## 提交您的貢獻
+
+1. **分叉此儲存庫**
+2. **為您的貢獻建立一個新分支**
+3. **依照上述準則新增您的指令、提示檔案、聊天模式或集合**
+4. **執行更新指令碼**：`npm start` 以使用您的新檔案更新 README (如果您尚未執行 `npm install`，請務必先執行)
+   - GitHub Actions 工作流程將驗證此步驟是否正確執行
+   - 如果執行指令碼會修改 README.md，則 PR 檢查將失敗並顯示所需變更的註解
+5. **提交拉取請求**，其中包含：
+   - 描述您貢獻的清晰標題
+   - 您的指令/提示功能的簡要描述
+   - 任何相關的上下文或使用說明
+
+**注意**：一旦您的貢獻合併，您將自動新增到我們的 [貢獻者](./README.md#contributors-) 部分！我們使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來表彰對專案的所有類型貢獻。
+
+## 我們接受什麼
+
+我們歡迎涵蓋任何技術、框架或開發實踐的貢獻，這些貢獻有助於開發人員更有效地使用 GitHub Copilot。這包括：
+
+- 程式語言和框架
+- 開發方法和最佳實踐
+- 架構模式和設計原則
+- 測試策略和品質保證
+- DevOps 和部署實踐
+- 無障礙和包容性設計
+- 效能最佳化技術
+
+## 我們不接受什麼
+
+為了維護一個安全、負責任和建設性的社群，我們將**不接受**以下貢獻：
+
+- **違反負責任 AI 原則**：試圖規避 Microsoft/GitHub 的負責任 AI 準則或宣傳有害 AI 使用的內容
 - **危害安全**：旨在繞過安全政策、利用漏洞或削弱系統安全的指令
-- **促成惡意行為**：意圖傷害其他系統、使用者或組織的內容
-- **利用弱點**：利用其他平台或服務漏洞的指令
-- **推廣有害內容**：可能導致產生有害、歧視或不當內容的指引
-- **規避平台政策**：企圖規避 GitHub、Microsoft 或其他平台服務條款
+- **啟用惡意活動**：旨在損害其他系統、使用者或組織的內容
+- **利用弱點**：利用其他平台或服務中漏洞的指令
+- **宣傳有害內容**：可能導致產生有害、歧視性或不當內容的指導
+- **規避平台政策**：試圖規避 GitHub、Microsoft 或其他平台服務條款的行為
 
-## 品質指引
+## 品質準則
 
-- **具體明確**：泛泛而談的指令不如具體、可執行的指引
-- **測試內容**：確保你的指令或提示能與 Copilot 良好運作
-- **遵循慣例**：使用一致的格式與命名
-- **聚焦主題**：每個檔案應聚焦於特定技術、框架或情境
-- **清楚易懂**：使用簡單、直接的語言
-- **推廣最佳實踐**：鼓勵安全、可維護且合乎倫理的開發實踐
+- **具體**：通用指令不如具體、可執行的指導有用
+- **測試您的內容**：確保您的指令或提示與 GitHub Copilot 運作良好
+- **遵循慣例**：使用一致的格式和命名
+- **保持專注**：每個檔案應解決特定技術、框架或使用案例
+- **清晰書寫**：使用簡單、直接的語言
+- **推廣最佳實踐**：鼓勵安全、可維護和道德的開發實踐
 
 ## 貢獻者認可
 
-本專案使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來認可貢獻者。當您做出貢獻時，您將自動在我們的貢獻者列表中獲得認可！
+此專案使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來認可貢獻者。當您做出貢獻時，您將自動在我們的貢獻者清單中獲得認可！
 
 我們歡迎所有類型的貢獻，包括：
+
 - 📝 文件改進
 - 💻 程式碼貢獻
 - 🐛 錯誤報告和修復
@@ -164,8 +243,8 @@ tools: ['codebase', 'terminalCommand']
 
 ## 行為準則
 
-請注意，本專案已發布 [貢獻者行為準則](CODE_OF_CONDUCT.md)。參與本專案即表示你同意遵守其條款。
+請注意，此專案發布時附有 [貢獻者行為準則](CODE_OF_CONDUCT.md)。參與此專案即表示您同意遵守其條款。
 
 ## 授權
 
-貢獻至本儲存庫即表示你同意你的貢獻將以 MIT 授權條款釋出。
+透過貢獻此儲存庫，您同意您的貢獻將根據 MIT 授權條款授權。
