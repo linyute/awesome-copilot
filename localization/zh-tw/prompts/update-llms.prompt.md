@@ -1,6 +1,6 @@
 ---
 mode: 'agent'
-description: '根據 llms.txt 規範 https://llmstxt.org/，更新根目錄的 llms.txt 文件以反映文件或規格的變更。'
+description: '根據 llms.txt 規範，更新根目錄的 llms.txt 文件以反映文件或規格的變更。'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
 ---
 # 更新 LLMs.txt 文件

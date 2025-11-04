@@ -1,4 +1,4 @@
---- 
+---
 description: 'Ansible 慣例與最佳實務'
 applyTo: '**/*.yaml, **/*.yml'
 ---

@@ -241,7 +241,7 @@ function validateCollectionDisplay(display) {
       //如果存在，也剝離周圍的引號
       if (
         (val.startsWith('"') && val.endsWith('"')) ||
-        (val.startsWith("'" ) && val.endsWith("'"))
+        (val.startsWith("'") && val.endsWith("'"))
       ) {
         val = val.substring(1, val.length - 1);
       }
@@ -318,8 +318,7 @@ function validateCollections() {
 
   for (const file of collectionFiles) {
     const filePath = path.join(COLLECTIONS_DIR, file);
-    console.log(`
-正在驗證 ${file}...`);
+    console.log(`\n正在驗證 ${file}...`);
 
     const collection = parseCollectionYaml(filePath);
     if (!collection) {
@@ -353,8 +352,7 @@ function validateCollections() {
   }
 
   if (!hasErrors) {
-    console.log(`
-✅ 所有 ${collectionFiles.length} 個集合都有效`);
+    console.log(`\n✅ 所有 ${collectionFiles.length} 個集合都有效`);
   }
 
   return !hasErrors;

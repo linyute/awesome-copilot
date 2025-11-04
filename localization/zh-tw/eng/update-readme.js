@@ -490,12 +490,12 @@ function generateUnifiedModeSection(cfg) {
     }
 
     if (includeMcpServers) {
-      content += `| [${title}](${link})<br />${badges} | ${ 
-        description && description !== "null" ? description : "" 
+      content += `| [${title}](../${link})<br />${badges} | ${
+        description && description !== "null" ? description : ""
       } | ${mcpServerCell} |\n`;
     } else {
-      content += `| [${title}](${link})<br />${badges} | ${ 
-        description && description !== "null" ? description : "" 
+      content += `| [${title}](../${link})<br />${badges} | ${
+        description && description !== "null" ? description : ""
       } |\n`;
     }
   }

@@ -1,11 +1,11 @@
 ---
 mode: 'agent'
-description: '根據 llms.txt 規範（https://llmstxt.org/），依據儲存庫結構從零建立 llms.txt 文件。'
+description: '根據 llms.txt 規範，依據儲存庫結構從零建立 llms.txt 文件。'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
 ---
 # 根據儲存庫結構建立 LLMs.txt 文件
 
-請依據官方 llms.txt 規範（https://llmstxt.org/），在儲存庫根目錄從零建立新的 `llms.txt` 文件。此文件將為大型語言模型（LLM）提供高階指引，協助其理解儲存庫目的與規格。
+請依據官方 llms.txt 規範 https://llmstxt.org/，在儲存庫根目錄從零建立新的 `llms.txt` 文件。此文件將為大型語言模型（LLM）提供高階指引，協助其理解儲存庫目的與規格。
 
 ## 主要指令
 

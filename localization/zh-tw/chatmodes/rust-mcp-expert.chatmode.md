@@ -1,4 +1,4 @@
---- 
+---
 description: '使用 rmcp SDK 和 tokio 非同步執行時的 Rust MCP 伺服器開發專家助理'
 model: GPT-4.1
 ---

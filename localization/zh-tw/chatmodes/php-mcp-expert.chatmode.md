@@ -1,4 +1,4 @@
---- 
+---
 description: '使用官方 PHP SDK 和基於屬性的探索功能，為 PHP MCP 伺服器開發提供專家協助'
 model: GPT-4.1
 ---

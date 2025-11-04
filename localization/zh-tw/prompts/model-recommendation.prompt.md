@@ -1,4 +1,14 @@
-# Copilot 對話模式和提示的 AI 模型推薦
+---
+description: "分析聊天模式或提示檔案，並根據任務複雜度、所需功能和成本效益推薦最佳 AI 模型"
+mode: "agent"
+tools:
+  - "search/codebase"
+  - "fetch"
+  - "context7/*"
+model: Auto (copilot)
+---
+
+# Copilot 聊天模式和提示的 AI 模型推薦
 
 ## 任務
 

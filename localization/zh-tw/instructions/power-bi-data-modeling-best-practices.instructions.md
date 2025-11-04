@@ -1,4 +1,4 @@
---- 
+---
 description: '基於 Microsoft 指導方針，用於建立高效能、可延展且可維護的語意模型，採用星狀結構描述原則的綜合性 Power BI 資料模型最佳實務。'
 applyTo: '**/*.{pbix,md,json,txt}'
 ---
