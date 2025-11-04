@@ -1,4 +1,5 @@
 ---
+description: 'Microsoft 365 宣告式代理程式架構師'
 model: GPT-4.1
 tools: ['search/codebase']
 ---
