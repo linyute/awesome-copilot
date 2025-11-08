@@ -1,11 +1,11 @@
-# 🤖 Awesome GitHub Copilot 客製化
+# 🤖 超棒的 GitHub Copilot 客製化
 
 [![Powered by Awesome Copilot](https://img.shields.io/badge/Powered_by-Awesome_Copilot-blue?logo=githubcopilot)](https://aka.ms/awesome-github-copilot)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-91-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-一個精選的提示、指令和聊天模式集合，旨在提升您在不同領域、語言和使用案例中的 GitHub Copilot 體驗。
+一個社群建立的自訂代理程式、提示和指令的集合，旨在跨不同領域、語言和使用案例，提升您的 GitHub Copilot 體驗。
 
 ## 🚀 什麼是 Awesome GitHub Copilot？
 
@@ -77,6 +77,13 @@
 
 啟用聊天模式以從針對特定角色（例如架構師、DBA 或安全專家）量身定制的 AI 人格獲得專業協助。
 
+## 🎯 為何使用超棒的 GitHub Copilot？
+
+- **生產力**: 預建的代理程式、提示和指令可節省時間並提供一致的結果。
+- **最佳實踐**: 受益於社群策劃的程式碼標準和模式。
+- **專業協助**: 透過專業的自訂代理程式獲得專家級指導。
+- **持續學習**: 隨時了解最新技術的模式和實踐。
+
 ## 🤝 貢獻
 
 我們歡迎貢獻！請參閱我們的 [貢獻指南](CONTRIBUTING.md) 以了解如何：
@@ -102,12 +109,6 @@
 └── scripts/          # 維護公用程式指令碼
 ```
 
-## 🌟 開始使用
-
-1. **瀏覽集合**：查看我們全面的 [提示](docs/README.prompts.md)、[指令](docs/README.instructions.md)、[聊天模式](docs/README.chatmodes.md) 和 [集合](docs/README.collections.md) 清單。
-2. **新增到您的編輯器**：按一下「安裝」按鈕以安裝到 VS Code，或複製檔案內容以用於其他編輯器。
-3. **開始使用**：複製提示以與 `/` 命令一起使用，讓指令增強您的程式碼體驗，或啟用聊天模式以獲得專業協助。
-
 ## 📄 授權
 
 此專案根據 MIT 授權條款授權 - 有關詳細資訊，請參閱 [LICENSE](LICENSE) 檔案。
@@ -118,12 +119,9 @@
 - **支援**：查看我們的 [支援指南](SUPPORT.md) 以獲得協助
 - **行為準則**：我們遵循 [貢獻者公約](CODE_OF_CONDUCT.md)
 
-## 🎯 為何使用 Awesome GitHub Copilot？
+## ℹ️ 免責聲明
 
-- **生產力**：預建的提示和指令可節省時間並提供一致的結果
-- **最佳實踐**：受益於社群策劃的程式碼標準和模式
-- **專業協助**：透過專業聊天模式獲得專家級指導
-- **持續學習**：隨時了解跨技術的最新模式和實踐
+此儲存庫中的客製化內容來自第三方開發者。GitHub 不會驗證、認可或保證這些代理程式的功能或安全性。請在安裝任何代理程式及其文件之前仔細檢查，以了解其可能需要的權限和可能執行的操作。
 
 ---
 

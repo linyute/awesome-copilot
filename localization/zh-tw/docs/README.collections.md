@@ -19,7 +19,7 @@
 | [⭐ 卓越 Copilot](../collections/awesome-copilot.md) | 協助您探索和建立精選 GitHub Copilot 聊天模式、集合、指示、提示和代理程式的後設提示。 | 6 items | github-copilot, discovery, meta, prompt-engineering, agents |
 | [⭐ 合作夥伴](../collections/partners.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 11 items | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
 | [Azure 與雲端開發](../collections/azure-cloud-development.md) | 全面的 Azure 雲端開發工具，包括基礎設施即程式碼、無伺服器函式、架構模式和成本最佳化，用於建立可延展的雲端應用程式。 | 18 items | azure, cloud, infrastructure, bicep, terraform, serverless, architecture, devops |
-| [C# .NET 開發](../collections/csharp-dotnet-development.md) | C# 和 .NET 開發的基本提示、指示和聊天模式，包括測試、文件和最佳實踐。 | 7 items | csharp, dotnet, aspnet, testing |
+| [C# .NET 開發](../collections/csharp-dotnet-development.md) | C# 和 .NET 開發的基本提示、指示和聊天模式，包括測試、文件和最佳實踐。 | 8 items | csharp, dotnet, aspnet, testing |
 | [C# MCP 伺服器開發](../collections/csharp-mcp-development.md) | 使用官方 SDK 以 C# 建立模型上下文協定 (MCP) 伺服器的完整工具包。包括最佳實踐說明、用於產生伺服器的提示，以及用於指導的專家聊天模式。 | 3 items | csharp, mcp, model-context-protocol, dotnet, server-development |
 | [Clojure 互動式程式設計](../collections/clojure-interactive-programming.md) | 用於 REPL 優先的 Clojure 工作流程的工具，具有 Clojure 指示、互動式程式設計聊天模式和支援指南。 | 3 items | clojure, repl, interactive-programming |
 | [DevOps 隨叫隨到](../collections/devops-oncall.md) | 一套集中的提示、指示和聊天模式，可協助使用 DevOps 工具和 Azure 資源快速分類事件並回應。 | 5 items | devops, incident-response, oncall, azure |
