@@ -34,10 +34,11 @@ Azure Verified Modules (AVM) 是預先建置、測試並驗證的 Terraform 與 
 
 ### 官方 AVM 索引
 
-- **Terraform 資源**：`https://azure.github.io/Azure-Verified-Modules/indexes/terraform/tf-resource-modules/`
-- **Terraform 樣式**：`https://azure.github.io/Azure-Verified-Modules/indexes/terraform/tf-pattern-modules/`
-- **Bicep 資源**：`https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-resource-modules/`
-- **Bicep 樣式**：`https://azure.github.io/Azure-Verified-Modules/indexes/bicep/bicep-pattern-modules/`
+> **注意：** 以下連結總是指向主分支上 CSV 檔案的最新版本。因此，這些檔案可能會隨時間變化。如果您需要特定時間點的版本，請考慮使用 URL 中的特定發布標籤。
+
+- **Terraform 資源模組**：`https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/static/module-indexes/TerraformResourceModules.csv`
+- **Terraform 模式模組**：`https://raw.githubusercontent.com/Azure/Azure-Verified-Modules/refs/heads/main/docs/static/module-indexes/TerraformPatternModules.csv`
+- **Terraform 公用程式模組**：`https://raw.githubusercontent.com/Azure/Azure-Verified-temp/localization/zh-tw/instructions/azure-verified-modules-terraform.instructions.md`
 
 ## Terraform 模組使用方式
 
