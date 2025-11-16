@@ -2,7 +2,7 @@
 
 [![Powered by Awesome Copilot](https://img.shields.io/badge/Powered_by-Awesome_Copilot-blue?logo=githubcopilot)](https://aka.ms/awesome-github-copilot)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-92-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-93-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 一個社群建立的自訂代理程式、提示和指令的集合，旨在跨不同領域、語言和使用案例，提升您的 GitHub Copilot 體驗。
@@ -24,7 +24,7 @@
 | 名稱 | 描述 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |
 | [Awesome Copilot](collections/awesome-copilot.md) | 協助您發現和產生精選 GitHub Copilot 聊天模式、集合、指令、提示和代理程式的元提示。 | 6 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
-| [Partners](collections/partners.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 11 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
+| [Partners](collections/partners.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 17 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
 
 
 ## MCP 伺服器
@@ -259,11 +259,8 @@
   </tbody>
   <tfoot>
     <tr>
-      <td align="center" size="13px" colspan="7">
-        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
-          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
-        </img>
-      </td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lechnerc77"><img src="https://avatars.githubusercontent.com/u/22294087?v=4?s=100" width="100px;" alt="Christian Lechner"/><br /><sub><b>Christian Lechner</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=lechnerc77" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://jan-v.nl"><img src="https://avatars.githubusercontent.com/u/462356?v=4?s=100" width="100px;" alt="Jan de Vries"/><br /><sub><b>Jan de Vries</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=Jandev" title="Code">💻</a></td>
     </tr>
   </tfoot>
 </table>
