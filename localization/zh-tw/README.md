@@ -255,12 +255,16 @@
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lechnerc77"><img src="https://avatars.githubusercontent.com/u/22294087?v=4?s=100" width="100px;" alt="Christian Lechner"/><br /><sub><b>Christian Lechner</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=lechnerc77" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://jan-v.nl"><img src="https://avatars.githubusercontent.com/u/462356?v=4?s=100" width="100px;" alt="Jan de Vries"/><br /><sub><b>Jan de Vries</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=Jandev" title="Code">💻</a></td>
     </tr>
   </tbody>
   <tfoot>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/lechnerc77"><img src="https://avatars.githubusercontent.com/u/22294087?v=4?s=100" width="100px;" alt="Christian Lechner"/><br /><sub><b>Christian Lechner</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=lechnerc77" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://jan-v.nl"><img src="https://avatars.githubusercontent.com/u/462356?v=4?s=100" width="100px;" alt="Jan de Vries"/><br /><sub><b>Jan de Vries</b></sub></a><br /><a href="https://github.com/github/awesome-copilot/commits?author=Jandev" title="Code">💻</a></td>
+      <td align="center" size="13px" colspan="7">
+        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
+          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
+        </img>
+      </td>
     </tr>
   </tfoot>
 </table>
