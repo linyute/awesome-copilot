@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
-const readline = require("readline");
-const { COLLECTIONS_DIR } = require("./constants");
+import fs from "fs";
+import path from "path";
+import readline from "readline";
+import { COLLECTIONS_DIR } from "./constants.mjs";
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -166,7 +166,7 @@ display:
     console.log("\n📝 後續步驟：");
     console.log("1. 編輯集合清單以新增您的項目");
     console.log("2. 視需要更新名稱、描述和標籤");
-    console.log("3. 執行 'npm run validate:collections' 以進行驗證");
+    console.log("3. 執行 'npm run collection:validate' 以進行驗證");
     console.log("4. 執行 'npm start' 以產生文件");
     console.log("\n📄 集合模板內容：");
     console.log(template);

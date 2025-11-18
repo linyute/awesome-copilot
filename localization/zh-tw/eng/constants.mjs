@@ -1,4 +1,9 @@
-const path = require("path");
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // README 的模板區塊
 const TEMPLATES = {
@@ -115,7 +120,7 @@ const MAX_COLLECTION_ITEMS = 50;
 
 const DOCS_DIR = path.join(ROOT_FOLDER, "docs");
 
-module.exports = {
+export {
   TEMPLATES,
   vscodeInstallImage,
   vscodeInsidersInstallImage,

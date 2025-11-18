@@ -1,8 +1,8 @@
 // 使用 vfile-matter 進行集合檔案和 frontmatter 解析的 YAML 解析器
-const fs = require("fs");
-const yaml = require("js-yaml");
-const { VFile } = require("vfile");
-const { matter } = require("vfile-matter");
+import fs from "fs";
+import yaml from "js-yaml";
+import { VFile } from "vfile";
+import { matter } from "vfile-matter";
 
 function safeFileOperation(operation, filePath, defaultValue = null) {
   try {
@@ -137,7 +137,7 @@ function extractMcpServerConfigs(filePath) {
   });
 }
 
-module.exports = {
+export {
   parseCollectionYaml,
   parseFrontmatter,
   extractAgentMetadata,

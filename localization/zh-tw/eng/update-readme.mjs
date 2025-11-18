@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const path = require("path");
-const {
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import {
   parseCollectionYaml,
   extractMcpServers,
   extractMcpServerConfigs,
   parseFrontmatter,
-} = require("./yaml-parser");
-const {
+} from "./yaml-parser.mjs";
+import {
   TEMPLATES,
   AKA_INSTALL_URLS,
   repoBaseUrl,
@@ -21,7 +23,10 @@ const {
   COLLECTIONS_DIR,
   INSTRUCTIONS_DIR,
   DOCS_DIR,
-} = require("./constants");
+} from "./constants.mjs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // 從 github-mcp-registry.json 載入的 MCP 註冊表伺服器名稱 (小寫) 快取
 let MCP_REGISTRY_SET = null;
