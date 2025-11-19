@@ -191,7 +191,7 @@ private Button _btnAdopt;
 ### 屬性模式 (⚠️ 關鍵 - 常見錯誤來源！)
 
 | 模式 | 行為 | 使用案例 | 記憶體 |
-|----------|----------|----------|--------|
+|---------|----------|----------|--------|
 | `=> new Type()` | 每次存取都建立新實例 | ⚠️ 可能的記憶體洩漏！ | 每次存取配置 |
 | `{ get; } = new()` | 在建構時建立一次 | 用於：快取/常數 | 單次配置 |
 | `=> _field ?? Default` | 計算/動態值 | 用於：計算屬性 | 變化 |
@@ -277,7 +277,7 @@ private void Button_Click(object? sender, EventArgs e)
 ### 破壞性變更：.NET Framework 與 .NET 8+
 
 | 功能 | .NET Framework <= 4.8.1 | .NET 8+ |
-|----------|----------------------|---------|
+|---------|----------------------|---------|
 | 類型化資料集 | 設計工具支援 | 僅限程式碼 (不建議) |
 | 物件繫結 | 支援 | 增強型 UI，完全支援 |
 | 資料來源視窗 | 可用 | 不可用 |
@@ -598,7 +598,7 @@ public class CustomControl : Control
 ### 模態對話方塊
 
 | 方面 | 規則 |
-|--------|------|--------|
+|--------|------|
 | 對話方塊按鈕 | 順序 -> 主要 (確定)：`AcceptButton`、`DialogResult = OK` / 次要 (取消)：`CancelButton`、`DialogResult = Cancel` |
 | 關閉策略 | `DialogResult` 由 DialogResult 隱式應用，無需額外程式碼 |
 | 驗證 | 在 _表單_ 上執行，而不是在欄位範圍上。絕不能使用 `CancelEventArgs.Cancel = true` 阻止焦點變更 |
@@ -609,7 +609,7 @@ public class CustomControl : Control
 ### 版面配置食譜
 
 | 表單類型 | 結構 |
-|-----------|-----------|--------|
+|-----------|-----------|
 | MainForm | MenuStrip、選用 ToolStrip、內容區域、StatusStrip |
 | 簡單輸入表單 | 資料輸入欄位主要在左側，右側只有按鈕欄。為模態設定有意義的表單 `MinimumSize` |
 | 索引標籤 | 僅用於不同任務。保持最小計數、簡短索引標籤標籤 |
@@ -625,7 +625,7 @@ public class CustomControl : Control
 ### TreeView 和 ListView
 
 | 控制項 | 規則 |
-|---------|-------|--------|
+|---------|-------|
 | TreeView | 必須有可見的、預設展開的根節點 |
 | ListView | 對於列數較少的小型清單，偏好使用 ListView 而非 DataGridView |
 | 內容設定 | 在程式碼中產生，而不是在設計工具程式碼後置中 |
