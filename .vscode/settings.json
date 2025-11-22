@@ -10,6 +10,7 @@
     100
   ],
   "files.associations": {
+    "*.agent.md": "markdown",
     "*.chatmode.md": "markdown",
     "*.instructions.md": "markdown",
     "*.prompt.md": "markdown"

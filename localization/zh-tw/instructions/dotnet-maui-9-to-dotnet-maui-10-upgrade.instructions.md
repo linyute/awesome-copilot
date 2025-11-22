@@ -16,7 +16,11 @@ applyTo: '**/*.csproj, **/*.cs, **/*.xaml'
 3. [重大變更 (P0 - 必須修正)](#breaking-changes-p0---must-fix)
    - [MessagingCenter 改為內部](#messagingcenter-made-internal)
    - [ListView 和 TableView 已棄用](#listview-and-tableview-deprecated)
-4. [已棄用的 API (P1 - 應盡快修正)](#deprecated-apis-p1---fix-soon)
+4. [已棄用的 API (P1 - 盡快修正)](#deprecated-apis-p1---fix-soon)
+   - [動畫方法](#1-animation-methods)
+   - [DisplayAlert 和 DisplayActionSheet](#2-displayalert-and-displayactionsheet)
+   - [Page.IsBusy](#3-pageisbusy)
+   - [MediaPicker API](#4-mediapicker-apis)
 5. [建議的變更 (P2)](#recommended-changes-p2)
 6. [大量遷移工具](#bulk-migration-tools)
 7. [測試您的升級](#testing-your-upgrade)
@@ -32,7 +36,7 @@ applyTo: '**/*.csproj, **/*.cs, **/*.xaml'
 2. **更新 CommunityToolkit.Maui** 至 12.3.0 或更高版本（如果您使用它）- 必要
 3. **修正重大變更** - MessagingCenter (P0)
 4. **遷移 ListView/TableView 至 CollectionView** (P0 - 關鍵)
-5. **修正已棄用的 API** - 動畫方法、DisplayAlert、IsBusy (P1)
+5. **修正已棄用的 API** - 動畫方法、DisplayAlert、IsBusy、MediaPicker (P1)
 
 > ⚠️ **重大變更**：
 > - CommunityToolkit.Maui **必須**為 12.3.0 或更高版本
@@ -1087,6 +1091,253 @@ public class MyViewModel : INotifyPropertyChanged
 
 ---
 
+### 4. MediaPicker APIs
+
+**狀態：** ⚠️ **已棄用** - 單選方法已替換為多選變體。
+
+**您將看到的警告：**
+```
+warning CS0618: 'MediaPicker.PickPhotoAsync(MediaPickerOptions)' is obsolete: 'Switch to PickPhotosAsync which also allows multiple selections.'
+warning CS0618: 'MediaPicker.PickVideoAsync(MediaPickerOptions)' is obsolete: 'Switch to PickVideosAsync which also allows multiple selections.'
+```
+
+**變更內容：**
+- `PickPhotoAsync()` → `PickPhotosAsync()` (返回 `List<FileResult>`)
+- `PickVideoAsync()` → `PickVideosAsync()` (返回 `List<FileResult>`)
+- `MediaPickerOptions` 上新增 `SelectionLimit` 屬性 (預設值：1)
+- 舊方法仍然有效，但已標記為過時
+
+**關鍵行為：**
+- **預設行為保留：** `SelectionLimit = 1` (單選)
+- 設定 `SelectionLimit = 0` 可實現無限多選
+- 設定 `SelectionLimit > 1` 可實現特定限制
+
+**平台注意事項：**
+- ✅ **iOS：** 選取限制由原生選取器 UI 強制執行
+- ⚠️ **Android：** 並非所有自訂選取器都遵守 `SelectionLimit` - 請注意！
+- ⚠️ **Windows：** 不支援 `SelectionLimit` - 請實作您自己的驗證
+
+#### 遷移範例
+
+**簡單相片選取器 (維持單選行為)：**
+```csharp
+// ❌ 舊 (已棄用)
+var photo = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+{
+    Title = "選取一張相片"
+});
+
+if (photo != null)
+{
+    var stream = await photo.OpenReadAsync();
+    MyImage.Source = ImageSource.FromStream(() => stream);
+}
+
+// ✅ 新 (維持相同行為 - 僅選取 1 張相片)
+var photos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions
+{
+    Title = "選取一張相片",
+    SelectionLimit = 1  // 明確：僅 1 張相片
+});
+
+var photo = photos.FirstOrDefault();
+if (photo != null)
+{
+    var stream = await photo.OpenReadAsync();
+    MyImage.Source = ImageSource.FromStream(() => stream);
+}
+```
+
+**簡單影片選取器 (維持單選行為)：**
+```csharp
+// ❌ 舊 (已棄用)
+var video = await MediaPicker.PickVideoAsync(new MediaPickerOptions
+{
+    Title = "選取一個影片"
+});
+
+if (video != null)
+{
+    VideoPlayer.Source = video.FullPath;
+}
+
+// ✅ 新 (維持相同行為 - 僅選取 1 個影片)
+var videos = await MediaPicker.PickVideosAsync(new MediaPickerOptions
+{
+    Title = "選取一個影片",
+    SelectionLimit = 1  // 明確：僅 1 個影片
+});
+
+var video = videos.FirstOrDefault();
+if (video != null)
+{
+    VideoPlayer.Source = video.FullPath;
+}
+```
+
+**無選項的相片選取器 (使用預設值)：**
+```csharp
+// ❌ 舊 (已棄用)
+var photo = await MediaPicker.PickPhotoAsync();
+
+// ✅ 新 (預設 SelectionLimit = 1，因此行為相同)
+var photos = await MediaPicker.PickPhotosAsync();
+var photo = photos.FirstOrDefault();
+```
+
+**多張相片選取 (新功能)：**
+```csharp
+// ✅ 新：選取最多 5 張相片
+var photos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions
+{
+    Title = "選取最多 5 張相片",
+    SelectionLimit = 5
+});
+
+foreach (var photo in photos)
+{
+    var stream = await photo.OpenReadAsync();
+    // 處理每張相片
+}
+
+// ✅ 新：無限選取
+var allPhotos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions
+{
+    Title = "選取相片",
+    SelectionLimit = 0  // 無限制
+});
+```
+
+**多個影片選取 (新功能)：**
+```csharp
+// ✅ 新：選取最多 3 個影片
+var videos = await MediaPicker.PickVideosAsync(new MediaPickerOptions
+{
+    Title = "選取最多 3 個影片",
+    SelectionLimit = 3
+});
+
+foreach (var video in videos)
+{
+    // 處理每個影片
+    Console.WriteLine($"已選取：{video.FileName}");
+}
+```
+
+**處理空結果：**
+```csharp
+// 新：如果使用者取消 (不是 null) 則返回空列表
+var photos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions
+{
+    SelectionLimit = 1
+});
+
+// ✅ 檢查空列表
+if (photos.Count == 0)
+{
+    await DisplayAlertAsync("已取消", "未選取任何相片", "確定");
+    return;
+}
+
+var photo = photos.First();
+// 處理相片...
+```
+
+**使用 Try-Catch (與以前相同)：**
+```csharp
+try
+{
+    var photos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions
+    {
+        Title = "選取一張相片",
+        SelectionLimit = 1
+    });
+    
+    if (photos.Count > 0)
+    {
+        await ProcessPhotoAsync(photos.First());
+    }
+}
+catch (PermissionException)
+{
+    await DisplayAlertAsync("權限遭拒", "需要相機存取權", "確定");
+}
+catch (Exception ex)
+{
+    await DisplayAlertAsync("錯誤", $"無法選取相片：{ex.Message}", "確定");
+}
+```
+
+#### 遷移清單
+
+遷移到新的 MediaPicker API 時：
+
+- [ ] 將 `PickPhotoAsync()` 替換為 `PickPhotosAsync()`
+- [ ] 將 `PickVideoAsync()` 替換為 `PickVideosAsync()`
+- [ ] 設定 `SelectionLimit = 1` 以維持單選行為
+- [ ] 將 `FileResult?` 變更為 `List<FileResult>` (或使用 `.FirstOrDefault()`)
+- [ ] 將 null 檢查更新為空列表檢查 (`photos.Count == 0`)
+- [ ] 在 Android 上測試 - 確保自訂選取器遵守限制 (或添加驗證)
+- [ ] 在 Windows 上測試 - 如果需要，添加您自己的限制驗證
+- [ ] 考慮多選是否能改善您的使用者體驗 (可選)
+
+#### 平台特定驗證 (Windows & Android)
+
+```csharp
+// ✅ 建議：在不強制執行選取限制的平台上驗證選取限制
+var photos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions
+{
+    Title = "選取最多 5 張相片",
+    SelectionLimit = 5
+});
+
+// 在 Windows 和某些 Android 選取器上，可能不會強制執行限制
+if (photos.Count > 5)
+{
+    await DisplayAlertAsync(
+        "相片過多", 
+        $"請選取最多 5 張相片。您選取了 {photos.Count} 張。", 
+        "確定"
+    );
+    return;
+}
+
+// 繼續處理...
+```
+
+#### 擷取方法 (未變更)
+
+**注意：** 擷取方法 (`CapturePhotoAsync`、`CaptureVideoAsync`) **未**棄用，保持不變：
+
+```csharp
+// ✅ 這些仍然按原樣工作 (無需更改)
+var photo = await MediaPicker.CapturePhotoAsync();
+var video = await MediaPicker.CaptureVideoAsync();
+```
+
+#### 快速遷移模式
+
+**對於所有現有的單選程式碼，請使用此模式：**
+
+```csharp
+// ❌ 舊
+var photo = await MediaPicker.PickPhotoAsync(options);
+if (photo != null)
+{
+    // 處理相片
+}
+
+// ✅ 新 (直接替換)
+var photos = await MediaPicker.PickPhotosAsync(options ?? new MediaPickerOptions { SelectionLimit = 1 });
+var photo = photos.FirstOrDefault();
+if (photo != null)
+{
+    // 處理相片 (與以前相同的程式碼)
+}
+```
+
+---
+
 ## 建議的變更 (P2)
 
 這些變更雖然建議進行，但並非立即需要。請考慮在下次重構週期中進行遷移。
@@ -1201,6 +1452,31 @@ public partial class App : Application
 
 尋找：    DisplayActionSheet\(
 取代： DisplayActionSheetAsync(
+```
+
+#### MediaPicker 方法
+
+**⚠️ 注意：** MediaPicker 遷移需要手動程式碼變更，因為返回類型變更 (`FileResult?` → `List<FileResult>`)。使用這些搜尋來查找實例：
+
+```bash
+# 查找 PickPhotoAsync 用法
+grep -rn "PickPhotoAsync" --include="*.cs" .
+
+# 查找 PickVideoAsync 用法
+grep -rn "PickVideoAsync" --include="*.cs" .
+```
+
+**手動遷移模式：**
+```csharp
+// 查找：await MediaPicker.PickPhotoAsync(
+// 替換為：
+var photos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions { SelectionLimit = 1 });
+var photo = photos.FirstOrDefault();
+
+// 查找：await MediaPicker.PickVideoAsync(
+// 替換為：
+var videos = await MediaPicker.PickVideosAsync(new MediaPickerOptions { SelectionLimit = 1 });
+var video = videos.FirstOrDefault();
 ```
 
 #### 偵測 ListView/TableView (需要手動遷移)
@@ -1416,6 +1692,54 @@ dotnet workload update
 
 ---
 
+### 警告：MediaPicker 方法已過時
+
+**原因：** 使用已棄用的 `PickPhotoAsync` 或 `PickVideoAsync` 方法。
+
+**解決方案：** 遷移到 `PickPhotosAsync` 或 `PickVideosAsync`：
+
+```csharp
+// ❌ 舊
+var photo = await MediaPicker.PickPhotoAsync(options);
+
+// ✅ 新 (維持單選)
+var photos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions 
+{ 
+    Title = options?.Title,
+    SelectionLimit = 1 
+});
+var photo = photos.FirstOrDefault();
+```
+
+**主要變更：**
+- 返回類型從 `FileResult?` 變更為 `List<FileResult>`
+- 使用 `.FirstOrDefault()` 獲取單一結果
+- 設定 `SelectionLimit = 1` 以維持舊行為
+- 檢查 `photos.Count == 0` 而不是 `photo == null`
+
+---
+
+### MediaPicker 返回比 SelectionLimit 更多的項目
+
+**原因：** Windows 和某些 Android 自訂選取器不強制執行 `SelectionLimit`。
+
+**解決方案：** 添加手動驗證：
+
+```csharp
+var photos = await MediaPicker.PickPhotosAsync(new MediaPickerOptions
+{
+    SelectionLimit = 5
+});
+
+if (photos.Count > 5)
+{
+    await DisplayAlertAsync("錯誤", "選取了過多的相片", "確定");
+    return;
+}
+```
+
+---
+
 ### 遷移後動畫未完成
 
 **原因：** 忘記使用 `await` 關鍵字。
@@ -1551,11 +1875,13 @@ warning CS0618: 'ListView' is obsolete: 'With the deprecation of ListView, this 
 - [ ] 將 `ContextActions` 轉換為 `SwipeView`
 - [ ] 移除特定平台的 ListView 組態
 
-**應修正 (P1 - 已棄用)：**
-- [ ] 更新動畫方法：加上 `Async` 後綴
+**應修復 (P1 - 已棄用)：**
+- [ ] 更新動畫方法：添加 `Async` 後綴
 - [ ] 更新 `DisplayAlert` → `DisplayAlertAsync`
 - [ ] 更新 `DisplayActionSheet` → `DisplayActionSheetAsync`  
 - [ ] 將 `Page.IsBusy` 替換為 `ActivityIndicator`
+- [ ] 將 `PickPhotoAsync` 替換為 `PickPhotosAsync` (帶 `SelectionLimit = 1`)
+- [ ] 將 `PickVideoAsync` 替換為 `PickVideosAsync` (帶 `SelectionLimit = 1`)
 
 **建議修正 (P2)：**
 - [ ] 將 `Application.MainPage` 遷移到 `CreateWindow`
