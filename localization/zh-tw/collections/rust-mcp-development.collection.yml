@@ -1,0 +1,47 @@
+id: rust-mcp-development
+name: Rust MCP 伺服器開發
+description: 使用官方 rmcp SDK 以 Rust 建立高效能模型上下文協定伺服器，支援 async/await、程序巨集和型別安全實作。
+tags:
+  [
+    rust,
+    mcp,
+    model-context-protocol,
+    server-development,
+    sdk,
+    tokio,
+    async,
+    macros,
+    rmcp,
+  ]
+items:
+  - path: instructions/rust-mcp-server.instructions.md
+    kind: instruction
+  - path: prompts/rust-mcp-server-generator.prompt.md
+    kind: prompt
+  - path: agents/rust-mcp-expert.agent.md
+    kind: agent
+    usage: |
+      推薦
+
+      此聊天模式為使用 Rust 建立 MCP 伺服器提供專家指導。
+
+      此聊天模式非常適合：
+      - 使用 Rust 建立新的 MCP 伺服器專案
+      - 使用 tokio 執行時實作非同步處理器
+      - 使用 rmcp 程序巨集建立工具
+      - 設定 stdio、SSE 或 HTTP 傳輸
+      - 偵錯非同步 Rust 和所有權問題
+      - 學習官方 rmcp SDK 的 Rust MCP 最佳實踐
+      - 使用 Arc 和 RwLock 進行效能優化
+
+      為了獲得最佳結果，請考慮：
+      - 使用指示檔案為 Rust MCP 開發設定上下文
+      - 使用提示產生初始專案結構
+      - 切換到專家聊天模式以獲得詳細的實作協助
+      - 指定您需要的傳輸類型
+      - 提供有關您需要哪些工具或功能的詳細資訊
+      - 提及您是否需要 OAuth 身份驗證
+
+display:
+  ordering: manual
+  show_badge: true

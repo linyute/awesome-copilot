@@ -1,0 +1,15 @@
+id: technical-spike
+name: 技術探究
+description: 用於建立、管理和研究技術探究的工具，以在進行解決方案的規範和實作之前減少未知數和假設。
+tags: [technical-spike, assumption-testing, validation, research]
+items:
+  # Planning Chat Modes
+  - path: agents/research-technical-spike.agent.md
+    kind: agent
+
+  # Planning Prompts
+  - path: prompts/create-technical-spike.prompt.md
+    kind: prompt
+display:
+  ordering: alpha # or "manual" to preserve the order above
+  show_badge: false # set to true to show collection badge on items

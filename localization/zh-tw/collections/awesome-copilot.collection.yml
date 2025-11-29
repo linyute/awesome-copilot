@@ -1,0 +1,21 @@
+id: awesome-copilot
+name: 卓越 Copilot
+description: "協助您探索和建立精選 GitHub Copilot 聊天模式、集合、指示、提示和代理程式的後設提示。"
+tags: [github-copilot, discovery, meta, prompt-engineering, agents]
+items:
+  - path: prompts/suggest-awesome-github-copilot-chatmodes.prompt.md
+    kind: prompt
+  - path: prompts/suggest-awesome-github-copilot-collections.prompt.md
+    kind: prompt
+  - path: prompts/suggest-awesome-github-copilot-instructions.prompt.md
+    kind: prompt
+  - path: prompts/suggest-awesome-github-copilot-prompts.prompt.md
+    kind: prompt
+  - path: prompts/suggest-awesome-github-copilot-agents.prompt.md
+    kind: prompt
+  - path: agents/meta-agentic-project-scaffold.agent.md
+    kind: agent
+display:
+  ordering: alpha # or "manual" to preserve the order above
+  show_badge: true # set to true to show collection badge on items
+  featured: true

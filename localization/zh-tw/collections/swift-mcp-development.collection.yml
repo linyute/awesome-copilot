@@ -1,0 +1,47 @@
+id: swift-mcp-development
+name: Swift MCP 伺服器開發
+description: "使用官方 MCP Swift SDK 建立 Swift 模型上下文協定伺服器的綜合集合，支援現代並行功能。"
+tags:
+  [
+    swift,
+    mcp,
+    model-context-protocol,
+    server-development,
+    sdk,
+    ios,
+    macos,
+    concurrency,
+    actor,
+    async-await,
+  ]
+items:
+  - path: instructions/swift-mcp-server.instructions.md
+    kind: instruction
+  - path: prompts/swift-mcp-server-generator.prompt.md
+    kind: prompt
+  - path: agents/swift-mcp-expert.agent.md
+    kind: agent
+    usage: |
+      推薦
+
+      此聊天模式為使用 Swift 建立 MCP 伺服器提供專家指導。
+
+      此聊天模式非常適合：
+      - 使用 Swift 建立新的 MCP 伺服器專案
+      - 實作 async/await 模式和基於 Actor 的並行
+      - 設定 stdio、HTTP 或網路傳輸
+      - 偵錯 Swift 並行和 ServiceLifecycle 整合
+      - 學習官方 SDK 的 Swift MCP 最佳實踐
+      - 優化 iOS/macOS 平台的伺服器效能
+
+      為了獲得最佳結果，請考慮：
+      - 使用指示檔案為 Swift MCP 開發設定上下文
+      - 使用提示產生初始專案結構
+      - 切換到專家聊天模式以獲得詳細的實作協助
+      - 指定您需要 stdio、HTTP 或網路傳輸
+      - 提供有關您需要哪些工具或功能的詳細資訊
+      - 提及您是否需要資源、提示或特殊功能
+
+display:
+  ordering: manual
+  show_badge: true

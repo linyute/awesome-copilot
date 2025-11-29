@@ -1,0 +1,35 @@
+id: ruby-mcp-development
+name: Ruby MCP 伺服器開發
+description: "使用官方 MCP Ruby SDK gem 建立 Ruby 模型上下文協定伺服器的完整工具包，支援 Rails 整合。"
+tags: [ruby, mcp, model-context-protocol, server-development, sdk, rails, gem]
+items:
+  - path: instructions/ruby-mcp-server.instructions.md
+    kind: instruction
+  - path: prompts/ruby-mcp-server-generator.prompt.md
+    kind: prompt
+  - path: agents/ruby-mcp-expert.agent.md
+    kind: agent
+    usage: |
+      推薦
+
+      此聊天模式為使用 Ruby 建立 MCP 伺服器提供專家指導。
+
+      此聊天模式非常適合：
+      - 使用 Ruby 建立新的 MCP 伺服器專案
+      - 實作工具、提示和資源
+      - 設定 stdio 或 HTTP 傳輸
+      - 偵錯結構描述定義和錯誤處理
+      - 學習官方 SDK 的 Ruby MCP 最佳實踐
+      - 與 Rails 應用程式整合
+
+      為了獲得最佳結果，請考慮：
+      - 使用指示檔案為 Ruby MCP 開發設定上下文
+      - 使用提示產生初始專案結構
+      - 切換到專家聊天模式以獲得詳細的實作協助
+      - 指定您需要 stdio 或 Rails 整合
+      - 提供有關您需要哪些工具或功能的詳細資訊
+      - 提及您是否需要身份驗證或 server_context 使用
+
+display:
+  ordering: manual
+  show_badge: true

@@ -1,0 +1,32 @@
+id: java-development
+name: Java 開發
+description: Java 開發的綜合提示和指示集合，包括 Spring Boot、Quarkus、測試、文件和最佳實踐。
+tags: [java, springboot, quarkus, jpa, junit, javadoc]
+items:
+  - path: instructions/java.instructions.md
+    kind: instruction
+  - path: instructions/springboot.instructions.md
+    kind: instruction
+  - path: instructions/quarkus.instructions.md
+    kind: instruction
+  - path: instructions/quarkus-mcp-server-sse.instructions.md
+    kind: instruction
+  - path: instructions/convert-jpa-to-spring-data-cosmos.instructions.md
+    kind: instruction
+  - path: instructions/java-11-to-java-17-upgrade.instructions.md
+    kind: instruction
+  - path: instructions/java-17-to-java-21-upgrade.instructions.md
+    kind: instruction
+  - path: instructions/java-21-to-java-25-upgrade.instructions.md
+    kind: instruction
+  - path: prompts/java-docs.prompt.md
+    kind: prompt
+  - path: prompts/java-junit.prompt.md
+    kind: prompt
+  - path: prompts/java-springboot.prompt.md
+    kind: prompt
+  - path: prompts/create-spring-boot-java-project.prompt.md
+    kind: prompt
+display:
+  ordering: alpha
+  show_badge: false

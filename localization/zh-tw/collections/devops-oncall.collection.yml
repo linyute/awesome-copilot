@@ -1,0 +1,18 @@
+id: devops-oncall
+name: DevOps 隨叫隨到
+description: 一套集中的提示、指示和聊天模式，可協助使用 DevOps 工具和 Azure 資源快速分類事件並回應。
+tags: [devops, incident-response, oncall, azure]
+items:
+  - path: prompts/azure-resource-health-diagnose.prompt.md
+    kind: prompt
+  - path: instructions/devops-core-principles.instructions.md
+    kind: instruction
+  - path: instructions/containerization-docker-best-practices.instructions.md
+    kind: instruction
+  - path: agents/azure-principal-architect.agent.md
+    kind: agent
+  - path: prompts/multi-stage-dockerfile.prompt.md
+    kind: prompt
+display:
+  ordering: manual
+  show_badge: true

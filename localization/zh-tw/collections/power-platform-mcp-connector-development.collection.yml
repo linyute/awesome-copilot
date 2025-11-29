@@ -1,0 +1,21 @@
+id: power-platform-mcp-connector-development
+name: Power Platform MCP 連接器開發
+description: 用於開發 Power Platform 自訂連接器的完整工具包，支援與 Microsoft Copilot Studio 的模型上下文協定整合
+tags:
+  - power-platform
+  - mcp
+  - copilot-studio
+  - custom-connector
+  - json-rpc
+items:
+  - path: instructions/power-platform-mcp-development.instructions.md
+    kind: instruction
+  - path: prompts/power-platform-mcp-connector-suite.prompt.md
+    kind: prompt
+  - path: prompts/mcp-copilot-studio-server-generator.prompt.md
+    kind: prompt
+  - path: agents/power-platform-mcp-integration-expert.agent.md
+    kind: agent
+display:
+  ordering: manual
+  show_badge: true

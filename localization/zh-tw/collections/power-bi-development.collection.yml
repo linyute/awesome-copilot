@@ -1,0 +1,63 @@
+id: power-bi-development
+name: Power BI 開發
+description: 全面的 Power BI 開發資源，包括資料模型、DAX 優化、效能調整、視覺化設計、安全最佳實踐以及用於建立企業級 Power BI 解決方案的 DevOps/ALM 指導。
+tags:
+  [
+    power-bi,
+    dax,
+    data-modeling,
+    performance,
+    visualization,
+    security,
+    devops,
+    business-intelligence,
+  ]
+items:
+  # Power BI Chat Modes
+  - path: agents/power-bi-data-modeling-expert.agent.md
+    kind: agent
+
+  - path: agents/power-bi-dax-expert.agent.md
+    kind: agent
+
+  - path: agents/power-bi-performance-expert.agent.md
+    kind: agent
+
+  - path: agents/power-bi-visualization-expert.agent.md
+    kind: agent
+
+  # Power BI Instructions
+  - path: instructions/power-bi-custom-visuals-development.instructions.md
+    kind: instruction
+
+  - path: instructions/power-bi-data-modeling-best-practices.instructions.md
+    kind: instruction
+
+  - path: instructions/power-bi-dax-best-practices.instructions.md
+    kind: instruction
+
+  - path: instructions/power-bi-devops-alm-best-practices.instructions.md
+    kind: instruction
+
+  - path: instructions/power-bi-report-design-best-practices.instructions.md
+    kind: instruction
+
+  - path: instructions/power-bi-security-rls-best-practices.instructions.md
+    kind: instruction
+
+  # Power BI Prompts
+  - path: prompts/power-bi-dax-optimization.prompt.md
+    kind: prompt
+
+  - path: prompts/power-bi-model-design-review.prompt.md
+    kind: prompt
+
+  - path: prompts/power-bi-performance-troubleshooting.prompt.md
+    kind: prompt
+
+  - path: prompts/power-bi-report-design-consultation.prompt.md
+    kind: prompt
+
+display:
+  ordering: manual
+  show_badge: true

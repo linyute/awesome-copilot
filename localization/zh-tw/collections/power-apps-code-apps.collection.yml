@@ -1,0 +1,29 @@
+id: power-apps-code-apps
+name: Power Apps 程式碼應用程式開發
+description: Power Apps 程式碼應用程式開發的完整工具包，包括專案鷹架、開發標準和專家指導，用於建立與 Power Platform 整合的程式碼優先應用程式。
+tags:
+  [
+    power-apps,
+    power-platform,
+    typescript,
+    react,
+    code-apps,
+    dataverse,
+    connectors,
+  ]
+items:
+  # Power Apps Code Apps Prompt
+  - path: prompts/power-apps-code-app-scaffold.prompt.md
+    kind: prompt
+
+  # Power Apps Code Apps Instructions
+  - path: instructions/power-apps-code-apps.instructions.md
+    kind: instruction
+
+  # Power Platform Expert Chat Mode
+  - path: agents/power-platform-expert.agent.md
+    kind: agent
+
+display:
+  ordering: manual
+  show_badge: true

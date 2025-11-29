@@ -1,0 +1,21 @@
+{
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false,
+    "editor.formatOnSave": true
+  },
+  "editor.rulers": [
+    100
+  ],
+  "files.associations": {
+    "*.agent.md": "markdown",
+    "*.chatmode.md": "markdown",
+    "*.instructions.md": "markdown",
+    "*.prompt.md": "markdown"
+  },
+  "yaml.schemas": {
+    "./.schemas/collection.schema.json": "*.collection.yml"
+  }
+}
