@@ -1,6 +1,6 @@
 ---
 description: '智慧型 README.md 產生提示，分析專案文件結構並建立完整的儲存庫說明文件。會掃描 .github/copilot 目錄下的檔案及 copilot-instructions.md，萃取專案資訊、技術堆疊、架構、開發流程、程式標準與測試方法，並產生結構良好、格式正確、具交叉參照且以開發者為主的 Markdown 文件。'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # README 產生器提示

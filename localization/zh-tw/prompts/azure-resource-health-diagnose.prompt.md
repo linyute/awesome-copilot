@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '分析 Azure 資源健康狀態，診斷日誌與遙測問題，並針對發現的問題建立修復計畫。'
 ---
 

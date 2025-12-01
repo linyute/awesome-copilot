@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: '使用官方 io.modelcontextprotocol:kotlin-sdk 函式庫，產生一個具有適當結構、依賴項和實作的完整 Kotlin MCP 伺服器專案。'
 ---
 

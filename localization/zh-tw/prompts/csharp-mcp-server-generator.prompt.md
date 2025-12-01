@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '使用工具、提示和正確配置生成完整的 C# MCP 伺服器專案'
 ---
 

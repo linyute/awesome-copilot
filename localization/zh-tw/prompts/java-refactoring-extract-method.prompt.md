@@ -1,6 +1,6 @@
 ---
 title: 'Refactoring Java Methods with Extract Method'
-mode: 'agent'
+agent: 'agent'
 description: '使用 Java 語言中的提取方法進行重構'
 ---
 

@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '分析應用程式所用的 Azure 資源（IaC 檔案及/或目標資源群組中的資源），並最佳化成本——針對發現的最佳化項目建立 GitHub issue。'
 ---
 

@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '根據 llms.txt 規範，依據儲存庫結構從零建立 llms.txt 文件。'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
 ---

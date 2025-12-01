@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '使用工具、資源和適當的配置，在 Python 中建立一個完整的 MCP 伺服器專案'
 ---
 

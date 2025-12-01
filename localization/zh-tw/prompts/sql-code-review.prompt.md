@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems']
 description: '通用 SQL 程式碼審查助手，針對所有 SQL 資料庫（MySQL、PostgreSQL、SQL Server、Oracle）進行全面安全性、可維護性與程式碼品質分析。重點檢查 SQL 注入防護、存取控制、程式標準與反模式偵測。可搭配 SQL 優化 prompt，完整涵蓋開發流程。'
 tested_with: 'GitHub Copilot Chat (GPT-4o) - 2025 年 7 月 20 日驗證'

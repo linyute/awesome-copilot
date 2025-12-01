@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '確保 .NET/C# 程式碼符合本解決方案/專案的最佳實踐。'
 ---
 

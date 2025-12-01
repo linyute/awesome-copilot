@@ -1,6 +1,6 @@
 ---
 description: '技術中立的藍圖產生器，用於建立完整的 copilot-instructions.md 文件，指引 GitHub Copilot 產生符合專案標準、架構模式與精確技術版本的程式碼，方法是分析現有程式碼庫模式並避免假設。'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # Copilot 指令藍圖產生器

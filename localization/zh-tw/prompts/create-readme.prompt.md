@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '為專案建立 README.md 文件'
 ---
 

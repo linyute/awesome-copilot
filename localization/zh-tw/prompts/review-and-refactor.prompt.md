@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '依照定義指令審查並重構專案程式碼'
 ---
 

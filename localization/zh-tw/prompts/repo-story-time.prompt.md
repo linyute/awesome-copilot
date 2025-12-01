@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '根據提交紀錄產生完整的儲存庫摘要與敘事故事'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'githubRepo', 'runCommands', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection']
 ---

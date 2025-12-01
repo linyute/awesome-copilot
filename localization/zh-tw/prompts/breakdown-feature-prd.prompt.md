@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '針對新功能產生產品需求文件（PRD）的提示，根據 Epic 內容。'
 ---
 

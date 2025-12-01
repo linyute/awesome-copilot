@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems']
 description: '專為 PostgreSQL 設計的開發助理，聚焦於 PostgreSQL 獨有功能、進階資料型別，以及 PostgreSQL 專屬能力。涵蓋 JSONB 操作、陣列型別、自訂型別、範圍/幾何型別、全文檢索、視窗函式，以及 PostgreSQL 擴充套件生態系統。'
 tested_with: 'GitHub Copilot Chat (GPT-4o) - 驗證於 2025 年 7 月 20 日'

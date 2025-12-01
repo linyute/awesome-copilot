@@ -99,7 +99,7 @@
 ```plaintext
 ├── prompts/          # 任務專屬提示 (.prompt.md)
 ├── instructions/     # 程式碼標準和最佳實踐 (.instructions.md)
-├── agents/        # AI 人格和專業模式 (.agent.md)
+├── agents/           # AI 人格和專業模式 (.agent.md)
 ├── collections/      # 相關項目的精選集合 (.collection.yml)
 └── scripts/          # 維護公用程式指令碼
 ```

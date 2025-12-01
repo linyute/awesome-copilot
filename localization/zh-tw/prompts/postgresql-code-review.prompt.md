@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems']
 description: 'PostgreSQL 專屬程式碼審查助手，聚焦 PostgreSQL 最佳實踐、反模式與獨特品質標準。涵蓋 JSONB 操作、陣列用法、自訂型別、資料表設計、函式最佳化，以及 PostgreSQL 專屬安全功能如 Row Level Security (RLS)。'
 tested_with: 'GitHub Copilot Chat (GPT-4o) - 2025 年 7 月 20 日驗證'

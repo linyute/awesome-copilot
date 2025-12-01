@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems', 'search']
 description: '取得 XUnit 單元測試最佳實踐，包括資料驅動測試'
 ---

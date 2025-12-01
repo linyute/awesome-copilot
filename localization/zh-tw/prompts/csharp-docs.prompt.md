@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems']
 description: '確保 C# 類型使用 XML 註解進行文件化，並遵循文件化的最佳實踐。'
 ---

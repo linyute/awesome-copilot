@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '系統化的 Power BI 效能疑難排解提示，用於識別、診斷和解決 Power BI 模型、報表和查詢中的效能問題。'
 model: 'gpt-4.1'
 tools: ['microsoft.docs.mcp']

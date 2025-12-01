@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '使用 AI 代理程式的角色來潤飾提示，以供終端使用者使用。'
 tools: ['edit/editFiles']
 ---

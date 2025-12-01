@@ -1,6 +1,6 @@
 ---
 description: '使用 Playwright MCP 自動填寫表單'
-mode: 'agent'
+agent: 'agent'
 tools: ['playwright']
 model: 'Claude Sonnet 4'
 ---

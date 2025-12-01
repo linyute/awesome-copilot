@@ -46,7 +46,7 @@ description: '用於為特定技術和實踐客製化 GitHub Copilot 行為的�
 
 ```markdown
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['search/codebase', 'terminalCommand']
 description: '此提示功能的簡要描述'
 ---

@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '建立 Spring Boot Java 專案骨架'
 ---
 

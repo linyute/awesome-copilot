@@ -1,6 +1,6 @@
 ---
 description: '技術中立的提示產生器，可建立可自訂的 AI 提示以掃描程式碼庫並找出高品質程式碼範例。支援多種程式語言（.NET、Java、JavaScript、TypeScript、React、Angular、Python），可調整分析深度、分類方式與文件格式，協助建立程式標準並維持團隊一致性。'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # 程式碼範例藍圖產生器

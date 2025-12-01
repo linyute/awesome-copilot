@@ -1,6 +1,6 @@
 ---
 description: '使用 PAC CLI 設定、SDK 整合和連接器組態，建立一個完整的 Power Apps Code App 專案'
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems', 'search']
 model: GPT-4.1
 ---

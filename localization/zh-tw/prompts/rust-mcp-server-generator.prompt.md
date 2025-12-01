@@ -1,7 +1,7 @@
 ---
 name: rust-mcp-server-generator
 description: '使用官方 rmcp SDK 產生一個完整的 Rust 模型上下文協定伺服器專案，包含工具、提示、資源和測試'
-mode: agent
+agent: agent
 ---
 
 # Rust MCP 伺服器產生器

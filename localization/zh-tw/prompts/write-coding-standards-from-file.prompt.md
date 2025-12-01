@@ -1,5 +1,5 @@
 ---
-mode: "agent"
+agent: "agent"
 description: "撰寫一個程式碼標準文件，該文件使用作為參數傳遞給提示的檔案和/或資料夾中的程式碼樣式。"
 tools: ['createFile', 'editFiles', 'fetch', 'githubRepo', 'search', 'testFailure']
 ---

@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '針對新 Epic 產生 Epic 產品需求文件（PRD）的提示。此 PRD 將作為產生技術架構規格的輸入。'
 ---
 

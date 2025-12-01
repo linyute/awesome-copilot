@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '逐步指南，用於捕獲 NoSQL 用例的關鍵應用程式需求，並使用最佳實踐和常見模式生成 Azure Cosmos DB 資料 NoSQL 模型設計，產生的文件：「cosmosdb_requirements.md」檔案和「cosmosdb_data_model.md」檔案'
 model: 'Claude Sonnet 4'
 ---

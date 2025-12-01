@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['search/codebase']
 description: '為任意語言或框架建立最佳化的多階段 Dockerfile'
 ---

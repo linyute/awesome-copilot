@@ -1,6 +1,6 @@
 ---
 description: '將此 Python 指令稿轉換為完善且適合初學者的專案，重構程式碼、加入清楚的教學註解，並產生完整的 markdown 指南。'
-mode: 'agent'
+agent: 'agent'
 ---
 
 請將此 Python 指令稿轉換為完善且適合初學者的專案，重構程式碼、加入清楚的教學註解，並產生完整的 markdown 指南。

@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '議題規劃與自動化提示，產生具 Epic > Feature > Story/Enabler > Test 層級、依賴、優先順序與自動追蹤的完整專案規劃。'
 ---
 

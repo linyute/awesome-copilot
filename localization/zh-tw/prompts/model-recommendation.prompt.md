@@ -1,6 +1,6 @@
 ---
 description: "分析聊天模式或提示檔案，並根據任務複雜度、所需功能和成本效益推薦最佳 AI 模型"
-mode: "agent"
+agent: "agent"
 tools:
   - "search/codebase"
   - "fetch"

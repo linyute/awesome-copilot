@@ -1,6 +1,6 @@
 ---
 description: '技術無關的專案資料夾結構分析與文件產生器，能自動偵測專案型態（.NET、Java、React、Angular、Python、Node.js、Flutter），產生詳細藍圖，包含視覺化選項、命名慣例、檔案放置模式與擴充範本，協助多種技術棧維持一致的程式碼組織。'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # 專案資料夾結構藍圖產生器

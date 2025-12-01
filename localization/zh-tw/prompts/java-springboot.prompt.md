@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems', 'search']
 description: '取得 Spring Boot 應用程式開發最佳實踐。'
 ---

@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '透過在隨機化項目之前驗證結構描述一致性，安全地隨機排列重複的 JSON 物件。'
 tools: ['edit/editFiles', 'runCommands/runInTerminal', 'pylanceRunCodeSnippet']
 ---

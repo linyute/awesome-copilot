@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '針對詳細功能實作計畫的提示，遵循 Epoch monorepo 結構。'
 ---
 

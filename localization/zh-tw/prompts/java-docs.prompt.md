@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems']
 description: '確保 Java 型別皆有 Javadoc 註解，並遵循最佳文件化實踐。'
 ---

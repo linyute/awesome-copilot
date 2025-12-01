@@ -1,6 +1,6 @@
 ---
 description: '使用官方 MCP Ruby SDK gem 在 Ruby 中建立一個完整的模型上下文協定伺服器專案。'
-mode: agent
+agent: agent
 ---
 
 # Ruby MCP 伺服器產生器

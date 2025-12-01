@@ -1,6 +1,6 @@
 ---
 description: 產生完整的 Power Platform 自訂連接器，並整合 MCP 以用於 Copilot Studio - 包括架構產生、疑難排解和驗證
-mode: agent
+agent: agent
 ---
 
 # Power Platform MCP 連接器套件

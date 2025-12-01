@@ -1,6 +1,6 @@
 ---
 title: 'Refactoring Java Methods with Remove Parameter'
-mode: 'agent'
+agent: 'agent'
 description: '使用 Java 語言中的移除參數進行重構'
 ---
 

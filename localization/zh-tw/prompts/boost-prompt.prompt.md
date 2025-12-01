@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '互動式提示優化工作流程：反覆詢問範疇、交付成果、限制條件；將最終 markdown 複製到剪貼簿；絕不撰寫程式碼。需安裝 Joyride 擴充套件。'
 ---
 

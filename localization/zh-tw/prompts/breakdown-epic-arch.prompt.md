@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '針對 Epic，根據產品需求文件產生高階技術架構的提示。'
 ---
 

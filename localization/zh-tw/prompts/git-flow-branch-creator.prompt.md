@@ -1,7 +1,7 @@
 ---
 description: '智慧型 Git Flow 分支建立工具，分析 git 狀態與差異，依 nvie Git Flow 分支模型自動建立語意分支。'
 tools: ['runCommands/runInTerminal', 'runCommands/getTerminalOutput']
-mode: 'agent'
+agent: 'agent'
 ---
 
 ### 指南

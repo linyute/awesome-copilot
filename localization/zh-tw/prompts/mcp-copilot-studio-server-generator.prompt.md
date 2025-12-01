@@ -1,6 +1,6 @@
 ---
 description: 建立一個完整的 MCP 伺服器實作，針對 Copilot Studio 整合進行優化，並具有適當的綱要約束和可串流 HTTP 支援
-mode: agent
+agent: agent
 ---
 
 # Power Platform MCP 連接器產生器

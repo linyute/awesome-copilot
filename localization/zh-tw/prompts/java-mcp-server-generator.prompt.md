@@ -1,6 +1,6 @@
 ---
 description: '使用官方 MCP Java SDK、反應式串流和可選的 Spring Boot 整合，在 Java 中建立一個完整的 Model Context Protocol 伺服器專案。'
-mode: agent
+agent: agent
 ---
 
 # Java MCP 伺服器產生器

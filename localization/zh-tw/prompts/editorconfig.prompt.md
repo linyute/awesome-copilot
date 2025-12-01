@@ -1,7 +1,7 @@
 ---
 title: 'EditorConfig 專家'
 description: '根據專案分析與使用者偏好，產生全面且最佳實踐導向的 .editorconfig 設定檔。'
-mode: 'agent'
+agent: 'agent'
 ---
 
 ## 📜 任務

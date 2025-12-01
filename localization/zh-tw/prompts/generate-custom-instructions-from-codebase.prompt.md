@@ -1,6 +1,6 @@
 ---
 description: 'GitHub Copilot 的遷移與程式碼演進指令產生器。分析兩個專案版本（分支、提交或發行版）之間的差異，產生精確指令，協助 Copilot 在技術遷移、大型重構或框架升級時維持一致性。'
-mode: 'agent'
+agent: 'agent'
 ---
 
 # 遷移與程式碼演進指令產生器

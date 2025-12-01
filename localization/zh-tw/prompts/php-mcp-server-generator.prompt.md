@@ -1,6 +1,6 @@
 ---
 description: '使用官方 PHP SDK 產生一個完整的 PHP 模型內容協定伺服器專案，包含工具、資源、提示和測試'
-mode: agent
+agent: agent
 ---
 
 # PHP MCP 伺服器產生器

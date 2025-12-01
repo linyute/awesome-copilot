@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '檢查 C#/.NET 程式碼設計模式實作並提出改進建議。'
 ---
 

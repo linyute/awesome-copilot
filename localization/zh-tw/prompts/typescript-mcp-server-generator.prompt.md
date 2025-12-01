@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '在 TypeScript 中產生一個完整的 MCP 伺服器專案，包含工具、資源和適當的組態。'
 ---
 

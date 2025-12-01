@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '測試規劃與品質保證提示，產生完整測試策略、任務分解與品質驗證計畫，適用於 GitHub 專案管理。'
 ---
 

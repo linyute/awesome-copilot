@@ -1,6 +1,6 @@
 ---
 description: "用於為儲存庫生成 AGENTS.md 檔案的提示"
-mode: "agent"
+agent: "agent"
 ---
 
 # 建立高品質的 AGENTS.md 檔案

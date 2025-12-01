@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '用於改進 DAX 計算的效能、可讀性和可維護性的綜合性 Power BI DAX 公式最佳化提示。'
 model: 'gpt-4.1'
 tools: ['microsoft.docs.mcp']

@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '用於評估模型架構、關係和最佳化機會的綜合性 Power BI 資料模型設計檢閱提示。'
 model: 'gpt-4.1'
 tools: ['microsoft.docs.mcp']

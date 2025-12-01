@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems', 'search']
 description: '取得使用 Spring Boot 與 Kotlin 開發應用程式的最佳實踐。'
 ---

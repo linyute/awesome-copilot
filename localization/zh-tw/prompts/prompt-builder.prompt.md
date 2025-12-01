@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['search/codebase', 'edit/editFiles', 'search']
 description: '引導使用者建立高品質 GitHub Copilot 提示，包含正確結構、工具與最佳實踐。'
 ---

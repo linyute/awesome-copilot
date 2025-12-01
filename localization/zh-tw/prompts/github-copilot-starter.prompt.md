@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 model: Claude Sonnet 4
 tools: ['edit', 'githubRepo', 'changes', 'problems', 'search', 'runCommands', 'fetch']
 description: '根據技術堆疊為新專案設定完整的 GitHub Copilot 配置'
@@ -211,7 +211,7 @@ applyTo: "**/*.ts,**/*.tsx"
 **提示 (.prompt.md)：**
 ```yaml
 ---
-mode: 'agent'
+agent: 'agent'
 model: Claude Sonnet 4
 tools: ['githubRepo', 'search/codebase']
 description: '產生新的 React 表單元件'

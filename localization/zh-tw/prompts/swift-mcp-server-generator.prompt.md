@@ -1,6 +1,6 @@
 ---
 description: '使用官方 MCP Swift SDK 套件，在 Swift 中產生完整的模型上下文協定伺服器專案。'
-mode: agent
+agent: agent
 ---
 
 # Swift MCP 伺服器產生器

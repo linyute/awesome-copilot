@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '建立 Spring Boot Kotlin 專案骨架'
 ---
 

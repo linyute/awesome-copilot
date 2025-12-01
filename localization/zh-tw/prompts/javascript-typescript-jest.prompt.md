@@ -1,6 +1,6 @@
 ---
 description: '使用 Jest 撰寫 JavaScript/TypeScript 測試的最佳實踐，包括模擬策略、測試結構與常見模式。'
-mode: 'agent'
+agent: 'agent'
 ---
 
 ### 測試結構

@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'problems']
 description: '通用 SQL 效能最佳化助理，針對所有 SQL 資料庫（MySQL、PostgreSQL、SQL Server、Oracle）提供查詢調校、索引策略與資料庫效能分析。涵蓋執行計畫分析、分頁最佳化、批次操作與效能監控指引。'
 tested_with: 'GitHub Copilot Chat (GPT-4o) - 驗證於 2025 年 7 月 20 日'

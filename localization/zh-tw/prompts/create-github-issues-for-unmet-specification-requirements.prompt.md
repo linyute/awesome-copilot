@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: '針對規格文件中尚未實作的需求，使用 feature_request.yml 樣板建立 GitHub Issue。'
 tools: ['search/codebase', 'search', 'github', 'create_issue', 'search_issues', 'update_issue']
 ---

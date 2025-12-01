@@ -1,5 +1,5 @@
 ---
-mode: 'agent'
+agent: 'agent'
 description: 'Power BI 報表視覺化設計提示，用於建立有效、使用者友善且易於存取的報表，並具有最佳圖表選擇和版面配置設計。'
 model: 'gpt-4.1'
 tools: ['microsoft.docs.mcp']

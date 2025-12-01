@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: '使用官方的 github.com/modelcontextprotocol/go-sdk 建立一個具有適當結構、依賴項和實作的完整 Go MCP 伺服器專案。'
 ---
 
