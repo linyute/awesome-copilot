@@ -23,7 +23,7 @@
 | 名稱 | 描述 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |
 | [Awesome Copilot](collections/awesome-copilot.md) | 協助您發現和產生精選 GitHub Copilot 聊天模式、集合、指令、提示和代理程式的元提示。 | 6 個項目  | github-copilot, discovery, meta, prompt-engineering, agents                                                   |
-| [Partners](collections/partners.md)               | 由 GitHub 合作夥伴建立的自訂代理程式                                               | 17 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
+| [Partners](collections/partners.md)               | 由 GitHub 合作夥伴建立的自訂代理程式                                               | 19 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
 
 
 ## MCP 伺服器
