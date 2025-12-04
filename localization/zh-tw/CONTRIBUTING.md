@@ -151,7 +151,7 @@ items:
       ```markdown, task-plan.prompt.md
       ---
       mode: task-planner
-      title: Plan microsoft fabric realtime intelligence terraform support
+      name: Plan microsoft fabric realtime intelligence terraform support
       ---
       #file: <file including in chat context>
       Do an action to achieve goal.

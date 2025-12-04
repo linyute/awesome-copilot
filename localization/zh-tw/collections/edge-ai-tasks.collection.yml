@@ -12,7 +12,7 @@ items:
       ```markdown, research.prompt.md
       ---
       mode: task-researcher
-      title: 研究 microsoft fabric 即時智慧 terraform 支援
+      name: 研究 microsoft fabric 即時智慧 terraform 支援
       ---
       檢閱 microsoft fabric 即時智慧的文件
       並提出如何將此支援實作到我們的 terraform 元件中的想法。
@@ -30,7 +30,7 @@ items:
       ```markdown, task-plan.prompt.md
       ---
       mode: task-planner
-      title: 規劃 microsoft fabric 即時智慧 terraform 支援
+      name: 規劃 microsoft fabric 即時智慧 terraform 支援
       ---
       #file: .copilot-tracking/research/*-fabric-rti-blueprint-modification-research.md
       建立一個計劃以支援將 fabric rti 新增到此專案
@@ -63,7 +63,7 @@ items:
       ```markdown, implement-fabric-rti-changes.prompt.md
       ---
       mode: agent
-      title: 實作 microsoft fabric 即時智慧 terraform 支援
+      name: 實作 microsoft fabric 即時智慧 terraform 支援
       ---
       /implement-fabric-rti-blueprint-modification phaseStop=true
       ```

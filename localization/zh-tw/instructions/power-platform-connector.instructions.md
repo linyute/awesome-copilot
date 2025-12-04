@@ -1,5 +1,5 @@
 ---
-title: Power Platform 連接器結構描述開發說明
+name: Power Platform 連接器結構描述開發說明
 description: 'Power Platform 自訂連接器使用 JSON 結構描述定義的綜合開發指南。涵蓋 API 定義 (Swagger 2.0)、API 屬性和使用 Microsoft 擴充功能的設定組態。'
 applyTo: '**/*.{json,md}'
 ---

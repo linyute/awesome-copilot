@@ -18,7 +18,7 @@ tools: ['search/codebase', 'edit/editFiles', 'search', 'runCommands', 'runTasks'
 ```markdown, upgrade-analysis.prompt.md
 ---
 mode: dotnet-upgrade
-title: 分析當前的 .NET 框架版本並建立升級計畫
+name: 分析當前的 .NET 框架版本並建立升級計畫
 ---
 分析儲存庫並列出每個專案的當前 TargetFramework 
 以及 Microsoft 發布排程中可用的最新 LTS 版本。

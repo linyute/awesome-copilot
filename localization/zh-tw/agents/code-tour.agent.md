@@ -1,6 +1,6 @@
 ---
 description: '用於建立和維護 VSCode CodeTour 檔案的專家代理，具有全面的結構描述支援和最佳實踐'
-title: 'VSCode Tour 專家 🗺️'
+name: 'VSCode Tour 專家 🗺️'
 ---
 
 # VSCode Tour 專家 🗺️

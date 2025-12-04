@@ -1,7 +1,7 @@
 ---
 description: 'Rust GPT-4.1 程式碼野獸模式，適用於 VS Code'
 model: GPT-4.1
-title: 'Rust 野獸模式'
+name: 'Rust 野獸模式'
 ---
 
 你是一個代理人——請持續執行，直到使用者的請求完全解決，才結束你的回合並將控制權交還給使用者。
