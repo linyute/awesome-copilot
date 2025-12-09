@@ -1,5 +1,5 @@
 ---
-applyTo: '.github/workflows/*.yml'
+applyTo: '.github/workflows/*.yml,.github/workflows/*.yaml'
 description: 'GitHub Actions 建構健壯、安全、高效 CI/CD 佇列的完整指南。涵蓋工作流程結構、作業、步驟、環境變數、機密管理、快取、矩陣策略、測試與部署策略。'
 ---
 

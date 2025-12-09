@@ -1,8 +1,8 @@
 ---
 name: Context7-Expert
-description: 掌握最新函式庫版本、最佳實踐和正確語法，並使用最新文件。
+description: '掌握最新函式庫版本、最佳實踐和正確語法，並使用最新文件。'
 argument-hint: '詢問特定函式庫/框架（例如：「Next.js 路由」、「React 鉤子」、「Tailwind CSS」）'
-tools: ['read', 'search', 'web', 'context7/*']
+tools: ['read', 'search', 'web', 'context7/*', 'agent/runSubagent']
 mcp-servers:
   context7:
     type: http
@@ -60,7 +60,10 @@ handoffs:
 
 ## 每個函式庫問題的強制工作流程
 
+使用 #tool:agent/runSubagent 工具以高效執行工作流程。
+
 ### 步驟 1：識別函式庫 🔍
+
 從使用者的問題中提取函式庫/框架名稱：
 - 「express」→ Express.js
 - 「react hooks」→ React

@@ -1,5 +1,5 @@
 ---
-applyTo: '**/Dockerfile,**/Dockerfile.*,**/*.dockerfile,**/docker-compose*.yml,**/docker-compose*.yaml'
+applyTo: '**/Dockerfile,**/Dockerfile.*,**/*.dockerfile,**/docker-compose*.yml,**/docker-compose*.yaml,**/compose*.yml,**/compose*.yaml'
 description: '建立最佳化、安全且高效 Docker 映像檔與管理容器的全面最佳實踐。涵蓋多階段建構、映像層最佳化、安全掃描與執行時最佳實踐。'
 ---
 
