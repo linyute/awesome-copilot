@@ -1,0 +1,42 @@
+id: software-engineering-team
+name: 軟體工程團隊
+description: 7 個專精代理人涵蓋從使用者體驗設計與架構到安全與 DevOps 的整個軟體開發生命週期。
+tags: [team, enterprise, security, devops, ux, architecture, product, ai-ethics]
+items:
+  - path: agents/se-ux-ui-designer.agent.md
+    kind: agent
+    usage: |
+      ## 關於此集合
+
+      這個由 7 個代理人組成的集合，基於 Microsoft 的實驗與經驗（例如 [The AI-Native Engineering Flow](https://medium.com/data-science-at-microsoft/the-ai-native-engineering-flow-5de5ffd7d877)），設計用來在整個開發生命週期中支援軟體工程團隊。
+
+      **主要設計原則：**
+      - **獨立運作**：每個代理人可獨立工作，彼此無相依性
+      - **企業就緒**：整合 OWASP、Zero Trust、WCAG 與 Well-Architected 等框架
+      - **涵蓋生命週期**：從使用者體驗研究 → 架構 → 開發 → 安全 → 到 DevOps
+
+      **此集合中的代理人：**
+      - **SE：UX 設計師** - Jobs-to-be-Done 分析與使用者旅程對應
+      - **SE：技術寫手** - 技術文件、部落格、架構決策紀錄 (ADR)、使用者指南
+      - **SE：DevOps/CI** - CI/CD 偵錯與部署故障排除
+      - **SE：產品經理** - 帶有商業背景與接受準則的 GitHub issue
+      - **SE：負責任 AI** - 偏差測試、無障礙（WCAG）與倫理開發
+      - **SE：架構師** - 依照 Well-Architected 框架進行架構審查
+      - **SE：安全審查員** - OWASP Top 10、LLM/ML 安全與 Zero Trust
+
+      你可以視需求使用單一代理人，或採用整個集合來全面擴充團隊能力。
+  - path: agents/se-technical-writer.agent.md
+    kind: agent
+  - path: agents/se-gitops-ci-specialist.agent.md
+    kind: agent
+  - path: agents/se-product-manager-advisor.agent.md
+    kind: agent
+  - path: agents/se-responsible-ai-code.agent.md
+    kind: agent
+  - path: agents/se-system-architecture-reviewer.agent.md
+    kind: agent
+  - path: agents/se-security-reviewer.agent.md
+    kind: agent
+display:
+  ordering: manual
+  show_badge: true

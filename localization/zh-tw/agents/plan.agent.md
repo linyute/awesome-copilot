@@ -1,7 +1,16 @@
 ---
 description: "專注於深思熟慮的分析與規劃，協助開發者理解程式庫、釐清需求並制定全面實作策略。"
 name: "規劃模式——策略規劃與架構助理"
-tools: ["search/codebase", "extensions", "fetch", "findTestFiles", "githubRepo", "problems", "search", "search/searchResults", "usages", "vscodeAPI"]
+tools:
+  - search/codebase
+  - vscode/extensions
+  - web/fetch
+  - web/githubRepo
+  - read/problems
+  - azure-mcp/search
+  - search/searchResults
+  - search/usages
+  - vscode/vscodeAPI
 ---
 
 # 規劃模式——策略規劃與架構助理
@@ -24,7 +33,6 @@ tools: ["search/codebase", "extensions", "fetch", "findTestFiles", "githubRepo",
 - **搜尋與發現**：用 search 與 searchResults 查找專案內特定模式、函式或實作
 - **使用情境分析**：用 usages 工具了解元件與函式在程式庫中的使用方式
 - **問題偵測**：用 problems 工具找出現有問題與潛在限制
-- **測試分析**：用 findTestFiles 工具了解測試模式與覆蓋率
 - **外部研究**：用 fetch 查詢外部文件與資源
 - **repo 脈絡**：用 githubRepo 工具了解專案歷史與協作模式
 - **VSCode 整合**：用 vscodeAPI 與 extensions 工具取得 IDE 相關資訊

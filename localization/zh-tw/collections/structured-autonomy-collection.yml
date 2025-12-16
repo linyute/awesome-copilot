@@ -1,6 +1,6 @@
 id: structured-autonomy
-name: Structured Autonomy
-description: "高階規劃，精省實作"
+name: 結構化自主
+description: "優質規劃，節儉實作"
 tags: [prompt-engineering, planning, agents]
 items:
   - path: prompts/structured-autonomy-plan.prompt.md

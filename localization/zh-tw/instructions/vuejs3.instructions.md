@@ -101,7 +101,7 @@ applyTo: '**/*.vue, **/*.ts, **/*.js, **/*.scss'
 - 麵包屑資料用 route meta 欄位
 
 ### 測試
-- 元件單元測試用 Vue Test Utils 與 Jest
+- 元件單元測試用 Vue Test Utils 與 Vitest
 - 聚焦行為而非實作細節
 - 用 `mount`、`shallowMount` 隔離元件
 - 全域插件（router、Pinia）可 mock
