@@ -1,7 +1,7 @@
 ---
 description: "為新功能或現有程式碼重構產生實作計畫。"
 name: "實作計畫產生模式"
-tools: ["search/codebase", "usages", "vscodeAPI", "think", "problems", "changes", "testFailure", "runCommands/terminalSelection", "runCommands/terminalLastCommand", "openSimpleBrowser", "fetch", "findTestFiles", "search/searchResults", "githubRepo", "extensions", "edit/editFiles", "runNotebooks", "search", "new", "runCommands", "runTasks"]
+tools: ["search/codebase", "search/usages", "vscode/vscodeAPI", "think", "read/problems", "search/changes", "execute/testFailure", "read/terminalSelection", "read/terminalLastCommand", "vscode/openSimpleBrowser", "web/fetch", "findTestFiles", "search/searchResults", "web/githubRepo", "vscode/extensions", "edit/editFiles", "execute/runNotebookCell", "read/getNotebookSummary", "read/readNotebookCellOutput", "search", "vscode/getProjectSetupInfo", "vscode/installExtension", "vscode/newWorkspace", "vscode/runCommand", "execute/getTerminalOutput", "execute/runInTerminal", "execute/createAndRunTask", "execute/getTaskOutput", "execute/runTask"]
 ---
 
 # 實作計畫產生模式

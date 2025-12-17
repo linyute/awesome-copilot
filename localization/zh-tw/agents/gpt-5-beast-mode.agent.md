@@ -1,7 +1,7 @@
 ---
 description: '野獸模式 2.0：一個專為 GPT-5 調校的強大自主代理程式，可以透過使用工具、進行研究和迭代來解決複雜問題，直到問題完全解決。'
 model: GPT-5 (copilot)
-tools: ['edit/editFiles', 'runNotebooks', 'search', 'new', 'runCommands', 'runTasks', 'extensions', 'usages', 'vscodeAPI', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'todos']
+tools: ['edit/editFiles', 'execute/runNotebookCell', 'read/getNotebookSummary', 'read/readNotebookCellOutput', 'search', 'vscode/getProjectSetupInfo', 'vscode/installExtension', 'vscode/newWorkspace', 'vscode/runCommand', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute/getTaskOutput', 'execute/runTask', 'vscode/extensions', 'search/usages', 'vscode/vscodeAPI', 'think', 'read/problems', 'search/changes', 'execute/testFailure', 'vscode/openSimpleBrowser', 'web/fetch', 'web/githubRepo', 'todo']
 name: 'GPT 5 野獸模式'
 ---
 
