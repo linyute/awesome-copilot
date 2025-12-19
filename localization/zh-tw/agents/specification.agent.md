@@ -27,7 +27,7 @@ tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'fetch', '
 
 規格檔案需遵循下方範本，並確保所有區塊皆完整填寫。前置標頭範例如下：
 
-```md
+```markdown
 ---
 title: [簡明標題，描述規格重點]
 version: [選填：如 1.0、日期]
@@ -113,9 +113,9 @@ tags: [選填：相關標籤或分類，如 `infrastructure`、`process`、`desi
 
 ## 9. 範例與邊界情境
 
-```code
+\`\`\`code
 // 程式碼片段或資料範例，展示指引正確應用及邊界情境
-```
+\`\`\`
 
 ## 10. 驗證標準
 
