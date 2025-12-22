@@ -161,14 +161,26 @@ function parseSkillMetadata(skillPath) {
         return null;
       }
 
-      // 列出捆綁資產 (除了 SKILL.md 之外的所有檔案)
-      const assets = fs
-        .readdirSync(skillPath)
-        .filter((file) => {
-          const filePath = path.join(skillPath, file);
-          return file !== "SKILL.md" && fs.statSync(filePath).isFile();
-        })
-        .sort();
+      // 列出捆綁的資產（所有檔案，除 SKILL.md 外），遞迴遍歷子目錄
+      const getAllFiles = (dirPath, arrayOfFiles = []) => {
+        const files = fs.readdirSync(dirPath);
+
+        files.forEach((file) => {
+          const filePath = path.join(dirPath, file);
+          if (fs.statSync(filePath).isDirectory()) {
+            arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
+          } else {
+            const relativePath = path.relative(skillPath, filePath);
+            if (relativePath !== "SKILL.md") {
+              arrayOfFiles.push(relativePath);
+            }
+          }
+        });
+
+        return arrayOfFiles;
+      };
+
+      const assets = getAllFiles(skillPath).sort();
 
       return {
         name: frontmatter.name,
