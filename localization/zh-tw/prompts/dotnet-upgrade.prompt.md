@@ -1,7 +1,6 @@
 ---
 name: ".NET 升級分析提示"
 description: "用於全面 .NET 框架升級分析和執行的即用型提示"
-prompts:
 ---
 
   # 專案探索與評估

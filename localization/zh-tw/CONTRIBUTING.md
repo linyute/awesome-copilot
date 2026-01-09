@@ -103,6 +103,15 @@ tools: ['search/codebase', 'terminalCommand']
 - [要遵循的最佳實踐]
 ```
 
+### 新增技能
+
+技能是位於 `skills/` 目錄中的獨立資料夾，其中包含 `SKILL.md` 檔案（帶有 front matter）和選用的配套資產。
+
+1. **建立新的技能資料夾**：執行 `npm run skill:create -- --name <skill-name> --description "<skill description>"`
+2. **編輯 `SKILL.md`**：確保 `name` 與資料夾名稱相符（小寫且帶有連字號），且 `description` 清晰且非空白
+3. **新增選用資產**：保持配套資產大小在合理範圍內（每個檔案小於 5MB），並在 `SKILL.md` 中引用它們
+4. **驗證並更新文件**：執行 `npm run skill:validate` 然後執行 `npm run build` 以更新產生的 README 表格
+
 ### 新增集合
 
 集合將相關的提示、指令和聊天模式圍繞特定主題或工作流程分組，讓使用者更容易發現和採用全面的工具包。
