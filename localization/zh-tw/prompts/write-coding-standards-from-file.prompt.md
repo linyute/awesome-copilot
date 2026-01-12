@@ -169,6 +169,7 @@ tools: ['createFile', 'editFiles', 'fetch', 'githubRepo', 'search', 'testFailure
 - [Angular Style Guide](https://angular.dev/style-guide)
 - [Vue Style Guide](https://vuejs.org/style-guide/rules-strongly-recommended.html)
 - [Django Style Guide](https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/)
+- [SystemVerilog Style Guide](https://github.com/lowRISC/style-guides/blob/master/VerilogCodingStyle.md)
 
 ## 程式碼標準範本
 

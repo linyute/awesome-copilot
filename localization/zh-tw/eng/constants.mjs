@@ -19,7 +19,7 @@ const TEMPLATES = {
 
 **使用/應用方式：**
 - 將這些指示複製到您工作區中的 \`.github/copilot-instructions.md\` 檔案
-- 在您工作區的 \`.github/instructions\` 資料夾中建立任務特定的 \`.github/.instructions.md\` 檔案
+- 在您工作區的 \`.github/instructions/\` 資料夾中建立任務特定的 \`*.instructions.md\` 檔案 (例如 \`.github/instructions/my-csharp-rules.instructions.md\`)
 - 指示一旦安裝到您的工作區，就會自動應用於 Copilot 的行為`,
 
   promptsSection: `## 🎯 可重複使用的提示

@@ -1,0 +1,16 @@
+id: typespec-m365-copilot
+name: 適用於 Microsoft 365 Copilot 的 TypeSpec
+description: 使用 TypeSpec 進行 Microsoft 365 Copilot 延展性開發，建置宣告式代理程式與 API 外掛程式的提示字元、指示與資源完整收藏。
+tags: [typespec, m365-copilot, declarative-agents, api-plugins, agent-development, microsoft-365]
+items:
+  - path: prompts/typespec-create-agent.prompt.md
+    kind: prompt
+  - path: prompts/typespec-create-api-plugin.prompt.md
+    kind: prompt
+  - path: prompts/typespec-api-operations.prompt.md
+    kind: prompt
+  - path: instructions/typespec-m365-copilot.instructions.md
+    kind: instruction
+display:
+  ordering: manual
+  show_badge: true

@@ -1,7 +1,7 @@
 ---
 name: sa-plan
 description: 結構化自主規劃提示
-model: Claude Sonnet 4.5 (copilot)]
+model: Claude Sonnet 4.5 (copilot)
 agent: agent
 ---
 

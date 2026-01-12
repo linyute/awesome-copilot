@@ -1,0 +1,38 @@
+id: mcp-m365-copilot
+name: 基於 MCP 的 M365 代理程式
+description: 建置整合 Model Context Protocol (MCP) 的 Microsoft 365 Copilot 宣告式代理程式的完整收藏
+tags: [mcp, m365-copilot, declarative-agents, api-plugins, model-context-protocol, adaptive-cards]
+
+display:
+  order: manual
+  show_badge: true
+
+items:
+  - kind: prompt
+    path: prompts/mcp-create-declarative-agent.prompt.md
+  - kind: prompt
+    path: prompts/mcp-create-adaptive-cards.prompt.md
+  - kind: prompt
+    path: prompts/mcp-deploy-manage-agents.prompt.md
+  - kind: instruction
+    path: instructions/mcp-m365-copilot.instructions.md
+  - kind: agent
+    path: agents/mcp-m365-agent-expert.agent.md
+    usage: |
+      建議使用
+
+      此對話模式提供建置 Microsoft 365 Copilot 的 MCP 宣告式代理程式專家指南。
+
+      此對話模式非常適合：
+      - 建立整合 MCP 的新宣告式代理程式
+      - 設計用於視覺化回應的調適型卡片 (Adaptive Cards)
+      - 設定 OAuth 2.0 或 SSO 驗證
+      - 設定回應語義與資料擷取
+      - 疑難排解部署與控管問題
+      - 學習 M365 Copilot 的 MCP 最佳做法
+
+      為了獲得最佳結果，請考慮：
+      - 使用指示檔案為所有 Copilot 互動設定內容
+      - 使用提示字元產生初始代理程式結構與組態
+      - 切換到專家對話模式以獲取詳細的實作協助
+      - 提供有關您的 MCP 伺服器、工具與商業情境的具體詳細資訊

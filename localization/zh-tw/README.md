@@ -14,6 +14,7 @@
 - **👉 [Awesome Agents](docs/README.agents.md)** - 專門的 GitHub Copilot 代理程式，與 MCP 伺服器整合，為特定工作流程和工具提供增強功能
 - **👉 [Awesome Prompts](docs/README.prompts.md)** - 專注於任務的提示，用於產生程式碼、文件和解決特定問題
 - **👉 [Awesome Instructions](docs/README.instructions.md)** - 適用於特定檔案模式或整個專案的全面程式碼標準和最佳實踐
+- **👉 [Awesome Skills](docs/README.skills.md)** - 自包含的資料夾，內含說明與捆綁資源，可增強 AI 在專門任務的能力
 - **👉 [Awesome Collections](docs/README.collections.md)** - 圍繞特定主題和工作流程組織的相關提示、指令和聊天模式的精選集合
 
 ## 🌟 精選集合
@@ -104,6 +105,7 @@
 ├── agents/           # AI 人格和專業模式 (.agent.md)
 ├── collections/      # 相關項目的精選集合 (.collection.yml)
 └── scripts/          # 維護公用程式指令碼
+└── skills/           # 專門任務的 AI 能力
 ```
 
 ## 📄 授權

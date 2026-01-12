@@ -40,9 +40,11 @@
 | [Swift MCP 伺服器開發](../collections/swift-mcp-development.md) | 使用官方 MCP Swift SDK 建立 Swift 模型上下文協定伺服器的綜合集合，支援現代並行功能。 | 3 個項目 | swift, mcp, model-context-protocol, server-development, sdk, ios, macos, concurrency, actor, async-await |
 | [TypeScript MCP 伺服器開發](../collections/typescript-mcp-development.md) | 使用官方 SDK 以 TypeScript/Node.js 建立模型上下文協定 (MCP) 伺服器的完整工具包。包括最佳實踐說明、用於產生伺服器的提示，以及用於指導的專家聊天模式。 | 3 個項目 | typescript, mcp, model-context-protocol, nodejs, server-development |
 | [前端網頁開發](../collections/frontend-web-dev.md) | 現代前端網頁開發的基本提示、指示和聊天模式，包括 React、Angular、Vue、TypeScript 和 CSS 框架。 | 11 個項目 | frontend, web, react, typescript, javascript, css, html, angular, vue |
+| [基於 MCP 的 M365 代理程式](../collections/mcp-m365-copilot.md) | 建置整合 Model Context Protocol (MCP) 的 Microsoft 365 Copilot 宣告式代理程式的完整收藏 | 5 個項目 | mcp, m365-copilot, declarative-agents, api-plugins, model-context-protocol, adaptive-cards |
 | [安全與程式碼品質](../collections/security-best-practices.md) | 安全框架、輔助功能指南、效能優化和程式碼品質最佳實踐，用於建立安全、可維護和高效能的應用程式。 | 6 個項目 | security, accessibility, performance, code-quality, owasp, a11y, optimization, best-practices |
 | [專案規劃與管理](../collections/project-planning.md) | 為開發團隊提供軟體專案規劃、功能分解、史詩管理、實作規劃和任務組織的工具和指導。 | 17 個項目 | planning, project-management, epic, feature, implementation, task, architecture, technical-spike |
 | [技術探究](../collections/technical-spike.md) | 用於建立、管理和研究技術探究的工具，以在進行解決方案的規範和實作之前減少未知數和假設。 | 2 個項目 | technical-spike, assumption-testing, validation, research |
 | [測試與測試自動化](../collections/testing-automation.md) | 用於編寫測試、測試自動化和測試驅動開發的綜合集合，包括單元測試、整合測試和端到端測試策略。 | 11 個項目 | testing, tdd, automation, unit-tests, integration, playwright, jest, nunit |
 | [資料庫與資料管理](../collections/database-data-management.md) | 用於 PostgreSQL、SQL Server 的資料庫管理、SQL 優化和資料管理工具，以及一般資料庫開發最佳實踐。 | 8 個項目 | database, sql, postgresql, sql-server, dba, optimization, queries, data-management |
 | [軟體工程團隊](../collections/software-engineering-team.md) | 7 個專精代理人涵蓋從使用者體驗設計與架構到安全與 DevOps 的整個軟體開發生命週期。 | 7 個項目 | team, enterprise, security, devops, ux, architecture, product, ai-ethics |
+| [適用於 Microsoft 365 Copilot 的 TypeSpec](../collections/typespec-m365-copilot.md) | 使用 TypeSpec 進行 Microsoft 365 Copilot 延展性開發，建置宣告式代理程式與 API 外掛程式的提示字元、指示與資源完整收藏。 | 4 個項目 | typespec, m365-copilot, declarative-agents, api-plugins, agent-development, microsoft-365 |
