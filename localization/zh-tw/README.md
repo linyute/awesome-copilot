@@ -104,7 +104,7 @@
 ├── instructions/     # 程式碼標準和最佳實踐 (.instructions.md)
 ├── agents/           # AI 人格和專業模式 (.agent.md)
 ├── collections/      # 相關項目的精選集合 (.collection.yml)
-└── scripts/          # 維護公用程式指令碼
+├── scripts/          # 維護公用程式指令碼
 └── skills/           # 專門任務的 AI 能力
 ```
 
