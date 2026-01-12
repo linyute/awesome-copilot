@@ -19,7 +19,7 @@ Team and project-specific instructions to enhance GitHub Copilot's behavior for 
 
 **To Use/Apply:**
 - Copy these instructions to your \`.github/copilot-instructions.md\` file in your workspace
-- Create task-specific \`.github/.instructions.md\` files in your workspace's \`.github/instructions\` folder
+- Create task-specific \`*.instructions.md\` files in your workspace's \`.github/instructions/\` folder (e.g., \`.github/instructions/my-csharp-rules.instructions.md\`)
 - Instructions automatically apply to Copilot behavior once installed in your workspace`,
 
   promptsSection: `## 🎯 Reusable Prompts
