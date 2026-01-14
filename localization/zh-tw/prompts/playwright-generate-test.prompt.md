@@ -1,7 +1,7 @@
 ---
 agent: 'agent'
 description: '根據情境使用 Playwright MCP 產生 Playwright 測試'
-tools: ['changes', 'search/codebase', 'edit/editFiles', 'fetch', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'playwright/*']
+tools: ['changes', 'search/codebase', 'edit/editFiles', 'web/fetch', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'playwright/*']
 model: 'Claude Sonnet 4.5'
 ---
 

@@ -1,7 +1,7 @@
 ---
 agent: 'agent'
 description: '建立 Copilot 檔案 (提示、代理程式、指令、集合)、MCP 伺服器或來自 URL 和查詢的文件，以產生 tldr 摘要。'
-tools: ['fetch', 'search/readFile', 'search', 'search/textSearch']
+tools: ['web/fetch', 'search/readFile', 'search', 'search/textSearch']
 model: 'claude-sonnet-4'
 ---
 

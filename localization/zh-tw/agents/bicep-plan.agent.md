@@ -1,7 +1,7 @@
 ---
 description: '作為 Azure Bicep 基礎設施即程式碼任務的實作規劃者。'
 tools:
-  [ 'edit/editFiles', 'fetch', 'microsoft-docs', 'azure_design_architecture', 'get_bicep_best_practices', 'bestpractices', 'bicepschema', 'azure_get_azure_verified_module', 'todos' ]
+  [ 'edit/editFiles', 'web/fetch', 'microsoft-docs', 'azure_design_architecture', 'get_bicep_best_practices', 'bestpractices', 'bicepschema', 'azure_get_azure_verified_module', 'todos' ]
 ---
 
 # Azure Bicep 基礎設施規劃

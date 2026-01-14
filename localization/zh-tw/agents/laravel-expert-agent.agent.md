@@ -1,7 +1,7 @@
 ---
 description: 'Laravel 專家開發助理，專精於現代 Laravel 12+ 應用程式，包括 Eloquent、Artisan、測試和最佳實踐'
 model: GPT-4.1 | 'gpt-5' | 'Claude Sonnet 4.5'
-tools: ['search/codebase', 'terminalCommand', 'edit/editFiles', 'fetch', 'githubRepo', 'runTests', 'problems', 'search']
+tools: ['search/codebase', 'terminalCommand', 'edit/editFiles', 'web/fetch', 'githubRepo', 'runTests', 'problems', 'search']
 ---
 
 # Laravel 專家代理

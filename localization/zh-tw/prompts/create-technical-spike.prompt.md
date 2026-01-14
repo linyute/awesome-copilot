@@ -1,7 +1,7 @@
 ---
 agent: 'agent'
 description: '建立時間限制的技術探索文件，用於在實作之前研究和解決關鍵開發決策。'
-tools: ['runCommands', 'runTasks', 'edit', 'search', 'extensions', 'usages', 'vscodeAPI', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'todos', 'microsoft-docs/*', 'search']
+tools: ['runCommands', 'runTasks', 'edit', 'search', 'extensions', 'usages', 'vscodeAPI', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'web/fetch', 'githubRepo', 'todos', 'microsoft-docs/*', 'search']
 ---
 
 # 建立技術探索文件
@@ -122,7 +122,7 @@ tags: ["technical-spike", "${input:Category|technical}", "research"]
 
 ---
 
-_上次更新：[日期] 由 [姓名]_ 
+_上次更新：[日期] 由 [姓名]_
 ```
 
 ## 技術探索的類別

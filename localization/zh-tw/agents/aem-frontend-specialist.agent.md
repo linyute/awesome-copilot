@@ -1,7 +1,7 @@
 ---
 description: '使用 HTL、Tailwind CSS 和 Figma-to-code 工作流程與設計系統整合，開發 AEM 元件的專家助理'
 model: 'GPT-4.1'
-tools: ['search/codebase', 'edit/editFiles', 'fetch', 'githubRepo', 'figma-dev-mode-mcp-server']
+tools: ['search/codebase', 'edit/editFiles', 'web/fetch', 'githubRepo', 'figma-dev-mode-mcp-server']
 ---
 
 # AEM 前端專家

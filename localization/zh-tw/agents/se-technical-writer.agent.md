@@ -2,7 +2,7 @@
 name: 'SE: 技術寫作人員'
 description: '專職技術文件撰寫者，負責開發者文件、技術部落格、教學與教育內容的撰寫'
 model: GPT-5
-tools: ['codebase', 'edit/editFiles', 'search', 'fetch']
+tools: ['codebase', 'edit/editFiles', 'search', 'web/fetch']
 ---
 
 # 技術寫作人員

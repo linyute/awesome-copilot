@@ -1,7 +1,7 @@
 ---
 agent: 'agent'
 description: '更新 Bicep 檔案中的 Azure Verified Modules (AVM) 至最新版本。'
-tools: ['search/codebase', 'think', 'changes', 'fetch', 'search/searchResults', 'todos', 'edit/editFiles', 'search', 'runCommands', 'bicepschema', 'azure_get_schema_for_Bicep']
+tools: ['search/codebase', 'think', 'changes', 'web/fetch', 'search/searchResults', 'todos', 'edit/editFiles', 'search', 'runCommands', 'bicepschema', 'azure_get_schema_for_Bicep']
 ---
 
 # 更新 Bicep 檔案中的 Azure Verified Modules

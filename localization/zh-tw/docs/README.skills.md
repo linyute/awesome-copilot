@@ -23,6 +23,7 @@
 | 名稱 | 描述 | 捆綁資產 |
 | ---- | ----------- | -------------- |
 | [appinsights-instrumentation](../skills/appinsights-instrumentation/SKILL.md) | 為應用程式安裝檢測以將有用的遙測資料傳送至 Azure App Insights | `examples/appinsights.bicep`<br />`references/ASPNETCORE.md`<br />`references/AUTO.md`<br />`references/NODEJS.md`<br />`references/PYTHON.md`<br />`scripts/appinsights.ps1` |
+| [azure-resource-visualizer](../skills/azure-resource-visualizer/SKILL.md) | 分析 Azure 資源群組並產生詳細的 Mermaid 架構圖，顯示個別資源之間的關係。當使用者要求提供其 Azure 資源的圖表或協助理解資源之間的相互關係時，請使用此技能。 | `assets/template-architecture.md` |
 | [azure-role-selector](../skills/azure-role-selector/SKILL.md) | 當使用者詢問在給定所需權限的情況下應為識別指派哪個角色時，此 Agent 會協助他們了解符合需求且具備最小權限存取權的角色，以及如何套用該角色。 | 無 |
 | [github-issues](../skills/github-issues/SKILL.md) | 使用 MCP 工具建立、更新及管理 GitHub issue。當使用者想要建立錯誤回報、功能要求或任務 issue、更新現有 issue、加入標籤/指派人員/里程碑，或管理 issue 工作流程時，請使用此技能。觸發條件包括「建立一個 issue」、「回報一個錯誤」、「要求一個功能」、「更新 issue X」或任何 GitHub issue 管理任務等請求。 | `references/templates.md` |
 | [nuget-manager](../skills/nuget-manager/SKILL.md) | 管理 .NET 專案/解決方案中的 NuGet 套件。當要新增、移除或更新 NuGet 套件版本時，請使用此技能。它強制使用 `dotnet` CLI 進行套件管理，並規定僅在更新版本時才能直接編輯檔案，並提供嚴格的操作程序。 | 無 |

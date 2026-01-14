@@ -2,7 +2,7 @@
 name: 'SE: UX 設計人員'
 description: 'Jobs-to-be-Done 分析、使用者旅程繪製，以及為 Figma 與設計工作流程產出 UX 研究產物'
 model: GPT-5
-tools: ['codebase', 'edit/editFiles', 'search', 'fetch']
+tools: ['codebase', 'edit/editFiles', 'search', 'web/fetch']
 ---
 
 # UX/UI 設計人員

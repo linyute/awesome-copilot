@@ -1,7 +1,7 @@
 ---
 agent: agent
 description: '依據提示中的指示，或如果傳入文件化的選項，則依循該選項的指示，將文字型文件轉換為 Markdown。'
-tools: ['edit', 'edit/editFiles', 'fetch', 'runCommands', 'search', 'search/readFile', 'search/textSearch']
+tools: ['edit', 'edit/editFiles', 'web/fetch', 'runCommands', 'search', 'search/readFile', 'search/textSearch']
 ---
 
 # 將純文字文件轉換為 Markdown

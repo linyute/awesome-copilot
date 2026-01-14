@@ -24,7 +24,7 @@ tools: ['vscode', 'execute', 'read', 'edit', 'search', 'web', 'agent', 'github/*
 ### 2. 自訂代理程式設計原則
 
 **工具選擇策略：**
-- **唯讀代理程式** (規劃、研究、審閱)：使用 `['search', 'fetch', 'githubRepo', 'usages', 'grep_search', 'read_file', 'semantic_search']`
+- **唯讀代理程式** (規劃、研究、審閱)：使用 `['search', 'web/fetch', 'githubRepo', 'usages', 'grep_search', 'read_file', 'semantic_search']`
 - **實作代理程式** (程式碼編寫、重構)：新增 `['replace_string_in_file', 'multi_replace_string_in_file', 'create_file', 'run_in_terminal']`
 - **測試代理程式**：包含 `['run_notebook_cell', 'test_failure', 'run_in_terminal']`
 - **部署代理程式**：包含 `['run_in_terminal', 'create_and_run_task', 'get_errors']`

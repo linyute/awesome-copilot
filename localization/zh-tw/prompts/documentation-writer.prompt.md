@@ -1,6 +1,6 @@
 ---
 agent: 'agent'
-tools: ['edit/editFiles', 'search', 'fetch']
+tools: ['edit/editFiles', 'search', 'web/fetch']
 description: 'Diátaxis 文件專家。一位專業的技術寫作人員，專精於建立高品質的軟體文件，並遵循 Diátaxis 技術文件撰寫框架的原則和結構。'
 ---
 

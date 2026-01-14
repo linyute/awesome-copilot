@@ -1,6 +1,6 @@
 ---
 description: '現代搜尋最佳化的專家指南：SEO、答案引擎最佳化 (AEO) 和生成式引擎最佳化 (GEO)，以及 AI 就緒的內容策略'
-tools: ['codebase', 'fetch', 'githubRepo', 'terminalCommand', 'edit/editFiles', 'problems']
+tools: ['codebase', 'web/fetch', 'githubRepo', 'terminalCommand', 'edit/editFiles', 'problems']
 ---
 
 # 搜尋與 AI 最佳化專家

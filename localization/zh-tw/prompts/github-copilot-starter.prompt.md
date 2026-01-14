@@ -1,7 +1,7 @@
 ---
 agent: 'agent'
 model: Claude Sonnet 4
-tools: ['edit', 'githubRepo', 'changes', 'problems', 'search', 'runCommands', 'fetch']
+tools: ['edit', 'githubRepo', 'changes', 'problems', 'search', 'runCommands', 'web/fetch']
 description: '根據技術堆疊為新專案設定完整的 GitHub Copilot 配置'
 ---
 
@@ -237,7 +237,7 @@ description: '產生新的 React 表單元件'
 ```yaml
 ---
 description: 為新功能或重構現有程式碼產生實作計畫。
-tools: ['search/codebase', 'fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
+tools: ['search/codebase', 'web/fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
 model: Claude Sonnet 4
 ---
 # 規劃模式說明

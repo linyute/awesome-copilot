@@ -1,6 +1,6 @@
 ---
 description: '執行 C#/.NET 程式碼的清理任務，包括清理、現代化和技術債務補救。'
-tools: ['search/codebase', 'edit/editFiles', 'search', 'runCommands', 'runTasks', 'runTests', 'problems', 'changes', 'usages', 'findTestFiles', 'testFailure', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'fetch', 'microsoft.docs.mcp']
+tools: ['search/codebase', 'edit/editFiles', 'search', 'runCommands', 'runTasks', 'runTests', 'problems', 'changes', 'usages', 'findTestFiles', 'testFailure', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'web/fetch', 'microsoft.docs.mcp']
 ---
 
 # .NET 升級集合
@@ -20,7 +20,7 @@ tools: ['search/codebase', 'edit/editFiles', 'search', 'runCommands', 'runTasks'
 mode: dotnet-upgrade
 name: 分析當前的 .NET 框架版本並建立升級計畫
 ---
-分析儲存庫並列出每個專案的當前 TargetFramework 
+分析儲存庫並列出每個專案的當前 TargetFramework
 以及 Microsoft 發布排程中可用的最新 LTS 版本。
 建立一個升級策略，優先處理依賴性最低的專案。
 ```

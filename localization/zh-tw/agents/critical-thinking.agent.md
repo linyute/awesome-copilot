@@ -1,6 +1,6 @@
 ---
 description: '挑戰假設並鼓勵批判性思考，以確保最佳解決方案與結果。'
-tools: ['search/codebase', 'extensions', 'fetch', 'findTestFiles', 'githubRepo', 'problems', 'search', 'search/searchResults', 'usages']
+tools: ['search/codebase', 'extensions', 'web/fetch', 'findTestFiles', 'githubRepo', 'problems', 'search', 'search/searchResults', 'usages']
 ---
 # 批判性思考模式指引
 

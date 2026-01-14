@@ -1,7 +1,7 @@
 ---
 agent: 'agent'
 description: '從文件 URL 和命令範例建立 tldr 頁面，需要 URL 和命令名稱。'
-tools: ['edit/createFile', 'fetch']
+tools: ['edit/createFile', 'web/fetch']
 ---
 
 # 建立 TLDR 頁面

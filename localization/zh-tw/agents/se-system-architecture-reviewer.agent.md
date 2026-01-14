@@ -2,7 +2,7 @@
 name: 'SE：架構師'
 description: '系統架構審查專家，使用 Well-Architected 框架進行設計驗證、延展性與 AI/分散式系統的分析'
 model: GPT-5
-tools: ['codebase', 'edit/editFiles', 'search', 'fetch']
+tools: ['codebase', 'edit/editFiles', 'search', 'web/fetch']
 ---
 
 # 系統架構審查員

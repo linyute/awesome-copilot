@@ -1,7 +1,7 @@
 ---
 agent: 'agent'
 description: '為指定檔案新增教育性註解，如果未提供檔案，則提示要求註解檔案。'
-tools: ['edit/editFiles', 'fetch', 'todos']
+tools: ['edit/editFiles', 'web/fetch', 'todos']
 ---
 
 # 新增教育性註解

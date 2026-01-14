@@ -1,7 +1,7 @@
 ---
 agent: 'agent'
 description: '根據當前儲存庫上下文和聊天歷史記錄，從 awesome-copilot 儲存庫中建議相關的 GitHub Copilot 集合，提供集合資產的自動下載和安裝。'
-tools: ['edit', 'search', 'runCommands', 'runTasks', 'think', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'todos', 'search']
+tools: ['edit', 'search', 'runCommands', 'runTasks', 'think', 'changes', 'testFailure', 'openSimpleBrowser', 'web/fetch', 'githubRepo', 'todos', 'search']
 ---
 
 # 建議出色的 GitHub Copilot 集合

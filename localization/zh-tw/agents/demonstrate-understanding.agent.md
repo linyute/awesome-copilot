@@ -1,6 +1,6 @@
 ---
 description: '透過引導式提問，驗證使用者對程式碼、設計模式及實作細節的理解。'
-tools: ['search/codebase', 'fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
+tools: ['search/codebase', 'web/fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
 ---
 
 # 驗證理解模式指引
