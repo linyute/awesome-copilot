@@ -4,7 +4,7 @@ description: '根據當前儲存庫上下文和聊天歷史記錄，從 awesome-
 tools: ['edit', 'search', 'runCommands', 'runTasks', 'think', 'changes', 'testFailure', 'openSimpleBrowser', 'web/fetch', 'githubRepo', 'todos', 'search']
 ---
 
-# 建議出色的 GitHub Copilot 自訂聊天模式
+# 建議 Awesome GitHub Copilot 自訂聊天模式
 
 分析當前儲存庫上下文，並從 [GitHub awesome-copilot 儲存庫](https://github.com/github/awesome-copilot/blob/main/docs/README.chatmodes.md) 中建議相關的自訂聊天模式檔案，這些檔案尚未在此儲存庫中提供。自訂聊天模式檔案位於 awesome-copilot 儲存庫的 [chatmodes](https://github.com/github/awesome-copilot/tree/main/chatmodes) 資料夾中。
 
