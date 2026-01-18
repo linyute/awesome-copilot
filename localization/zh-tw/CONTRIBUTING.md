@@ -200,7 +200,8 @@ display:
    - 您的指令/提示功能的簡要描述
    - 任何相關的上下文或使用說明
 
-**注意**：一旦您的貢獻合併，您將自動新增到我們的 [貢獻者](./README.md#contributors-) 部分！我們使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來表彰對專案的所有類型貢獻。
+> [!NOTE]
+> 我們使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來認可對本專案的所有類型貢獻。跳轉至 [貢獻者認可](#contributor-recognition) 以了解更多資訊！
 
 ## 我們接受什麼
 
@@ -236,19 +237,31 @@ display:
 
 ## 貢獻者認可
 
-此專案使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來認可貢獻者。當您做出貢獻時，您將自動在我們的貢獻者清單中獲得認可！
+我們使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來認可此專案的**所有類型貢獻**。
 
-我們歡迎所有類型的貢獻，包括：
+若要加入您自己，請在相關的 issue 或 pull request 中使用您的 GitHub 使用者名稱和適當的貢獻類型發表評論：
 
-- 📝 文件改進
-- 💻 程式碼貢獻
-- 🐛 錯誤報告和修復
-- 🎨 設計改進
-- 💡 想法和建議
-- 🤔 回答問題
-- 📢 推廣專案
+```markdown
+@all-contributors add @username for contributionType1, contributionType2
+```
 
-您的貢獻有助於使這個資源對整個 GitHub Copilot 社群更好！
+貢獻者列表會在每週日的 **3:00 AM UTC** 自動更新。當下一次執行完成時，您的名字將出現在 [README 貢獻者](./README.md#contributors-) 區段中。
+
+### 貢獻類型
+
+我們歡迎多種形式的貢獻，包括下方的自訂類別：
+
+| 類別 | 描述 | 表情符號 |
+| --- | --- | :---: |
+| **Instructions (指令)** | 引導 GitHub Copilot 行為的自訂指令集 | 🧭 |
+| **Prompts (提示詞)** | 適用於 GitHub Copilot 的可重用或一次性提示詞 | ⌨️ |
+| **Agents (代理程式)** | 定義的 GitHub Copilot 角色或個性 | 🎭 |
+| **Skills (技能)** | 針對 GitHub Copilot 任務的專業知識 | 🧰 |
+| **Collections (收藏集)** | 精選的相關提示詞、代理程式或指令套件 | 🎁 |
+
+此外，[All Contributors](https://allcontributors.org/emoji-key/) 支援的所有標準貢獻類型均會被認可。
+
+> 每一份貢獻都很重要。感謝您協助改善 GitHub Copilot 社群的這項資源。
 
 ## 行為準則
 
