@@ -1801,6 +1801,15 @@
       "contributions": [
         "agents"
       ]
+    },
+    {
+      "login": "shibicr93",
+      "name": "Shibi Ramachandran",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6803434?v=4",
+      "profile": "https://github.com/shibicr93",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
