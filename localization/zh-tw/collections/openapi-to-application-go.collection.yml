@@ -1,0 +1,14 @@
+id: openapi-to-application-go
+name: OpenAPI 轉應用程式 - Go
+description: '從 OpenAPI 規格產生生產就緒的 Go 應用程式。包含專案基礎架構建立、處理常式產生、中介軟體設定以及 REST API 的 Go 最佳實踐。'
+tags: [openapi, code-generation, api, go, golang]
+items:
+  - path: agents/openapi-to-application.agent.md
+    kind: agent
+  - path: instructions/go.instructions.md
+    kind: instruction
+  - path: prompts/openapi-to-application-code.prompt.md
+    kind: prompt
+display:
+  ordering: manual
+  show_badge: false

@@ -1,0 +1,14 @@
+id: openapi-to-application-csharp-dotnet
+name: OpenAPI 轉應用程式 - C# .NET
+description: '從 OpenAPI 規格產生生產就緒的 .NET 應用程式。包含 ASP.NET Core 專案基礎架構建立、控制器產生、Entity Framework 整合以及 C# 最佳實踐。'
+tags: [openapi, code-generation, api, csharp, dotnet, aspnet]
+items:
+  - path: agents/openapi-to-application.agent.md
+    kind: agent
+  - path: instructions/csharp.instructions.md
+    kind: instruction
+  - path: prompts/openapi-to-application-code.prompt.md
+    kind: prompt
+display:
+  ordering: manual
+  show_badge: false

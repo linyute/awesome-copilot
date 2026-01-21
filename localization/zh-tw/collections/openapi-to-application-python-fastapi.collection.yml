@@ -1,0 +1,14 @@
+id: openapi-to-application-python-fastapi
+name: OpenAPI 轉換應用程式 - Python FastAPI
+description: '從 OpenAPI 規格產生生產就緒的 FastAPI 應用程式。包含專案架構建立、路由產生、相依性注入以及用於非同步 API 的 Python 最佳實踐。'
+tags: [openapi, code-generation, api, python, fastapi]
+items:
+  - path: agents/openapi-to-application.agent.md
+    kind: agent
+  - path: instructions/python.instructions.md
+    kind: instruction
+  - path: prompts/openapi-to-application-code.prompt.md
+    kind: prompt
+display:
+  ordering: manual
+  show_badge: false

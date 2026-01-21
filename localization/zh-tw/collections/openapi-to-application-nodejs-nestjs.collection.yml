@@ -1,0 +1,14 @@
+id: openapi-to-application-nodejs-nestjs
+name: OpenAPI 轉應用程式 - Node.js NestJS
+description: '從 OpenAPI 規格產生生產就緒的 NestJS 應用程式。包含專案基礎架構建立、控制器與服務產生、TypeScript 最佳實踐以及企業模式。'
+tags: [openapi, code-generation, api, nodejs, typescript, nestjs]
+items:
+  - path: agents/openapi-to-application.agent.md
+    kind: agent
+  - path: instructions/nestjs.instructions.md
+    kind: instruction
+  - path: prompts/openapi-to-application-code.prompt.md
+    kind: prompt
+display:
+  ordering: manual
+  show_badge: false
