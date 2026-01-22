@@ -1,0 +1,41 @@
+id: cast-imaging
+name: CAST Imaging 代理程式
+description: 一個專門用於軟體分析、影響評估、結構品質建議以及使用 CAST Imaging 進行架構檢視的專業代理程式綜合集合。
+tags: [cast-imaging, software-analysis, architecture, quality, impact-analysis, devops]
+items:
+  - path: agents/cast-imaging-software-discovery.agent.md
+    kind: agent
+    usage: |
+      此代理程式專為全面軟體應用程式探索與架構對應而設計。它協助使用者了解程式碼結構、相依性以及架構模式，包括資料庫結構描述 (schema) 以及物理原始檔案位置。
+
+      理想用途：
+      - 探索可用的應用程式並取得概觀。
+      - 了解系統架構與元件結構。
+      - 分析相依性與資料庫結構描述（資料表/資料行）。
+      - 定位並分析物理原始檔案。
+
+  - path: agents/cast-imaging-impact-analysis.agent.md
+    kind: agent
+    usage: |
+      此代理程式專精於全面變更影響評估與風險分析。它協助使用者了解程式碼變更的漣漪效應、識別架構耦合（共用資源）並開發測試策略。
+
+      理想用途：
+      - 評估程式碼修改的潛在影響。
+      - 識別架構耦合與共用程式碼風險。
+      - 分析橫跨多個應用程式的影響。
+      - 根據變更範圍開發目標測試方法。
+
+  - path: agents/cast-imaging-structural-quality-advisor.agent.md
+    kind: agent
+    usage: |
+      此代理程式專注於識別、分析並針對結構品質問題提供修復指導。它支援專業標準，包括安全性 (CVE)、綠色 IT 缺陷以及 ISO-5055 合規性。
+
+      理想用途：
+      - 識別並了解程式碼品質問題與結構缺陷。
+      - 檢查對安全性 (CVE)、綠色 IT 以及 ISO-5055 標準的合規性。
+      - 根據業務影響與風險排定品質問題的優先順序。
+      - 分析品質趨勢並提供修復指導。
+
+display:
+  ordering: manual
+  show_badge: true
