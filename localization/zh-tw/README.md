@@ -20,6 +20,7 @@
 
 | 名稱 | 描述 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |
+| [Copilot SDK](collections/copilot-sdk.md) | 使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含針對 C#、Go、Node.js/TypeScript 和 Python 的完整指引，協助您建立由 AI 驅動的應用程式。 | 4 個項目 | copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot |
 | [卓越 Copilot](collections/awesome-copilot.md) | 協助您探索和建立精選 GitHub Copilot 聊天模式、集合、指示、提示和代理程式的後設提示。 | 6 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
 | [合作夥伴](collections/partners.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 20 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
 

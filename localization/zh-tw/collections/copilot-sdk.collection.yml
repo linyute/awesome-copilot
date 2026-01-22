@@ -1,0 +1,17 @@
+id: copilot-sdk
+name: Copilot SDK
+description: 使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含針對 C#、Go、Node.js/TypeScript 和 Python 的完整指引，協助您建立由 AI 驅動的應用程式。
+tags: [copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot]
+items:
+  - path: instructions/copilot-sdk-csharp.instructions.md
+    kind: instruction
+  - path: instructions/copilot-sdk-go.instructions.md
+    kind: instruction
+  - path: instructions/copilot-sdk-nodejs.instructions.md
+    kind: instruction
+  - path: instructions/copilot-sdk-python.instructions.md
+    kind: instruction
+display:
+  ordering: manual
+  show_badge: true
+  featured: true
