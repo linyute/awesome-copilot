@@ -1,7 +1,7 @@
 {
   "name": "awesome-copilot",
   "version": "1.0.0",
-  "description": "Enhance your GitHub Copilot experience with community-contributed instructions, prompts, and chat modes",
+  "description": "Enhance your GitHub Copilot experience with community-contributed instructions, prompts, agents, and skills.",
   "main": "./eng/update-readme.js",
   "private": true,
   "scripts": {
@@ -26,7 +26,7 @@
     "ai",
     "prompts",
     "instructions",
-    "chat modes",
+    "skills",
     "agents"
   ],
   "author": "GitHub",

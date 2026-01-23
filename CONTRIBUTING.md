@@ -61,26 +61,25 @@ Your goal is to...
 - Include examples where helpful
 ```
 
-### Adding Chat Modes
+### Adding an Agent
 
-Chat modes are specialized configurations that transform GitHub Copilot Chat into domain-specific assistants or personas for particular development scenarios.
+Agents are specialized configurations that transform GitHub Copilot Chat into domain-specific assistants or personas for particular development scenarios.
 
-1. **Create your chat mode file**: Add a new `.agent.md` file in the `agents/` directory
+1. **Create your agent file**: Add a new `.agent.md` file in the `agents/` directory
 2. **Follow the naming convention**: Use descriptive, lowercase filenames with hyphens and the `.agent.md` extension (e.g., `react-performance-expert.agent.md`)
 3. **Include frontmatter**: Add metadata at the top of your file with required fields
-4. **Define the persona**: Create a clear identity and expertise area for the chat mode
-5. **Test your chat mode**: Ensure the chat mode provides helpful, accurate responses in its domain
+4. **Define the persona**: Create a clear identity and expertise area for the agent
+5. **Test your agent**: Ensure the agent provides helpful, accurate responses in its domain
 
-#### Example chat mode format
+#### Example agent format
 
 ```markdown
 ---
-description: 'Brief description of the chat mode and its purpose'
+description: 'Brief description of the agent and its purpose'
 model: 'gpt-5'
 tools: ['codebase', 'terminalCommand']
+name: 'My Agent Name'
 ---
-
-# Chat Mode Title
 
 You are an expert [domain/role] with deep knowledge in [specific areas].
 
@@ -114,7 +113,7 @@ Skills are self-contained folders in the `skills/` directory that include a `SKI
 
 ### Adding Collections
 
-Collections group related prompts, instructions, and chat modes around specific themes or workflows, making it easier for users to discover and adopt comprehensive toolkits.
+Collections group related prompts, instructions, agents, and skills around specific themes or workflows, making it easier for users to discover and adopt comprehensive toolkits.
 
 1. **Create your collection manifest**: Add a new `.collection.yml` file in the `collections/` directory
 2. **Follow the naming convention**: Use descriptive, lowercase filenames with hyphens (e.g., `python-web-development.collection.yml`)
@@ -142,17 +141,17 @@ items:
     kind: prompt
   - path: instructions/my-instructions.instructions.md
     kind: instruction
-  - path: agents/my-chatmode.agent.md
+  - path: agents/my-custom.agent.md
     kind: agent
     usage: |
      recommended # or "optional" if not essential to the workflow
 
-     This chat mode requires the following instructions/prompts/MCPs:
+     This agent requires the following instructions/prompts/MCPs:
       - Instruction 1
       - Prompt 1
       - MCP 1
 
-     This chat mode is ideal for...
+     This agent is ideal for...
       - Use case 1
       - Use case 2
     
@@ -255,7 +254,7 @@ We welcome many kinds of contributions, including the custom categories below:
 | --- | --- | :---: |
 | **Instructions** | Custom instruction sets that guide GitHub Copilot behavior | 🧭 |
 | **Prompts** | Reusable or one-off prompts for GitHub Copilot | ⌨️ |
-| **Agents (Chat Modes)** | Defined GitHub Copilot roles or personalities | 🎭 |
+| **Agents** | Defined GitHub Copilot roles or personalities | 🎭 |
 | **Skills** | Specialized knowledge of a task for GitHub Copilot | 🧰 |
 | **Collections** | Curated bundles of related prompts, agents, or instructions | 🎁 |
 
