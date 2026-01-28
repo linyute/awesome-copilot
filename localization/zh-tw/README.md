@@ -11,8 +11,8 @@
 - **👉 [Awesome Agents](docs/README.agents.md)** - 專門的 GitHub Copilot 代理程式，與 MCP 伺服器整合，為特定工作流程和工具提供增強功能
 - **👉 [Awesome Prompts](docs/README.prompts.md)** - 專注於任務的提示，用於產生程式碼、文件和解決特定問題
 - **👉 [Awesome Instructions](docs/README.instructions.md)** - 適用於特定檔案模式或整個專案的全面程式碼標準和最佳實踐
-- **👉 [Awesome Skills](docs/README.skills.md)** - 自包含的資料夾，內含說明與捆綁資源，可增強 AI 在專門任務的能力
-- **👉 [Awesome Collections](docs/README.collections.md)** - 圍繞特定主題和工作流程組織的相關提示、指令和聊天模式的精選集合
+- **👉 [Awesome Skills](docs/README.skills.md)** - 自包含的資料夾，內含說明與捆綁資源，可增強 AI 在專門任務的技能
+- **👉 [Awesome Collections](docs/README.collections.md)** - 圍繞特定主題和工作流程組織的相關提示、指令、代理程式和技能的精選集合
 
 ## 🌟 精選集合
 
@@ -20,14 +20,14 @@
 
 | 名稱 | 描述 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |
+| [Awesome Copilot](collections/awesome-copilot.md) | 幫助您發現並產生精選 GitHub Copilot Agent、集合、指令、提示和技能的 Meta 提示。 | 5 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
 | [Copilot SDK](collections/copilot-sdk.md) | 使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含針對 C#、Go、Node.js/TypeScript 和 Python 的完整指引，協助您建立由 AI 驅動的應用程式。 | 4 個項目 | copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot |
-| [卓越 Copilot](collections/awesome-copilot.md) | 協助您探索和建立精選 GitHub Copilot 聊天模式、集合、指示、提示和代理程式的後設提示。 | 6 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
 | [合作夥伴](collections/partners.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 20 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
 
 
 ## MCP 伺服器
 
-為了方便將這些客製化功能新增到您的編輯器中，我們建立了一個 [MCP 伺服器](https://developer.microsoft.com/blog/announcing-awesome-copilot-mcp-server)，它提供了一個提示，用於直接從此儲存庫搜尋和安裝提示、指令和聊天模式。您需要安裝並執行 Docker 才能執行伺服器。
+為了方便將這些客製化功能新增到您的編輯器中，我們建立了一個 [MCP 伺服器](https://developer.microsoft.com/blog/announcing-awesome-copilot-mcp-server)，它提供了一個提示，用於直接從此儲存庫搜尋和安裝提示、指令、代理程式和技能。您需要安裝並執行 Docker 才能執行伺服器。
 
 [![在 VS Code 中安裝](https://img.shields.io/badge/VS_Code-Install-0098FF?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode) [![在 VS Code Insiders 中安裝](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode-insiders) [![在 Visual Studio 中安裝](https://img.shields.io/badge/Visual_Studio-Install-C16FDE?logo=visualstudio&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vs)
 
@@ -82,7 +82,7 @@
 
 我們歡迎貢獻！請參閱我們的 [貢獻指南](CONTRIBUTING.md) 以了解如何：
 
-- 新增提示、指令或聊天模式
+- 新增提示、指令、代理程式或技能
 - 改進現有內容
 - 報告問題或建議增強功能
 
@@ -180,7 +180,7 @@
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/griffinashe/"><img src="https://avatars.githubusercontent.com/u/6391612?v=4?s=100" width="100px;" alt="Griffin Ashe"/><br /><sub><b>Griffin Ashe</b></sub></a><br /><a href="#agents-griffinashe" title="Specialized agents for GitHub Copilot">🎭</a> <a href="#collections-griffinashe" title="Curated collections of related content">🎁</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/anchildress1"><img src="https://avatars.githubusercontent.com/u/6563688?v=4?s=100" width="100px;" alt="Ashley Childress"/><br /><sub><b>Ashley Childress</b></sub></a><br /><a href="#agents-anchildress1" title="Specialized agents for GitHub Copilot">🎭</a> <a href="https://github.com/github/awesome-copilot/commits?author=anchildress1" title="Documentation">📖</a> <a href="#instructions-anchildress1" title="Custom instructions for GitHub Copilot">🧭</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/anchildress1"><img src="https://avatars.githubusercontent.com/u/6563688?v=4?s=100" width="100px;" alt="Ashley Childress"/><br /><sub><b>Ashley Childress</b></sub></a><br /><a href="#agents-anchildress1" title="Specialized agents for GitHub Copilot">🎭</a> <a href="https://github.com/github/awesome-copilot/commits?author=anchildress1" title="Documentation">📖</a> <a href="#instructions-anchildress1" title="Custom instructions for GitHub Copilot">🧭</a> <a href="#infra-anchildress1" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/github/awesome-copilot/commits?author=anchildress1" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.senseof.tech/"><img src="https://avatars.githubusercontent.com/u/50712277?v=4?s=100" width="100px;" alt="Adrien Clerbois"/><br /><sub><b>Adrien Clerbois</b></sub></a><br /><a href="#agents-AClerbois" title="Specialized agents for GitHub Copilot">🎭</a> <a href="https://github.com/github/awesome-copilot/commits?author=AClerbois" title="Documentation">📖</a> <a href="#prompts-AClerbois" title="Reusable prompts for GitHub Copilot">⌨️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Vhivi"><img src="https://avatars.githubusercontent.com/u/38220028?v=4?s=100" width="100px;" alt="ANGELELLI David"/><br /><sub><b>ANGELELLI David</b></sub></a><br /><a href="#agents-Vhivi" title="Specialized agents for GitHub Copilot">🎭</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://markdav.is/"><img src="https://avatars.githubusercontent.com/u/311063?v=4?s=100" width="100px;" alt="Mark Davis"/><br /><sub><b>Mark Davis</b></sub></a><br /><a href="#instructions-markdav-is" title="Custom instructions for GitHub Copilot">🧭</a></td>
@@ -399,7 +399,6 @@
 
 - [VS Code Copilot 客製化文件](https://code.visualstudio.com/docs/copilot/copilot-customization) - 官方 Microsoft 文件
 - [GitHub Copilot Chat 文件](https://code.visualstudio.com/docs/copilot/chat/copilot-chat) - 完整的聊天功能指南
-- [自訂聊天模式](https://code.visualstudio.com/docs/copilot/chat/chat-modes) - 進階聊天配置
 - [VS Code 設定](https://code.visualstudio.com/docs/getstarted/settings) - 一般 VS Code 配置指南
 
 ## ™️ 商標

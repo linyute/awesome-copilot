@@ -238,6 +238,39 @@ function extractDescription(filePath) {
   );
 }
 
+/**
+ * 格式化任意多行文字，以便在 Markdown 表格儲存格中安全呈現。
+ * - 透過轉換為 <br /> 來保留換行符
+ * - 逃脫管道字元 (|) 以避免破壞表格欄位
+ * - 修剪每行的前導/尾隨空格
+ * - 摺疊多個連續空白行
+ * 在表格中使用時，應將此應用於所有檔案類型的描述。
+ *
+ * @param {string|null|undefined} text
+ * @returns {string} 表格安全內容
+ */
+function formatTableCell(text) {
+  if (text === null || text === undefined) return "";
+  let s = String(text);
+  // 正規化行尾
+  s = s.replace(/\r\n/g, "\n");
+  // 分割行、修剪、刪除空群組同時保留意圖的中斷
+  const lines = s
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((_, idx, arr) => {
+      // 保留單個空白行，移除連續空白行
+      if (arr[idx] !== "") return true;
+      return arr[idx - 1] !== ""; // 允許一個空白行，移除重複項
+    });
+  s = lines.join("\n");
+  // 逃脫表格管道
+  s = s.replace(/\|/g, "&#124;");
+  // 轉換剩餘的換行符為 <br />，用於單一儲存格呈現
+  s = s.replace(/\n/g, "<br />");
+  return s.trim();
+}
+
 function makeBadges(link, type) {
   const aka = AKA_INSTALL_URLS[type] || AKA_INSTALL_URLS.instructions;
 
@@ -298,8 +331,10 @@ function generateInstructionsSection(instructionsDir) {
     const badges = makeBadges(link, "instructions");
 
     if (customDescription && customDescription !== "null") {
-      // 使用前置內容中的描述
-      instructionsContent += `| [${title}](../${link})<br />${badges} | ${customDescription} |\n`;
+      // 使用前置內容中的描述, table-safe
+      instructionsContent += `| [${title}](../${link})<br />${badges} | ${formatTableCell(
+        customDescription
+      )} |\n`;
     } else {
       // 回退到預設方法 - 使用標題的最後一個單字作為描述，如果存在則移除尾隨的 's'
       const topic = title.split(" ").pop().replace(/s$/, "");
@@ -356,7 +391,9 @@ function generatePromptsSection(promptsDir) {
     const badges = makeBadges(link, "prompt");
 
     if (customDescription && customDescription !== "null") {
-      promptsContent += `| [${title}](../${link})<br />${badges} | ${customDescription} |\n`;
+      promptsContent += `| [${title}](../${link})<br />${badges} | ${formatTableCell(
+        customDescription
+      )} |\n`;
     } else {
       promptsContent += `| [${title}](../${link})<br />${badges} | | |\n`;
     }
@@ -533,14 +570,16 @@ function generateSkillsSection(skillsDir) {
         ? skill.assets.map((a) => `\`${a}\``).join("<br />")
         : "無";
 
-    content += `| [${skill.name}](${link}) | ${skill.description} | ${assetsList} |\n`;
+    content += `| [${skill.name}](${link}) | ${formatTableCell(
+      skill.description
+    )} | ${assetsList} |\n`;
   }
 
   return `${TEMPLATES.skillsSection}\n${TEMPLATES.skillsUsage}\n\n${content}`;
 }
 
 /**
- * 聊天模式和代理程式的統一產生器 (未來整合)
+ * 代理程式的統一產生器 (未來整合)
  * @param {Object} cfg
  * @param {string} cfg.dir - 目錄路徑
  * @param {string} cfg.extension - 要匹配的檔案副檔名 (例如 .agent.md, .agent.md)
@@ -598,14 +637,12 @@ function generateUnifiedModeSection(cfg) {
       mcpServerCell = generateMcpServerLinks(servers, registryNames);
     }
 
+    const descCell =
+      description && description !== "null" ? formatTableCell(description) : "";
     if (includeMcpServers) {
-      content += `| [${title}](../${link})<br />${badges} | ${
-        description && description !== "null" ? description : ""
-      } | ${mcpServerCell} |\n`;
+      content += `| [${title}](../${link})<br />${badges} | ${descCell} | ${mcpServerCell} |\n`;
     } else {
-      content += `| [${title}](../${link})<br />${badges} | ${
-        description && description !== "null" ? description : ""
-      } |\n`;
+      content += `| [${title}](../${link})<br />${badges} | ${descCell} |\n`;
     }
   }
 
@@ -677,7 +714,9 @@ function generateCollectionsSection(collectionsDir) {
   // 為每個集合檔案產生表格列
   for (const entry of sortedEntries) {
     const { collection, collectionId, name, isFeatured } = entry;
-    const description = collection.description || "無描述";
+    const description = formatTableCell(
+      collection.description || "無描述"
+    );
     const itemCount = collection.items ? collection.items.length : 0;
     const tags = collection.tags ? collection.tags.join(", ") : "";
 
@@ -719,7 +758,9 @@ function generateFeaturedCollectionsSection(collectionsDir) {
           const collectionId =
             collection.id || path.basename(file, ".collection.yml");
           const name = collection.name || collectionId;
-          const description = collection.description || "無描述";
+          const description = formatTableCell(
+            collection.description || "無描述"
+          );
           const tags = collection.tags ? collection.tags.join(", ") : "";
           const itemCount = collection.items ? collection.items.length : 0;
 
@@ -820,9 +861,7 @@ function generateCollectionReadme(
     const description = extractDescription(filePath) || "無描述";
 
     const typeDisplay =
-      item.kind === "chat-mode"
-        ? "聊天模式"
-        : item.kind === "instruction"
+      item.kind === "instruction"
         ? "指示"
         : item.kind === "agent"
         ? "代理程式"
@@ -835,8 +874,6 @@ function generateCollectionReadme(
     const badgeType =
       item.kind === "instruction"
         ? "instructions"
-        : item.kind === "chat-mode"
-        ? "mode"
         : item.kind === "agent"
         ? "agent"
         : item.kind === "skill"
@@ -904,17 +941,20 @@ function buildCollectionRow({
     ? `[${title}](${link})<br />${badges}`
     : `[${title}](${link})`;
 
+  // 確保描述適用於表格
+  const safeUsage = formatTableCell(usageDescription);
+
   if (hasAgents) {
-    // 目前只有代理程式有 MCP 伺服器；未來的遷移可能會擴展到聊天模式。
+    // 目前只有代理程式有 MCP 伺服器；
     const mcpServers =
       kind === "agent" ? extractMcpServerConfigs(filePath) : [];
     const mcpServerCell =
       mcpServers.length > 0
         ? generateMcpServerLinks(mcpServers, registryNames)
         : "";
-    return `| ${titleCell} | ${typeDisplay} | ${usageDescription} | ${mcpServerCell} |\n`;
+    return `| ${titleCell} | ${typeDisplay} | ${safeUsage} | ${mcpServerCell} |\n`;
   }
-  return `| ${titleCell} | ${typeDisplay} | ${usageDescription} |\n`;
+  return `| ${titleCell} | ${typeDisplay} | ${safeUsage} |\n`;
 }
 
 // 公用程式：只有在內容變更時才寫入檔案

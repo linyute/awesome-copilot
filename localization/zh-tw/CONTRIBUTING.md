@@ -61,26 +61,25 @@ description: '此提示功能的簡要描述'
 - 在有幫助的地方包含範例
 ```
 
-### 新增聊天模式
+### 新增代理程式
 
-聊天模式是專門的配置，可將 GitHub Copilot Chat 轉換為特定開發情境的領域特定助理或角色。
+代理程式是專門的配置，可將 GitHub Copilot Chat 轉換為特定開發情境的領域特定助理或角色。
 
-1. **建立您的聊天模式檔案**：在 `agents/` 目錄中新增一個 `.agent.md` 檔案
+1. **建立您的代理程式檔案**：在 `agents/` 目錄中新增一個 `.agent.md` 檔案
 2. **遵循命名慣例**：使用描述性、小寫檔名並以連字號分隔，並加上 `.agent.md` 副檔名 (例如：`react-performance-expert.agent.md`)
 3. **包含前置內容**：在檔案頂部新增包含必要欄位的中繼資料
-4. **定義角色**：為聊天模式建立清晰的身份和專業領域
-5. **測試您的聊天模式**：確保聊天模式在其領域中提供有用的、準確的回應
+4. **定義角色**：為代理程式建立清晰的身份和專業領域
+5. **測試您的代理程式**：確保代理程式在其領域中提供有用的、準確的回應
 
-#### 聊天模式格式範例
+#### 代理程式格式範例
 
 ```markdown
 ---
-description: '聊天模式及其目的的簡要描述'
+description: '代理程式及其目的的簡要描述'
 model: 'gpt-5'
 tools: ['search/codebase', 'terminalCommand']
+name: '代理程式名稱'
 ---
-
-# 聊天模式標題
 
 您是具有 [特定領域] 深入知識的專家 [領域/角色]。
 
@@ -114,7 +113,7 @@ tools: ['search/codebase', 'terminalCommand']
 
 ### 新增集合
 
-集合將相關的提示、指令和聊天模式圍繞特定主題或工作流程分組，讓使用者更容易發現和採用全面的工具包。
+集合將相關的提示、指令、代理程式和技能，圍繞特定主題或工作流程分組，讓使用者更容易發現和採用全面的工具包。
 
 1. **建立您的集合清單**：在 `collections/` 目錄中新增一個 `.collection.yml` 檔案
 2. **遵循命名慣例**：使用描述性、小寫檔名並以連字號分隔 (例如：`python-web-development.collection.yml`)
@@ -142,17 +141,17 @@ items:
     kind: prompt
   - path: instructions/my-instructions.instructions.md
     kind: instruction
-  - path: agents/my-chatmode.agent.md
+  - path: agents/my-custom.agent.md
     kind: agent
     usage: |
      recommended # 或 "optional" 如果不是工作流程的必要部分
 
-     此聊天模式需要以下指令/提示/MCP：
+     此代理程式需要以下指令/提示/MCP：
       - 指令 1
       - 提示 1
       - MCP 1
 
-     此聊天模式非常適合...
+     此代理程式非常適合...
       - 使用案例 1
       - 使用案例 2
     
@@ -191,7 +190,7 @@ display:
 
 1. **分叉此儲存庫**
 2. **為您的貢獻建立一個新分支**
-3. **依照上述準則新增您的指令、提示檔案、聊天模式或集合**
+3. **依照上述準則新增您的指令、提示檔案、代理程式或集合**
 4. **執行更新指令碼**：`npm start` 以使用您的新檔案更新 README (如果您尚未執行 `npm install`，請務必先執行)
    - GitHub Actions 工作流程將驗證此步驟是否正確執行
    - 如果執行指令碼會修改 README.md，則 PR 檢查將失敗並顯示所需變更的註解
