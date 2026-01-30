@@ -31,10 +31,14 @@ uv add copilot-sdk
 
 ```python
 from copilot import CopilotClient
+import asyncio
 
-async with CopilotClient() as client:
-    # 使用客戶端...
-    pass
+async def main():
+    async with CopilotClient() as client:
+        # 使用客戶端...
+        pass
+
+asyncio.run(main())
 ```
 
 ### 客戶端設定選項 (Client Configuration Options)
@@ -56,10 +60,16 @@ async with CopilotClient() as client:
 如需明確控制：
 
 ```python
-client = CopilotClient({"auto_start": False})
-await client.start()
-# 使用客戶端...
-await client.stop()
+from copilot import CopilotClient
+import asyncio
+
+async def main():
+    client = CopilotClient({"auto_start": False})
+    await client.start()
+    # Use client...
+    await client.stop()
+
+asyncio.run(main())
 ```
 
 當 `stop()` 耗時過長時，請使用 `force_stop()`。

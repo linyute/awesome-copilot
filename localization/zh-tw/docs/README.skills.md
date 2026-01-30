@@ -43,8 +43,10 @@
 | [plantuml-ascii](../skills/plantuml-ascii/SKILL.md) | 使用 PlantUML 文字模式產生 ASCII 藝術圖表。當使用者要求建立 ASCII 圖表、基於文字的圖表、對終端機友善的圖表，或提及 plantuml ascii、文字圖表、ascii 藝術圖表時使用。支援：將 PlantUML 圖表轉換為 ASCII 藝術、建立 ASCII 格式的時序圖、類別圖、流程圖，以及使用 -utxt 參數產生強化 Unicode 的 ASCII 藝術。 | 無 |
 | [prd](../skills/prd/SKILL.md) | 為軟體系統和人工智慧（AI）驅動的功能產出高品質的產品需求文件 (PRD)。包含摘要、使用者故事、技術規格和風險分析。 | 無 |
 | [refactor](../skills/refactor/SKILL.md) | 進行精確的程式碼重構，在不改變行為的情況下提高可維護性。涵蓋提取函式、重新命名變數、拆解龐大函式（god functions）、提高型別安全性、消除程式碼異味以及應用設計模式。比 repo-rebuilder 的影響較小；用於漸進式改進。 | 無 |
+| [scoutqa-test](../skills/scoutqa-test/SKILL.md) | 當使用者要求「測試此網站」、「執行探索性測試」、「檢查協助工具問題」、「驗證登入流程是否正常」、「尋找此頁面上的錯誤」或要求自動化 QA 測試時，應使用此技能。針對網頁應用程式測試情境觸發，包括使用 ScoutQA CLI 的煙霧測試、協助工具稽核、電子商務流程和使用者流程驗證。重要提示：在實作網頁應用程式功能後，請主動使用此技能來驗證它們是否正常運作 - 不要等待使用者要求測試。 | 無 |
 | [snowflake-semanticview](../skills/snowflake-semanticview/SKILL.md) | 使用 Snowflake CLI (snow) 建立、修改及驗證 Snowflake 語義檢視表 (semantic views)。當被要求使用 CREATE/ALTER SEMANTIC VIEW 建構語義檢視表/語義層定義或進行疑難排解、透過 CLI 向 Snowflake 驗證語義檢視表 DDL，或引導進行 Snowflake CLI 安裝與連線設定時使用。 | 無 |
 | [vscode-ext-commands](../skills/vscode-ext-commands/SKILL.md) | 在 VS Code 延伸模組中貢獻指令的指南。標示命名慣例、可見性、在地化及其他相關屬性，遵循 VS Code 延伸模組開發指南、函式庫及最佳實務。 | 無 |
 | [vscode-ext-localization](../skills/vscode-ext-localization/SKILL.md) | VS Code 延伸模組正確在地化的指南，遵循 VS Code 延伸模組開發指南、函式庫及最佳實務。 | 無 |
 | [web-design-reviewer](../skills/web-design-reviewer/SKILL.md) | 此技能可對在本機或遠端執行的網站進行視覺檢查，以識別並修正設計問題。觸發條件包括「審閱網站設計」、「檢查 UI」、「修正版面配置」、「尋找設計問題」等請求。可偵測回應式設計、無障礙性、視覺一致性以及版面破裂等問題，並在原始程式碼層級進行修正。 | `references/framework-fixes.md`<br />`references/visual-checklist.md` |
 | [webapp-testing](../skills/webapp-testing/SKILL.md) | 使用 Playwright 與本地網頁應用程式互動和測試的工具包。支援驗證前端功能、偵錯 UI 行為、擷取瀏覽器螢幕截圖以及檢視瀏覽器日誌。 | `test-helper.js` |
+| [workiq-copilot](../skills/workiq-copilot/SKILL.md) | 引導 Copilot CLI 如何使用 WorkIQ CLI/MCP 伺服器來查詢 Microsoft 365 Copilot 資料（電子郵件、會議、文件、Teams、人員），以獲取即時背景資訊、摘要和建議。 | 無 |

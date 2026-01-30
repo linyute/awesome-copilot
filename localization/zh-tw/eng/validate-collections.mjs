@@ -2,12 +2,12 @@
 
 import fs from "fs";
 import path from "path";
-import { parseCollectionYaml, parseFrontmatter } from "./yaml-parser.mjs";
 import {
-  ROOT_FOLDER,
   COLLECTIONS_DIR,
   MAX_COLLECTION_ITEMS,
+  ROOT_FOLDER,
 } from "./constants.mjs";
+import { parseCollectionYaml, parseFrontmatter } from "./yaml-parser.mjs";
 
 // 驗證函式
 function validateCollectionId(id) {
@@ -177,10 +177,10 @@ function validateCollectionItems(items) {
     if (!item.kind || typeof item.kind !== "string") {
       return `項目 ${i + 1} 必須有種類字串`;
     }
-    if (!["prompt", "instruction", "agent"].includes(item.kind)) {
+    if (!["prompt", "instruction", "agent", "skill"].includes(item.kind)) {
       return `項目 $
         ${i + 1}
-      種類必須是以下之一：prompt, instruction, agent`;
+      種類必須是以下之一：prompt, instruction, agent, skill`;
     }
 
     // Validate file path exists

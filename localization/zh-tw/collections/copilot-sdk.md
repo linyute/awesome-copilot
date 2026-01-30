@@ -1,6 +1,6 @@
 # Copilot SDK
 
-使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含針對 C#、Go、Node.js/TypeScript 和 Python 的完整指引，協助您建立由 AI 驅動的應用程式。
+使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含 C#、Go、Node.js/TypeScript 和 Python 的完整指示，協助您建立 AI 驅動的應用程式。
 
 **標籤：** copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot
 
@@ -12,6 +12,7 @@
 | [GitHub Copilot SDK Go 指引](../instructions/copilot-sdk-go.instructions.md)<br />[![在 VS Code 中安裝](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/instructions?url=vscode%3Achat-instructions%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Flinyute%2Fawesome-copilot%2Fmain%2Flocalization%2Fzh-tw%2Finstructions%2Fcopilot-sdk-go.instructions.md)<br />[![在 VS Code Insiders 中安裝](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/instructions?url=vscode-insiders%3Achat-instructions%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Flinyute%2Fawesome-copilot%2Fmain%2Flocalization%2Fzh-tw%2Finstructions%2Fcopilot-sdk-go.instructions.md) | 指示 | 本檔案提供使用 GitHub Copilot SDK 建構 Go 應用程式的指引。 |
 | [GitHub Copilot SDK Node.js 指引](../instructions/copilot-sdk-nodejs.instructions.md)<br />[![在 VS Code 中安裝](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/instructions?url=vscode%3Achat-instructions%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Flinyute%2Fawesome-copilot%2Fmain%2Flocalization%2Fzh-tw%2Finstructions%2Fcopilot-sdk-nodejs.instructions.md)<br />[![在 VS Code Insiders 中安裝](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/instructions?url=vscode-insiders%3Achat-instructions%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Flinyute%2Fawesome-copilot%2Fmain%2Flocalization%2Fzh-tw%2Finstructions%2Fcopilot-sdk-nodejs.instructions.md) | 指示 | 本檔案提供使用 GitHub Copilot SDK 建構 Node.js/TypeScript 應用程式的指引。 |
 | [GitHub Copilot SDK Python 指引](../instructions/copilot-sdk-python.instructions.md)<br />[![在 VS Code 中安裝](https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/instructions?url=vscode%3Achat-instructions%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Flinyute%2Fawesome-copilot%2Fmain%2Flocalization%2Fzh-tw%2Finstructions%2Fcopilot-sdk-python.instructions.md)<br />[![在 VS Code Insiders 中安裝](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/install/instructions?url=vscode-insiders%3Achat-instructions%2Finstall%3Furl%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Flinyute%2Fawesome-copilot%2Fmain%2Flocalization%2Fzh-tw%2Finstructions%2Fcopilot-sdk-python.instructions.md) | 指示 | 本檔案提供使用 GitHub Copilot SDK 建構 Python 應用程式的指引。 |
+| [GitHub Copilot SDK](../skills/copilot-sdk/SKILL.md) | 技能 | 無描述 |
 
 ---
-*此集合包含 **Copilot SDK** 的 4 個精選項目。*
+*此集合包含 **Copilot SDK** 的 5 個精選項目。*

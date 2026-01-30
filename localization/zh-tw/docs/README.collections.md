@@ -17,7 +17,7 @@
 | 名稱 | 描述 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |
 | [⭐ Awesome Copilot](../collections/awesome-copilot.md) | 幫助您發現並產生精選 GitHub Copilot Agent、集合、指令、提示和技能的 Meta 提示。 | 5 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
-| [⭐ Copilot SDK](../collections/copilot-sdk.md) | 使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含針對 C#、Go、Node.js/TypeScript 和 Python 的完整指引，協助您建立由 AI 驅動的應用程式。 | 4 個項目 | copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot |
+| [⭐ Copilot SDK](../collections/copilot-sdk.md) | 使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含 C#、Go、Node.js/TypeScript 和 Python 的完整指示，協助您建立 AI 驅動的應用程式。 | 5 個項目 | copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot |
 | [⭐ 合作夥伴](../collections/partners.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 20 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
 | [Azure 與雲端開發](../collections/azure-cloud-development.md) | 全面的 Azure 雲端開發工具，包括基礎設施即程式碼、無伺服器函式、架構模式和成本最佳化，用於建立可延展的雲端應用程式。 | 18 個項目 | azure, cloud, infrastructure, bicep, terraform, serverless, architecture, devops |
 | [C# .NET 開發](../collections/csharp-dotnet-development.md) | C# 和 .NET 開發的基本提示、指示和聊天模式，包括測試、文件和最佳實踐。 | 8 個項目 | csharp, dotnet, aspnet, testing |
