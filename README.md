@@ -1,4 +1,4 @@
-# 🤖 Awesome GitHub Copilot Customizations
+# 🤖 Awesome GitHub Copilot
 [![Powered by Awesome Copilot](https://img.shields.io/badge/Powered_by-Awesome_Copilot-blue?logo=githubcopilot)](https://aka.ms/awesome-github-copilot) [![GitHub contributors from allcontributors.org](https://img.shields.io/github/all-contributors/github/awesome-copilot?color=ee8449)](#contributors-)
 
 
@@ -13,6 +13,7 @@ This repository provides a comprehensive toolkit for enhancing GitHub Copilot wi
 - **👉 [Awesome Instructions](docs/README.instructions.md)** - Comprehensive coding standards and best practices that apply to specific file patterns or entire projects
 - **👉 [Awesome Skills](docs/README.skills.md)** - Self-contained folders with instructions and bundled resources that enhance AI capabilities for specialized tasks
 - **👉 [Awesome Collections](docs/README.collections.md)** - Curated collections of related prompts, instructions, agents, and skills organized around specific themes and workflows
+- **👉 [Awesome Cookbook Recipes](cookbook/README.md)** - Practical, copy-paste-ready code snippets and real-world examples for working with GitHub Copilot tools and features
 
 ## 🌟 Featured Collections
 
