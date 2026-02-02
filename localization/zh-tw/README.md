@@ -1,4 +1,4 @@
-# 🤖 超棒的 GitHub Copilot 客製化
+# 🤖 超棒的 GitHub Copilot
 
 [![Powered by Awesome Copilot](https://img.shields.io/badge/Powered_by-Awesome_Copilot-blue?logo=githubcopilot)](https://aka.ms/awesome-github-copilot) [![GitHub contributors from allcontributors.org](https://img.shields.io/github/all-contributors/github/awesome-copilot?color=ee8449)](#contributors-)
 
@@ -13,6 +13,7 @@
 - **👉 [Awesome Instructions](docs/README.instructions.md)** - 適用於特定檔案模式或整個專案的全面程式碼標準和最佳實踐
 - **👉 [Awesome Skills](docs/README.skills.md)** - 自包含的資料夾，內含說明與捆綁資源，可增強 AI 在專門任務的技能
 - **👉 [Awesome Collections](docs/README.collections.md)** - 圍繞特定主題和工作流程組織的相關提示、指令、代理程式和技能的精選集合
+- **👉 [Awesome Cookbook Recipes](cookbook/README.md)** - 實用、可直接複製貼上的程式碼片段與實務範例，展示如何搭配 GitHub Copilot 的工具與功能使用
 
 ## 🌟 精選集合
 

@@ -195,6 +195,22 @@ function parseSkillMetadata(skillPath) {
   );
 }
 
+/**
+ * 剖析一般的 YAML 檔案（用於 tools.yml 和其他設定檔）
+ * @param {string} filePath - YAML 檔案的路徑
+ * @returns {object|null} 剖析後的 YAML 物件，若發生錯誤則回傳 null
+ */
+function parseYamlFile(filePath) {
+  return safeFileOperation(
+    () => {
+      const content = fs.readFileSync(filePath, "utf8");
+      return yaml.load(content, { schema: yaml.JSON_SCHEMA });
+    },
+    filePath,
+    null
+  );
+}
+
 export {
   parseCollectionYaml,
   parseFrontmatter,
@@ -202,5 +218,6 @@ export {
   extractMcpServers,
   extractMcpServerConfigs,
   parseSkillMetadata,
+  parseYamlFile,
   safeFileOperation,
 };

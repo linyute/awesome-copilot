@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=../.schemas/cookbook.schema.json
+# Cookbook manifest for the Awesome GitHub Copilot website
+# This file defines the structure of cookbooks and recipes for the Samples page
+
+cookbooks:
+  - id: copilot-sdk
+    name: GitHub Copilot SDK
+    description: 跨多種語言建構 GitHub Copilot SDK 的隨插即用範例
+    path: cookbook/copilot-sdk
+    featured: true
+    languages:
+      - id: nodejs
+        name: Node.js / TypeScript
+        icon: "\uE628"
+        extension: .ts
+      - id: python
+        name: Python
+        icon: "\uE73C"
+        extension: .py
+      - id: dotnet
+        name: .NET (C#)
+        icon: "\uE648"
+        extension: .cs
+      - id: go
+        name: Go
+        icon: "\uE626"
+        extension: .go
+    recipes:
+      - id: error-handling
+        name: 錯誤處理
+        description: 優雅地處理錯誤，包括連線失敗、逾時和清除
+        tags:
+          - errors
+          - basics
+          - reliability
+      - id: multiple-sessions
+        name: 多個工作階段
+        description: 同時管理多個獨立的對話
+        tags:
+          - sessions
+          - advanced
+          - concurrency
+      - id: managing-local-files
+        name: 管理本機檔案
+        description: 使用 AI 驅動的分組策略，依 Metadata 整理檔案
+        tags:
+          - files
+          - organization
+          - ai-powered
+      - id: pr-visualization
+        name: PR 視覺化
+        description: 使用 GitHub MCP Server 產生互動式 PR 建立時間圖表
+        tags:
+          - github
+          - visualization
+          - mcp
+      - id: persisting-sessions
+        name: 持久化工作階段
+        description: 跨重新啟動儲存並恢復工作階段
+        tags:
+          - sessions
+          - persistence
+          - state-management
