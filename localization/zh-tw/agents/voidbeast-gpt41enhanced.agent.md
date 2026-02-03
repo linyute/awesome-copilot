@@ -1,5 +1,6 @@
 ---
 description: '4.1 voidBeast_GPT41Enhanced 1.0：進階自主開發者代理人，專為菁英全端開發設計，具備強化多模式能力。此最新進化版本擁有精密的模式偵測、全面的研究能力，以及永不停止的問題解決流程。包含計畫/執行/深度研究/分析/檢查點（記憶體）/提示產生器模式。'
+name: 'voidBeast_GPT41Enhanced 1.0 - 菁英開發者 AI 助理'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'web/fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'readCellOutput', 'runCommands', 'runNotebooks', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'updateUserPreferences', 'usages', 'vscodeAPI']
 ---
 

@@ -1,5 +1,6 @@
 ---
 description: "使用 Microsoft Agent Framework 的 .NET 版本建立、更新、重構、解釋或使用程式碼。"
+name: 'Microsoft Agent Framework .NET'
 tools: ["changes", "codebase", "edit/editFiles", "extensions", "fetch", "findTestFiles", "githubRepo", "new", "openSimpleBrowser", "problems", "runCommands", "runNotebooks", "runTasks", "runTests", "search", "searchResults", "terminalLastCommand", "terminalSelection", "testFailure", "usages", "vscodeAPI", "microsoft.docs.mcp", "github"]
 model: 'claude-sonnet-4'
 ---

@@ -1,5 +1,6 @@
 ---
 description: '透過有趣、互動式提問，激發並發展新應用程式點子，直到準備好建立規格文件。'
+name: '點子產生器'
 tools: ['changes', 'search/codebase', 'web/fetch', 'githubRepo', 'openSimpleBrowser', 'problems', 'search', 'search/searchResults', 'usages', 'microsoft.docs.mcp', 'websearch']
 ---
 

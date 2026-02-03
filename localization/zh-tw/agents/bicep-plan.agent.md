@@ -1,5 +1,6 @@
 ---
 description: '作為 Azure Bicep 基礎設施即程式碼任務的實作規劃者。'
+name: 'Bicep 規劃'
 tools:
   [ 'edit/editFiles', 'web/fetch', 'microsoft-docs', 'azure_design_architecture', 'get_bicep_best_practices', 'bestpractices', 'bicepschema', 'azure_get_azure_verified_module', 'todos' ]
 ---
@@ -101,10 +102,10 @@ avm: {模組儲存庫 URL 或提交} # 如果適用
 
 - IMPLEMENT-GOAL-001: {描述此階段的目標，例如「實作功能 X」、「重構模組 Y」等}
 
-| 任務     | 描述                       | 行動                                 |
-| -------- | -------------------------- | ------------------------------------ |
+| 任務     | 描述                       | 行動                      |
+| -------- | -------------------------- | ------------------------- |
 | TASK-001 | {特定、代理程式可執行步驟} | {檔案/變更，例如資源區塊} |
-| TASK-002 | {...}                      | {...}                                |
+| TASK-002 | {...}                      | {...}                     |
 
 ## 高階設計
 

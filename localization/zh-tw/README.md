@@ -54,6 +54,10 @@
 
 </details>
 
+## 📄 llms.txt
+
+一個遵循 [`llmstxt.org`](https://llmstxt.org/) 規範的 [`llms.txt`](https://github.github.io/awesome-copilot/llms.txt) 檔案已在 GitHub Pages 網站提供。此機器可讀檔案可讓大型語言模型（LLM）輕鬆發現並理解所有可用的代理程式、提示、指令和技能，提供一個包含名稱與描述的結構化資源總覽。
+
 ## 🔧 如何使用
 
 ### 🤖 自訂代理程式

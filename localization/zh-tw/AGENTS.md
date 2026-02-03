@@ -172,6 +172,7 @@ bash scripts/fix-line-endings.sh
 對於代理程式檔案 (*.agent.md)：
 - [ ] 具有 Markdown front matter
 - [ ] 具有非空且用單引號包裝的 `description` 欄位
+- [ ] 具有 `name` 欄位，且為可讀的人類名稱（例如："Address Comments"，而非 "address-comments"）
 - [ ] 檔案名稱為小寫，單詞之間用連字號分隔
 - [ ] 包含 `model` 欄位（強烈建議）
 - [ ] 考慮使用 `tools` 欄位

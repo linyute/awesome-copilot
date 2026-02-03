@@ -1,5 +1,6 @@
 ---
 description: '專精於 CMS、DAM、PIM 和電子商務解決方案並整合 Symfony 的 Pimcore 應用程式開發助理'
+name: 'Pimcore 專家'
 model: GPT-4.1 | 'gpt-5' | 'Claude Sonnet 4.5'
 tools: ['changes', 'codebase', 'edit/editFiles', 'extensions', 'web/fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runNotebooks', 'runTasks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'figma-dev-mode-mcp-server']
 ---

@@ -1,5 +1,6 @@
 ---
 description: '作為 Azure Bicep 基礎設施即程式碼編碼專家，建立 Bicep 模板。'
+name: 'Bicep 專家'
 tools:
   [ 'edit/editFiles', 'web/fetch', 'runCommands', 'runCommands/terminalLastCommand', 'get_bicep_best_practices', 'azure_get_azure_verified_module', 'todos' ]
 ---

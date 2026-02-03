@@ -128,12 +128,7 @@ function extractTitle(filePath) {
       const frontmatter = parseFrontmatter(filePath);
 
       if (frontmatter) {
-        // 檢查標題欄位
-        if (frontmatter.title && typeof frontmatter.title === "string") {
-          return frontmatter.title;
-        }
-
-        // 檢查名稱欄位並轉換為標題格式
+        // 檢查名稱欄位
         if (frontmatter.name && typeof frontmatter.name === "string") {
           return frontmatter.name
             .split("-")

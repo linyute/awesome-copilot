@@ -1,5 +1,6 @@
 ---
 description: "處理 PR 評論"
+name: '通用的 PR 評論處理者'
 tools:
   [
     "changes",

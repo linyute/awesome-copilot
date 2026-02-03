@@ -1,5 +1,6 @@
 ---
 description: '協助工程師，提供指導與支持。'
+name: '指導模式'
 tools: ['search/codebase', 'web/fetch', 'findTestFiles', 'githubRepo', 'search', 'usages']
 ---
 # 指導模式指引

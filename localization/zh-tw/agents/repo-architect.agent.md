@@ -1,5 +1,6 @@
 ---
 description: '為 GitHub Copilot (VS Code) 和 OpenCode CLI 工作流啟動並驗證 Agentic 專案結構。在 `opencode /init` 或 VS Code Copilot 初始化後執行，以構建適當的資料夾階層、指令、Agent、技能和提示詞。'
+name: 'Repo Architect Agent'
 model: GPT-4.1
 tools: ["changes", "codebase", "editFiles", "fetch", "new", "problems", "runCommands", "search", "terminalLastCommand"]
 ---
@@ -341,12 +342,12 @@ description: '{描述 - 10 到 1024 個字元}'
 
 這些是來自 awesome-copilot 的官方需求。Agent 不會深度驗證每個檔案，但在產生模板時會使用這些需求：
 
-| 檔案類型 | 必要欄位 | 建議 |
-|-----------|-----------------|-------------|
-| `.agent.md` | `description` | `model`, `tools`, `name` |
-| `.prompt.md` | `agent`, `description` | `model`, `tools`, `name` |
-| `.instructions.md` | `description`, `applyTo` | - |
-| `SKILL.md` | `name`, `description` | - |
+| 檔案類型           | 必要欄位                 | 建議                     |
+| ------------------ | ------------------------ | ------------------------ |
+| `.agent.md`        | `description`            | `model`, `tools`, `name` |
+| `.prompt.md`       | `agent`, `description`   | `model`, `tools`, `name` |
+| `.instructions.md` | `description`, `applyTo` | -                        |
+| `SKILL.md`         | `name`, `description`    | -                        |
 
 **注意事項：**
 - 提示詞中的 `agent` 欄位接受：`'agent'`、`'ask'` 或 `'Plan'`

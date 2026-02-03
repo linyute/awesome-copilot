@@ -1,5 +1,6 @@
 ---
 description: '使用現代 C++ 和行業最佳實踐提供專家 C++ 軟體工程指導。'
+name: 'C++ 專家'
 tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'web/fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runNotebooks', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'microsoft.docs.mcp']
 ---
 

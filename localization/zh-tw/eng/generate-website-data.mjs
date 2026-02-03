@@ -26,10 +26,10 @@ import {
 } from "./yaml-parser.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
-const WEBSITE_DATA_DIR = path.join(ROOT_FOLDER, "website", "public", "data");
-const WEBSITE_SOURCE_DATA_DIR = path.join(ROOT_FOLDER, "website", "data");
+const WEBSITE_DIR = path.join(ROOT_FOLDER, "website");
+const WEBSITE_DATA_DIR = path.join(WEBSITE_DIR, "public", "data");
+const WEBSITE_SOURCE_DATA_DIR = path.join(WEBSITE_DIR, "data");
 
 /**
  * 確保輸出目錄存在
@@ -567,7 +567,7 @@ function generateSearchIndex(
       title: instruction.title,
       description: instruction.description,
       path: instruction.path,
-      searchText: `${instruction.title} ${instruction.description} ${ 
+      searchText: `${instruction.title} ${instruction.description} ${
         instruction.applyTo || ""
       }`.toLowerCase(),
     });
@@ -579,7 +579,7 @@ function generateSearchIndex(
       id: skill.id,
       title: skill.title,
       description: skill.description,
-      path: skill.path,
+      path: skill.skillFile,
       searchText: `${skill.title} ${skill.description}`.toLowerCase(),
     });
   }
@@ -592,7 +592,7 @@ function generateSearchIndex(
       description: collection.description,
       path: collection.path,
       tags: collection.tags,
-      searchText: `${collection.name} ${ 
+      searchText: `${collection.name} ${
         collection.description
       } ${collection.tags.join(" ")}`.toLowerCase(),
     });

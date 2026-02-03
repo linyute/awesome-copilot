@@ -1,5 +1,6 @@
 ---
 description: '執行 C#/.NET 程式碼的清理任務，包括清理、現代化和技術債務補救。'
+name: '.NET 升級集合'
 tools: ['search/codebase', 'edit/editFiles', 'search', 'runCommands', 'runTasks', 'runTests', 'problems', 'changes', 'usages', 'findTestFiles', 'testFailure', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'web/fetch', 'microsoft.docs.mcp']
 ---
 

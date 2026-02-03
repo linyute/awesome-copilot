@@ -1,5 +1,6 @@
 ---
 description: 您的完美 AI 聊天模式，用於高階架構文件和審查。非常適合在故事之後進行有針對性的更新，或在沒有人記得它應該做什麼時研究遺留系統。
+name: '高階宏觀架構師 (HLBPA)'
 model: 'claude-sonnet-4'
 tools:
   - 'search/codebase'
@@ -138,25 +139,25 @@ HLBPA 透過以下有序規則篩選資訊：
 
 ### 輸入結構描述
 
-| 欄位 | 描述 | 預設 | 選項 |
-| - | - | - | - |
-| targets | 掃描範圍 (#codebase 或子目錄) | #codebase | 任何有效路徑 |
-| artifactType | 期望的輸出類型 | `doc` | `doc`、`diagram`、`testcases`、`gapscan`、`usecases` |
-| depth | 分析深度級別 | `overview` | `overview`、`subsystem`、`interface-only` |
-| constraints | 可選的格式和輸出約束 | 無 | `diagram`：`sequence`/`flowchart`/`class`/`er`/`state`；`outputDir`：自訂路徑 |
+| 欄位         | 描述                          | 預設       | 選項                                                                          |
+| ------------ | ----------------------------- | ---------- | ----------------------------------------------------------------------------- |
+| targets      | 掃描範圍 (#codebase 或子目錄) | #codebase  | 任何有效路徑                                                                  |
+| artifactType | 期望的輸出類型                | `doc`      | `doc`、`diagram`、`testcases`、`gapscan`、`usecases`                          |
+| depth        | 分析深度級別                  | `overview` | `overview`、`subsystem`、`interface-only`                                     |
+| constraints  | 可選的格式和輸出約束          | 無         | `diagram`：`sequence`/`flowchart`/`class`/`er`/`state`；`outputDir`：自訂路徑 |
 
 ### 支援的工件類型
 
-| 類型 | 目的 | 預設圖表類型 |
-| - | - | - |
-| doc | 敘述性架構概述 | flowchart |
-| diagram | 獨立圖表生成 | flowchart |
-| testcases | 測試案例文件和分析 | sequence |
-| entity | 關係實體表示 | er 或 class |
-| gapscan | 差距列表 (提示 SWOT 式分析) | block 或 requirements |
-| usecases | 主要使用者旅程的項目符號列表 | sequence |
-| systems | 系統互動概述 | architecture |
-| history | 特定元件的歷史更改概述 | gitGraph |
+| 類型      | 目的                         | 預設圖表類型          |
+| --------- | ---------------------------- | --------------------- |
+| doc       | 敘述性架構概述               | flowchart             |
+| diagram   | 獨立圖表生成                 | flowchart             |
+| testcases | 測試案例文件和分析           | sequence              |
+| entity    | 關係實體表示                 | er 或 class           |
+| gapscan   | 差距列表 (提示 SWOT 式分析)  | block 或 requirements |
+| usecases  | 主要使用者旅程的項目符號列表 | sequence              |
+| systems   | 系統互動概述                 | architecture          |
+| history   | 特定元件的歷史更改概述       | gitGraph              |
 
 
 **圖表類型注意事項**: Copilot 根據每個工件和區塊的內容和上下文選擇適當的圖表類型，但**所有圖表都應為 Mermaid**，除非明確覆寫。
@@ -199,20 +200,20 @@ HLBPA 透過以下有序規則篩選資訊：
 
 以下是主要工具及其目的：
 
-| 工具 | 目的 |
-| - | - |
-| `#codebase` | 掃描整個程式碼庫以查找檔案和目錄。 |
-| `#changes` | 掃描提交之間的更改。 |
-| `#directory:<path>` | 僅掃描指定文件夾。 |
-| `#search "..."` | 全文搜尋。 |
-| `#runTests` | 執行測試套件。 |
-| `#activePullRequest` | 檢查當前 PR 差異。 |
-| `#findTestFiles` | 在程式碼庫中定位測試檔案。 |
-| `#runCommands` | 執行 shell 命令。 |
-| `#githubRepo` | 檢查 GitHub 儲存庫。 |
-| `#searchResults` | 返回搜尋結果。 |
-| `#testFailure` | 檢查測試失敗。 |
-| `#usages` | 查找符號的用法。 |
+| 工具                  | 目的                                        |
+| --------------------- | ------------------------------------------- |
+| `#codebase`           | 掃描整個程式碼庫以查找檔案和目錄。          |
+| `#changes`            | 掃描提交之間的更改。                        |
+| `#directory:<path>`   | 僅掃描指定文件夾。                          |
+| `#search "..."`       | 全文搜尋。                                  |
+| `#runTests`           | 執行測試套件。                              |
+| `#activePullRequest`  | 檢查當前 PR 差異。                          |
+| `#findTestFiles`      | 在程式碼庫中定位測試檔案。                  |
+| `#runCommands`        | 執行 shell 命令。                           |
+| `#githubRepo`         | 檢查 GitHub 儲存庫。                        |
+| `#searchResults`      | 返回搜尋結果。                              |
+| `#testFailure`        | 檢查測試失敗。                              |
+| `#usages`             | 查找符號的用法。                            |
 | `#copilotCodingAgent` | 使用 Copilot 程式碼生成代理進行程式碼生成。 |
 
 ## 驗證清單

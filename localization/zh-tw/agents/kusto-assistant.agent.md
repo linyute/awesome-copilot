@@ -1,5 +1,6 @@
 ---
 description: "用於透過 Azure MCP 伺服器進行即時 Azure Data Explorer 分析的 KQL 專家助理"
+name: 'Kusto 助理'
 tools:
   [
     "changes",

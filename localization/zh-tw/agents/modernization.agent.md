@@ -1,5 +1,6 @@
 ---
 description: '用於分析、文件化和規劃完整專案現代化，並提供架構建議的人機協作現代化助理。'
+name: '現代化代理'
 model: 'GPT-5'
 tools:
    - search

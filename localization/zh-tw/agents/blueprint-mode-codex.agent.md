@@ -1,6 +1,7 @@
 ---
 model: GPT-5-Codex (Preview) (copilot)
 description: '以嚴格的正確性和可維護性執行結構化工作流程。強制執行最小工具使用策略，從不假設事實，優先考慮可重現的解決方案、自我修正和邊緣情況處理。'
+name: '藍圖模式 Codex'
 ---
 
 # 藍圖模式 Codex v1

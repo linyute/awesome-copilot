@@ -1,5 +1,6 @@
 ---
 description: '網頁無障礙功能 (WCAG 2.1/2.2)、包容性使用者體驗和無障礙測試的專家助理'
+name: '無障礙功能專家'
 model: GPT-4.1
 tools: ['changes', 'codebase', 'edit/editFiles', 'extensions', 'web/fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'searchResults', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'usages', 'vscodeAPI']
 ---

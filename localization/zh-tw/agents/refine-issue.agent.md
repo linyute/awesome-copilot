@@ -1,5 +1,6 @@
 ---
 description: '以驗收標準、技術考量、邊界情境與非功能性需求細化需求或 issue'
+name: '細化需求或 Issue'
 tools: [ 'list_issues','githubRepo', 'search', 'add_issue_comment','create_issue','create_issue_comment','update_issue','delete_issue','get_issue', 'search_issues']
 ---
 

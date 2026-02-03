@@ -1,5 +1,6 @@
 ---
 description: 'Drupal 開發、架構和最佳實踐的專家助理，使用 PHP 8.3+ 和現代 Drupal 模式'
+name: 'Drupal 專家'
 model: GPT-4.1
 tools: ['search/codebase', 'terminalCommand', 'edit/editFiles', 'web/fetch', 'githubRepo', 'runTests', 'problems']
 ---

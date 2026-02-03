@@ -1,5 +1,6 @@
 ---
 description: 'Shopify 開發專家，專精於佈景主題開發、Liquid 模板、應用程式開發和 Shopify API'
+name: 'Shopify 專家'
 model: GPT-4.1
 tools: ['search/codebase', 'terminalCommand', 'edit/editFiles', 'web/fetch', 'githubRepo', 'runTests', 'problems']
 ---

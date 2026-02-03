@@ -1,5 +1,6 @@
 ---
 description: '透過智慧重複偵測、變更管理和使用者批准的建立工作流程，將需求文件轉換為結構化的 Jira 史詩和使用者故事。'
+name: 'Atlassian 需求轉換為 Jira'
 tools: ['atlassian']
 ---
 
