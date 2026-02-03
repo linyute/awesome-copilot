@@ -1,4 +1,6 @@
 ---
+import { execSync } from "child_process";
+
 interface Props {
   title: string;
   description?: string;
@@ -11,6 +13,21 @@ const {
   activeNav = "",
 } = Astro.props;
 const base = import.meta.env.BASE_URL;
+
+// Get git commit SHA and build date at build time
+let commitSha = "unknown";
+let buildDate = new Date().toISOString().split("T")[0];
+try {
+  // Use GITHUB_SHA env var in GitHub Actions, fallback to git command locally
+  const githubSha = process.env.GITHUB_SHA;
+  if (githubSha) {
+    commitSha = githubSha.substring(0, 7);
+  } else {
+    commitSha = execSync("git rev-parse --short HEAD", { encoding: "utf-8" }).trim();
+  }
+} catch {
+  // Fallback if git is not available
+}
 ---
 
 <!doctype html>
@@ -154,6 +171,13 @@ const base = import.meta.env.BASE_URL;
             target="_blank"
             rel="noopener">MIT License</a
           >
+        </p>
+        <p class="build-info">
+          Built from <a
+            href={`https://github.com/github/awesome-copilot/commit/${commitSha}`}
+            target="_blank"
+            rel="noopener">{commitSha}</a
+          > on {buildDate}
         </p>
       </div>
     </footer>

@@ -26,10 +26,10 @@ import {
 } from "./yaml-parser.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
-const WEBSITE_DATA_DIR = path.join(ROOT_FOLDER, "website", "public", "data");
-const WEBSITE_SOURCE_DATA_DIR = path.join(ROOT_FOLDER, "website", "data");
+const WEBSITE_DIR = path.join(ROOT_FOLDER, "website");
+const WEBSITE_DATA_DIR = path.join(WEBSITE_DIR, "public", "data");
+const WEBSITE_SOURCE_DATA_DIR = path.join(WEBSITE_DIR, "data");
 
 /**
  * Ensure the output directory exists
@@ -44,7 +44,6 @@ function ensureDataDir() {
  * Extract title from filename or frontmatter
  */
 function extractTitle(filePath, frontmatter) {
-  if (frontmatter?.title) return frontmatter.title;
   if (frontmatter?.name) {
     return frontmatter.name
       .split("-")
@@ -579,7 +578,7 @@ function generateSearchIndex(
       id: skill.id,
       title: skill.title,
       description: skill.description,
-      path: skill.path,
+      path: skill.skillFile,
       searchText: `${skill.title} ${skill.description}`.toLowerCase(),
     });
   }
