@@ -24,6 +24,7 @@ import {
   parseSkillMetadata,
   parseYamlFile,
 } from "./yaml-parser.mjs";
+import { getGitFileDates } from "./utils/git-dates.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -64,7 +65,7 @@ function extractTitle(filePath, frontmatter) {
 /**
  * Generate agents metadata
  */
-function generateAgentsData() {
+function generateAgentsData(gitDates) {
   const agents = [];
   const files = fs
     .readdirSync(AGENTS_DIR)
@@ -105,6 +106,7 @@ function generateAgentsData() {
         : [],
       path: relativePath,
       filename: file,
+      lastUpdated: gitDates.get(relativePath) || null,
     });
   }
 
@@ -123,7 +125,7 @@ function generateAgentsData() {
 /**
  * Generate prompts metadata
  */
-function generatePromptsData() {
+function generatePromptsData(gitDates) {
   const prompts = [];
   const files = fs
     .readdirSync(PROMPTS_DIR)
@@ -151,6 +153,7 @@ function generatePromptsData() {
       tools: tools,
       path: relativePath,
       filename: file,
+      lastUpdated: gitDates.get(relativePath) || null,
     });
   }
 
@@ -206,7 +209,7 @@ function extractExtensionFromPattern(pattern) {
 /**
  * Generate instructions metadata
  */
-function generateInstructionsData() {
+function generateInstructionsData(gitDates) {
   const instructions = [];
   const files = fs
     .readdirSync(INSTRUCTIONS_DIR)
@@ -253,6 +256,7 @@ function generateInstructionsData() {
       extensions: [...new Set(extensions)],
       path: relativePath,
       filename: file,
+      lastUpdated: gitDates.get(relativePath) || null,
     });
   }
 
@@ -316,7 +320,7 @@ function categorizeSkill(name, description) {
 /**
  * Generate skills metadata
  */
-function generateSkillsData() {
+function generateSkillsData(gitDates) {
   const skills = [];
 
   if (!fs.existsSync(SKILLS_DIR)) {
@@ -343,6 +347,9 @@ function generateSkillsData() {
       // Get all files in the skill folder recursively
       const files = getSkillFiles(skillPath, relativePath);
 
+      // Get last updated from SKILL.md file
+      const skillFilePath = `${relativePath}/SKILL.md`;
+
       skills.push({
         id: folder,
         name: metadata.name,
@@ -356,8 +363,9 @@ function generateSkillsData() {
         assetCount: metadata.assets.length,
         category: category,
         path: relativePath,
-        skillFile: `${relativePath}/SKILL.md`,
+        skillFile: skillFilePath,
         files: files,
+        lastUpdated: gitDates.get(skillFilePath) || null,
       });
     }
   }
@@ -406,7 +414,7 @@ function getSkillFiles(skillPath, relativePath) {
 /**
  * Generate collections metadata
  */
-function generateCollectionsData() {
+function generateCollectionsData(gitDates) {
   const collections = [];
 
   if (!fs.existsSync(COLLECTIONS_DIR)) {
@@ -447,6 +455,7 @@ function generateCollectionsData() {
         })),
         path: relativePath,
         filename: file,
+        lastUpdated: gitDates.get(relativePath) || null,
       });
     }
   }
@@ -542,6 +551,7 @@ function generateSearchIndex(
       title: agent.title,
       description: agent.description,
       path: agent.path,
+      lastUpdated: agent.lastUpdated,
       searchText: `${agent.title} ${agent.description} ${agent.tools.join(
         " "
       )}`.toLowerCase(),
@@ -555,6 +565,7 @@ function generateSearchIndex(
       title: prompt.title,
       description: prompt.description,
       path: prompt.path,
+      lastUpdated: prompt.lastUpdated,
       searchText: `${prompt.title} ${prompt.description}`.toLowerCase(),
     });
   }
@@ -566,6 +577,7 @@ function generateSearchIndex(
       title: instruction.title,
       description: instruction.description,
       path: instruction.path,
+      lastUpdated: instruction.lastUpdated,
       searchText: `${instruction.title} ${instruction.description} ${
         instruction.applyTo || ""
       }`.toLowerCase(),
@@ -579,6 +591,7 @@ function generateSearchIndex(
       title: skill.title,
       description: skill.description,
       path: skill.skillFile,
+      lastUpdated: skill.lastUpdated,
       searchText: `${skill.title} ${skill.description}`.toLowerCase(),
     });
   }
@@ -591,6 +604,7 @@ function generateSearchIndex(
       description: collection.description,
       path: collection.path,
       tags: collection.tags,
+      lastUpdated: collection.lastUpdated,
       searchText: `${collection.name} ${
         collection.description
       } ${collection.tags.join(" ")}`.toLowerCase(),
@@ -703,32 +717,40 @@ async function main() {
 
   ensureDataDir();
 
+  // Load git dates for all resource files (single efficient git command)
+  console.log("Loading git history for last updated dates...");
+  const gitDates = getGitFileDates(
+    ["agents/", "prompts/", "instructions/", "skills/", "collections/"],
+    ROOT_FOLDER
+  );
+  console.log(`✓ Loaded dates for ${gitDates.size} files\n`);
+
   // Generate all data
-  const agentsData = generateAgentsData();
+  const agentsData = generateAgentsData(gitDates);
   const agents = agentsData.items;
   console.log(
     `✓ Generated ${agents.length} agents (${agentsData.filters.models.length} models, ${agentsData.filters.tools.length} tools)`
   );
 
-  const promptsData = generatePromptsData();
+  const promptsData = generatePromptsData(gitDates);
   const prompts = promptsData.items;
   console.log(
     `✓ Generated ${prompts.length} prompts (${promptsData.filters.tools.length} tools)`
   );
 
-  const instructionsData = generateInstructionsData();
+  const instructionsData = generateInstructionsData(gitDates);
   const instructions = instructionsData.items;
   console.log(
     `✓ Generated ${instructions.length} instructions (${instructionsData.filters.extensions.length} extensions)`
   );
 
-  const skillsData = generateSkillsData();
+  const skillsData = generateSkillsData(gitDates);
   const skills = skillsData.items;
   console.log(
     `✓ Generated ${skills.length} skills (${skillsData.filters.categories.length} categories)`
   );
 
-  const collectionsData = generateCollectionsData();
+  const collectionsData = generateCollectionsData(gitDates);
   const collections = collectionsData.items;
   console.log(
     `✓ Generated ${collections.length} collections (${collectionsData.filters.tags.length} tags)`

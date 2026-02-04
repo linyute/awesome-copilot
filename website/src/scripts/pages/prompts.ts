@@ -3,12 +3,13 @@
  */
 import { createChoices, getChoicesValues, type Choices } from '../choices';
 import { FuzzySearch, SearchItem } from '../search';
-import { fetchData, debounce, escapeHtml, getGitHubUrl, getInstallDropdownHtml, setupDropdownCloseHandlers, getActionButtonsHtml, setupActionHandlers } from '../utils';
+import { fetchData, debounce, escapeHtml, getGitHubUrl, getInstallDropdownHtml, setupDropdownCloseHandlers, getActionButtonsHtml, setupActionHandlers, getLastUpdatedHtml } from '../utils';
 import { setupModal, openFileModal } from '../modal';
 
 interface Prompt extends SearchItem {
   path: string;
   tools?: string[];
+  lastUpdated?: string | null;
 }
 
 interface PromptsData {
@@ -18,11 +19,25 @@ interface PromptsData {
   };
 }
 
+type SortOption = 'title' | 'lastUpdated';
+
 const resourceType = 'prompt';
 let allItems: Prompt[] = [];
 let search = new FuzzySearch<Prompt>();
 let toolSelect: Choices;
 let currentFilters = { tools: [] as string[] };
+let currentSort: SortOption = 'title';
+
+function sortItems(items: Prompt[]): Prompt[] {
+  return [...items].sort((a, b) => {
+    if (currentSort === 'lastUpdated') {
+      const dateA = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+      const dateB = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+      return dateB - dateA;
+    }
+    return a.title.localeCompare(b.title);
+  });
+}
 
 function applyFiltersAndRender(): void {
   const searchInput = document.getElementById('search-input') as HTMLInputElement;
@@ -36,6 +51,8 @@ function applyFiltersAndRender(): void {
       item.tools?.some(tool => currentFilters.tools.includes(tool))
     );
   }
+
+  results = sortItems(results);
 
   renderItems(results, query);
   let countText = `${results.length} of ${allItems.length} prompts`;
@@ -62,6 +79,7 @@ function renderItems(items: Prompt[], query = ''): void {
         <div class="resource-meta">
           ${item.tools?.slice(0, 4).map(t => `<span class="resource-tag">${escapeHtml(t)}</span>`).join('') || ''}
           ${item.tools && item.tools.length > 4 ? `<span class="resource-tag">+${item.tools.length - 4} more</span>` : ''}
+          ${getLastUpdatedHtml(item.lastUpdated)}
         </div>
       </div>
       <div class="resource-actions">
@@ -87,6 +105,7 @@ export async function initPromptsPage(): Promise<void> {
   const list = document.getElementById('resource-list');
   const searchInput = document.getElementById('search-input') as HTMLInputElement;
   const clearFiltersBtn = document.getElementById('clear-filters');
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
 
   const data = await fetchData<PromptsData>('prompts.json');
   if (!data || !data.items) {
@@ -104,13 +123,20 @@ export async function initPromptsPage(): Promise<void> {
     applyFiltersAndRender();
   });
 
+  sortSelect?.addEventListener('change', () => {
+    currentSort = sortSelect.value as SortOption;
+    applyFiltersAndRender();
+  });
+
   applyFiltersAndRender();
   searchInput?.addEventListener('input', debounce(() => applyFiltersAndRender(), 200));
 
   clearFiltersBtn?.addEventListener('click', () => {
     currentFilters = { tools: [] };
+    currentSort = 'title';
     toolSelect.removeActiveItems();
     if (searchInput) searchInput.value = '';
+    if (sortSelect) sortSelect.value = 'title';
     applyFiltersAndRender();
   });
 

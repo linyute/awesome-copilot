@@ -429,3 +429,75 @@ export function setupActionHandlers(): void {
 
 let dropdownHandlersReady = false;
 let actionHandlersReady = false;
+
+/**
+ * Format a date as relative time (e.g., "3 days ago")
+ * @param isoDate - ISO 8601 date string
+ * @returns Relative time string
+ */
+export function formatRelativeTime(isoDate: string | null | undefined): string {
+  if (!isoDate) return "Unknown";
+
+  const date = new Date(isoDate);
+  if (isNaN(date.getTime())) return "Unknown";
+
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+  const diffYears = Math.floor(diffDays / 365);
+
+  if (diffDays === 0) {
+    if (diffHours === 0) {
+      if (diffMinutes === 0) return "just now";
+      return diffMinutes === 1 ? "1 minute ago" : `${diffMinutes} minutes ago`;
+    }
+    return diffHours === 1 ? "1 hour ago" : `${diffHours} hours ago`;
+  }
+  if (diffDays === 1) return "yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffWeeks === 1) return "1 week ago";
+  if (diffWeeks < 4) return `${diffWeeks} weeks ago`;
+  if (diffMonths === 1) return "1 month ago";
+  if (diffMonths < 12) return `${diffMonths} months ago`;
+  if (diffYears === 1) return "1 year ago";
+  return `${diffYears} years ago`;
+}
+
+/**
+ * Format a date for display (e.g., "January 15, 2026")
+ * @param isoDate - ISO 8601 date string
+ * @returns Formatted date string
+ */
+export function formatFullDate(isoDate: string | null | undefined): string {
+  if (!isoDate) return "Unknown";
+
+  const date = new Date(isoDate);
+  if (isNaN(date.getTime())) return "Unknown";
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+/**
+ * Generate HTML for displaying last updated time with hover tooltip
+ * @param isoDate - ISO 8601 date string
+ * @returns HTML string with relative time and title attribute
+ */
+export function getLastUpdatedHtml(isoDate: string | null | undefined): string {
+  const relativeTime = formatRelativeTime(isoDate);
+  const fullDate = formatFullDate(isoDate);
+
+  if (relativeTime === "Unknown") {
+    return `<span class="last-updated">Updated: Unknown</span>`;
+  }
+
+  return `<span class="last-updated" title="${escapeHtml(fullDate)}">Updated ${relativeTime}</span>`;
+}

@@ -24,6 +24,13 @@ import Modal from '../components/Modal.astro';
             <label for="filter-tool">Tool:</label>
             <select id="filter-tool" multiple aria-label="Filter by tool"></select>
           </div>
+          <div class="filter-group">
+            <label for="sort-select">Sort:</label>
+            <select id="sort-select" aria-label="Sort by">
+              <option value="title">Name (A-Z)</option>
+              <option value="lastUpdated">Recently Updated</option>
+            </select>
+          </div>
           <button id="clear-filters" class="btn btn-secondary btn-small">Clear Filters</button>
         </div>
         

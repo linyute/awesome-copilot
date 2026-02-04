@@ -1415,6 +1415,14 @@ a:hover {
   flex-shrink: 0;
 }
 
+/* Last Updated */
+.last-updated {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  cursor: default;
+  margin-left: auto;
+}
+
 /* Collection Items */
 .collection-items {
   margin-top: 12px;

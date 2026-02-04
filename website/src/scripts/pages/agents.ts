@@ -3,7 +3,7 @@
  */
 import { createChoices, getChoicesValues, type Choices } from '../choices';
 import { FuzzySearch, SearchItem } from '../search';
-import { fetchData, debounce, escapeHtml, getGitHubUrl, getInstallDropdownHtml, setupDropdownCloseHandlers, getActionButtonsHtml, setupActionHandlers } from '../utils';
+import { fetchData, debounce, escapeHtml, getGitHubUrl, getInstallDropdownHtml, setupDropdownCloseHandlers, getActionButtonsHtml, setupActionHandlers, getLastUpdatedHtml } from '../utils';
 import { setupModal, openFileModal } from '../modal';
 
 interface Agent extends SearchItem {
@@ -11,6 +11,7 @@ interface Agent extends SearchItem {
   model?: string;
   tools?: string[];
   hasHandoffs?: boolean;
+  lastUpdated?: string | null;
 }
 
 interface AgentsData {
@@ -21,17 +22,33 @@ interface AgentsData {
   };
 }
 
+type SortOption = 'title' | 'lastUpdated';
+
 const resourceType = 'agent';
 let allItems: Agent[] = [];
 let search = new FuzzySearch<Agent>();
 let modelSelect: Choices;
 let toolSelect: Choices;
+let currentSort: SortOption = 'title';
 
 let currentFilters = {
   models: [] as string[],
   tools: [] as string[],
   hasHandoffs: false,
 };
+
+function sortItems(items: Agent[]): Agent[] {
+  return [...items].sort((a, b) => {
+    if (currentSort === 'lastUpdated') {
+      // Sort by last updated (newest first), with null/undefined at end
+      const dateA = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+      const dateB = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+      return dateB - dateA;
+    }
+    // Default: sort by title
+    return a.title.localeCompare(b.title);
+  });
+}
 
 function applyFiltersAndRender(): void {
   const searchInput = document.getElementById('search-input') as HTMLInputElement;
@@ -58,6 +75,9 @@ function applyFiltersAndRender(): void {
   if (currentFilters.hasHandoffs) {
     results = results.filter(item => item.hasHandoffs);
   }
+
+  // Apply sorting
+  results = sortItems(results);
 
   renderItems(results, query);
 
@@ -97,6 +117,7 @@ function renderItems(items: Agent[], query = ''): void {
           ${item.tools?.slice(0, 3).map(t => `<span class="resource-tag">${escapeHtml(t)}</span>`).join('') || ''}
           ${item.tools && item.tools.length > 3 ? `<span class="resource-tag">+${item.tools.length - 3} more</span>` : ''}
           ${item.hasHandoffs ? `<span class="resource-tag tag-handoffs">handoffs</span>` : ''}
+          ${getLastUpdatedHtml(item.lastUpdated)}
         </div>
       </div>
       <div class="resource-actions">
@@ -123,6 +144,7 @@ export async function initAgentsPage(): Promise<void> {
   const searchInput = document.getElementById('search-input') as HTMLInputElement;
   const handoffsCheckbox = document.getElementById('filter-handoffs') as HTMLInputElement;
   const clearFiltersBtn = document.getElementById('clear-filters');
+  const sortSelect = document.getElementById('sort-select') as HTMLSelectElement;
 
   const data = await fetchData<AgentsData>('agents.json');
   if (!data || !data.items) {
@@ -149,6 +171,12 @@ export async function initAgentsPage(): Promise<void> {
     applyFiltersAndRender();
   });
 
+  // Initialize sort select
+  sortSelect?.addEventListener('change', () => {
+    currentSort = sortSelect.value as SortOption;
+    applyFiltersAndRender();
+  });
+
   applyFiltersAndRender();
 
   searchInput?.addEventListener('input', debounce(() => applyFiltersAndRender(), 200));
@@ -160,10 +188,12 @@ export async function initAgentsPage(): Promise<void> {
 
   clearFiltersBtn?.addEventListener('click', () => {
     currentFilters = { models: [], tools: [], hasHandoffs: false };
+    currentSort = 'title';
     modelSelect.removeActiveItems();
     toolSelect.removeActiveItems();
     if (handoffsCheckbox) handoffsCheckbox.checked = false;
     if (searchInput) searchInput.value = '';
+    if (sortSelect) sortSelect.value = 'title';
     applyFiltersAndRender();
   });
 

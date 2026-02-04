@@ -11,6 +11,7 @@
 # categor - TypeScript template literal in website/src/scripts/pages/skills.ts:70 (categor${...length > 1 ? "ies" : "y"})
 # aline - proper name (Aline Ávila, contributor)
 # ative - part of "Declarative Agents" in TypeSpec M365 Copilot documentation (collections/typespec-m365-copilot.collection.md)
-ignore-words-list = numer,wit,aks,edn,ser,ois,gir,rouge,categor,aline,ative,afterall,deques
+# dateA, dateB - variable names used in sorting comparison functions
+ignore-words-list = numer,wit,aks,edn,ser,ois,gir,rouge,categor,aline,ative,afterall,deques,dateA,dateB
 # Skip certain files and directories
 skip = .git,node_modules,package-lock.json,*.lock,website/build,website/.docusaurus

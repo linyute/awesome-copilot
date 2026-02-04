@@ -20,7 +20,7 @@ You want to understand how long PRs have been open in a repository. This tool de
 ## Prerequisites
 
 ```bash
-pip install copilot-sdk
+pip install github-copilot-sdk
 ```
 
 ## Usage

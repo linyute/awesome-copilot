@@ -10,6 +10,7 @@ import {
   getGitHubUrl,
   getRawGitHubUrl,
   showToast,
+  getLastUpdatedHtml,
 } from "../utils";
 import { setupModal, openFileModal } from "../modal";
 import JSZip from "../jszip";
@@ -27,6 +28,7 @@ interface Skill extends SearchItem {
   hasAssets: boolean;
   assetCount: number;
   files: SkillFile[];
+  lastUpdated?: string | null;
 }
 
 interface SkillsData {
@@ -36,6 +38,8 @@ interface SkillsData {
   };
 }
 
+type SortOption = 'title' | 'lastUpdated';
+
 const resourceType = "skill";
 let allItems: Skill[] = [];
 let search = new FuzzySearch<Skill>();
@@ -44,6 +48,18 @@ let currentFilters = {
   categories: [] as string[],
   hasAssets: false,
 };
+let currentSort: SortOption = 'title';
+
+function sortItems(items: Skill[]): Skill[] {
+  return [...items].sort((a, b) => {
+    if (currentSort === 'lastUpdated') {
+      const dateA = a.lastUpdated ? new Date(a.lastUpdated).getTime() : 0;
+      const dateB = b.lastUpdated ? new Date(b.lastUpdated).getTime() : 0;
+      return dateB - dateA;
+    }
+    return a.title.localeCompare(b.title);
+  });
+}
 
 function applyFiltersAndRender(): void {
   const searchInput = document.getElementById(
@@ -62,6 +78,8 @@ function applyFiltersAndRender(): void {
   if (currentFilters.hasAssets) {
     results = results.filter((item) => item.hasAssets);
   }
+
+  results = sortItems(results);
 
   renderItems(results, query);
   const activeFilters: string[] = [];
@@ -116,6 +134,7 @@ function renderItems(items: Skill[], query = ""): void {
           <span class="resource-tag">${item.files.length} file${
         item.files.length === 1 ? "" : "s"
       }</span>
+          ${getLastUpdatedHtml(item.lastUpdated)}
         </div>
       </div>
       <div class="resource-actions">
@@ -236,6 +255,7 @@ export async function initSkillsPage(): Promise<void> {
     "filter-has-assets"
   ) as HTMLInputElement;
   const clearFiltersBtn = document.getElementById("clear-filters");
+  const sortSelect = document.getElementById("sort-select") as HTMLSelectElement;
 
   const data = await fetchData<SkillsData>("skills.json");
   if (!data || !data.items) {
@@ -262,6 +282,11 @@ export async function initSkillsPage(): Promise<void> {
     applyFiltersAndRender();
   });
 
+  sortSelect?.addEventListener("change", () => {
+    currentSort = sortSelect.value as SortOption;
+    applyFiltersAndRender();
+  });
+
   applyFiltersAndRender();
   searchInput?.addEventListener(
     "input",
@@ -275,9 +300,11 @@ export async function initSkillsPage(): Promise<void> {
 
   clearFiltersBtn?.addEventListener("click", () => {
     currentFilters = { categories: [], hasAssets: false };
+    currentSort = 'title';
     categorySelect.removeActiveItems();
     if (hasAssetsCheckbox) hasAssetsCheckbox.checked = false;
     if (searchInput) searchInput.value = "";
+    if (sortSelect) sortSelect.value = "title";
     applyFiltersAndRender();
   });
 
