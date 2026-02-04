@@ -18,11 +18,11 @@ name: 'GitHub Copilot SDK Python 指引'
 請務必透過 pip 安裝：
 
 ```bash
-pip install copilot-sdk
+pip install github-copilot-sdk
 # 或使用 poetry
-poetry add copilot-sdk
+poetry add github-copilot-sdk
 # 或使用 uv
-uv add copilot-sdk
+uv add github-copilot-sdk
 ```
 
 ## 客戶端初始化 (Client Initialization)

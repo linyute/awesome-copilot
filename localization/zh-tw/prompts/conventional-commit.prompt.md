@@ -1,6 +1,6 @@
 ---
 description: '用於使用結構化 XML 格式生成常規提交訊息的提示和工作流程。指導使用者根據常規提交規範建立標準化、描述性的提交訊息，包括說明、範例和驗證。'
-tools: ['runCommands/runInTerminal', 'runCommands/getTerminalOutput']
+tools: ['execute/runInTerminal', 'execute/getTerminalOutput']
 ---
 
 ### 說明

@@ -24,6 +24,7 @@ import {
   parseSkillMetadata,
   parseYamlFile,
 } from "./yaml-parser.mjs";
+import { getGitFileDates } from "./utils/git-dates.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -65,7 +66,7 @@ function extractTitle(filePath, frontmatter) {
 /**
  * 產生代理 (agents) Metadata
  */
-function generateAgentsData() {
+function generateAgentsData(gitDates) {
   const agents = [];
   const files = fs
     .readdirSync(AGENTS_DIR)
@@ -106,6 +107,7 @@ function generateAgentsData() {
         : [],
       path: relativePath,
       filename: file,
+      lastUpdated: gitDates.get(relativePath) || null,
     });
   }
 
@@ -124,7 +126,7 @@ function generateAgentsData() {
 /**
  * 產生提示 (prompts) Metadata
  */
-function generatePromptsData() {
+function generatePromptsData(gitDates) {
   const prompts = [];
   const files = fs
     .readdirSync(PROMPTS_DIR)
@@ -152,6 +154,7 @@ function generatePromptsData() {
       tools: tools,
       path: relativePath,
       filename: file,
+      lastUpdated: gitDates.get(relativePath) || null,
     });
   }
 
@@ -207,7 +210,7 @@ function extractExtensionFromPattern(pattern) {
 /**
  * 產生指令 (instructions) Metadata
  */
-function generateInstructionsData() {
+function generateInstructionsData(gitDates) {
   const instructions = [];
   const files = fs
     .readdirSync(INSTRUCTIONS_DIR)
@@ -254,6 +257,7 @@ function generateInstructionsData() {
       extensions: [...new Set(extensions)],
       path: relativePath,
       filename: file,
+      lastUpdated: gitDates.get(relativePath) || null,
     });
   }
 
@@ -317,7 +321,7 @@ function categorizeSkill(name, description) {
 /**
  * 產生技能 (skills) Metadata
  */
-function generateSkillsData() {
+function generateSkillsData(gitDates) {
   const skills = [];
 
   if (!fs.existsSync(SKILLS_DIR)) {
@@ -344,6 +348,9 @@ function generateSkillsData() {
       // 遞迴取得技能資料夾中的所有檔案
       const files = getSkillFiles(skillPath, relativePath);
 
+      // 從 SKILL.md 檔案取得最後更新時間
+      const skillFilePath = `${relativePath}/SKILL.md`;
+
       skills.push({
         id: folder,
         name: metadata.name,
@@ -357,8 +364,9 @@ function generateSkillsData() {
         assetCount: metadata.assets.length,
         category: category,
         path: relativePath,
-        skillFile: `${relativePath}/SKILL.md`,
+        skillFile: skillFilePath,
         files: files,
+        lastUpdated: gitDates.get(skillFilePath) || null,
       });
     }
   }
@@ -407,7 +415,7 @@ function getSkillFiles(skillPath, relativePath) {
 /**
  * 產生集合 (collections) Metadata
  */
-function generateCollectionsData() {
+function generateCollectionsData(gitDates) {
   const collections = [];
 
   if (!fs.existsSync(COLLECTIONS_DIR)) {
@@ -448,6 +456,7 @@ function generateCollectionsData() {
         })),
         path: relativePath,
         filename: file,
+        lastUpdated: gitDates.get(relativePath) || null,
       });
     }
   }
@@ -543,6 +552,7 @@ function generateSearchIndex(
       title: agent.title,
       description: agent.description,
       path: agent.path,
+      lastUpdated: agent.lastUpdated,
       searchText: `${agent.title} ${agent.description} ${agent.tools.join(
         " "
       )}`.toLowerCase(),
@@ -556,6 +566,7 @@ function generateSearchIndex(
       title: prompt.title,
       description: prompt.description,
       path: prompt.path,
+      lastUpdated: prompt.lastUpdated,
       searchText: `${prompt.title} ${prompt.description}`.toLowerCase(),
     });
   }
@@ -567,6 +578,7 @@ function generateSearchIndex(
       title: instruction.title,
       description: instruction.description,
       path: instruction.path,
+      lastUpdated: instruction.lastUpdated,
       searchText: `${instruction.title} ${instruction.description} ${
         instruction.applyTo || ""
       }`.toLowerCase(),
@@ -580,6 +592,7 @@ function generateSearchIndex(
       title: skill.title,
       description: skill.description,
       path: skill.skillFile,
+      lastUpdated: skill.lastUpdated,
       searchText: `${skill.title} ${skill.description}`.toLowerCase(),
     });
   }
@@ -592,6 +605,7 @@ function generateSearchIndex(
       description: collection.description,
       path: collection.path,
       tags: collection.tags,
+      lastUpdated: collection.lastUpdated,
       searchText: `${collection.name} ${
         collection.description
       } ${collection.tags.join(" ")}`.toLowerCase(),
@@ -704,32 +718,40 @@ async function main() {
 
   ensureDataDir();
 
+  // 載入所有資源檔案的 Git 日期（使用單一高效率的 git 命令）
+  console.log("載入 Git 紀錄以取得檔案最後更新時間...");
+  const gitDates = getGitFileDates(
+    ["agents/", "prompts/", "instructions/", "skills/", "collections/"],
+    ROOT_FOLDER
+  );
+  console.log(`✓ 已載入 ${gitDates.size} 個檔案的日期紀錄\n`);
+
   // 產生所有資料
-  const agentsData = generateAgentsData();
+  const agentsData = generateAgentsData(gitDates);
   const agents = agentsData.items;
   console.log(
     `✓ 已產生 ${agents.length} 個代理 (${agentsData.filters.models.length} 個模型，${agentsData.filters.tools.length} 個工具)`
   );
 
-  const promptsData = generatePromptsData();
+  const promptsData = generatePromptsData(gitDates);
   const prompts = promptsData.items;
   console.log(
     `✓ 已產生 ${prompts.length} 個提示 (${promptsData.filters.tools.length} 個工具)`
   );
 
-  const instructionsData = generateInstructionsData();
+  const instructionsData = generateInstructionsData(gitDates);
   const instructions = instructionsData.items;
   console.log(
     `✓ 已產生 ${instructions.length} 個指令 (${instructionsData.filters.extensions.length} 個副檔名)`
   );
 
-  const skillsData = generateSkillsData();
+  const skillsData = generateSkillsData(gitDates);
   const skills = skillsData.items;
   console.log(
     `✓ 已產生 ${skills.length} 個技能 (${skillsData.filters.categories.length} 個類別)`
   );
 
-  const collectionsData = generateCollectionsData();
+  const collectionsData = generateCollectionsData(gitDates);
   const collections = collectionsData.items;
   console.log(
     `✓ 已產生 ${collections.length} 個集合 (${collectionsData.filters.tags.length} 個標籤)`

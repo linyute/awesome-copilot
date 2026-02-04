@@ -122,7 +122,7 @@ dotnet msbuild <ProjectName>.csproj /t:GenerateRestoreGraphFile /p:RestoreGraphO
 ## 分類規則
 - `TargetFramework` 以 `netcoreapp`、`net5.0+`、`net6.0+` 等開頭 → **現代 .NET**
 - `netstandard*` → **.NET Standard** (遷移到當前 .NET 版本)
-- `net4*` → **.NET Framework** (透過中間步驟遷移到 .NET 6+)
+- `net4*` → **.NET Framework** (透過中間步驟遷移到 .NET 8+)
 
 ---
 

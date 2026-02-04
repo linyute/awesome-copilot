@@ -1,4 +1,4 @@
---- 
+---
 name: 'copilot-sdk'
 description: '使用 GitHub Copilot SDK 建構 Agentic 應用程式。適用於在應用程式中嵌入 AI Agent、建立自訂工具、實作串流回應、管理工作階段、連接到 MCP 伺服器或建立自訂 Agent。觸發條件包括 Copilot SDK、GitHub SDK、Agentic 應用程式、嵌入 Copilot、可程式化 Agent、MCP 伺服器、自訂 Agent。'
 ---
