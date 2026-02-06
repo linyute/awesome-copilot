@@ -60,6 +60,26 @@ An [`llms.txt`](https://github.github.io/awesome-copilot/llms.txt) file followin
 
 ## 🔧 How to Use
 
+### 🔌 Plugins
+
+Plugins are installable packages generated from collections. Each plugin contains symlinked agents, commands (prompts), and skills from the source collection, making it easy to install a curated set of resources.
+
+#### Installing Plugins
+
+First, add the Awesome Copilot marketplace to your Copilot CLI:
+
+```bash
+copilot marketplace add github/awesome-copilot
+```
+
+Then install any plugin from the collection:
+
+```bash
+copilot plugin install <plugin-name>@awesome-copilot
+```
+
+Alternatively, you can use the `/plugin` command within a Copilot chat session to browse and install plugins interactively.
+
 ### 🤖 Custom Agents
 
 Custom agents can be used in Copilot coding agent (CCA), VS Code, and Copilot CLI (coming soon). For CCA, when assigning an issue to Copilot, select the custom agent from the provided list. In VS Code, you can activate the custom agent in the agents session, alongside built-in agents like Plan and Agent.
@@ -107,6 +127,7 @@ For AI coding agents working with this project, refer to [AGENTS.md](AGENTS.md) 
 ├── instructions/     # Coding standards and best practices (.instructions.md)
 ├── agents/           # AI personas and specialized modes (.agent.md)
 ├── collections/      # Curated collections of related items (.collection.yml)
+├── plugins/          # Installable plugins generated from collections
 ├── scripts/          # Utility scripts for maintenance
 └── skills/           # AI capabilities for specialized tasks
 ```

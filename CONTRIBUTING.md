@@ -2,6 +2,31 @@
 
 Thank you for your interest in contributing to the Awesome GitHub Copilot repository! We welcome contributions from the community to help expand our collection of custom instructions and prompts.
 
+## Prerequisites
+
+### Windows Users: Enable Symlinks
+
+This repository uses symbolic links for plugins. On Windows, you need to enable symlink support before cloning:
+
+1. **Enable Developer Mode** (recommended):
+   - Open **Settings** → **Update & Security** → **For developers**
+   - Enable **Developer Mode**
+   - This allows creating symlinks without administrator privileges
+
+2. **Configure Git to use symlinks**:
+   ```bash
+   git config --global core.symlinks true
+   ```
+
+3. **Clone the repository** (after enabling the above):
+   ```bash
+   git clone https://github.com/github/awesome-copilot.git
+   ```
+
+> **Note:** If you cloned the repository before enabling symlinks, the symlinks will appear as plain text files containing the target path. You'll need to delete the local repository and re-clone after enabling symlink support.
+
+**Alternative for older Windows versions:** If Developer Mode is not available, you can run Git Bash as Administrator, or grant your user the "Create symbolic links" privilege via Local Security Policy (`secpol.msc` → Local Policies → User Rights Assignment → Create symbolic links).
+
 ## How to Contribute
 
 ### Adding Instructions
@@ -185,6 +210,49 @@ For full example of usage checkout edge-ai tasks collection:
 - **Test combinations**: Ensure the items complement each other effectively
 - **Clear purpose**: The collection should solve a specific problem or workflow
 - **Validate before submitting**: Run `node validate-collections.js` to ensure your manifest is valid
+
+### Working with Plugins
+
+Plugins are installable packages automatically generated from collections. They contain symlinked agents, commands (prompts), and skills from the source collection.
+
+#### Creating a Plugin from a Collection
+
+When you create a new collection, you can generate a corresponding plugin:
+
+```bash
+# Migrate a collection to a new plugin (first time only)
+npm run plugin:migrate -- --collection <collection-id>
+```
+
+#### Updating Plugins After Collection Changes
+
+If you modify a collection (add/remove items, update metadata), refresh the corresponding plugin:
+
+```bash
+# Refresh a single plugin
+npm run plugin:refresh -- --collection <collection-id>
+
+# Refresh all existing plugins
+npm run plugin:refresh -- --all
+```
+
+#### Plugin Structure
+
+```plaintext
+plugins/<collection-id>/
+├── .github/plugin/plugin.json  # Plugin metadata (auto-generated)
+├── README.md                   # Plugin documentation (auto-generated)
+├── agents/                     # Symlinks to agent files (.md)
+├── commands/                   # Symlinks to prompt files (.md)
+└── skills/                     # Symlinks to skill folders
+```
+
+#### Plugin Guidelines
+
+- **Symlinks, not copies**: Plugin files are symlinks to the source files, avoiding duplication
+- **Instructions excluded**: Instructions are not currently supported in plugins
+- **Auto-generated content**: The `plugin.json` and `README.md` are generated from the collection metadata
+- **Keep plugins in sync**: After modifying a collection, run `plugin:refresh` to update the plugin
 
 ## Submitting Your Contribution
 
