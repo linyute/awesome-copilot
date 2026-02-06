@@ -1,4 +1,4 @@
-# 🤖 超棒的 GitHub Copilot
+# 🤖 Awesome GitHub Copilot
 
 [![Powered by Awesome Copilot](https://img.shields.io/badge/Powered_by-Awesome_Copilot-blue?logo=githubcopilot)](https://aka.ms/awesome-github-copilot) [![GitHub contributors from allcontributors.org](https://img.shields.io/github/all-contributors/github/awesome-copilot?color=ee8449)](#contributors-)
 
@@ -60,6 +60,26 @@
 
 ## 🔧 如何使用
 
+### 🔌 外掛
+
+外掛是由集合（collections）產生的可安裝套件。每個外掛會從原始集合建立符號連結的代理程式（agents）、指令（prompts）與技能（skills），方便您一次安裝經過策劃的資源組合。
+
+#### 安裝外掛
+
+首先，將 Awesome Copilot 市集新增至您的 Copilot CLI：
+
+```bash
+copilot marketplace add github/awesome-copilot
+```
+
+接著從集合中安裝任一外掛：
+
+```bash
+copilot plugin install <plugin-name>@awesome-copilot
+```
+
+或者，您也可以在 Copilot 聊天會話中使用 `/plugin` 指令，以互動方式瀏覽並安裝外掛。
+
 ### 🤖 自訂代理程式
 
 自訂代理程式可用於 Copilot 程式碼代理程式 (CCA)、VS Code 和 Copilot CLI (即將推出)。對於 CCA，當將問題指派給 Copilot 時，從提供的清單中選取自訂代理程式。在 VS Code 中，您可以在代理程式會話中啟用自訂代理程式，以及內建代理程式（例如 Plan 和 Agent）。
@@ -107,6 +127,7 @@
 ├── instructions/     # 程式碼標準和最佳實踐 (.instructions.md)
 ├── agents/           # AI 人格和專業模式 (.agent.md)
 ├── collections/      # 相關項目的精選集合 (.collection.yml)
+├── plugins/          # 由集合產生的可安裝外掛
 ├── scripts/          # 維護公用程式指令碼
 └── skills/           # 專門任務的 AI 能力
 ```

@@ -1,0 +1,10 @@
+{
+  "name": "power-apps-code-apps",
+  "description": "Power Apps Code Apps 開發的完整工具包，包含專案架構建立、開發標準，以及建構整合 Power Platform 的程式碼優先應用程式的專家引導。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

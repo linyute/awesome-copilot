@@ -1,0 +1,10 @@
+{
+  "name": "csharp-mcp-development",
+  "description": "在 C# 中使用官方 SDK 建置模型內容協定 (MCP) 伺服器的完整工具包。包含最佳實務指示、用於產生伺服器的提示詞，以及用於引導的專家對話模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

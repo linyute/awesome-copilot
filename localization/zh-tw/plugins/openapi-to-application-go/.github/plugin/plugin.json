@@ -1,0 +1,10 @@
+{
+  "name": "openapi-to-application-go",
+  "description": "從 OpenAPI 規格產生生產就緒的 Go 應用程式。包含專案架構建立、處理常式產生、中介軟體設定，以及 REST API 的 Go 最佳實務。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

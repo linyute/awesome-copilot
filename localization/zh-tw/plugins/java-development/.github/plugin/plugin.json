@@ -1,0 +1,10 @@
+{
+  "name": "java-development",
+  "description": "包含 Java 開發（包括 Spring Boot、Quarkus、測試、文件和最佳實務）的提示詞與指示的完整集合。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

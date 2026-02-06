@@ -1,0 +1,10 @@
+{
+  "name": "frontend-web-dev",
+  "description": "現代前端網頁開發（包括 React、Angular、Vue、TypeScript 和 CSS 框架）的基本提示詞、指示和對話模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

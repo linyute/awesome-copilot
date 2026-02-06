@@ -2,6 +2,31 @@
 
 感謝您有興趣貢獻 Awesome GitHub Copilot 儲存庫！我們歡迎社群的貢獻，以協助擴展我們的自訂指令和提示集合。
 
+## 前置需求
+
+### Windows 使用者：啟用符號連結（Symlinks）
+
+本儲存庫使用符號連結來管理外掛。在 Windows 上，請在克隆之前先啟用符號連結支援：
+
+1. **啟用開發人員模式（建議）**：
+   - 開啟 **設定** → **更新與安全性** → **針對開發人員**
+   - 啟用 **開發人員模式**
+   - 啟用後可在不需系統管理員權限下建立符號連結
+
+2. **設定 Git 使用符號連結**：
+   ```bash
+   git config --global core.symlinks true
+   ```
+
+3. **克隆本儲存庫**（在完成上述設定後）：
+   ```bash
+   git clone https://github.com/github/awesome-copilot.git
+   ```
+
+> **注意：** 如果您在啟用符號連結之前已經克隆過儲存庫，符號連結可能會以包含目標路徑的純文字檔案顯示。您需要刪除本機儲存庫並在啟用符號連結支援後重新克隆。
+
+**舊版 Windows 的替代作法：** 如果無法使用開發人員模式，您可以以系統管理員身份執行 Git Bash，或透過「本機安全性原則」（`secpol.msc` → Local Policies → User Rights Assignment → Create symbolic links）授予使用者「建立符號連結」的權限。
+
 ## 如何貢獻
 
 ### 新增指令
@@ -186,6 +211,49 @@ display:
 - **明確的目的**：集合應解決特定問題或工作流程
 - **提交前驗證**：執行 `node validate-collections.js` 以確保您的清單有效
 
+### 使用外掛
+
+外掛是從集合自動產生的可安裝套件。外掛會包含指向原始集合中資源的符號連結（agents、commands（提示）與 skills）。
+
+#### 從集合建立外掛
+
+當您建立新的集合時，可以產生對應的外掛：
+
+```bash
+# 將集合遷移為新外掛（僅第一次需要）
+npm run plugin:migrate -- --collection <collection-id>
+```
+
+#### 在集合變更後更新外掛
+
+如果您修改集合（新增/移除項目或更新 metadata），請重新整理對應的外掛：
+
+```bash
+# 重新整理單一外掛
+npm run plugin:refresh -- --collection <collection-id>
+
+# 重新整理所有現有外掛
+npm run plugin:refresh -- --all
+```
+
+#### 外掛結構
+
+```plaintext
+plugins/<collection-id>/
+├── .github/plugin/plugin.json  # 外掛的 metadata（自動產生）
+├── README.md                   # 外掛文件（自動產生）
+├── agents/                     # 代理程式檔案的符號連結（.md）
+├── commands/                   # 提示檔案的符號連結（.md）
+└── skills/                     # 技能資料夾的符號連結
+```
+
+#### 外掛指南
+
+- **使用符號連結而非複製**：外掛檔案為指向原始檔案的符號連結，以避免重複複製
+- **不包含 Instructions（指令檔）**：目前外掛不支援包含指令檔
+- **自動產生內容**：`plugin.json` 與 `README.md` 由集合的 metadata 產生
+- **保持外掛同步**：修改集合後，執行 `plugin:refresh` 以更新外掛
+
 ## 提交您的貢獻
 
 1. **分叉此儲存庫**
@@ -250,13 +318,13 @@ display:
 
 我們歡迎多種形式的貢獻，包括下方的自訂類別：
 
-| 類別 | 描述 | 表情符號 |
-| --- | --- | :---: |
-| **Instructions (指令)** | 引導 GitHub Copilot 行為的自訂指令集 | 🧭 |
-| **Prompts (提示詞)** | 適用於 GitHub Copilot 的可重用或一次性提示詞 | ⌨️ |
-| **Agents (代理程式)** | 定義的 GitHub Copilot 角色或個性 | 🎭 |
-| **Skills (技能)** | 針對 GitHub Copilot 任務的專業知識 | 🧰 |
-| **Collections (收藏集)** | 精選的相關提示詞、代理程式或指令套件 | 🎁 |
+| 類別                     | 描述                                         | 表情符號 |
+| ------------------------ | -------------------------------------------- | :------: |
+| **Instructions (指令)**  | 引導 GitHub Copilot 行為的自訂指令集         |    🧭     |
+| **Prompts (提示詞)**     | 適用於 GitHub Copilot 的可重用或一次性提示詞 |    ⌨️     |
+| **Agents (代理程式)**    | 定義的 GitHub Copilot 角色或個性             |    🎭     |
+| **Skills (技能)**        | 針對 GitHub Copilot 任務的專業知識           |    🧰     |
+| **Collections (收藏集)** | 精選的相關提示詞、代理程式或指令套件         |    🎁     |
 
 此外，[All Contributors](https://allcontributors.org/emoji-key/) 支援的所有標準貢獻類型均會被認可。
 

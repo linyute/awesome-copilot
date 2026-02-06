@@ -1,0 +1,10 @@
+{
+  "name": "software-engineering-team",
+  "description": "7 個專業的代理程式，涵蓋從 UX 設計和架構到安全性和 DevOps 的完整軟體開發生命週期。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

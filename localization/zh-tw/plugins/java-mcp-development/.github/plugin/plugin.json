@@ -1,0 +1,10 @@
+{
+  "name": "java-mcp-development",
+  "description": "在 Java 中使用官方 MCP Java SDK 並結合回應式串流與 Spring Boot 整合，建置模型內容協定伺服器的完整工具包。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "csharp-dotnet-development",
+  "description": "C# 和 .NET 開發（包括測試、文件和最佳實務）的基本提示詞、指示和對話模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

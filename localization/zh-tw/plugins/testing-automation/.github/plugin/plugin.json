@@ -1,0 +1,10 @@
+{
+  "name": "testing-automation",
+  "description": "用於撰寫測試、測試自動化和測試驅動開發的完整集合，包含單元測試、整合測試和端對端測試策略。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

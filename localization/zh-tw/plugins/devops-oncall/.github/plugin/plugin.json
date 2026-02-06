@@ -1,0 +1,10 @@
+{
+  "name": "devops-oncall",
+  "description": "一組專注的提示詞、指示和對話模式，旨在協助使用 DevOps 工具和 Azure 資源來對事件進行分類並快速回應。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

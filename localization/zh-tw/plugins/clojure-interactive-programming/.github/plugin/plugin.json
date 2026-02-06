@@ -1,0 +1,10 @@
+{
+  "name": "clojure-interactive-programming",
+  "description": "REPL 優先的 Clojure 工作流工具，具備 Clojure 指示、互動式程式設計對話模式和支援指引。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

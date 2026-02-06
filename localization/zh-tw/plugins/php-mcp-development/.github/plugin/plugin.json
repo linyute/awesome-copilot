@@ -1,0 +1,10 @@
+{
+  "name": "php-mcp-development",
+  "description": "使用官方 PHP SDK 並結合基於屬性的探索來建置模型內容協定伺服器的完整資源，包含最佳實務、專案產生和專家協助",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

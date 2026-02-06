@@ -1,0 +1,10 @@
+{
+  "name": "rust-mcp-development",
+  "description": "在 Rust 中使用官方 rmcp SDK 並結合 async/await、程序式巨集和型別安全實作，建置高效能的模型內容協定伺服器。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

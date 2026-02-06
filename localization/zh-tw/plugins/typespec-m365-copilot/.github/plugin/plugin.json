@@ -1,0 +1,10 @@
+{
+  "name": "typespec-m365-copilot",
+  "description": "包含提示詞、指示和資源的完整集合，用於使用 TypeSpec 建立 Microsoft 365 Copilot 擴充性的宣告式代理程式和 API 外掛程式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

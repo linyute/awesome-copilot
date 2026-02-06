@@ -1,0 +1,10 @@
+{
+  "name": "ruby-mcp-development",
+  "description": "在 Ruby 中使用官方 MCP Ruby SDK gem 並支援 Rails 整合，建置模型內容協定伺服器的完整工具包。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

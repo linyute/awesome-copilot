@@ -1,0 +1,10 @@
+{
+  "name": "partners",
+  "description": "由 GitHub 合作夥伴建立的自訂代理程式",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

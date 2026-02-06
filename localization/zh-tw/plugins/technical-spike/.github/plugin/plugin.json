@@ -1,0 +1,10 @@
+{
+  "name": "technical-spike",
+  "description": "用於建立、管理和研究技術探路 (technical spikes) 的工具，以在進行解決方案的規格制定和實作之前減少未知數和假設。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

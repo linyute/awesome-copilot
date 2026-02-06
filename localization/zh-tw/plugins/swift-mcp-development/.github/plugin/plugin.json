@@ -1,0 +1,10 @@
+{
+  "name": "swift-mcp-development",
+  "description": "在 Swift 中使用官方 MCP Swift SDK 和現代並行功能建置模型內容協定伺服器的完整集合。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

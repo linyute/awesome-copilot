@@ -1,0 +1,10 @@
+{
+  "name": "openapi-to-application-nodejs-nestjs",
+  "description": "從 OpenAPI 規格產生生產就緒的 NestJS 應用程式。包含專案架構建立、控制器與服務產生、TypeScript 最佳實務，以及企業模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

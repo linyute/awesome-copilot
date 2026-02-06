@@ -1,0 +1,10 @@
+{
+  "name": "dataverse-sdk-for-python",
+  "description": "建構生產就緒的 Microsoft Dataverse Python 整合的完整集合。包含官方文件、最佳實務、進階功能、檔案操作和程式碼產生提示詞。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

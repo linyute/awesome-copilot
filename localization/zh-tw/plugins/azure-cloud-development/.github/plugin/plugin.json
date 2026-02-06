@@ -1,0 +1,10 @@
+{
+  "name": "azure-cloud-development",
+  "description": "完整的 Azure 雲端開發工具，包含基礎設施即程式碼 (IaC)、無伺服器函式、架構模式和成本最佳化，用於建構可延展的雲端應用程式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

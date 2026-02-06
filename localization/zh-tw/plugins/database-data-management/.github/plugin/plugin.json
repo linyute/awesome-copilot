@@ -1,0 +1,10 @@
+{
+  "name": "database-data-management",
+  "description": "為 PostgreSQL、SQL Server 提供的資料庫管理、SQL 最佳化和資料管理工具，以及通用資料庫開發最佳實務。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

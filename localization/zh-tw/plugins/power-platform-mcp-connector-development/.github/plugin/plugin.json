@@ -1,0 +1,10 @@
+{
+  "name": "power-platform-mcp-connector-development",
+  "description": "為 Microsoft Copilot Studio 開發整合模型內容協定的 Power Platform 自訂連接器的完整工具包",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

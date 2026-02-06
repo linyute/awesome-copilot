@@ -1,0 +1,10 @@
+{
+  "name": "edge-ai-tasks",
+  "description": "為中高階使用者和大型程式碼庫提供的工作研究員 (Task Researcher) 與工作規劃員 (Task Planner) - 由 microsoft/edge-ai 提供",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

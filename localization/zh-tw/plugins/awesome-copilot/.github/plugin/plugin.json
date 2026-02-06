@@ -1,0 +1,10 @@
+{
+  "name": "awesome-copilot",
+  "description": "協助您發現並產生精選 GitHub Copilot 代理程式、集合、指示、提示詞和技能的 Meta 提示詞。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

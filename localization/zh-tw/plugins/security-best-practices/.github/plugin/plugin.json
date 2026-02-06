@@ -1,0 +1,10 @@
+{
+  "name": "security-best-practices",
+  "description": "用於建構安全、可維護且高效能應用程式的安全框架、無障礙指南、效能最佳化和程式碼品質最佳實務。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

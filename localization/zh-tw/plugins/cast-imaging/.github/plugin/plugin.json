@@ -1,0 +1,10 @@
+{
+  "name": "cast-imaging",
+  "description": "使用 CAST Imaging 進行軟體分析、影響評估、結構品質建議和架構審查的專業代理程式完整集合。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

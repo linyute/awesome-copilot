@@ -1,0 +1,10 @@
+{
+  "name": "openapi-to-application-python-fastapi",
+  "description": "從 OpenAPI 規格產生生產就緒的 FastAPI 應用程式。包含專案架構建立、路由產生、相依性注入，以及非同步 API 的 Python 最佳實務。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}
