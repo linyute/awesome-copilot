@@ -1148,8 +1148,7 @@ gh pr comment 123 --delete 456789
 gh pr review 123
 
 # 核准 (Approve) PR
-gh pr review 123 --approve \
-  --approve-body "LGTM!"
+gh pr review 123 --approve --body "LGTM!"
 
 # 要求變更 (Request changes)
 gh pr review 123 --request-changes \

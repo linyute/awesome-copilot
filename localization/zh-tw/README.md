@@ -19,16 +19,15 @@
 
 探索我們精選的提示、指示和代理程式集合，這些集合圍繞特定主題和工作流程組織。
 
-| 名稱 | 描述 | 項目 | 標籤 |
-| ---- | ----------- | ----- | ---- |
-| [Awesome Copilot](collections/awesome-copilot.md) | 幫助您發現並產生精選 GitHub Copilot Agent、集合、指令、提示和技能的 Meta 提示。 | 5 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
-| [Copilot SDK](collections/copilot-sdk.md) | 使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含 C#、Go、Node.js/TypeScript 和 Python 的完整指示，協助您建立 AI 驅動的應用程式。 | 5 個項目 | copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot |
-| [合作夥伴](collections/partners.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 20 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
+| 名稱                                              | 描述                                                                                                                                       | 項目      | 標籤                                                                                                          |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | --------- | ------------------------------------------------------------------------------------------------------------- |
+| [Awesome Copilot](collections/awesome-copilot.md) | 幫助您發現並產生精選 GitHub Copilot Agent、集合、指令、提示和技能的 Meta 提示。                                                            | 5 個項目  | github-copilot, discovery, meta, prompt-engineering, agents                                                   |
+| [Copilot SDK](collections/copilot-sdk.md)         | 使用 GitHub Copilot SDK 建構跨多種程式語言的應用程式。包含 C#、Go、Node.js/TypeScript 和 Python 的完整指示，協助您建立 AI 驅動的應用程式。 | 5 個項目  | copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot                                  |
+| [合作夥伴](collections/partners.md)               | 由 GitHub 合作夥伴建立的自訂代理程式                                                                                                       | 20 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
 
+## 如何安裝客製化功能
 
-## MCP 伺服器
-
-為了方便將這些客製化功能新增到您的編輯器中，我們建立了一個 [MCP 伺服器](https://developer.microsoft.com/blog/announcing-awesome-copilot-mcp-server)，它提供了一個提示，用於直接從此儲存庫搜尋和安裝提示、指令、代理程式和技能。您需要安裝並執行 Docker 才能執行伺服器。
+為了方便將這些客製化功能新增到您的編輯器中，我們建立了一個 [MCP 伺服器](https://developer.microsoft.com/blog/announcing-awesome-copilot-mcp-server)，它提供了一個提示，用於直接從此儲存庫搜尋和安裝提示、指令、代理程式和技能。您需要安裝並執行 Docker 才能本地端執行 MCP 伺服器。
 
 [![在 VS Code 中安裝](https://img.shields.io/badge/VS_Code-Install-0098FF?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode) [![在 VS Code Insiders 中安裝](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?logo=visualstudiocode&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vscode-insiders) [![在 Visual Studio 中安裝](https://img.shields.io/badge/Visual_Studio-Install-C16FDE?logo=visualstudio&logoColor=white)](https://aka.ms/awesome-copilot/mcp/vs)
 
@@ -69,7 +68,7 @@
 首先，將 Awesome Copilot 市集新增至您的 Copilot CLI：
 
 ```bash
-copilot marketplace add github/awesome-copilot
+copilot plugin marketplace add github/awesome-copilot
 ```
 
 接著從集合中安裝任一外掛：
