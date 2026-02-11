@@ -8,6 +8,7 @@ Awesome GitHub Copilot 儲存庫是一個由社群驅動的自訂代理程式、
 - **提示** - 用於程式碼產生和問題解決的特定任務提示
 - **指令** - 應用於特定檔案模式的程式碼標準和最佳實踐
 - **技能** - 包含指令和專門任務的捆綁資源的獨立資料夾
+- **Hooks** - 在開發期間由特定事件觸發的自動化工作流程
 - **集合** - 圍繞特定主題和工作流程組織的精選集合
 
 ## 儲存庫結構
@@ -18,6 +19,7 @@ Awesome GitHub Copilot 儲存庫是一個由社群驅動的自訂代理程式、
 ├── prompts/          # 特定任務提示（.prompt.md 檔案）
 ├── instructions/     # 程式碼標準和指南（.instructions.md 檔案）
 ├── skills/           # 代理程式技能資料夾（每個包含 SKILL.md 和可選的捆綁資產）
+├── hooks/            # 自動化工作流程 Hooks（資料夾內含 README.md + hooks.json）
 ├── collections/      # 精選資源集合（.md 檔案）
 ├── docs/             # 不同資源類型的文件
 ├── eng/              # 建構和自動化腳本
@@ -48,9 +50,9 @@ npm run skill:create -- --name <skill-name>
 
 ## 開發工作流程
 
-### 使用代理程式、提示、指令和技能
+### 與代理程式、提示、指令、技能和 Hooks 的協作
 
-所有代理程式檔案（`*.agent.md`）、提示檔案（`*.prompt.md`）和指令檔案（`*.instructions.md`）都必須包含正確的 Markdown front matter。代理程式技能是包含帶有 frontmatter 的 `SKILL.md` 檔案和可選捆綁資產的資料夾：
+所有代理程式檔案（`*.agent.md`）、提示檔案（`*.prompt.md`）和指令檔案（`*.instructions.md`）都必須包含正確的 Markdown front matter。代理程式技能（skills）是包含 `SKILL.md`（附有 front matter）和可選捆綁資產的資料夾。Hooks 是包含具有 front matter 的 `README.md` 與 `hooks.json` 設定檔的資料夾：
 
 #### 代理程式檔案 (*.agent.md)
 - 必須有 `description` 欄位（用單引號包裝）
@@ -80,6 +82,18 @@ npm run skill:create -- --name <skill-name>
 - 資產檔案大小應合理（每個檔案小於 5MB）
 - 技能遵循 [代理程式技能規範](https://agentskills.io/specification)
 
+#### Hook 資料夾 (hooks/*/README.md)
+
+- 每個 Hook 都是一個資料夾，該資料夾包含具有 frontmatter 的 `README.md` 檔案
+- `README.md` 必須具有 `name` 欄位（人類可閱讀的名稱）
+- `README.md` 必須具有 `description` 欄位（用單引號包裹，且不可為空）
+- 必須包含一個 `hooks.json` 檔案，內含 Hook 的設定（從此檔案擷取 Hook 事件）
+- 資料夾名稱應為小寫，單詞以連字號分隔
+- 可包含捆綁資產（腳本、工具、設定檔）
+- 捆綁的腳本應在 `README.md` 與 `hooks.json` 中被引用
+- 遵循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)
+- 可選地包含 `tags` 欄位以便分類
+
 ### 新增資源
 
 新增代理程式、提示、指令或技能時：
@@ -89,6 +103,15 @@ npm run skill:create -- --name <skill-name>
 2. 將檔案新增到適當的目錄
 3. 執行 `npm run build` 更新 README.md
 4. 驗證資源是否出現在產生的 README 中
+
+**關於 Hooks：**
+1. 在 `hooks/` 中建立一個具描述性的資料夾名稱
+2. 建立 `README.md`，並加入正確的 front matter（name、description、hooks、tags）
+3. 建立 `hooks.json`，其中包含符合 GitHub Copilot hooks 規範的 Hook 設定
+4. 將任何捆綁的腳本或資產新增到該資料夾
+5. 使腳本可執行：`chmod +x script.sh`
+6. 執行 `npm run build` 以更新 README.md
+7. 確認該 Hook 是否出現在產生的 README 中
 
 **對於技能：**
 1. 執行 `npm run skill:create` 以建立新的技能資料夾
@@ -185,6 +208,16 @@ bash scripts/fix-line-endings.sh
 - [ ] 資料夾名稱為小寫，單詞之間用連字號分隔
 - [ ] 任何捆綁資產都在 SKILL.md 中引用
 - [ ] 捆綁資產每個檔案小於 5MB
+
+For hook folders (hooks/*/):
+- [ ] 資料夾包含帶有 Markdown front matter 的 `README.md` 檔案
+- [ ] 具有 `name` 欄位，為可讀的人類名稱
+- [ ] 具有非空且用單引號包裹的 `description` 欄位
+- [ ] 具有 `hooks.json` 檔案，包含有效的 Hook 設定（從此檔案擷取 Hook 事件）
+- [ ] 資料夾名稱為小寫，使用連字號分隔
+- [ ] 所有捆綁的腳本為可執行，且在 `README.md` 中被引用
+- [ ] 遵循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)
+- [ ] 可選地包含 `tags` 陣列欄位以便分類
 
 ## 貢獻
 

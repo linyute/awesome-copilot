@@ -11,6 +11,7 @@
 - **👉 [Awesome Agents](docs/README.agents.md)** - 專門的 GitHub Copilot 代理程式，與 MCP 伺服器整合，為特定工作流程和工具提供增強功能
 - **👉 [Awesome Prompts](docs/README.prompts.md)** - 專注於任務的提示，用於產生程式碼、文件和解決特定問題
 - **👉 [Awesome Instructions](docs/README.instructions.md)** - 適用於特定檔案模式或整個專案的全面程式碼標準和最佳實踐
+- **👉 [Awesome Hooks](docs/README.hooks.md)** - 在開發、測試與部署期間由特定事件觸發的自動化工作流程
 - **👉 [Awesome Skills](docs/README.skills.md)** - 自包含的資料夾，內含說明與捆綁資源，可增強 AI 在專門任務的技能
 - **👉 [Awesome Collections](docs/README.collections.md)** - 圍繞特定主題和工作流程組織的相關提示、指令、代理程式和技能的精選集合
 - **👉 [Awesome Cookbook Recipes](cookbook/README.md)** - 實用、可直接複製貼上的程式碼片段與實務範例，展示如何搭配 GitHub Copilot 的工具與功能使用
@@ -95,6 +96,10 @@ copilot plugin install <plugin-name>@awesome-copilot
 
 指令會根據其模式自動套用到檔案，並為程式碼標準、框架和最佳實踐提供上下文指導。
 
+### 🪝 Hooks
+
+Hooks 可在 GitHub Copilot 程式碼代理會話期間，由特定事件（例如 sessionStart、sessionEnd、userPromptSubmitted）觸发並啟動自動化工作流程。這些 Hooks 可用於自動記錄、將變更自動提交或與外部服務整合等任務。
+
 ## 🎯 為何使用超棒的 GitHub Copilot？
 
 - **生產力**: 預建的代理程式、提示和指令可節省時間並提供一致的結果。
@@ -106,7 +111,7 @@ copilot plugin install <plugin-name>@awesome-copilot
 
 我們歡迎貢獻！請參閱我們的 [貢獻指南](CONTRIBUTING.md) 以了解如何：
 
-- 新增提示、指令、代理程式或技能
+- 新增提示、指令、hooks、代理程式或技能
 - 改進現有內容
 - 報告問題或建議增強功能
 
@@ -147,7 +152,7 @@ copilot plugin install <plugin-name>@awesome-copilot
 
 ---
 
-**準備好提升您的程式碼體驗了嗎？** 開始探索我們的 [提示](docs/README.prompts.md)、[指令](docs/README.instructions.md) 和 [代理程式](docs/README.agents.md)！
+**準備好提升您的程式碼體驗了嗎？** 開始探索我們的 [提示](docs/README.prompts.md)、[指令](docs/README.instructions.md)、[hooks](docs/README.hooks.md) 和 [代理程式](docs/README.agents.md)！
 
 ## 貢獻者 ✨
 

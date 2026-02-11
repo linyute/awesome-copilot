@@ -7,24 +7,26 @@
  */
 
 import fs from "fs";
-import path, { dirname } from "path";
+import path from "path";
 import { fileURLToPath } from "url";
 import {
-  AGENTS_DIR,
-  COLLECTIONS_DIR,
-  COOKBOOK_DIR,
-  INSTRUCTIONS_DIR,
-  PROMPTS_DIR,
-  ROOT_FOLDER,
-  SKILLS_DIR,
+    AGENTS_DIR,
+    COLLECTIONS_DIR,
+    COOKBOOK_DIR,
+    HOOKS_DIR,
+    INSTRUCTIONS_DIR,
+    PROMPTS_DIR,
+    ROOT_FOLDER,
+    SKILLS_DIR
 } from "./constants.mjs";
-import {
-  parseCollectionYaml,
-  parseFrontmatter,
-  parseSkillMetadata,
-  parseYamlFile,
-} from "./yaml-parser.mjs";
 import { getGitFileDates } from "./utils/git-dates.mjs";
+import {
+    parseCollectionYaml,
+    parseFrontmatter,
+    parseSkillMetadata,
+    parseHookMetadata,
+    parseYamlFile,
+} from "./yaml-parser.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -45,7 +47,6 @@ function ensureDataDir() {
  * 從檔名或 Frontmatter 中擷取標題
  */
 function extractTitle(filePath, frontmatter) {
-  if (frontmatter?.title) return frontmatter.title;
   if (frontmatter?.name) {
     return frontmatter.name
       .split("-")
@@ -119,6 +120,75 @@ function generateAgentsData(gitDates) {
     filters: {
       models: ["(none)", ...Array.from(allModels).sort()],
       tools: Array.from(allTools).sort(),
+    },
+  };
+}
+
+/**
+ * 產生 hooks 的 Metadata
+ */
+/**
+ * 產生 hooks 的 Metadata（類似於 skills - 基於資料夾）
+ */
+function generateHooksData(gitDates) {
+  const hooks = [];
+
+  // 檢查 hooks 目錄是否存在
+  if (!fs.existsSync(HOOKS_DIR)) {
+    return {
+      items: hooks,
+      filters: {
+        hooks: [],
+        tags: [],
+      },
+    };
+  }
+
+  // 取得所有 hook 資料夾（目錄）
+  const hookFolders = fs.readdirSync(HOOKS_DIR).filter((file) => {
+    const filePath = path.join(HOOKS_DIR, file);
+    return fs.statSync(filePath).isDirectory();
+  });
+
+  // 追蹤用於篩選器的所有不重複值
+  const allHookTypes = new Set();
+  const allTags = new Set();
+
+  for (const folder of hookFolders) {
+    const hookPath = path.join(HOOKS_DIR, folder);
+    const metadata = parseHookMetadata(hookPath);
+    if (!metadata) continue;
+
+    const relativePath = path
+      .relative(ROOT_FOLDER, hookPath)
+      .replace(/\\/g, "/");
+    const readmeRelativePath = `${relativePath}/README.md`;
+
+    // 追蹤不重複的值
+    (metadata.hooks || []).forEach((h) => allHookTypes.add(h));
+    (metadata.tags || []).forEach((t) => allTags.add(t));
+
+    hooks.push({
+      id: folder,
+      title: metadata.name,
+      description: metadata.description,
+      hooks: metadata.hooks || [],
+      tags: metadata.tags || [],
+      assets: metadata.assets || [],
+      path: relativePath,
+      readmeFile: readmeRelativePath,
+      lastUpdated: gitDates.get(readmeRelativePath) || null,
+    });
+  }
+
+  // 排序並回傳包含篩選器 Metadata
+  const sortedHooks = hooks.sort((a, b) => a.title.localeCompare(b.title));
+
+  return {
+    items: sortedHooks,
+    filters: {
+      hooks: Array.from(allHookTypes).sort(),
+      tags: Array.from(allTags).sort(),
     },
   };
 }
@@ -540,6 +610,7 @@ function generateSearchIndex(
   agents,
   prompts,
   instructions,
+  hooks,
   skills,
   collections
 ) {
@@ -582,6 +653,20 @@ function generateSearchIndex(
       searchText: `${instruction.title} ${instruction.description} ${
         instruction.applyTo || ""
       }`.toLowerCase(),
+    });
+  }
+
+  for (const hook of hooks) {
+    index.push({
+      type: "hook",
+      id: hook.id,
+      title: hook.title,
+      description: hook.description,
+      path: hook.readmeFile,
+      lastUpdated: hook.lastUpdated,
+      searchText: `${hook.title} ${hook.description} ${hook.hooks.join(
+        " "
+      )} ${hook.tags.join(" ")}`.toLowerCase(),
     });
   }
 
@@ -721,7 +806,7 @@ async function main() {
   // 載入所有資源檔案的 Git 日期（使用單一高效率的 git 命令）
   console.log("載入 Git 紀錄以取得檔案最後更新時間...");
   const gitDates = getGitFileDates(
-    ["agents/", "prompts/", "instructions/", "skills/", "collections/"],
+    ["agents/", "prompts/", "instructions/", "hooks/", "skills/", "collections/"],
     ROOT_FOLDER
   );
   console.log(`✓ 已載入 ${gitDates.size} 個檔案的日期紀錄\n`);
@@ -731,6 +816,12 @@ async function main() {
   const agents = agentsData.items;
   console.log(
     `✓ 已產生 ${agents.length} 個代理 (${agentsData.filters.models.length} 個模型，${agentsData.filters.tools.length} 個工具)`
+  );
+
+  const hooksData = generateHooksData(gitDates);
+  const hooks = hooksData.items;
+  console.log(
+    `✓ 已產生 ${hooks.length} 個 hooks (${hooksData.filters.hooks.length} 個 hook 類型，${hooksData.filters.tags.length} 個標籤)`
   );
 
   const promptsData = generatePromptsData(gitDates);
@@ -772,6 +863,7 @@ async function main() {
     agents,
     prompts,
     instructions,
+    hooks,
     skills,
     collections
   );
@@ -781,6 +873,11 @@ async function main() {
   fs.writeFileSync(
     path.join(WEBSITE_DATA_DIR, "agents.json"),
     JSON.stringify(agentsData, null, 2)
+  );
+
+  fs.writeFileSync(
+    path.join(WEBSITE_DATA_DIR, "hooks.json"),
+    JSON.stringify(hooksData, null, 2)
   );
 
   fs.writeFileSync(
@@ -826,6 +923,7 @@ async function main() {
       prompts: prompts.length,
       instructions: instructions.length,
       skills: skills.length,
+      hooks: hooks.length,
       collections: collections.length,
       tools: tools.length,
       samples: samplesData.totalRecipes,

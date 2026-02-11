@@ -1,6 +1,5 @@
-import path from "path";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -100,6 +99,34 @@ GitHub Copilot 的自訂代理程式，讓使用者和組織可以透過簡單�
 - 瀏覽下面的技能表以搜尋相關功能
 - 將技能資料夾複製到您的本機技能目錄
 - 在您的提示中參考技能或讓代理程式自動探索它們`,
+
+  hooksSection: `## 🪝 Hooks
+
+Hooks 可啟用自動化工作流程，當 GitHub Copilot 程式碼代理程式工作階段發生特定事件（例如工作階段開始、工作階段結束、使用者提示提交或工具使用）時觸發。`,
+
+  hooksUsage: `### 如何使用 Hooks
+
+**包含內容：**
+- 每個 hook 都是包含一個 \`README.md\` 檔案與一個 \`hooks.json\` 設定檔的資料夾
+- Hooks 可能包含輔助腳本、公用工具或其他打包資源
+- Hooks 遵循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)
+
+**安裝方式：**
+- 將 hook 資料夾複製到您儲存庫的 \`.github/hooks/\` 目錄下
+- 確保任何打包的腳本為可執行（\`chmod +x script.sh\`）
+- 將 hook 提交到儲存庫的預設分支
+
+**啟用/使用方式：**
+- Hooks 會在 Copilot 程式碼代理程式的工作階段中自動執行
+- 在 \`hooks.json\` 檔案中設定 hook 事件
+- 可用事件：\`sessionStart\`、\`sessionEnd\`、\`userPromptSubmitted\`、\`preToolUse\`、\`postToolUse\`、\`errorOccurred\`
+
+**何時使用：**
+- 自動化工作階段紀錄與稽核追蹤
+- 在工作階段結束時自動提交變更
+- 追蹤使用分析
+- 與外部工具與服務整合
+- 自訂工作階段工作流程`,
 };
 
 const vscodeInstallImage =
@@ -115,6 +142,7 @@ const AKA_INSTALL_URLS = {
   instructions: "https://aka.ms/awesome-copilot/install/instructions",
   prompt: "https://aka.ms/awesome-copilot/install/prompt",
   agent: "https://aka.ms/awesome-copilot/install/agent",
+  hook: "https://aka.ms/awesome-copilot/install/hook",
 };
 
 const ROOT_FOLDER = path.join(__dirname, "..");
@@ -122,11 +150,12 @@ const INSTRUCTIONS_DIR = path.join(ROOT_FOLDER, "instructions");
 const PROMPTS_DIR = path.join(ROOT_FOLDER, "prompts");
 const AGENTS_DIR = path.join(ROOT_FOLDER, "agents");
 const SKILLS_DIR = path.join(ROOT_FOLDER, "skills");
+const HOOKS_DIR = path.join(ROOT_FOLDER, "hooks");
 const COLLECTIONS_DIR = path.join(ROOT_FOLDER, "collections");
 const COOKBOOK_DIR = path.join(ROOT_FOLDER, "cookbook");
 const MAX_COLLECTION_ITEMS = 50;
 
-// Agent Skills validation constants
+// 代理程式技能驗證常數
 const SKILL_NAME_MIN_LENGTH = 1;
 const SKILL_NAME_MAX_LENGTH = 64;
 const SKILL_DESCRIPTION_MIN_LENGTH = 10;
@@ -135,22 +164,23 @@ const SKILL_DESCRIPTION_MAX_LENGTH = 1024;
 const DOCS_DIR = path.join(ROOT_FOLDER, "docs");
 
 export {
-  TEMPLATES,
-  vscodeInstallImage,
-  vscodeInsidersInstallImage,
-  repoBaseUrl,
-  AKA_INSTALL_URLS,
-  ROOT_FOLDER,
-  INSTRUCTIONS_DIR,
-  PROMPTS_DIR,
   AGENTS_DIR,
-  SKILLS_DIR,
+  AKA_INSTALL_URLS,
   COLLECTIONS_DIR,
   COOKBOOK_DIR,
-  MAX_COLLECTION_ITEMS,
-  SKILL_NAME_MIN_LENGTH,
-  SKILL_NAME_MAX_LENGTH,
-  SKILL_DESCRIPTION_MIN_LENGTH,
-  SKILL_DESCRIPTION_MAX_LENGTH,
   DOCS_DIR,
+  HOOKS_DIR,
+  INSTRUCTIONS_DIR,
+  MAX_COLLECTION_ITEMS,
+  PROMPTS_DIR,
+  repoBaseUrl,
+  ROOT_FOLDER,
+  SKILL_DESCRIPTION_MAX_LENGTH,
+  SKILL_DESCRIPTION_MIN_LENGTH,
+  SKILL_NAME_MAX_LENGTH,
+  SKILL_NAME_MIN_LENGTH,
+  SKILLS_DIR,
+  TEMPLATES,
+  vscodeInsidersInstallImage,
+  vscodeInstallImage
 };

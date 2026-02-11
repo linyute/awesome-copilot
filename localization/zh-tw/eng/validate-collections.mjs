@@ -3,9 +3,9 @@
 import fs from "fs";
 import path from "path";
 import {
-  COLLECTIONS_DIR,
-  MAX_COLLECTION_ITEMS,
-  ROOT_FOLDER,
+    COLLECTIONS_DIR,
+    MAX_COLLECTION_ITEMS,
+    ROOT_FOLDER,
 } from "./constants.mjs";
 import { parseCollectionYaml, parseFrontmatter } from "./yaml-parser.mjs";
 
@@ -155,6 +155,41 @@ function validateAgentFile(filePath) {
   }
 }
 
+function validateHookFile(filePath) {
+  try {
+    const hook = parseFrontmatter(filePath);
+
+    if (!hook) {
+      return `項目 ${filePath} hook 檔案無法解析`;
+    }
+
+    // Validate name field
+    if (!hook.name || typeof hook.name !== "string") {
+      return `項目 ${filePath} hook 必須有 'name' 欄位`;
+    }
+    if (hook.name.length < 1 || hook.name.length > 50) {
+      return `項目 ${filePath} hook 名稱必須介於 1 到 50 個字元之間`;
+    }
+
+    // Validate description field
+    if (!hook.description || typeof hook.description !== "string") {
+      return `項目 ${filePath} hook 必須有 'description' 欄位`;
+    }
+    if (hook.description.length < 1 || hook.description.length > 500) {
+      return `項目 ${filePath} hook 描述必須介於 1 到 500 個字元之間`;
+    }
+
+    // Validate event field (optional but recommended)
+    if (hook.event !== undefined && typeof hook.event !== "string") {
+      return `項目 ${filePath} hook 'event' 必須是字串`;
+    }
+
+    return null; // All validations passed
+  } catch (error) {
+    return `項目 ${filePath} hook 檔案驗證失敗：${error.message}`;
+  }
+}
+
 function validateCollectionItems(items) {
   if (!items || !Array.isArray(items)) {
     return "項目為必填項且必須是陣列";
@@ -177,10 +212,10 @@ function validateCollectionItems(items) {
     if (!item.kind || typeof item.kind !== "string") {
       return `項目 ${i + 1} 必須有種類字串`;
     }
-    if (!["prompt", "instruction", "agent", "skill"].includes(item.kind)) {
+    if (!["prompt", "instruction", "agent", "skill", "hook"].includes(item.kind)) {
       return `項目 $
         ${i + 1}
-      種類必須是以下之一：prompt, instruction, agent, skill`;
+      種類必須是以下之一：prompt, instruction, agent, skill, hook`;
     }
 
     // Validate file path exists
@@ -191,29 +226,38 @@ function validateCollectionItems(items) {
 
     // Validate path pattern matches kind
     if (item.kind === "prompt" && !item.path.endsWith(".prompt.md")) {
-      return `項目 $
-        ${i + 1}
-      種類為 "prompt" 但路徑未以 .prompt.md 結尾`;
+      return `項目 ${i + 1} 種類為 "prompt" 但路徑未以 .prompt.md 結尾`;
     }
     if (
       item.kind === "instruction" &&
       !item.path.endsWith(".instructions.md")
     ) {
-      return `項目 $
-        ${i + 1}
-      種類為 "instruction" 但路徑未以 .instructions.md 結尾`;
+      return `項目 ${i + 1} 種類為 "instruction" 但路徑未以 .instructions.md 結尾`;
     }
     if (item.kind === "agent" && !item.path.endsWith(".agent.md")) {
-      return `項目 $
-        ${i + 1}
-      種類為 "agent" 但路徑未以 .agent.md 結尾`;
+      return `項目 ${i + 1} 種類為 "agent" 但路徑未以 .agent.md 結尾`;
+    }
+    if (item.kind === "hook") {
+      const isValidHookPath =
+        item.path.startsWith("hooks/") && item.path.endsWith("/README.md");
+        if (!isValidHookPath) {
+          return `項目 ${i + 1} 種類為 "hook" 但路徑必須是 hooks/<hook>/README.md`;
+        }
     }
 
-    // Validate agent-specific frontmatter
+    // 驗證 agent 專用的 frontmatter
     if (item.kind === "agent") {
       const agentValidation = validateAgentFile(filePath, i + 1);
       if (agentValidation) {
         return agentValidation;
+      }
+    }
+
+    // 驗證 hook 專用的 frontmatter
+    if (item.kind === "hook") {
+      const hookValidation = validateHookFile(filePath);
+      if (hookValidation) {
+        return hookValidation;
       }
     }
   }

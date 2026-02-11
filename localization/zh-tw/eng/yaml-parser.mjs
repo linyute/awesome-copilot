@@ -1,7 +1,7 @@
 // 用於集合檔案和使用 vfile-matter 進行前置內容解析的 YAML 解析器
 import fs from "fs";
-import path from "path";
 import yaml from "js-yaml";
+import path from "path";
 import { VFile } from "vfile";
 import { matter } from "vfile-matter";
 
@@ -172,8 +172,8 @@ function parseSkillMetadata(skillPath) {
           } else {
             const relativePath = path.relative(skillPath, filePath);
             if (relativePath !== "SKILL.md") {
-              // Normalize path separators to forward slashes for cross-platform consistency
-              arrayOfFiles.push(relativePath.replace(/\\/g, '/'));
+              // 為確保跨平台一致性，將路徑分隔符標準化為正斜線
+              arrayOfFiles.push(relativePath.replace(/\\/g, "/"));
             }
           }
         });
@@ -196,6 +196,83 @@ function parseSkillMetadata(skillPath) {
 }
 
 /**
+ * 解析 hook 資料夾的前置內容（類似於技能）
+ * @param {string} hookPath - hook 資料夾的路徑
+ * @returns {object|null} Hook 的 metadata，發生錯誤時回傳 null
+ */
+function parseHookMetadata(hookPath) {
+  return safeFileOperation(
+    () => {
+      const readmeFile = path.join(hookPath, "README.md");
+      if (!fs.existsSync(readmeFile)) {
+        return null;
+      }
+
+      const frontmatter = parseFrontmatter(readmeFile);
+
+      // 驗證必要欄位
+      if (!frontmatter?.name || !frontmatter?.description) {
+        console.warn(
+          `位於 ${hookPath} 的 hook 無效：前置內容中缺少名稱或描述`
+        );
+        return null;
+      }
+
+      // 若存在 hooks.json，擷取 hook 事件
+      let hookEvents = [];
+      const hooksJsonPath = path.join(hookPath, "hooks.json");
+      if (fs.existsSync(hooksJsonPath)) {
+        try {
+          const hooksJsonContent = fs.readFileSync(hooksJsonPath, "utf8");
+          const hooksConfig = JSON.parse(hooksJsonContent);
+          // 從 hooks 物件中擷取所有事件名稱
+          if (hooksConfig.hooks && typeof hooksConfig.hooks === "object") {
+            hookEvents = Object.keys(hooksConfig.hooks);
+          }
+        } catch (error) {
+          console.warn(
+            `無法解析 ${hooksJsonPath}：${error.message}`
+          );
+        }
+      }
+
+      // 列出捆綁的資產（所有檔案，除 README.md 外），遞迴遍歷子目錄
+      const getAllFiles = (dirPath, arrayOfFiles = []) => {
+        const files = fs.readdirSync(dirPath);
+
+        files.forEach((file) => {
+          const filePath = path.join(dirPath, file);
+          if (fs.statSync(filePath).isDirectory()) {
+            arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
+          } else {
+            const relativePath = path.relative(hookPath, filePath);
+            if (relativePath !== "README.md") {
+              // 為確保跨平台一致性，將路徑分隔符標準化為正斜線
+              arrayOfFiles.push(relativePath.replace(/\\/g, "/"));
+            }
+          }
+        });
+
+        return arrayOfFiles;
+      };
+
+      const assets = getAllFiles(hookPath).sort();
+
+      return {
+        name: frontmatter.name,
+        description: frontmatter.description,
+        hooks: hookEvents,
+        tags: frontmatter.tags || [],
+        assets,
+        path: hookPath,
+      };
+    },
+    hookPath,
+    null
+  );
+}
+
+/**
  * 剖析一般的 YAML 檔案（用於 tools.yml 和其他設定檔）
  * @param {string} filePath - YAML 檔案的路徑
  * @returns {object|null} 剖析後的 YAML 物件，若發生錯誤則回傳 null
@@ -212,12 +289,13 @@ function parseYamlFile(filePath) {
 }
 
 export {
+  extractAgentMetadata,
+  extractMcpServerConfigs,
+  extractMcpServers,
   parseCollectionYaml,
   parseFrontmatter,
-  extractAgentMetadata,
-  extractMcpServers,
-  extractMcpServerConfigs,
   parseSkillMetadata,
+  parseHookMetadata,
   parseYamlFile,
   safeFileOperation,
 };
