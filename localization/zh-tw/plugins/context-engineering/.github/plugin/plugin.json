@@ -1,0 +1,10 @@
+{
+  "name": "context-engineering",
+  "description": "透過更好的上下文管理來最大化 GitHub Copilot 成效的工具與技術。包含結構化程式碼的指引、用於規劃多檔案變更的代理程式 (agent)，以及用於上下文感知開發的提示詞。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

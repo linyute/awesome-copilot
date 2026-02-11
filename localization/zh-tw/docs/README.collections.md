@@ -46,6 +46,7 @@
 | [Rust MCP 伺服器開發](../collections/rust-mcp-development.md) | 使用官方 rmcp SDK 以 Rust 建立高效能模型上下文協定伺服器，支援 async/await、程序巨集和型別安全實作。 | 3 個項目 | rust, mcp, model-context-protocol, server-development, sdk, tokio, async, macros, rmcp |
 | [Swift MCP 伺服器開發](../collections/swift-mcp-development.md) | 使用官方 MCP Swift SDK 建立 Swift 模型上下文協定伺服器的綜合集合，支援現代並行功能。 | 3 個項目 | swift, mcp, model-context-protocol, server-development, sdk, ios, macos, concurrency, actor, async-await |
 | [TypeScript MCP 伺服器開發](../collections/typescript-mcp-development.md) | 使用官方 SDK 以 TypeScript/Node.js 建立模型上下文協定 (MCP) 伺服器的完整工具包。包括最佳實踐說明、用於產生伺服器的提示，以及用於指導的專家聊天模式。 | 3 個項目 | typescript, mcp, model-context-protocol, nodejs, server-development |
+| [上下文工程](../collections/context-engineering.md) | 透過更好的上下文管理來最大化 GitHub Copilot 成效的工具與技術。包含結構化程式碼的指引、用於規劃多檔案變更的代理程式 (agent)，以及用於上下文感知開發的提示詞。 | 5 個項目 | context, productivity, refactoring, best-practices, architecture |
 | [前端網頁開發](../collections/frontend-web-dev.md) | 現代前端網頁開發的基本提示、指示和聊天模式，包括 React、Angular、Vue、TypeScript 和 CSS 框架。 | 11 個項目 | frontend, web, react, typescript, javascript, css, html, angular, vue |
 | [基於 MCP 的 M365 代理程式](../collections/mcp-m365-copilot.md) | 建置整合 Model Context Protocol (MCP) 的 Microsoft 365 Copilot 宣告式代理程式的完整收藏 | 5 個項目 | mcp, m365-copilot, declarative-agents, api-plugins, model-context-protocol, adaptive-cards |
 | [安全與程式碼品質](../collections/security-best-practices.md) | 安全框架、輔助功能指南、效能優化和程式碼品質最佳實踐，用於建立安全、可維護和高效能的應用程式。 | 6 個項目 | security, accessibility, performance, code-quality, owasp, a11y, optimization, best-practices |

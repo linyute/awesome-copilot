@@ -1,0 +1,60 @@
+id: context-engineering
+name: 上下文工程
+description: 透過更好的上下文管理來最大化 GitHub Copilot 成效的工具與技術。包含結構化程式碼的指引、用於規劃多檔案變更的代理程式 (agent)，以及用於上下文感知開發的提示詞。
+tags: [context, productivity, refactoring, best-practices, architecture]
+
+items:
+  - path: instructions/context-engineering.instructions.md
+    kind: instruction
+
+  - path: agents/context-architect.agent.md
+    kind: agent
+    usage: |
+      建議使用
+
+      Context Architect 代理程式透過對應相依性
+      並在進行修改前識別所有相關檔案，來協助規劃多檔案變更。
+
+      在以下情況使用此代理程式：
+      - 規劃跨越多個檔案的重構
+      - 新增涉及多個模組的功能
+      - 調查程式碼庫中不熟悉的部分
+
+      使用範例：
+      ```
+      @context-architect 我需要對所有 API 端點新增速率限制。
+      涉及哪些檔案，以及最佳方法是什麼？
+      ```
+
+      為了獲得最佳結果：
+      - 描述高階目標，而不僅僅是當前任務
+      - 在提供檔案之前，先讓代理程式進行搜尋
+      - 在核准變更前檢視內容地圖 (context map)
+
+  - path: prompts/context-map.prompt.md
+    kind: prompt
+    usage: |
+      選用
+
+      在任何重大變更前使用，以了解影響範圍。
+      產生檔案、相依性與測試的結構化地圖。
+
+  - path: prompts/what-context-needed.prompt.md
+    kind: prompt
+    usage: |
+      選用
+
+      當 Copilot 給出通用或錯誤的答案時使用。
+      要求 Copilot 明確列出其需要檢視的檔案。
+
+  - path: prompts/refactor-plan.prompt.md
+    kind: prompt
+    usage: |
+      選用
+
+      用於多檔案重構。產生包含驗證步驟
+      與回滾程序的階段性計畫。
+
+display:
+  ordering: manual
+  show_badge: true

@@ -242,7 +242,7 @@ for user in users:
 ### 範例註解
 
 #### 嚴重問題
-```markdown
+````markdown
 **🔴 嚴重 - 安全性：SQL 注入弱點**
 
 第 45 行的查詢直接將使用者輸入串聯到 SQL 字串中，
@@ -265,10 +265,10 @@ stmt.setString(1, email);
 ```
 
 **參考：** OWASP SQL Injection Prevention Cheat Sheet
-```
+````
 
 #### 重要問題
-```markdown
+````markdown
 **🟡 重要 - 測試：關鍵路徑缺少測試覆蓋率**
 
 `processPayment()` 函式處理金融交易，但沒有退款情境的測試。
@@ -289,10 +289,10 @@ test('should process full refund when order is cancelled', () => {
     expect(result.status).toBe('refunded');
 });
 ```
-```
+````
 
 #### 建議
-```markdown
+````markdown
 **🟢 建議 - 可讀性：簡化巢狀條件**
 
 第 30-40 行的巢狀 if 語句使邏輯難以理解。
@@ -317,7 +317,7 @@ if (!user || !user.isActive || !user.hasPermission('write')) {
 }
 // do something
 ```
-```
+````
 
 ## 審查清單
 
