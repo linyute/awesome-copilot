@@ -7,7 +7,6 @@ tools: ['execute/runInTerminal', 'execute/getTerminalOutput']
 
 ```xml
 	<description>此檔案包含用於生成常規提交訊息的提示範本。它提供說明、範例和格式指南，以幫助使用者根據常規提交規範撰寫標準化、描述性的提交訊息。</description>
-	<note>
 ```
 
 ### 工作流程

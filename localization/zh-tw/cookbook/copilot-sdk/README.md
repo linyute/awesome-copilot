@@ -6,6 +6,7 @@
 
 ### .NET (C#)
 
+- [Ralph Loop](dotnet/ralph-loop.md)：建立自動化的 AI 編碼迴圈，每次迭代提供新上下文，支援規劃/建置模式與背壓機制。
 - [錯誤處理](dotnet/error-handling.md)：優雅地處理錯誤，包括連線失敗、逾時與清理。
 - [多個工作階段](dotnet/multiple-sessions.md)：同時管理多個獨立的對話。
 - [管理本機檔案](dotnet/managing-local-files.md)：使用 AI 驅動的分組策略，按 Metadata 組織檔案。
@@ -14,6 +15,7 @@
 
 ### Node.js / TypeScript
 
+- [Ralph Loop](nodejs/ralph-loop.md): 建立自動化的 AI 編碼迴圈，每次迭代提供新上下文，支援規劃/建置模式與背壓機制。
 - [錯誤處理](nodejs/error-handling.md)：優雅地處理錯誤，包括連線失敗、逾時與清理。
 - [多個工作階段](nodejs/multiple-sessions.md)：同時管理多個獨立的對話。
 - [管理本機檔案](nodejs/managing-local-files.md)：使用 AI 驅動的分組策略，按 Metadata 組織檔案。
@@ -22,6 +24,7 @@
 
 ### Python
 
+- [Ralph Loop](python/ralph-loop.md): 建立自動化的 AI 編碼迴圈，每次迭代提供新上下文，支援規劃/建置模式與背壓機制。
 - [錯誤處理](python/error-handling.md)：優雅地處理錯誤，包括連線失敗、逾時與清理。
 - [多個工作階段](python/multiple-sessions.md)：同時管理多個獨立的對話。
 - [管理本機檔案](python/managing-local-files.md)：使用 AI 驅動的分組策略，按 Metadata 組織檔案。
@@ -30,6 +33,7 @@
 
 ### Go
 
+- [Ralph Loop](go/ralph-loop.md): 建立自動化的 AI 編碼迴圈，每次迭代提供新上下文，支援規劃/建置模式與背壓機制。
 - [錯誤處理](go/error-handling.md)：優雅地處理錯誤，包括連線失敗、逾時與清理。
 - [多個工作階段](go/multiple-sessions.md)：同時管理多個獨立的對話。
 - [管理本機檔案](go/managing-local-files.md)：使用 AI 驅動的分組策略，按 Metadata 組織檔案。
@@ -83,4 +87,4 @@ go run <filename>.go
 
 ## 狀態
 
-Cookbook 結構已完成，包含所有 4 種受支援語言的 4 份食譜。每份食譜都包含 Markdown 文件與可執行範例。
+Cookbook 結構已完成，包含所有 4 種受支援語言的 6 份食譜。每份食譜都包含 Markdown 文件與可執行範例。

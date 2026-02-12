@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../.schemas/cookbook.schema.json
-# Cookbook manifest for the Awesome GitHub Copilot website
-# This file defines the structure of cookbooks and recipes for the Samples page
+# Awesome GitHub Copilot 網站的 Cookbook 指令清單
+# 此檔案定義了 Samples 頁面的 cookbook 與食譜結構
 
 cookbooks:
   - id: copilot-sdk
     name: GitHub Copilot SDK
-    description: 跨多種語言建構 GitHub Copilot SDK 的隨插即用範例
+    description: 跨多種語言使用 GitHub Copilot SDK 進行建構的即用型食譜
     path: cookbook/copilot-sdk
     featured: true
     languages:
@@ -28,7 +28,7 @@ cookbooks:
     recipes:
       - id: error-handling
         name: 錯誤處理
-        description: 優雅地處理錯誤，包括連線失敗、逾時和清除
+        description: 優雅地處理錯誤，包含連線失敗、逾時與清理
         tags:
           - errors
           - basics
@@ -42,22 +42,30 @@ cookbooks:
           - concurrency
       - id: managing-local-files
         name: 管理本機檔案
-        description: 使用 AI 驅動的分組策略，依 Metadata 整理檔案
+        description: 使用 AI 驅動的分組策略按 metadata 組織檔案
         tags:
           - files
           - organization
           - ai-powered
       - id: pr-visualization
         name: PR 視覺化
-        description: 使用 GitHub MCP Server 產生互動式 PR 建立時間圖表
+        description: 使用 GitHub MCP 伺服器產生互動式 PR 時效圖表
         tags:
           - github
           - visualization
           - mcp
       - id: persisting-sessions
         name: 持久化工作階段
-        description: 跨重新啟動儲存並恢復工作階段
+        description: 在重新啟動後儲存並恢復工作階段
         tags:
           - sessions
           - persistence
           - state-management
+      - id: accessibility-report
+        name: 協助工具報告
+        description: 使用 Playwright MCP 伺服器產生 WCAG 協助工具報告
+        tags:
+          - accessibility
+          - playwright
+          - mcp
+          - wcag
