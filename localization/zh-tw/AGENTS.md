@@ -32,8 +32,11 @@ Awesome GitHub Copilot 儲存庫是一個由社群驅動的自訂代理程式、
 # 安裝依賴項
 npm ci
 
-# 建構專案（產生 README.md）
+# 建構專案（產生 README.md 和 marketplace.json）
 npm run build
+
+# 產生 marketplace.json
+npm run plugin:generate-marketplace
 
 # 驗證集合清單
 npm run collection:validate
@@ -94,9 +97,19 @@ npm run skill:create -- --name <skill-name>
 - 遵循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)
 - 可選地包含 `tags` 欄位以便分類
 
+#### 插件資料夾 (plugins/*)
+
+- 每個插件資料夾應包含一個 `.github/plugin/plugin.json` 檔案以提供元資料
+- `plugin.json` 必須包含 `name` 欄位（與資料夾名稱相符）
+- `plugin.json` 必須包含 `description` 欄位（描述插件用途）
+- `plugin.json` 必須包含 `version` 欄位（採用語義化版本，例如 "1.0.0"）
+- 插件資料夾可以包含任意組合的代理程式、提示、指令、技能與 Hooks
+- `marketplace.json` 檔案會在建構期間自動從所有插件產生
+- 插件可由 GitHub Copilot CLI 被發現並安裝
+
 ### 新增資源
 
-新增代理程式、提示、指令或技能時：
+新增代理程式、提示、指令、技能、Hook 或插件時：
 
 **對於代理程式、提示和指令：**
 1. 建立具有正確 front matter 的檔案
@@ -120,6 +133,14 @@ npm run skill:create -- --name <skill-name>
 4. 執行 `npm run skill:validate` 以驗證技能結構
 5. 執行 `npm run build` 更新 README.md
 6. 驗證技能是否出現在產生的 README 中
+
+**對於插件：**
+1. 在 `plugins/` 中建立一個具描述性的資料夾名稱（小寫，使用連字號）
+2. 建立 `.github/plugin/plugin.json`，包含元資料（name、description、version）
+3. 將代理程式、提示、指令、技能或 Hooks 新增到該插件資料夾
+4. 執行 `npm run build` 以更新 README.md 與 marketplace.json
+5. 驗證該插件是否出現在 `.github/plugin/marketplace.json` 中
+6. 測試插件安裝：`copilot plugin install <plugin-name>@awesome-copilot`
 
 ### 測試指令
 
@@ -209,7 +230,7 @@ bash scripts/fix-line-endings.sh
 - [ ] 任何捆綁資產都在 SKILL.md 中引用
 - [ ] 捆綁資產每個檔案小於 5MB
 
-For hook folders (hooks/*/):
+對於 hook 資料夾 (hooks/*/):
 - [ ] 資料夾包含帶有 Markdown front matter 的 `README.md` 檔案
 - [ ] 具有 `name` 欄位，為可讀的人類名稱
 - [ ] 具有非空且用單引號包裹的 `description` 欄位
@@ -218,6 +239,15 @@ For hook folders (hooks/*/):
 - [ ] 所有捆綁的腳本為可執行，且在 `README.md` 中被引用
 - [ ] 遵循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)
 - [ ] 可選地包含 `tags` 陣列欄位以便分類
+
+對於插件資料夾 (plugins/*/):
+- [ ] 資料夾包含 `.github/plugin/plugin.json` 檔案以提供元資料
+- [ ] plugin.json 含有 `name` 欄位，與資料夾名稱相符（小寫並以連字號分隔）
+- [ ] plugin.json 含有非空的 `description` 欄位
+- [ ] plugin.json 含有 `version` 欄位（語義化版本，例如 "1.0.0"）
+- [ ] 資料夾名稱為小寫，使用連字號分隔
+- [ ] 插件資源（代理程式、提示等）遵循各自的指南
+- [ ] 執行 `npm run build` 以驗證 marketplace.json 已正確更新
 
 ## 貢獻
 

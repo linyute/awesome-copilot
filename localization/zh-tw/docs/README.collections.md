@@ -26,6 +26,7 @@
 | [Clojure 互動式程式設計](../collections/clojure-interactive-programming.md) | 用於 REPL 優先的 Clojure 工作流程的工具，具有 Clojure 指示、互動式程式設計聊天模式和支援指南。 | 3 個項目 | clojure, repl, interactive-programming |
 | [Dataverse 的 Python SDK](../collections/dataverse-sdk-for-python.md) | 完整集合，協助建立可投入生產的 Python 與 Microsoft Dataverse 整合。包含官方文件、最佳實務、進階功能、檔案操作範例，與程式碼產生提示。 | 17 個項目 | dataverse, python, integration, sdk |
 | [DevOps 隨叫隨到](../collections/devops-oncall.md) | 一套集中的提示、指示和聊天模式，可協助使用 DevOps 工具和 Azure 資源快速分類事件並回應。 | 5 個項目 | devops, incident-response, oncall, azure |
+| [Gem Team 多代理程式協排](../collections/gem-team.md) | 一個模組化的多代理程式團隊，用於複雜專案執行，具備基於 DAG 的規劃、並行執行、TDD 驗證和自動化測試。 | 8 個項目 | multi-agent, orchestration, dag-planning, parallel-execution, tdd, verification, automation, security |
 | [Go MCP 伺服器開發](../collections/go-mcp-development.md) | 使用官方 github.com/modelcontextprotocol/go-sdk 以 Go 建立模型上下文協定 (MCP) 伺服器的完整工具包。包括最佳實踐說明、用於產生伺服器的提示，以及用於指導的專家聊天模式。 | 3 個項目 | go, golang, mcp, model-context-protocol, server-development, sdk |
 | [Java MCP 伺服器開發](../collections/java-mcp-development.md) | 使用官方 MCP Java SDK 建立 Java 模型上下文協定伺服器的完整工具包，支援反應式串流和 Spring Boot 整合。 | 3 個項目 | java, mcp, model-context-protocol, server-development, sdk, reactive-streams, spring-boot, reactor |
 | [Java 開發](../collections/java-development.md) | Java 開發的綜合提示和指示集合，包括 Spring Boot、Quarkus、測試、文件和最佳實踐。 | 12 個項目 | java, springboot, quarkus, jpa, junit, javadoc |
@@ -56,3 +57,4 @@
 | [資料庫與資料管理](../collections/database-data-management.md) | 用於 PostgreSQL、SQL Server 的資料庫管理、SQL 優化和資料管理工具，以及一般資料庫開發最佳實踐。 | 8 個項目 | database, sql, postgresql, sql-server, dba, optimization, queries, data-management |
 | [軟體工程團隊](../collections/software-engineering-team.md) | 7 個專精代理人涵蓋從使用者體驗設計與架構到安全與 DevOps 的整個軟體開發生命週期。 | 7 個項目 | team, enterprise, security, devops, ux, architecture, product, ai-ethics |
 | [適用於 Microsoft 365 Copilot 的 TypeSpec](../collections/typespec-m365-copilot.md) | 使用 TypeSpec 進行 Microsoft 365 Copilot 延展性開發，建置宣告式代理程式與 API 外掛程式的提示字元、指示與資源完整收藏。 | 4 個項目 | typespec, m365-copilot, declarative-agents, api-plugins, agent-development, microsoft-365 |
+| [開源贊助](../collections/ospo-sponsorship.md) | 供開源專案辦公室 (OSPO) 使用的工具和資源，用於透過 GitHub Sponsors、Open Collective 和其他資助平台識別、評估和管理開源相依性的贊助。 | 1 個項目 | ospo, sponsorship, open-source, funding, github-sponsors |

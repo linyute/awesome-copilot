@@ -1,0 +1,10 @@
+{
+  "name": "gem-team",
+  "description": "一個用於複雜專案執行的模組化多代理人團隊，具有基於 DAG 的規劃、平行執行、TDD 驗證和自動化測試。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT"
+}

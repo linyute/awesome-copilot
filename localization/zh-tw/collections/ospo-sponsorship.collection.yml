@@ -1,0 +1,15 @@
+id: ospo-sponsorship
+name: 開源贊助
+description: 供開源專案辦公室 (OSPO) 使用的工具和資源，用於透過 GitHub Sponsors、Open Collective 和其他資助平台識別、評估和管理開源相依性的贊助。
+tags: [ospo, sponsorship, open-source, funding, github-sponsors]
+items:
+  # 代理程式技能
+  - path: skills/sponsor-finder/SKILL.md
+    kind: skill
+    usage: |
+      尋找 GitHub 儲存庫中哪些相依性可透過 GitHub Sponsors 進行贊助。
+      透過提供 GitHub 擁有者/儲存庫進行呼叫（例如「尋找 expressjs/express 中的可贊助相依性」）。
+display:
+  ordering: alpha # 或 "manual" 以保留上述順序
+  show_badge: true # 設定為 true 以在項目上顯示集合徽章
+  featured: false

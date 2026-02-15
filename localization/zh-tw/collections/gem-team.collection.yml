@@ -1,0 +1,169 @@
+id: gem-team
+name: Gem Team 多代理程式協排
+description: 一個模組化的多代理程式團隊，用於複雜專案執行，具備基於 DAG 的規劃、並行執行、TDD 驗證和自動化測試。
+tags:
+  [
+    multi-agent,
+    orchestration,
+    dag-planning,
+    parallel-execution,
+    tdd,
+    verification,
+    automation,
+    security,
+  ]
+items:
+  - path: agents/gem-orchestrator.agent.md
+    kind: agent
+    usage: |
+      建議使用
+
+      Orchestrator 是協調中心，負責協調多代理程式工作流程、透過 runSubagent 委派工作並合併結果。它不直接執行工作，而是管理整體工作流程。
+
+      此代理程式非常適合用於：
+      - 協調複雜的多代理程式工作流程
+      - 管理工作委派和並行執行
+      - 合併多個代理程式的結果
+      - 維持 plan.yaml 狀態
+
+      為了獲得最佳結果，請考慮：
+      - 從 Orchestrator 開始任何複雜專案
+      - 提供明確的目標和約束
+      - 在執行前檢閱 plan.yaml
+      - 使用導覽摘要來追蹤進度
+
+  - path: agents/gem-researcher.agent.md
+    kind: agent
+    usage: |
+      建議使用
+
+      Researcher 收集程式碼庫資訊、識別相關檔案/模式，並回傳結構化發現。它通常由 Orchestrator 呼叫並指定特定的關注區域。
+
+      此代理程式非常適合用於：
+      - 理解程式碼庫結構和模式
+      - 識別特定功能的相關檔案
+      - 在進行變更前收集資訊
+      - 研究技術相依性
+
+      為了獲得最佳結果，請考慮：
+      - 指定明確的關注區域或問題
+      - 提供關於您試圖達成目標的資訊
+      - 針對不同區域並行使用多個 Researcher
+
+  - path: agents/gem-planner.agent.md
+    kind: agent
+    usage: |
+      建議使用
+
+      Planner 建立具備事前分析的基於 DAG 的計畫，提交以供核准，並根據回饋進行反覆運算。它將研究發現合併為結構化計畫。
+
+      此代理程式非常適合用於：
+      - 將複雜目標分解為原子任務
+      - 建立任務相依性 (DAG)
+      - 執行事前分析以識別風險
+      - 在執行前獲得核准
+
+      為了獲得最佳結果，請考慮：
+      - 提供來自 Researcher 的明確研究發現
+      - 在核准前仔細檢閱計畫
+      - 如果計畫不是最優的，請要求反覆運算
+      - 使用 plan_review 工具進行協作規劃
+
+  - path: agents/gem-implementer.agent.md
+    kind: agent
+    usage: |
+      建議使用
+
+      Implementer 執行 TDD 程式碼變更、確保驗證並維護品質。它遵循具備驗證指令的嚴格 TDD 規範。
+
+      此代理程式非常適合用於：
+      - 以 TDD 規範實作功能
+      - 先撰寫測試，再撰寫程式碼
+      - 確保驗證指令通過
+      - 維護程式碼品質
+
+      為了獲得最佳結果，請考慮：
+      - 務必提供驗證指令
+      - 遵循 TDD：紅燈、綠燈、重構
+      - 在每次編輯後檢查 get_errors
+      - 保持變更極簡且集中
+
+  - path: agents/gem-chrome-tester.agent.md
+    kind: agent
+    usage: |
+      選用
+
+      Chrome Tester 透過 Chrome DevTools 自動化瀏覽器測試和 UI/UX 驗證。它需要 Chrome DevTools MCP 伺服器。
+
+      此代理程式非常適合用於：
+      - 自動化瀏覽器測試
+      - UI/UX 驗證
+      - 擷取螢幕截圖和快照
+      - 測試網頁應用程式
+
+      為了獲得最佳結果，請考慮：
+      - 已安裝 Chrome DevTools MCP 伺服器
+      - 提供明確的測試情境
+      - 使用快照進行偵錯
+      - 在不同的視窗大小下進行測試
+
+  - path: agents/gem-devops.agent.md
+    kind: agent
+    usage: |
+      選用
+
+      DevOps 代理程式管理容器、CI/CD 管線和基礎設施部署。它處理基礎設施即程式碼 (IaC) 和部署自動化。
+
+      此代理程式非常適合用於：
+      - 設定 CI/CD 管線
+      - 管理容器 (Docker, Kubernetes)
+      - 基礎設施部署
+      - DevOps 自動化
+
+      為了獲得最佳結果，請考慮：
+      - 提供明確的基礎設施需求
+      - 使用 IaC 最佳實踐
+      - 在本地測試管線
+      - 記錄部署程序
+
+  - path: agents/gem-reviewer.agent.md
+    kind: agent
+    usage: |
+      建議使用
+
+      Reviewer 是關鍵任務的安全守門員。它應用 OWASP 掃描、秘密資訊偵測和合規性驗證。
+
+      此代理程式非常適合用於：
+      - 安全性程式碼檢閱
+      - OWASP Top 10 掃描
+      - 秘密資訊和 PII 偵測
+      - 合規性驗證
+
+      為了獲得最佳結果，請考慮：
+      - 用於所有關鍵的安全變更
+      - 仔細檢閱發現結果
+      - 解決所有安全性問題
+      - 保持文件更新
+
+  - path: agents/gem-documentation-writer.agent.md
+    kind: agent
+    usage: |
+      選用
+
+      Documentation Writer 產生技術文件、圖表，並維持程式碼與文件的一致性。
+
+      此代理程式非常適合用於：
+      - 產生技術文件
+      - 建立圖表
+      - 保持文件與程式碼同步
+      - API 文件
+
+      為了獲得最佳結果，請考慮：
+      - 提供明確的資訊和需求
+      - 檢閱產生的文件以確保準確性
+      - 隨著程式碼變更更新文件
+      - 使用一致的文件風格
+
+display:
+  ordering: manual
+  show_badge: true
