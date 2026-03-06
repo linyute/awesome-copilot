@@ -1,0 +1,13 @@
+{
+  "name": "ospo-sponsorship",
+  "description": "為開源專案辦公室 (OSPO) 提供的工具與資源，用於透過 GitHub Sponsors、Open Collective 及其他資助平台識別、評估並管理開源相依項目的贊助。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "skills": [
+    "./skills/sponsor-finder/"
+  ]
+}

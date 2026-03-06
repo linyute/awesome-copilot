@@ -1,0 +1,22 @@
+{
+  "name": "rug-agentic-workflow",
+  "description": "包含編排器以及實作與 QA 子代理程式的三代理程式工作流程，用於編排軟體交付。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "agentic-workflow",
+    "orchestration",
+    "subagents",
+    "software-engineering",
+    "qa"
+  ],
+  "agents": [
+    "./agents/rug-orchestrator.md",
+    "./agents/swe-subagent.md",
+    "./agents/qa-subagent.md"
+  ]
+}

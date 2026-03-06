@@ -1,0 +1,23 @@
+{
+  "name": "typespec-m365-copilot",
+  "description": "使用 TypeSpec 進行 Microsoft 365 Copilot 擴充，建構宣告式代理程式與 API 外掛程式的完整提示、指令與資源集合。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "typespec",
+    "m365-copilot",
+    "declarative-agents",
+    "api-plugins",
+    "agent-development",
+    "microsoft-365"
+  ],
+  "skills": [
+    "./skills/typespec-create-agent/",
+    "./skills/typespec-create-api-plugin/",
+    "./skills/typespec-api-operations/"
+  ]
+}

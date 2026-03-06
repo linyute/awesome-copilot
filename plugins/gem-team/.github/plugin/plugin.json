@@ -1,0 +1,31 @@
+{
+  "name": "gem-team",
+  "description": "一個模組化的多代理程式團隊，用於執行複雜專案，具備基於 DAG 的規劃、平行執行、TDD 驗證，以及由充滿活力的團隊領導帶領的自動化測試。",
+  "version": "1.2.1",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "orchestration",
+    "dag-planning",
+    "parallel-execution",
+    "tdd",
+    "verification",
+    "automation",
+    "security",
+    "prd"
+  ],
+  "agents": [
+    "./agents/gem-orchestrator.md",
+    "./agents/gem-researcher.md",
+    "./agents/gem-planner.md",
+    "./agents/gem-implementer.md",
+    "./agents/gem-browser-tester.md",
+    "./agents/gem-devops.md",
+    "./agents/gem-reviewer.md",
+    "./agents/gem-documentation-writer.md"
+  ]
+}

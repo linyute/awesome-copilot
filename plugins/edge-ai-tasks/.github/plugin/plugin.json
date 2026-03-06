@@ -1,0 +1,21 @@
+{
+  "name": "edge-ai-tasks",
+  "description": "適用於中高階使用者與大型程式碼庫的任務研究員與任務規劃員 - 由 microsoft/edge-ai 提供",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "architecture",
+    "planning",
+    "research",
+    "tasks",
+    "implementation"
+  ],
+  "agents": [
+    "./agents/task-researcher.md",
+    "./agents/task-planner.md"
+  ]
+}

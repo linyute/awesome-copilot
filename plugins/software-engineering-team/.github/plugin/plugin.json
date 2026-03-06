@@ -1,0 +1,29 @@
+{
+  "name": "software-engineering-team",
+  "description": "7 個專門的代理程式，涵蓋從 UX 設計與架構到安全性與 DevOps 的完整軟體開發生命週期。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "team",
+    "enterprise",
+    "security",
+    "devops",
+    "ux",
+    "architecture",
+    "product",
+    "ai-ethics"
+  ],
+  "agents": [
+    "./agents/se-ux-ui-designer.md",
+    "./agents/se-technical-writer.md",
+    "./agents/se-gitops-ci-specialist.md",
+    "./agents/se-product-manager-advisor.md",
+    "./agents/se-responsible-ai-code.md",
+    "./agents/se-system-architecture-reviewer.md",
+    "./agents/se-security-reviewer.md"
+  ]
+}

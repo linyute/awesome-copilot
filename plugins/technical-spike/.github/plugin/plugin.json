@@ -1,0 +1,22 @@
+{
+  "name": "technical-spike",
+  "description": "用於建立、管理與研究技術探究 (Technical Spike) 的工具，旨在於進行解決方案的規格制定與實作前減少未知因素與假設。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "technical-spike",
+    "assumption-testing",
+    "validation",
+    "research"
+  ],
+  "agents": [
+    "./agents/research-technical-spike.md"
+  ],
+  "skills": [
+    "./skills/create-technical-spike/"
+  ]
+}

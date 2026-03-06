@@ -1,0 +1,23 @@
+{
+  "name": "openapi-to-application-java-spring-boot",
+  "description": "從 OpenAPI 規格產生生產等級的 Spring Boot 應用程式。包含專案架構、REST 控制器產生、服務層組織以及 Spring Boot 最佳實作。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "openapi",
+    "code-generation",
+    "api",
+    "java",
+    "spring-boot"
+  ],
+  "agents": [
+    "./agents/openapi-to-application.md"
+  ],
+  "skills": [
+    "./skills/openapi-to-application-code/"
+  ]
+}

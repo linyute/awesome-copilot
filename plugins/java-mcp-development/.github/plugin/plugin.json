@@ -1,0 +1,26 @@
+{
+  "name": "java-mcp-development",
+  "description": "使用官方 MCP Java SDK 並結合回應式串流與 Spring Boot 整合，在 Java 中建構 Model Context Protocol 伺服器的完整工具組。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "java",
+    "mcp",
+    "model-context-protocol",
+    "server-development",
+    "sdk",
+    "reactive-streams",
+    "spring-boot",
+    "reactor"
+  ],
+  "agents": [
+    "./agents/java-mcp-expert.md"
+  ],
+  "skills": [
+    "./skills/java-mcp-server-generator/"
+  ]
+}

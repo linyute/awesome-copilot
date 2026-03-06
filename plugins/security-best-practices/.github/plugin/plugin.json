@@ -1,0 +1,23 @@
+{
+  "name": "security-best-practices",
+  "description": "安全性框架、無障礙指南、效能最佳化與程式碼品質最佳實作，用於建構安全、可維護且高效能的應用程式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "accessibility",
+    "performance",
+    "code-quality",
+    "owasp",
+    "a11y",
+    "optimization",
+    "best-practices"
+  ],
+  "skills": [
+    "./skills/ai-prompt-engineering-safety-review/"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "testing-automation",
+  "description": "用於編寫測試、測試自動化與測試驅動開發的完整集合，包含單元測試、整合測試以及端對端測試策略。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "testing",
+    "tdd",
+    "automation",
+    "unit-tests",
+    "integration",
+    "playwright",
+    "jest",
+    "nunit"
+  ],
+  "agents": [
+    "./agents/tdd-red.md",
+    "./agents/tdd-green.md",
+    "./agents/tdd-refactor.md",
+    "./agents/playwright-tester.md"
+  ],
+  "skills": [
+    "./skills/playwright-explore-website/",
+    "./skills/playwright-generate-test/",
+    "./skills/csharp-nunit/",
+    "./skills/java-junit/",
+    "./skills/ai-prompt-engineering-safety-review/"
+  ]
+}

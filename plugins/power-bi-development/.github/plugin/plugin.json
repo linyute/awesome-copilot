@@ -1,0 +1,32 @@
+{
+  "name": "power-bi-development",
+  "description": "全面的 Power BI 開發資源，包含資料模型建構、DAX 最佳化、效能調校、視覺化設計、安全性最佳實作，以及建構企業級 Power BI 解決方案的 DevOps/ALM 指引。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "power-bi",
+    "dax",
+    "data-modeling",
+    "performance",
+    "visualization",
+    "security",
+    "devops",
+    "business-intelligence"
+  ],
+  "agents": [
+    "./agents/power-bi-data-modeling-expert.md",
+    "./agents/power-bi-dax-expert.md",
+    "./agents/power-bi-performance-expert.md",
+    "./agents/power-bi-visualization-expert.md"
+  ],
+  "skills": [
+    "./skills/power-bi-dax-optimization/",
+    "./skills/power-bi-model-design-review/",
+    "./skills/power-bi-performance-troubleshooting/",
+    "./skills/power-bi-report-design-consultation/"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "java-development",
+  "description": "Java 開發的提示詞與指令完整集合，包含 Spring Boot、Quarkus、測試、文件與最佳實作。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "java",
+    "springboot",
+    "quarkus",
+    "jpa",
+    "junit",
+    "javadoc"
+  ],
+  "skills": [
+    "./skills/java-docs/",
+    "./skills/java-junit/",
+    "./skills/java-springboot/",
+    "./skills/create-spring-boot-java-project/"
+  ]
+}

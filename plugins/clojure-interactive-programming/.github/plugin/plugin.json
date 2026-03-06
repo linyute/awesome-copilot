@@ -1,0 +1,21 @@
+{
+  "name": "clojure-interactive-programming",
+  "description": "REPL 優先的 Clojure 工作流程工具，具有 Clojure 指令、互動式程式設計對話模式及支援引導。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "clojure",
+    "repl",
+    "interactive-programming"
+  ],
+  "agents": [
+    "./agents/clojure-interactive-programming.md"
+  ],
+  "skills": [
+    "./skills/remember-interactive-programming/"
+  ]
+}

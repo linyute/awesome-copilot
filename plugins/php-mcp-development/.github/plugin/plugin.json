@@ -1,0 +1,25 @@
+{
+  "name": "php-mcp-development",
+  "description": "使用官方 PHP SDK 建構 Model Context Protocol 伺服器的完整資源，具備基於屬性的探索功能，包含最佳實作、專案產生以及專家協助",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "php",
+    "mcp",
+    "model-context-protocol",
+    "server-development",
+    "sdk",
+    "attributes",
+    "composer"
+  ],
+  "agents": [
+    "./agents/php-mcp-expert.md"
+  ],
+  "skills": [
+    "./skills/php-mcp-server-generator/"
+  ]
+}

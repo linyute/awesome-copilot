@@ -1,0 +1,23 @@
+{
+  "name": "devops-oncall",
+  "description": "一組專注的提示詞、指令與對話模式，協助進行事件分類並使用 DevOps 工具與 Azure 資源快速回應。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "devops",
+    "incident-response",
+    "oncall",
+    "azure"
+  ],
+  "agents": [
+    "./agents/azure-principal-architect.md"
+  ],
+  "skills": [
+    "./skills/azure-resource-health-diagnose/",
+    "./skills/multi-stage-dockerfile/"
+  ]
+}

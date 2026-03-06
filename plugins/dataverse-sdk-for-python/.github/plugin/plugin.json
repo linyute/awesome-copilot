@@ -1,0 +1,22 @@
+{
+  "name": "dataverse-sdk-for-python",
+  "description": "建構適用於 Microsoft Dataverse 之生產等級 Python 整合的完整集合。包含官方文件、最佳實作、進階功能、檔案操作以及程式碼產生提示詞。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "dataverse",
+    "python",
+    "integration",
+    "sdk"
+  ],
+  "skills": [
+    "./skills/dataverse-python-quickstart/",
+    "./skills/dataverse-python-advanced-patterns/",
+    "./skills/dataverse-python-production-code/",
+    "./skills/dataverse-python-usecase-builder/"
+  ]
+}

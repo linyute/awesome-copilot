@@ -1,0 +1,105 @@
+# yaml-language-server: $schema=../.schemas/cookbook.schema.json
+# Awesome GitHub Copilot 網站的食譜資訊清單 (Cookbook manifest)
+# 此檔案定義了「範例」(Samples) 頁面的食譜 (Cookbooks) 與食譜 (Recipes) 結構
+
+cookbooks:
+  - id: copilot-sdk
+    name: GitHub Copilot SDK
+    description: 適用於多種語言的 GitHub Copilot SDK 構建即用食譜
+    path: cookbook/copilot-sdk
+    featured: true
+    languages:
+      - id: nodejs
+        name: Node.js / TypeScript
+        icon: "\uE628"
+        extension: .ts
+      - id: python
+        name: Python
+        icon: "\uE73C"
+        extension: .py
+      - id: dotnet
+        name: .NET (C#)
+        icon: "\uE648"
+        extension: .cs
+      - id: go
+        name: Go
+        icon: "\uE626"
+        extension: .go
+    recipes:
+      - id: error-handling
+        name: 錯誤處理 (Error Handling)
+        description: 優雅地處理錯誤，包含連線失敗、逾時與清理作業
+        tags:
+          - errors
+          - basics
+          - reliability
+      - id: multiple-sessions
+        name: 多重工作階段 (Multiple Sessions)
+        description: 同時管理多個獨立的對話
+        tags:
+          - sessions
+          - advanced
+          - concurrency
+      - id: managing-local-files
+        name: 管理本機檔案 (Managing Local Files)
+        description: 使用 AI 驅動的分組策略，按 Metadata 組織檔案
+        tags:
+          - files
+          - organization
+          - ai-powered
+      - id: pr-visualization
+        name: PR 視覺化 (PR Visualization)
+        description: 使用 GitHub MCP 伺服器產生互動式的 PR 存續時間圖表
+        tags:
+          - github
+          - visualization
+          - mcp
+      - id: persisting-sessions
+        name: 持久化工作階段 (Persisting Sessions)
+        description: 在重新啟動後儲存並恢復工作階段
+        tags:
+          - sessions
+          - persistence
+          - state-management
+      - id: accessibility-report
+        name: 無障礙報告 (Accessibility Report)
+        description: 使用 Playwright MCP 伺服器產生 WCAG 無障礙報告
+        tags:
+          - accessibility
+          - playwright
+          - mcp
+          - wcag
+
+  - id: community-samples
+    name: 社群範例 (Community Samples)
+    description: 由社群貢獻的 GitHub Copilot 專案與範例
+    path: cookbook/community-samples
+    featured: false
+    languages: []
+    recipes:
+      - id: nodejs-agentic-issue-resolver
+        name: Node.js 代理型問題解決器 (Agentic Issue Resolver)
+        description: 一款具備彈性的代理型工作流程，用於自主探索與修復程式碼，並針對 Copilot SDK 技術預覽版進行了最佳化
+        external: true
+        url: https://github.com/Impesud/nodejs-copilot-issue-resolver
+        author:
+          name: Impesud
+          url: https://github.com/Impesud
+        tags:
+          - nodejs
+          - copilot-sdk
+          - agents
+          - community
+      - id: copilot-sdk-web-app
+        name: Copilot SDK 網頁應用程式 (Web App)
+        description: 一款使用 GitHub Copilot SDK、.NET Aspire 以及帶有 GitHub OAuth、工作階段歷程記錄與模型選擇功能的 React 構建的全疊層對話應用程式
+        external: true
+        url: https://github.com/aaronpowell/copilot-sdk-web-app
+        author:
+          name: aaronpowell
+          url: https://github.com/aaronpowell
+        tags:
+          - dotnet
+          - copilot-sdk
+          - web-app
+          - community

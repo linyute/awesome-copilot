@@ -1,0 +1,23 @@
+{
+  "name": "cast-imaging",
+  "description": "使用 CAST Imaging 進行軟體分析、影響評估、結構品質諮詢與架構審查的專業代理程式完整集合。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "cast-imaging",
+    "software-analysis",
+    "architecture",
+    "quality",
+    "impact-analysis",
+    "devops"
+  ],
+  "agents": [
+    "./agents/cast-imaging-software-discovery.md",
+    "./agents/cast-imaging-impact-analysis.md",
+    "./agents/cast-imaging-structural-quality-advisor.md"
+  ]
+}

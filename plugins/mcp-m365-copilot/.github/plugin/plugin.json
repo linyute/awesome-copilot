@@ -1,0 +1,26 @@
+{
+  "name": "mcp-m365-copilot",
+  "description": "為 Microsoft 365 Copilot 建構整合 Model Context Protocol 之宣告式代理程式的完整集合",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "m365-copilot",
+    "declarative-agents",
+    "api-plugins",
+    "model-context-protocol",
+    "adaptive-cards"
+  ],
+  "agents": [
+    "./agents/mcp-m365-agent-expert.md"
+  ],
+  "skills": [
+    "./skills/mcp-create-declarative-agent/",
+    "./skills/mcp-create-adaptive-cards/",
+    "./skills/mcp-deploy-manage-agents/"
+  ]
+}

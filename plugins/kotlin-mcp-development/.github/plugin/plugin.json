@@ -1,0 +1,24 @@
+{
+  "name": "kotlin-mcp-development",
+  "description": "使用官方 io.modelcontextprotocol:kotlin-sdk 函式庫在 Kotlin 中建構 Model Context Protocol (MCP) 伺服器的完整工具組。包含最佳實作指令、用於產生伺服器的提示詞，以及提供引導的專家對話模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "kotlin",
+    "mcp",
+    "model-context-protocol",
+    "kotlin-multiplatform",
+    "server-development",
+    "ktor"
+  ],
+  "agents": [
+    "./agents/kotlin-mcp-expert.md"
+  ],
+  "skills": [
+    "./skills/kotlin-mcp-server-generator/"
+  ]
+}

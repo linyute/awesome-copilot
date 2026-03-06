@@ -1,0 +1,29 @@
+{
+  "name": "frontend-web-dev",
+  "description": "現代前端網頁開發的必備提示詞、指令與對話模式，包含 React、Angular、Vue、TypeScript 以及 CSS 框架。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "frontend",
+    "web",
+    "react",
+    "typescript",
+    "javascript",
+    "css",
+    "html",
+    "angular",
+    "vue"
+  ],
+  "agents": [
+    "./agents/expert-react-frontend-engineer.md",
+    "./agents/electron-angular-native.md"
+  ],
+  "skills": [
+    "./skills/playwright-explore-website/",
+    "./skills/playwright-generate-test/"
+  ]
+}

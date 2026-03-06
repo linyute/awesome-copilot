@@ -1,0 +1,22 @@
+{
+  "name": "noob-mode",
+  "description": "適用於非技術性 Copilot CLI 使用者的淺顯易懂翻譯層。將每個核准提示、錯誤訊息與技術輸出翻譯成清晰、無術語的內容，並附帶顏色標記的風險指標。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "accessibility",
+    "plain-english",
+    "non-technical",
+    "beginner",
+    "translation",
+    "copilot-cli",
+    "ux"
+  ],
+  "skills": [
+    "./skills/noob-mode/"
+  ]
+}

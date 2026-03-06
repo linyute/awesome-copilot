@@ -1,0 +1,23 @@
+{
+  "name": "typescript-mcp-development",
+  "description": "使用官方 SDK 在 TypeScript/Node.js 中建構 Model Context Protocol (MCP) 伺服器的完整工具包。包含最佳實作指南、用於產生伺服器的提示，以及提供引導的專家對話模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "typescript",
+    "mcp",
+    "model-context-protocol",
+    "nodejs",
+    "server-development"
+  ],
+  "agents": [
+    "./agents/typescript-mcp-expert.md"
+  ],
+  "skills": [
+    "./skills/typescript-mcp-server-generator/"
+  ]
+}
