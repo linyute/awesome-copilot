@@ -1,0 +1,24 @@
+{
+  "name": "flowstudio-power-automate",
+  "description": "透過 FlowStudio MCP 伺服器管理 Power Automate 雲端流程的完整工具組。包含用於連線至 MCP 伺服器、偵錯失敗的流程執行記錄，以及根據自然語言建構並部署流程的技能。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "power-automate",
+    "power-platform",
+    "flowstudio",
+    "mcp",
+    "model-context-protocol",
+    "cloud-flows",
+    "workflow-automation"
+  ],
+  "skills": [
+    "./skills/flowstudio-power-automate-mcp/",
+    "./skills/flowstudio-power-automate-debug/",
+    "./skills/flowstudio-power-automate-build/"
+  ]
+}

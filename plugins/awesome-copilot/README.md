@@ -13,18 +13,17 @@ copilot plugin install awesome-copilot@awesome-copilot
 
 ### 命令 (斜線命令)
 
-| 命令 | 說明 |
-|---------|-------------|
-| `/awesome-copilot:suggest-awesome-github-copilot-collections` | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 收藏，提供自動下載與安裝收藏資產，並識別需要更新的過時收藏資產。 |
-| `/awesome-copilot:suggest-awesome-github-copilot-instructions` | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 指引檔案，避免與此儲存庫中現有的指引重複，並識別需要更新的過時指引。 |
-| `/awesome-copilot:suggest-awesome-github-copilot-prompts` | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 提示詞檔案，避免與此儲存庫中現有的提示詞重複，並識別需要更新的過時提示詞。 |
-| `/awesome-copilot:suggest-awesome-github-copilot-agents` | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 自訂 Agent 檔案，避免與此儲存庫中現有的自訂 Agent 重複，並識別需要更新的過時 Agent。 |
-| `/awesome-copilot:suggest-awesome-github-copilot-skills` | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 技能，避免與此儲存庫中現有的技能重複，並識別需要更新的過時技能。 |
+| 命令                                                           | 說明                                                                                                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/awesome-copilot:suggest-awesome-github-copilot-collections`  | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 收藏，提供自動下載與安裝收藏資產，並識別需要更新的過時收藏資產。                     |
+| `/awesome-copilot:suggest-awesome-github-copilot-instructions` | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 指引檔案，避免與此儲存庫中現有的指引重複，並識別需要更新的過時指引。                 |
+| `/awesome-copilot:suggest-awesome-github-copilot-agents`       | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 自訂 Agent 檔案，避免與此儲存庫中現有的自訂 Agent 重複，並識別需要更新的過時 Agent。 |
+| `/awesome-copilot:suggest-awesome-github-copilot-skills`       | 根據目前儲存庫內容與聊天歷史記錄，從 awesome-copilot 儲存庫建議相關的 GitHub Copilot 技能，避免與此儲存庫中現有的技能重複，並識別需要更新的過時技能。                     |
 
 ### Agent
 
-| Agent | 說明 |
-|-------|-------------|
+| Agent                           | 說明                                                                      |
+| ------------------------------- | ------------------------------------------------------------------------- |
 | `meta-agentic-project-scaffold` | Meta Agentic 專案建立協助工具，可協助使用者有效地建立並管理專案工作流程。 |
 
 ## 來源

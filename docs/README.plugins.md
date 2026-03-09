@@ -25,7 +25,7 @@
 
 | 名稱 | 說明 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |
-| [awesome-copilot](../plugins/awesome-copilot/README.md) | 協助您發現與產生精選 GitHub Copilot 代理程式、指令、提示詞與技能的 Meta 提示詞。 | 5 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
+| [awesome-copilot](../plugins/awesome-copilot/README.md) | 協助您發現與產生精選 GitHub Copilot 代理程式、指令、提示詞與技能的 Meta 提示詞。 | 4 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
 | [azure-cloud-development](../plugins/azure-cloud-development/README.md) | 全方位的 Azure 雲端開發工具，包含基礎架構即程式碼、無伺服器函式、架構模式，以及建構具延展性雲端應用程式的成本最佳化。 | 11 個項目 | azure, cloud, infrastructure, bicep, terraform, serverless, architecture, devops |
 | [cast-imaging](../plugins/cast-imaging/README.md) | 使用 CAST Imaging 進行軟體分析、影響評估、結構品質諮詢與架構審查的專業代理程式完整集合。 | 3 個項目 | cast-imaging, software-analysis, architecture, quality, impact-analysis, devops |
 | [clojure-interactive-programming](../plugins/clojure-interactive-programming/README.md) | REPL 優先的 Clojure 工作流程工具，具有 Clojure 指令、互動式程式設計對話模式及支援引導。 | 2 個項目 | clojure, repl, interactive-programming |
@@ -38,6 +38,7 @@
 | [dataverse-sdk-for-python](../plugins/dataverse-sdk-for-python/README.md) | 建構適用於 Microsoft Dataverse 之生產等級 Python 整合的完整集合。包含官方文件、最佳實作、進階功能、檔案操作以及程式碼產生提示詞。 | 4 個項目 | dataverse, python, integration, sdk |
 | [devops-oncall](../plugins/devops-oncall/README.md) | 一組專注的提示詞、指令與對話模式，協助進行事件分類並使用 DevOps 工具與 Azure 資源快速回應。 | 3 個項目 | devops, incident-response, oncall, azure |
 | [edge-ai-tasks](../plugins/edge-ai-tasks/README.md) | 適用於中高階使用者與大型程式碼庫的任務研究員與任務規劃員 - 由 microsoft/edge-ai 提供 | 2 個項目 | architecture, planning, research, tasks, implementation |
+| [flowstudio-power-automate](../plugins/flowstudio-power-automate/README.md) | 透過 FlowStudio MCP 伺服器管理 Power Automate 雲端流程的完整工具組。包含用於連線至 MCP 伺服器、偵錯失敗的流程執行記錄，以及根據自然語言建構並部署流程的技能。 | 3 個項目 | power-automate, power-platform, flowstudio, mcp, model-context-protocol, cloud-flows, workflow-automation |
 | [frontend-web-dev](../plugins/frontend-web-dev/README.md) | 現代前端網頁開發的必備提示詞、指令與對話模式，包含 React、Angular、Vue、TypeScript 以及 CSS 框架。 | 4 個項目 | frontend, web, react, typescript, javascript, css, html, angular, vue |
 | [gem-team](../plugins/gem-team/README.md) | 一個模組化的多代理程式團隊，用於執行複雜專案，具備基於 DAG 的規劃、平行執行、TDD 驗證，以及由充滿活力的團隊領導帶領的自動化測試。 | 8 個項目 | multi-agent, orchestration, dag-planning, parallel-execution, tdd, verification, automation, security, prd |
 | [go-mcp-development](../plugins/go-mcp-development/README.md) | 使用官方 github.com/modelcontextprotocol/go-sdk 在 Go 中建構 Model Context Protocol (MCP) 伺服器的完整工具組。包含最佳實作指令、用於產生伺服器的提示詞，以及提供引導的專家對話模式。 | 2 個項目 | go, golang, mcp, model-context-protocol, server-development, sdk |
