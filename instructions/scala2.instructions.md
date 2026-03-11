@@ -1,6 +1,6 @@
 ---
 description: 'Scala 2.12/2.13 程式語言編碼規範與最佳實踐，遵循 Databricks 樣式指南，專注於函數式程式設計、型別安全和生產環境程式碼品質。'
-applyTo: '**.scala, **/build.sbt, **/build.sc'
+applyTo: '**/*.scala, **/build.sbt, **/build.sc'
 ---
 
 # Scala 最佳實踐

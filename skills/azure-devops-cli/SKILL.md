@@ -27,6 +27,7 @@ az extension add --name azure-devops
 az devops login --organization https://dev.azure.com/{org} --token YOUR_PAT_TOKEN
 
 # 設定預設組織和專案（避免重複輸入 --org/--project）
+# 注意：舊版 URL https://{org}.visualstudio.com 應改為 https://dev.azure.com/{org}
 az devops configure --defaults organization=https://dev.azure.com/{org} project={project}
 
 # 列出目前設定

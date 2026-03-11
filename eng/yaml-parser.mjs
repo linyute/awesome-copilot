@@ -148,10 +148,11 @@ function parseSkillMetadata(skillPath) {
       // 列出隨附資產 (除了 SKILL.md 以外的所有檔案)，並遞迴搜尋子目錄
       const getAllFiles = (dirPath, arrayOfFiles = []) => {
         const files = fs.readdirSync(dirPath);
+        const assetPaths = ['references', 'assets', 'scripts'];
 
         files.forEach((file) => {
           const filePath = path.join(dirPath, file);
-          if (fs.statSync(filePath).isDirectory()) {
+          if (fs.statSync(filePath).isDirectory() && assetPaths.includes(file)) {
             arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
           } else {
             const relativePath = path.relative(skillPath, filePath);

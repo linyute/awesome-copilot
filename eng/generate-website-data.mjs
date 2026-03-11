@@ -541,6 +541,63 @@ function generatePluginsData(gitDates) {
     }
   }
 
+  // 從 plugins/external.json 載入外部外掛
+  const externalJsonPath = path.join(PLUGINS_DIR, "external.json");
+  if (fs.existsSync(externalJsonPath)) {
+    try {
+      const externalPlugins = JSON.parse(
+        fs.readFileSync(externalJsonPath, "utf-8")
+      );
+      if (Array.isArray(externalPlugins)) {
+        let addedCount = 0;
+        for (const ext of externalPlugins) {
+          if (!ext.name || !ext.description) {
+            console.warn(
+              `跳過缺少名稱或描述的外部外掛`
+            );
+            continue;
+          }
+
+          // Skip if a local plugin with the same name already exists
+          if (plugins.some((p) => p.id === ext.name)) {
+            console.warn(
+              `跳過外部外掛 "${ext.name}" — 本機已存在相同名稱的外掛`
+            );
+            continue;
+          }
+
+          const tags = ext.keywords || ext.tags || [];
+
+          plugins.push({
+            id: ext.name,
+            name: ext.name,
+            description: ext.description || "",
+            path: `plugins/${ext.name}`,
+            tags: tags,
+            itemCount: 0,
+            items: [],
+            external: true,
+            repository: ext.repository || null,
+            homepage: ext.homepage || null,
+            author: ext.author || null,
+            license: ext.license || null,
+            source: ext.source || null,
+            lastUpdated: null,
+            searchText: `${ext.name} ${ext.description || ""} ${tags.join(
+              " "
+            )} ${ext.author?.name || ""} ${ext.repository || ""}`.toLowerCase(),
+          });
+          addedCount++;
+        }
+        console.log(
+          `  ✓ 載入 ${addedCount} 個外部外掛`
+        );
+      }
+    } catch (e) {
+      console.warn(`解析外部外掛失敗：${e.message}`);
+    }
+  }
+
   // 收集所有不重複的標籤
   const allTags = [...new Set(plugins.flatMap((p) => p.tags))].sort();
 

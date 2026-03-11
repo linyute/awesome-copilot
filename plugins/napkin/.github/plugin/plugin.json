@@ -1,0 +1,25 @@
+{
+  "name": "napkin",
+  "description": "Copilot CLI 的視覺化白板協作。在您的瀏覽器中開啟一個互動式白板，您可以在其中繪圖、素描並新增便利貼 — 然後將所有內容分享回 Copilot。Copilot 會查看您的繪圖並透過分析、建議和想法進行回應。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "whiteboard",
+    "visual",
+    "collaboration",
+    "brainstorming",
+    "non-technical",
+    "drawing",
+    "sticky-notes",
+    "accessibility",
+    "copilot-cli",
+    "ux"
+  ],
+  "skills": [
+    "./skills/napkin/"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "oracle-to-postgres-migration-expert",
+  "description": "用於 .NET 解決方案中 Oracle 到 PostgreSQL 應用程式遷移的專家代理。執行程式碼編輯、執行指令，並呼叫擴充工具，以將 .NET/Oracle 資料存取模式遷移至 PostgreSQL。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "oracle",
+    "postgresql",
+    "database-migration",
+    "dotnet",
+    "sql",
+    "migration",
+    "integration-testing",
+    "stored-procedures"
+  ],
+  "agents": [
+    "./agents/oracle-to-postgres-migration-expert.md"
+  ],
+  "skills": [
+    "./skills/creating-oracle-to-postgres-master-migration-plan/",
+    "./skills/creating-oracle-to-postgres-migration-bug-report/",
+    "./skills/creating-oracle-to-postgres-migration-integration-tests/",
+    "./skills/migrating-oracle-to-postgres-stored-procedures/",
+    "./skills/planning-oracle-to-postgres-migration-integration-testing/",
+    "./skills/reviewing-oracle-to-postgres-migration/",
+    "./skills/scaffolding-oracle-to-postgres-migration-test-project/"
+  ]
+}

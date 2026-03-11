@@ -44,7 +44,7 @@ mutation {
     issueId: "被封鎖議題的節點_ID"
     blockingIssueId: "執行封鎖議題的節點_ID"
   }) {
-    blockedByIssue { number title }
+    blockingIssue { number title }
   }
 }
 ```
@@ -56,7 +56,7 @@ mutation {
     issueId: "被封鎖議題的節點_ID"
     blockingIssueId: "執行封鎖議題的節點_ID"
   }) {
-    blockedByIssue { number title }
+    blockingIssue { number title }
   }
 }
 ```

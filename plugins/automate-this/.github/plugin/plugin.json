@@ -1,0 +1,23 @@
+{
+  "name": "automate-this",
+  "description": "錄製您執行手動程序的螢幕，將影片放在您的桌面，讓 Copilot CLI 逐影格進行分析，以建構可運作的自動化腳本。支援包含音訊逐字稿的旁白錄製。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "automation",
+    "screen-recording",
+    "workflow",
+    "video-analysis",
+    "process-automation",
+    "scripting",
+    "productivity",
+    "copilot-cli"
+  ],
+  "skills": [
+    "./skills/automate-this/"
+  ]
+}

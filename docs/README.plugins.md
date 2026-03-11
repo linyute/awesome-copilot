@@ -25,6 +25,7 @@
 
 | 名稱 | 說明 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |
+| [automate-this](../plugins/automate-this/README.md) | 錄製您執行手動程序的螢幕，將影片放在您的桌面，讓 Copilot CLI 逐影格進行分析，以建構可運作的自動化腳本。支援包含音訊逐字稿的旁白錄製。 | 1 個項目 | automation, screen-recording, workflow, video-analysis, process-automation, scripting, productivity, copilot-cli |
 | [awesome-copilot](../plugins/awesome-copilot/README.md) | 協助您發現與產生精選 GitHub Copilot 代理程式、指令、提示詞與技能的 Meta 提示詞。 | 4 個項目 | github-copilot, discovery, meta, prompt-engineering, agents |
 | [azure-cloud-development](../plugins/azure-cloud-development/README.md) | 全方位的 Azure 雲端開發工具，包含基礎架構即程式碼、無伺服器函式、架構模式，以及建構具延展性雲端應用程式的成本最佳化。 | 11 個項目 | azure, cloud, infrastructure, bicep, terraform, serverless, architecture, devops |
 | [cast-imaging](../plugins/cast-imaging/README.md) | 使用 CAST Imaging 進行軟體分析、影響評估、結構品質諮詢與架構審查的專業代理程式完整集合。 | 3 個項目 | cast-imaging, software-analysis, architecture, quality, impact-analysis, devops |
@@ -46,12 +47,14 @@
 | [java-mcp-development](../plugins/java-mcp-development/README.md) | 使用官方 MCP Java SDK 並結合回應式串流與 Spring Boot 整合，在 Java 中建構 Model Context Protocol 伺服器的完整工具組。 | 2 個項目 | java, mcp, model-context-protocol, server-development, sdk, reactive-streams, spring-boot, reactor |
 | [kotlin-mcp-development](../plugins/kotlin-mcp-development/README.md) | 使用官方 io.modelcontextprotocol:kotlin-sdk 函式庫在 Kotlin 中建構 Model Context Protocol (MCP) 伺服器的完整工具組。包含最佳實作指令、用於產生伺服器的提示詞，以及提供引導的專家對話模式。 | 2 個項目 | kotlin, mcp, model-context-protocol, kotlin-multiplatform, server-development, ktor |
 | [mcp-m365-copilot](../plugins/mcp-m365-copilot/README.md) | 為 Microsoft 365 Copilot 建構整合 Model Context Protocol 之宣告式代理程式的完整集合 | 4 個項目 | mcp, m365-copilot, declarative-agents, api-plugins, model-context-protocol, adaptive-cards |
+| [napkin](../plugins/napkin/README.md) | Copilot CLI 的視覺化白板協作。在您的瀏覽器中開啟一個互動式白板，您可以在其中繪圖、素描並新增便利貼 — 然後將所有內容分享回 Copilot。Copilot 會查看您的繪圖並透過分析、建議和想法進行回應。 | 1 個項目 | whiteboard, visual, collaboration, brainstorming, non-technical, drawing, sticky-notes, accessibility, copilot-cli, ux |
 | [noob-mode](../plugins/noob-mode/README.md) | 適用於非技術性 Copilot CLI 使用者的淺顯易懂翻譯層。將每個核准提示、錯誤訊息與技術輸出翻譯成清晰、無術語的內容，並附帶顏色標記的風險指標。 | 1 個項目 | accessibility, plain-english, non-technical, beginner, translation, copilot-cli, ux |
 | [openapi-to-application-csharp-dotnet](../plugins/openapi-to-application-csharp-dotnet/README.md) | 從 OpenAPI 規格產生生產等級的 .NET 應用程式。包含 ASP.NET Core 專案架構、控制器產生、Entity Framework 整合以及 C# 最佳實作。 | 2 個項目 | openapi, code-generation, api, csharp, dotnet, aspnet |
 | [openapi-to-application-go](../plugins/openapi-to-application-go/README.md) | 從 OpenAPI 規格產生生產等級的 Go 應用程式。包含專案架構、處理常式產生、中介軟體設定以及 REST API 的 Go 最佳實作。 | 2 個項目 | openapi, code-generation, api, go, golang |
 | [openapi-to-application-java-spring-boot](../plugins/openapi-to-application-java-spring-boot/README.md) | 從 OpenAPI 規格產生生產等級的 Spring Boot 應用程式。包含專案架構、REST 控制器產生、服務層組織以及 Spring Boot 最佳實作。 | 2 個項目 | openapi, code-generation, api, java, spring-boot |
 | [openapi-to-application-nodejs-nestjs](../plugins/openapi-to-application-nodejs-nestjs/README.md) | 從 OpenAPI 規格產生生產等級的 NestJS 應用程式。包含專案主體結構建置、控制器與服務產生、TypeScript 最佳實作以及企業級模式。 | 2 個項目 | openapi, code-generation, api, nodejs, typescript, nestjs |
 | [openapi-to-application-python-fastapi](../plugins/openapi-to-application-python-fastapi/README.md) | 從 OpenAPI 規格產生生產等級的 FastAPI 應用程式。包含專案主體結構建置、路由產生、相依性注入，以及用於非同步 API 的 Python 最佳實作。 | 2 個項目 | openapi, code-generation, api, python, fastapi |
+| [oracle-to-postgres-migration-expert](../plugins/oracle-to-postgres-migration-expert/README.md) | 用於 .NET 解決方案中 Oracle 到 PostgreSQL 應用程式遷移的專家代理。執行程式碼編輯、執行指令，並呼叫擴充工具，以將 .NET/Oracle 資料存取模式遷移至 PostgreSQL。 | 8 個項目 | oracle, postgresql, database-migration, dotnet, sql, migration, integration-testing, stored-procedures |
 | [ospo-sponsorship](../plugins/ospo-sponsorship/README.md) | 為開源專案辦公室 (OSPO) 提供的工具與資源，用於透過 GitHub Sponsors、Open Collective 及其他資助平台識別、評估並管理開源相依項目的贊助。 | 1 個項目 |  |
 | [partners](../plugins/partners/README.md) | 由 GitHub 合作夥伴建立的自訂代理程式 | 20 個項目 | devops, security, database, cloud, infrastructure, observability, feature-flags, cicd, migration, performance |
 | [pcf-development](../plugins/pcf-development/README.md) | 使用 Power Apps 元件架構為模型驅動與畫布應用程式開發自訂程式碼元件的完整工具包 | 0 個項目 | power-apps, pcf, component-framework, typescript, power-platform |
