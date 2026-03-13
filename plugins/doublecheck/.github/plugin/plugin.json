@@ -1,0 +1,24 @@
+{
+  "name": "doublecheck",
+  "description": "針對 AI 輸出的三層驗證流程。擷取主張、尋找來源並標記幻覺風險，以便人類在採取行動前進行驗證。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "verification",
+    "hallucination",
+    "fact-check",
+    "source-citation",
+    "trust",
+    "safety"
+  ],
+  "agents": [
+    "./agents/doublecheck.md"
+  ],
+  "skills": [
+    "./skills/doublecheck/"
+  ]
+}

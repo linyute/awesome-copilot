@@ -38,6 +38,7 @@
 | [dataverse](../plugins/dataverse/README.md) | Microsoft Dataverse 整合的完整集合。包含 MCP 設定指令。 | 1 個項目 | dataverse, mcp |
 | [dataverse-sdk-for-python](../plugins/dataverse-sdk-for-python/README.md) | 建構適用於 Microsoft Dataverse 之生產等級 Python 整合的完整集合。包含官方文件、最佳實作、進階功能、檔案操作以及程式碼產生提示詞。 | 4 個項目 | dataverse, python, integration, sdk |
 | [devops-oncall](../plugins/devops-oncall/README.md) | 一組專注的提示詞、指令與對話模式，協助進行事件分類並使用 DevOps 工具與 Azure 資源快速回應。 | 3 個項目 | devops, incident-response, oncall, azure |
+| [doublecheck](../plugins/doublecheck/README.md) | 針對 AI 輸出的三層驗證流程。擷取主張、尋找來源並標記幻覺風險，以便人類在採取行動前進行驗證。 | 2 個項目 | verification, hallucination, fact-check, source-citation, trust, safety |
 | [edge-ai-tasks](../plugins/edge-ai-tasks/README.md) | 適用於中高階使用者與大型程式碼庫的任務研究員與任務規劃員 - 由 microsoft/edge-ai 提供 | 2 個項目 | architecture, planning, research, tasks, implementation |
 | [flowstudio-power-automate](../plugins/flowstudio-power-automate/README.md) | 透過 FlowStudio MCP 伺服器管理 Power Automate 雲端流程的完整工具組。包含用於連線至 MCP 伺服器、偵錯失敗的流程執行記錄，以及根據自然語言建構並部署流程的技能。 | 3 個項目 | power-automate, power-platform, flowstudio, mcp, model-context-protocol, cloud-flows, workflow-automation |
 | [frontend-web-dev](../plugins/frontend-web-dev/README.md) | 現代前端網頁開發的必備提示詞、指令與對話模式，包含 React、Angular、Vue、TypeScript 以及 CSS 框架。 | 4 個項目 | frontend, web, react, typescript, javascript, css, html, angular, vue |
