@@ -24,7 +24,8 @@ try
     await client.StartAsync();
     var session = await client.CreateSessionAsync(new SessionConfig
     {
-        Model = "gpt-5"
+        Model = "gpt-5",
+        OnPermissionRequest = PermissionHandler.ApproveAll
     });
 
     var done = new TaskCompletionSource<string>();
@@ -76,7 +77,11 @@ catch (Exception ex)
 ## 逾時處理
 
 ```csharp
-var session = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5" });
+var session = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
 
 try
 {
@@ -106,7 +111,11 @@ catch (OperationCanceledException)
 ## 中止請求
 
 ```csharp
-var session = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5" });
+var session = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
 
 // 開始一個請求
 await session.SendAsync(new MessageOptions { Prompt = "寫一個很長的故事..." });
@@ -141,7 +150,11 @@ Console.CancelKeyPress += async (sender, e) =>
 await using var client = new CopilotClient();
 await client.StartAsync();
 
-var session = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5" });
+var session = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
 
 // ... 執行工作 ...
 
@@ -149,6 +162,8 @@ var session = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5
 ```
 
 ## 最佳實踐
+
+從 Copilot SDK v0.1.28 起，權限處理為選用項目。如果工作階段可能需要工具、檔案或系統存取，請在建立時明確設定 `OnPermissionRequest`。
 
 1. **務必進行清理**：使用 try-finally 或 `await using` 以確保呼叫 `StopAsync()`
 2. **處理連線錯誤**：CLI 可能未安裝或未執行

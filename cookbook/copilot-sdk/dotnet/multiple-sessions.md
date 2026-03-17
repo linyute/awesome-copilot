@@ -12,7 +12,7 @@
 
 您需要同時執行多個對話，每個對話都有其自己的內容與歷程記錄。
 
-## C#
+## C #
 
 ```csharp
 using GitHub.Copilot.SDK;
@@ -21,9 +21,21 @@ await using var client = new CopilotClient();
 await client.StartAsync();
 
 // 建立多個獨立的工作階段
-var session1 = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5" });
-var session2 = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5" });
-var session3 = await client.CreateSessionAsync(new SessionConfig { Model = "claude-sonnet-4.5" });
+var session1 = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
+var session2 = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
+var session3 = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "claude-sonnet-4.5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
 
 // 每個工作階段都維護自己的對話歷程記錄
 await session1.SendAsync(new MessageOptions { Prompt = "您正在協助處理一個 Python 專案" });
@@ -49,7 +61,8 @@ await session3.DisposeAsync();
 var session = await client.CreateSessionAsync(new SessionConfig
 {
     SessionId = "user-123-chat",
-    Model = "gpt-5"
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
 });
 
 Console.WriteLine(session.SessionId); // "user-123-chat"

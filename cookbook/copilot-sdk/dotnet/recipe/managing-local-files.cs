@@ -10,7 +10,8 @@ await client.StartAsync();
 // 定義檔案操作工具
 var session = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "gpt-5"
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
 });
 
 // 等待完成
@@ -36,8 +37,7 @@ session.On(evt =>
 });
 
 // 請求 Copilot 整理檔案
-// 將此更改為您的目標資料夾
-var targetFolder = @"C:\Users\Me\Downloads";
+var targetFolder = args.FirstOrDefault() ?? Environment.CurrentDirectory;
 
 await session.SendAsync(new MessageOptions
 {

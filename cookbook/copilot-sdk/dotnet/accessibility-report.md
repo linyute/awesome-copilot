@@ -64,6 +64,7 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
 {
     Model = "claude-opus-4.6",
     Streaming = true,
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     McpServers = new Dictionary<string, object>()
     {
         ["playwright"] =
@@ -207,6 +208,7 @@ if (generateTests == "y" || generateTests == "yes")
 此食譜設定了與工作階段一同執行的本機 MCP 伺服器：
 
 ```csharp
+OnPermissionRequest = PermissionHandler.ApproveAll,
 McpServers = new Dictionary<string, object>()
 {
     ["playwright"] = new McpLocalServerConfig

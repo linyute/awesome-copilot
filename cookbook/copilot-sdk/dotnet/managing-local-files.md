@@ -6,6 +6,7 @@
 > 
 > ```bash
 > dotnet run recipe/managing-local-files.cs
+> dotnet run recipe/managing-local-files.cs -- /path/to/folder
 > ```
 
 ## 範例場景
@@ -24,7 +25,8 @@ await client.StartAsync();
 // 定義檔案操作的工具
 var session = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "gpt-5"
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
 });
 
 // 等待完成
@@ -50,7 +52,7 @@ session.On(evt =>
 });
 
 // 要求 Copilot 組織檔案
-var targetFolder = @"C:\Users\Me\Downloads";
+var targetFolder = args.FirstOrDefault() ?? Environment.CurrentDirectory;
 
 await session.SendAsync(new MessageOptions
 {

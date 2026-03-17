@@ -1,11 +1,16 @@
 ---
 name: issue-fields-migration
-description: '將欄位值從 GitHub Project V2 欄位或儲存庫標籤遷移至組織級議題欄位。當使用者需要批次複製 Metadata (優先順序、狀態、日期、文字、數字) 從專案欄位或標籤到議題欄位，或者當他們詢問有關將專案欄位資料或標籤遷移、轉移或複製到議題欄位時，請使用此技能。'
+description: '從兩個來源將 Metadata 批次遷移到 GitHub Issue 欄位 (Issue fields)：儲存庫標籤 (例如將優先級標籤遷移到「優先級 (Priority)」欄位) 和 Project V2 欄位。當使用者說「將我的標籤遷移到 Issue 欄位」、「將專案欄位遷移到 Issue 欄位」、「將標籤轉換為 Issue 欄位」、「將專案欄位值複製到 Issue 欄位」或詢問有關採用 Issue 欄位時，請使用此技能。Issue 欄位是組織層級的型別化 Metadata (單選、文字、數字、日期)，可用結構化、可搜尋、跨儲存庫的欄位取代基於標籤的因應措施。'
 ---
 
-# 議題欄位遷移 (Issue Fields Migration)
+# Issue 欄位遷移 (Issue Fields Migration)
 
-將欄位值從 Project V2 欄位或儲存庫標籤批次複製到組織級議題欄位。此技能將引導您探索欄位對應、預覽變更，並在執行遷移時提供進度報告。支援兩種遷移來源：專案欄位 (單一專案) 及儲存庫標籤 (一個或多個儲存庫)。
+[Issue 欄位 (Issue fields)](https://github.blog/changelog/2026-03-12-issue-fields-structured-issue-metadata-is-in-public-preview/) 是組織層級的型別化 Metadata (單選、文字、數字、日期)，可用結構化、可搜尋、跨儲存庫的欄位取代基於標籤的因應措施。每個組織都會預先設定好 `Priority`、`Effort`、`Start date` 和 `Target date`，並支援多達 25 個自訂欄位。
+
+此技能可從兩個來源將現有的 Metadata 批次遷移到 Issue 欄位中：
+
+- **儲存庫標籤 (Repo labels)**：將 `p0`、`p1`、`priority/high` 等標籤轉換為結構化的 Issue 欄位值 (例如 Priority 欄位)。支援一次遷移多個標籤，並可選擇在遷移後將其移除。
+- **Project V2 欄位**：將欄位值 (單選、文字、數字、日期、反覆項目) 從 GitHub Project 複製到等效的組織層級 Issue 欄位中。
 
 ## 何時使用
 

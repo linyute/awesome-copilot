@@ -27,7 +27,6 @@ name: 'Agent 顯示名稱'
 tools: ['read', 'edit', 'search']
 model: 'Claude Sonnet 4.5'
 target: 'vscode'
-infer: true
 ---
 ```
 
@@ -61,10 +60,15 @@ infer: true
 - 如果省略，Agent 在這兩個環境中皆可用
 - 當 Agent 具有環境特定功能時使用
 
-#### **infer** (選用)
-- 布林值，控制 Copilot 是否可以根據上下文自動使用此 Agent
-- 如果省略，預設為 `true`
-- 設定為 `false` 則需要手動選擇 Agent
+#### **user-invocable**（選用）
+- Boolean：控制該 Agent 是否顯示在聊天中的 Agent 下拉選單中
+- 預設：若省略則為 `true`
+- 設為 `false` 可建立僅能透過子 Agent 或程式化方式存取的 Agent
+
+#### **disable-model-invocation**（選用）
+- Boolean：控制該 Agent 是否能被其他 Agent 作為子 Agent 呼叫
+- 預設：若省略則為 `false`
+- 設為 `true` 可在保持該 Agent 在選擇器中可見的同時，防止被作為子 Agent 呼叫
 
 #### **metadata** (選用，僅限 GitHub.com)
 - 包含名稱-值對的物件，用於 Agent 註釋

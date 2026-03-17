@@ -7,9 +7,21 @@ await using var client = new CopilotClient();
 await client.StartAsync();
 
 // 建立多個獨立的工作階段
-var session1 = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5" });
-var session2 = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5" });
-var session3 = await client.CreateSessionAsync(new SessionConfig { Model = "claude-sonnet-4.5" });
+var session1 = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
+var session2 = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
+var session3 = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "claude-sonnet-4.5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
+});
 
 Console.WriteLine("已建立 3 個獨立的工作階段");
 

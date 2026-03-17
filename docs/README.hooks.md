@@ -34,3 +34,4 @@
 | [Governance Audit](../hooks/governance-audit/README.md) | 掃描 Copilot 代理程式提示以尋找威脅訊號並記錄治理事件 | sessionStart, sessionEnd, userPromptSubmitted | `audit-prompt.sh`<br />`audit-session-end.sh`<br />`audit-session-start.sh`<br />`hooks.json` |
 | [Session Auto-Commit](../hooks/session-auto-commit/README.md) | 當 Copilot 程式編碼代理程式會話結束時自動提交並推送變更 | sessionEnd | `auto-commit.sh`<br />`hooks.json` |
 | [Session Logger](../hooks/session-logger/README.md) | 記錄所有 Copilot 程式編碼代理程式會話活動，以供稽核與分析 | sessionStart, sessionEnd, userPromptSubmitted | `hooks.json`<br />`log-prompt.sh`<br />`log-session-end.sh`<br />`log-session-start.sh` |
+| [機密掃描器 (Secrets Scanner)](../hooks/secrets-scanner/README.md) | 掃描 Copilot 編碼代理程式工作階段中修改的檔案，尋找洩漏的機密、認證資訊和敏感資料 | sessionEnd | `hooks.json`<br />`scan-secrets.sh` |

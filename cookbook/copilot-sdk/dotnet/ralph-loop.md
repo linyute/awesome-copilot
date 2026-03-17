@@ -58,7 +58,11 @@ try
 
         // 每次反覆運算使用全新工作階段 —— 內容隔離是關鍵點
         var session = await client.CreateSessionAsync(
-            new SessionConfig { Model = "gpt-5.1-codex-mini" });
+            new SessionConfig
+            {
+                Model = "gpt-5.1-codex-mini",
+                OnPermissionRequest = PermissionHandler.ApproveAll
+            });
         try
         {
             var done = new TaskCompletionSource<string>();
@@ -125,8 +129,7 @@ try
                 // 將代理程式固定在專案目錄
                 WorkingDirectory = Environment.CurrentDirectory,
                 // 自動核准工具呼叫以進行自動化執行
-                OnPermissionRequest = (_, _) => Task.FromResult(
-                    new PermissionRequestResult { Kind = "approved" }),
+                OnPermissionRequest = PermissionHandler.ApproveAll,
             });
         try
         {

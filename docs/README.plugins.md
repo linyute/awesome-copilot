@@ -35,7 +35,6 @@
 | [csharp-dotnet-development](../plugins/csharp-dotnet-development/README.md) | C# 與 .NET 開發的必備提示詞、指令與對話模式，包含測試、文件與最佳實作。 | 9 個項目 | csharp, dotnet, aspnet, testing |
 | [csharp-mcp-development](../plugins/csharp-mcp-development/README.md) | 使用官方 SDK 在 C# 中建構 Model Context Protocol (MCP) 伺服器的完整工具組。包含最佳實作指令、用於產生伺服器的提示詞，以及提供引導的專家對話模式。 | 2 個項目 | csharp, mcp, model-context-protocol, dotnet, server-development |
 | [database-data-management](../plugins/database-data-management/README.md) | 適用於 PostgreSQL、SQL Server 的資料庫管理、SQL 最佳化與資料管理工具，以及通用資料庫開發最佳實作。 | 6 個項目 | database, sql, postgresql, sql-server, dba, optimization, queries, data-management |
-| [dataverse](../plugins/dataverse/README.md) | Microsoft Dataverse 整合的完整集合。包含 MCP 設定指令。 | 1 個項目 | dataverse, mcp |
 | [dataverse-sdk-for-python](../plugins/dataverse-sdk-for-python/README.md) | 建構適用於 Microsoft Dataverse 之生產等級 Python 整合的完整集合。包含官方文件、最佳實作、進階功能、檔案操作以及程式碼產生提示詞。 | 4 個項目 | dataverse, python, integration, sdk |
 | [devops-oncall](../plugins/devops-oncall/README.md) | 一組專注的提示詞、指令與對話模式，協助進行事件分類並使用 DevOps 工具與 Azure 資源快速回應。 | 3 個項目 | devops, incident-response, oncall, azure |
 | [doublecheck](../plugins/doublecheck/README.md) | 針對 AI 輸出的三層驗證流程。擷取主張、尋找來源並標記幻覺風險，以便人類在採取行動前進行驗證。 | 2 個項目 | verification, hallucination, fact-check, source-citation, trust, safety |

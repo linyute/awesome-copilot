@@ -564,6 +564,6 @@ async def read_file(path: str) -> str:
 
 ## 相關資源 (Related Resources)
 
-- [Agent-OS Governance Engine](https://github.com/imran-siddique/agent-os) — 完整治理框架
-- [AgentMesh Integrations](https://github.com/imran-siddique/agentmesh-integrations) — 框架特定套件
+- [Agent Governance Toolkit](https://github.com/microsoft/agent-governance-toolkit) — 完整治理框架
+- [AgentMesh Integrations](https://github.com/microsoft/agent-governance-toolkit/tree/main/packages/agentmesh-integrations) — 框架特定套件
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/)

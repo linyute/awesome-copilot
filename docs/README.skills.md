@@ -79,7 +79,6 @@
 | [create-github-pull-request-from-specification](../skills/create-github-pull-request-from-specification/SKILL.md) | 使用 pull_request_template.md 範本從規範檔案為功能請求建立 GitHub Pull Request。 | 無 |
 | [create-implementation-plan](../skills/create-implementation-plan/SKILL.md) | 為新功能、重構現有程式碼或升級套件、設計、架構或基礎建設建立新的實作計畫文件。 | 無 |
 | [create-llms](../skills/create-llms/SKILL.md) | 根據 llms.txt 規範，依據儲存庫結構從零建立 llms.txt 文件。 | 無 |
-| [create-oo-component-documentation](../skills/create-oo-component-documentation/SKILL.md) | 依循業界最佳實踐與架構文件標準，為物件導向元件建立完整且標準化的文件。 | 無 |
 | [create-readme](../skills/create-readme/SKILL.md) | 為專案建立 README.md 文件 | 無 |
 | [create-specification](../skills/create-specification/SKILL.md) | 為解決方案建立新的規格文件，並針對生成式 AI 優化。 | 無 |
 | [create-spring-boot-java-project](../skills/create-spring-boot-java-project/SKILL.md) | 建立 Spring Boot Java 專案骨架 | 無 |
@@ -112,6 +111,7 @@
 | [editorconfig](../skills/editorconfig/SKILL.md) | 根據專案分析與使用者偏好，產生全面且最佳實踐導向的 .editorconfig 設定檔。 | 無 |
 | [ef-core](../skills/ef-core/SKILL.md) | 取得 Entity Framework Core 最佳實踐 | 無 |
 | [entra-agent-user](../skills/entra-agent-user/SKILL.md) | 從代理程式識別碼在 Microsoft Entra ID 中建立代理程式使用者，讓 AI 代理程式在 Microsoft 365 和 Azure 環境中能以具備使用者識別功能的數位員工身分運作。 | 無 |
+| [eval-driven-dev](../skills/eval-driven-dev/SKILL.md) | 檢測 Python LLM 應用程式、建構黃金資料集、編寫基於評估的測試、執行測試並分析失敗的根本原因 — 涵蓋完整的評估驅動開發週期。每當使用者開發、測試、QA、評估或基準測試呼叫 LLM 的 Python 專案時，務必使用此技能，即使他們沒有明確說出「評估 (evals)」。用於確保 AI 應用程式正常運作、在提示 (prompt) 變更後捕捉迴歸、除錯代理程式行為差異的原因，或在發布前驗證輸出品質。 | `references/pixie-api.md` |
 | [excalidraw-diagram-generator](../skills/excalidraw-diagram-generator/SKILL.md) | 根據自然語言描述生成 Excalidraw 圖表。當被要求「建立圖表」、「製作流程圖」、「視覺化流程」、「繪製系統架構」、「建立心智圖」或「生成 Excalidraw 檔案」時使用。支援流程圖、關聯圖、心智圖和系統架構圖。輸出可以直接在 Excalidraw 中開啟的 .excalidraw JSON 檔案。 | `references/element-types.md`<br />`references/excalidraw-schema.md`<br />`scripts/.gitignore`<br />`scripts/README.md`<br />`scripts/add-arrow.py`<br />`scripts/add-icon-to-diagram.py`<br />`scripts/split-excalidraw-library.py`<br />`templates` |
 | [fabric-lakehouse](../skills/fabric-lakehouse/SKILL.md) | 使用此技能獲取關於 Fabric Lakehouse 及其功能的背景資訊，適用於軟體系統和 AI 驅動的功能。它提供 Lakehouse 資料元件的說明、使用結構描述和捷徑進行組織、存取控制以及程式碼範例。此技能支援使用者使用最佳實作來設計、建構和最佳化 Lakehouse 解決方案。 | `references/getdata.md`<br />`references/pyspark.md` |
 | [fedora-linux-triage](../skills/fedora-linux-triage/SKILL.md) | 使用 dnf、systemd 和具備 SELinux 意識的指南來分類並解決 Fedora 問題。 | 無 |
@@ -134,7 +134,7 @@
 | [go-mcp-server-generator](../skills/go-mcp-server-generator/SKILL.md) | 使用官方的 github.com/modelcontextprotocol/go-sdk 建立一個具有適當結構、依賴項和實作的完整 Go MCP 伺服器專案。 | 無 |
 | [image-manipulation-image-magick](../skills/image-manipulation-image-magick/SKILL.md) | 使用 ImageMagick 處理和操作影像。支援調整大小、格式轉換、批次處理以及擷取影像 Metadata。適用於處理影像、建立縮圖、調整桌布大小或執行批次影像操作。 | 無 |
 | [import-infrastructure-as-code](../skills/import-infrastructure-as-code/SKILL.md) | 使用 Azure CLI 探索功能與 Azure 驗證模組 (Azure Verified Modules, AVM)，將現有的 Azure 資源匯入 Terraform。當被要求反向工程現有的 Azure 基礎設施、從現有的訂閱/資源群組/資源識別碼產生基礎設施即程式碼 (IaC)、對應相依性、從下載的模組原始碼衍生精確的匯入位址、防止設定漂移，以及產生可供驗證與規劃且基於 AVM 的 Terraform 檔案（適用於任何 Azure 資源型別）時使用。 | 無 |
-| [issue-fields-migration](../skills/issue-fields-migration/SKILL.md) | 將欄位值從 GitHub Project V2 欄位或儲存庫標籤遷移至組織級議題欄位。當使用者需要批次複製 Metadata (優先順序、狀態、日期、文字、數字) 從專案欄位或標籤到議題欄位，或者當他們詢問有關將專案欄位資料或標籤遷移、轉移或複製到議題欄位時，請使用此技能。 | `references/issue-fields-api.md`<br />`references/labels-api.md`<br />`references/projects-api.md` |
+| [issue-fields-migration](../skills/issue-fields-migration/SKILL.md) | 從兩個來源將 Metadata 批次遷移到 GitHub Issue 欄位 (Issue fields)：儲存庫標籤 (例如將優先級標籤遷移到「優先級 (Priority)」欄位) 和 Project V2 欄位。當使用者說「將我的標籤遷移到 Issue 欄位」、「將專案欄位遷移到 Issue 欄位」、「將標籤轉換為 Issue 欄位」、「將專案欄位值複製到 Issue 欄位」或詢問有關採用 Issue 欄位時，請使用此技能。Issue 欄位是組織層級的型別化 Metadata (單選、文字、數字、日期)，可用結構化、可搜尋、跨儲存庫的欄位取代基於標籤的因應措施。 | `references/issue-fields-api.md`<br />`references/labels-api.md`<br />`references/projects-api.md` |
 | [java-add-graalvm-native-image-support](../skills/java-add-graalvm-native-image-support/SKILL.md) | GraalVM Native Image 專家：為 Java 應用程式新增 native image 支援，建置專案、分析建置錯誤、套用修正，並依據 Oracle 最佳實務反覆處理直到成功編譯。 | 無 |
 | [java-docs](../skills/java-docs/SKILL.md) | 確保 Java 型別皆有 Javadoc 註解，並遵循最佳文件化實踐。 | 無 |
 | [java-junit](../skills/java-junit/SKILL.md) | 取得 JUnit 5 單元測試最佳實踐，包括資料驅動測試 | 無 |
@@ -150,7 +150,6 @@
 | [make-skill-template](../skills/make-skill-template/SKILL.md) | 從提示語或透過複製此範本來建立新的 GitHub Copilot Agent Skills。當被要求「建立技能」、「製作新技能」、「建構技能架構」或使用隨附資源建構專門的 AI 能力時使用。產生具備正確 Frontmatter、目錄結構以及選用的 scripts/references/assets 資料夾的 SKILL.md 檔案。 | 無 |
 | [markdown-to-html](../skills/markdown-to-html/SKILL.md) | 將 Markdown 檔案轉換為 HTML，類似於 `marked.js`、`pandoc`、`gomarkdown/markdown` 或類似工具；或是編寫自定義指令稿來將 Markdown 轉換為 HTML，以及/或者在 `jekyll/jekyll`、`gohugoio/hugo` 或類似的使用 Markdown 文件並將其轉換為 HTML 輸出的網頁模板系統上工作。當被要求「將 markdown 轉換為 html」、「將 md 轉換為 html」、「渲染 markdown」、「從 markdown 產生 html」，或者在處理 .md 檔案以及/或者將 markdown 轉換為 HTML 輸出的網頁模板系統時使用。支援 GFM、CommonMark 和標準 Markdown 版本的 CLI 和 Node.js 工作流。 | `references/basic-markdown-to-html.md`<br />`references/basic-markdown.md`<br />`references/code-blocks-to-html.md`<br />`references/code-blocks.md`<br />`references/collapsed-sections-to-html.md`<br />`references/collapsed-sections.md`<br />`references/gomarkdown.md`<br />`references/hugo.md`<br />`references/jekyll.md`<br />`references/marked.md`<br />`references/pandoc.md`<br />`references/tables-to-html.md`<br />`references/tables.md`<br />`references/writing-mathematical-expressions-to-html.md`<br />`references/writing-mathematical-expressions.md` |
 | [mcp-cli](../skills/mcp-cli/SKILL.md) | 透過命令列介面（CLI）與 MCP (Model Context Protocol) 伺服器互動。當你需要透過 MCP 伺服器與外部工具、API 或資料源進行互動，列出可用的 MCP 伺服器/工具，或從命令列呼叫 MCP 工具時使用。 | 無 |
-| [mcp-configure](../skills/mcp-configure/SKILL.md) | 為 GitHub Copilot 設定搭配您的 Dataverse 環境的 MCP 伺服器。 | 無 |
 | [mcp-copilot-studio-server-generator](../skills/mcp-copilot-studio-server-generator/SKILL.md) | 建立一個完整的 MCP 伺服器實作，針對 Copilot Studio 整合進行優化，並具有適當的綱要約束和可串流 HTTP 支援 | 無 |
 | [mcp-create-adaptive-cards](../skills/mcp-create-adaptive-cards/SKILL.md) | 為基於 MCP 的 API 外掛程式新增調適型卡片回應範本，以便在 Microsoft 365 Copilot 中視覺化呈現資料 | 無 |
 | [mcp-create-declarative-agent](../skills/mcp-create-declarative-agent/SKILL.md) | 透過整合具有驗證、工具選取和組態的 MCP 伺服器，為 Microsoft 365 Copilot 建立宣告式代理程式 | 無 |
@@ -158,9 +157,10 @@
 | [meeting-minutes](../skills/meeting-minutes/SKILL.md) | 為內部會議生成簡潔、具備行動力的會議紀錄。包含 Metadata、出席者、議程、決策、行動項目（負責人 + 截止日期）以及後續步驟。 | 無 |
 | [memory-merger](../skills/memory-merger/SKILL.md) | 將領域記憶檔案中的成熟經驗合併到其指令檔案中。語法：`/memory-merger >domain [scope]`，其中 scope 為 `global` (預設)、`user`、`workspace` 或 `ws`。 | 無 |
 | [mentoring-juniors](../skills/mentoring-juniors/SKILL.md) | 針對初級開發者與 AI 新手的蘇格拉底式引導。透過提問進行引導，絕不直接給出答案。觸發詞： "help me understand", "explain this code", "I'm stuck", "Im stuck", "I'm confused", "Im confused", "I don't understand", "I dont understand", "can you teach me", "teach me", "mentor me", "guide me", "what does this error mean", "why doesn't this work", "why does not this work", "I'm a beginner", "Im a beginner", "I'm learning", "Im learning", "I'm new to this", "Im new to this", "walk me through", "how does this work", "what's wrong with my code", "what's wrong", "can you break this down", "ELI5", "step by step", "where do I start", "what am I missing", "newbie here", "junior dev", "first time using", "how do I", "what is", "is this right", "not sure", "need help", "struggling", "show me", "help me debug", "best practice", "too complex", "overwhelmed", "lost", "debug this", "/socratic", "/hint", "/concept", "/pseudocode"。漸進式線索系統、教學技巧與成功指標。 | 無 |
-| [microsoft-code-reference](../skills/microsoft-code-reference/SKILL.md) | 查詢 Microsoft API 參考、尋找可執行的程式碼範例，並驗證 SDK 程式碼是否正確。在處理 Azure SDK、.NET 函式庫或 Microsoft API 時使用——用以尋找正確的方法、檢查參數、取得可執行的範例或疑難排解錯誤。透過查詢官方文件來捕捉虛構的方法、錯誤的簽章以及淘汰的模式。 | 無 |
-| [microsoft-docs](../skills/microsoft-docs/SKILL.md) | 查詢 Microsoft 官方文件，以尋找 Azure、.NET、Agent Framework、Aspire、VS Code、GitHub 等各方面的概念、教學和程式碼範例。預設使用 Microsoft Learn MCP，對於 learn.microsoft.com 以外的內容則使用 Context7 和 Aspire MCP。 | 無 |
-| [microsoft-skill-creator](../skills/microsoft-skill-creator/SKILL.md) | 使用 Learn MCP 工具為 Microsoft 技術建立代理程式技能。當使用者想要建立一個技能，用來教導代理程式關於任何 Microsoft 技術、函式庫、架構或服務 (Azure, .NET, M365, VS Code, Bicep 等) 時使用。深入調查主題，然後產生一個混合技能，將核心知識儲存在本機，同時實現動態的深度調查。 | `references/skill-templates.md` |
+| [microsoft-agent-framework](../skills/microsoft-agent-framework/SKILL.md) | 使用共享指南以及 .NET 和 Python 的語言特定參考，來建立、更新、重構、說明或檢閱 Microsoft 代理程式框架 (Microsoft Agent Framework) 解決方案。 | `references/dotnet.md`<br />`references/python.md` |
+| [microsoft-code-reference](../skills/microsoft-code-reference/SKILL.md) | 查詢 Microsoft API 參考、尋找可執行的程式碼範例，並驗證 SDK 程式碼是否正確。在處理 Azure SDK、.NET 函式庫或 Microsoft API 時使用 — 以尋找正確的方法、檢查參數、獲取可執行的範例或對錯誤進行疑難排解。透過查詢官方文件來捕捉幻覺方法、錯誤簽章和過時模式。 | 無 |
+| [microsoft-docs](../skills/microsoft-docs/SKILL.md) | 查詢 Microsoft 官方文件，以尋找 Azure、.NET、代理程式框架 (Agent Framework)、Aspire、VS Code、GitHub 等領域的概念、教學課程和程式碼範例。預設使用 Microsoft Learn MCP，對於 learn.microsoft.com 之外的內容則使用 Context7 和 Aspire MCP。 | 無 |
+| [microsoft-skill-creator](../skills/microsoft-skill-creator/SKILL.md) | 使用 Learn MCP 工具為 Microsoft 技術建立代理程式技能。當使用者想要建立一個技能來教導代理程式關於任何 Microsoft 技術、函式庫、框架或服務 (Azure, .NET, M365, VS Code, Bicep 等) 時，請使用此技能。深入調查主題，然後產生一個混合技能，在本地儲存核心知識，同時支援動態的深入調查。 | `references/skill-templates.md` |
 | [migrating-oracle-to-postgres-stored-procedures](../skills/migrating-oracle-to-postgres-stored-procedures/SKILL.md) | 將 Oracle PL/SQL 預存程序遷移至 PostgreSQL PL/pgSQL。翻譯 Oracle 特定的語法，保留方法簽章與類型錨定參數，在適當時利用 orafce，並套用 COLLATE "C" 以實現與 Oracle 相容的文字排序。在資料庫遷移期間將 Oracle 預存程序或函式轉換為 PostgreSQL 等效項時使用。 | 無 |
 | [mkdocs-translations](../skills/mkdocs-translations/SKILL.md) | 產生 mkdocs 文件堆疊的語言翻譯。 | 無 |
 | [model-recommendation](../skills/model-recommendation/SKILL.md) | 分析聊天模式或提示檔案，並根據任務複雜度、所需功能和成本效益推薦最佳 AI 模型 | 無 |
@@ -173,6 +173,7 @@
 | [next-intl-add-language](../skills/next-intl-add-language/SKILL.md) | 為 Next.js + next-intl 應用程式新增語言 | 無 |
 | [noob-mode](../skills/noob-mode/SKILL.md) | 針對非技術背景 Copilot CLI 使用者的淺白用語翻譯層。將每個核准提示、錯誤訊息與技術輸出翻譯成清晰、無術語的英文 (在此為繁體中文)，並附帶顏色標示的風險指標。 | `references/examples.md`<br />`references/glossary.md` |
 | [nuget-manager](../skills/nuget-manager/SKILL.md) | 管理 .NET 專案/解決方案中的 NuGet 套件。當要新增、移除或更新 NuGet 套件版本時，請使用此技能。它強制使用 `dotnet` CLI 進行套件管理，並規定僅在更新版本時才能直接編輯檔案，並提供嚴格的操作程序。 | 無 |
+| [oo-component-documentation](../skills/oo-component-documentation/SKILL.md) | 使用共享範本以及針對新文件和現有文件的特定模式指南，來建立或更新標準化的物件導向元件文件。 | `assets/documentation-template.md`<br />`references/create-mode.md`<br />`references/update-mode.md` |
 | [openapi-to-application-code](../skills/openapi-to-application-code/SKILL.md) | 從 OpenAPI 規格產生完整且可用於生產環境的應用程式 | 無 |
 | [pdftk-server](../skills/pdftk-server/SKILL.md) | 使用命令列工具 pdftk (PDFtk Server) 處理 PDF 檔案的技能。當被要求合併 PDF、分割 PDF、旋轉頁面、加密或解密 PDF、填寫 PDF 表單、套用浮水印、圖章重疊、擷取中繼資料、將文件拆分為頁面、修復損毀的 PDF、附加或擷取檔案，或從命令列執行任何 PDF 操作時使用。 | `references/download.md`<br />`references/pdftk-cli-examples.md`<br />`references/pdftk-man-page.md`<br />`references/pdftk-server-license.md`<br />`references/third-party-materials.md` |
 | [penpot-uiux-design](../skills/penpot-uiux-design/SKILL.md) | 使用 MCP 工具在 Penpot 中建立專業 UI/UX 設計的全面指南。當執行以下操作時使用此技能：(1) 為網頁、行動裝置或桌面應用程式建立新的 UI/UX 設計，(2) 使用元件和權杖 (Tokens) 建構設計系統，(3) 設計儀表板、表單、導覽或登陸頁面，(4) 套用無障礙標準和最佳實踐，(5) 遵循平台指南 (iOS, Android, Material Design)，(6) 審查或改進現有的 Penpot 設計以提高可用性。觸發詞：「設計 UI」、「建立介面」、「建構佈局」、「設計儀表板」、「建立表單」、「設計登陸頁面」、「使其具備無障礙性」、「設計系統」、「元件函式庫」。 | `references/accessibility.md`<br />`references/component-patterns.md`<br />`references/platform-guidelines.md`<br />`references/setup-troubleshooting.md` |
@@ -195,6 +196,7 @@
 | [prd](../skills/prd/SKILL.md) | 為軟體系統和人工智慧（AI）驅動的功能產出高品質的產品需求文件 (PRD)。包含摘要、使用者故事、技術規格和風險分析。 | 無 |
 | [project-workflow-analysis-blueprint-generator](../skills/project-workflow-analysis-blueprint-generator/SKILL.md) | 全面且技術中立的提示產生器，用於記錄端到端應用程式工作流程。可自動偵測專案架構模式、技術堆疊與資料流模式，產生詳細的實作藍圖，涵蓋進入點、服務層、資料存取、錯誤處理與測試方法，支援多種技術如 .NET、Java/Spring、React 及微服務架構。 | 無 |
 | [prompt-builder](../skills/prompt-builder/SKILL.md) | 引導使用者建立高品質 GitHub Copilot 提示，包含正確結構、工具與最佳實踐。 | 無 |
+| [publish-to-pages](../skills/publish-to-pages/SKILL.md) | 將簡報與網頁內容發佈到 GitHub Pages。將 PPTX、PDF、HTML 或 Google 簡報轉換為即時 GitHub Pages URL。處理儲存庫建立、檔案轉換、啟用 Pages，並傳回即時 URL。當使用者想要透過 GitHub Pages 發佈、部署或共用簡報或 HTML 檔案時使用。 | `scripts/convert-pdf.py`<br />`scripts/convert-pptx.py`<br />`scripts/publish.sh` |
 | [pytest-coverage](../skills/pytest-coverage/SKILL.md) | 執行 pytest 測試並產生覆蓋率報告，找出缺少覆蓋率的程式碼行，並將覆蓋率提高到 100%。 | 無 |
 | [python-mcp-server-generator](../skills/python-mcp-server-generator/SKILL.md) | 使用工具、資源和適當的配置，在 Python 中建立一個完整的 MCP 伺服器專案 | 無 |
 | [quasi-coder](../skills/quasi-coder/SKILL.md) | 專家級 10x 工程師技能，用於從簡寫、類程式碼 (quasi-code) 與自然語言描述中解釋並實作程式碼。當協作者提供不完整的程式碼片段、虛擬程式碼 (pseudo-code) 或包含潛在打錯字或不正確術語的描述時使用。擅長將非技術或半技術描述轉換為生產等級品質的程式碼。 | 無 |
@@ -209,8 +211,10 @@
 | [reviewing-oracle-to-postgres-migration](../skills/reviewing-oracle-to-postgres-migration/SKILL.md) | 透過將程式碼與已知行為差異（空字串、Refcursors、類型強制、排序、時戳、並行交易等）進行交叉引用，識別 Oracle 到 PostgreSQL 的遷移風險。在規劃資料庫遷移、檢閱遷移成品或驗證整合測試是否涵蓋 Oracle/PostgreSQL 差異時使用。 | `references/REFERENCE.md`<br />`references/empty-strings-handling.md`<br />`references/no-data-found-exceptions.md`<br />`references/oracle-parentheses-from-clause.md`<br />`references/oracle-to-postgres-sorting.md`<br />`references/oracle-to-postgres-timestamp-timezone.md`<br />`references/oracle-to-postgres-to-char-numeric.md`<br />`references/oracle-to-postgres-type-coercion.md`<br />`references/postgres-concurrent-transactions.md`<br />`references/postgres-refcursor-handling.md` |
 | [ruby-mcp-server-generator](../skills/ruby-mcp-server-generator/SKILL.md) | 使用官方 MCP Ruby SDK gem 在 Ruby 中建立一個完整的模型上下文協定伺服器專案。 | 無 |
 | [rust-mcp-server-generator](../skills/rust-mcp-server-generator/SKILL.md) | 使用官方 rmcp SDK 產生一個完整的 Rust 模型上下文協定伺服器專案，包含工具、提示、資源和測試 | 無 |
+| [sandbox-npm-install](../skills/sandbox-npm-install/SKILL.md) | 在 Docker 沙盒環境中安裝 npm 套件。每當您需要在透過 virtiofs 掛載工作區的容器內安裝、重新安裝或更新 node_modules 時，請使用此技能。原生二進位檔案 (esbuild, lightningcss, rollup) 在 virtiofs 上會當機，因此必須將套件安裝在本地 ext4 檔案系統上並建立符號連結。 | `scripts/install.sh` |
 | [scaffolding-oracle-to-postgres-migration-test-project](../skills/scaffolding-oracle-to-postgres-migration-test-project/SKILL.md) | 為驗證 .NET 解決方案中的 Oracle 到 PostgreSQL 資料庫遷移行為，建構一個 xUnit 整合測試專案。建立測試專案、交易回滾基礎類別和種子資料管理員。在編寫遷移整合測試前設定測試基礎設施，或在 Oracle 到 PostgreSQL 驗證需要測試專案時使用。 | 無 |
 | [scoutqa-test](../skills/scoutqa-test/SKILL.md) | 當使用者要求「測試此網站」、「執行探索性測試」、「檢查無障礙性問題」、「驗證登入流程是否正常」、「尋找此頁面上的錯誤」或要求自動化 QA 測試時，應使用此技能。適用於 Web 應用程式測試情境，包括使用 ScoutQA CLI 執行的冒煙測試、無障礙性稽核、電子商務流程及使用者流程驗證。在實作 Web 應用程式功能後，請主動使用此技能來驗證其是否運作正常。 | 無 |
+| [semantic-kernel](../skills/semantic-kernel/SKILL.md) | 使用共享指南以及針對 .NET 和 Python 的語言特定參考，來建立、更新、重構、說明或檢閱 Semantic Kernel 解決方案。 | `references/dotnet.md`<br />`references/python.md` |
 | [shuffle-json-data](../skills/shuffle-json-data/SKILL.md) | 透過在隨機化項目之前驗證結構描述一致性，安全地隨機排列重複的 JSON 物件。 | 無 |
 | [snowflake-semanticview](../skills/snowflake-semanticview/SKILL.md) | 使用 Snowflake CLI (snow) 建立、修改及驗證 Snowflake 語義檢視表 (semantic views)。當被要求使用 CREATE/ALTER SEMANTIC VIEW 建構語義檢視表/語義層定義或進行疑難排解、透過 CLI 向 Snowflake 驗證語義檢視表 DDL，或引導進行 Snowflake CLI 安裝與連線設定時使用。 | 無 |
 | [sponsor-finder](../skills/sponsor-finder/SKILL.md) | 使用 GitHub CLI 與 REST API 尋找 GitHub 存放庫的相依項目中哪些可以透過 GitHub Sponsors 進行贊助。使用 deps.dev API 跨 npm、PyPI、Cargo、Go、RubyGems、Maven 與 NuGet 進行相依性解析。檢查 npm funding 中繼資料、FUNDING.yml 檔案以及網頁搜尋。驗證每個連結。顯示直接與遞移相依項目以及 OSSF Scorecard 專案健康資料。使用 /sponsor 後跟 GitHub 擁有者/存放庫（例如 "/sponsor expressjs/express"）進行呼叫。 | 無 |
@@ -231,11 +235,11 @@
 | [typespec-api-operations](../skills/typespec-api-operations/SKILL.md) | 為 TypeSpec API 外掛程式新增具有正確路由、參數和調適型卡片的 GET、POST、PATCH 和 DELETE 作業 | 無 |
 | [typespec-create-agent](../skills/typespec-create-agent/SKILL.md) | 為 Microsoft 365 Copilot 產生包含指令、能力和交談啟動器的完整 TypeSpec 宣告式代理程式 | 無 |
 | [typespec-create-api-plugin](../skills/typespec-create-api-plugin/SKILL.md) | 產生包含 REST 作業、驗證和調適型卡片的 Microsoft 365 Copilot TypeSpec API 外掛程式 | 無 |
+| [unit-test-vue-pinia](../skills/unit-test-vue-pinia/SKILL.md) | 為 Vue 3 + TypeScript + Vitest + Pinia 程式碼庫編寫並審查單元測試。適用於建立或更新元件、composables 與 stores 的測試；使用 createTestingPinia 模擬 Pinia；應用 Vue Test Utils 模式；以及對實作細節強制執行黑箱斷言。 | `references/pinia-patterns.md` |
 | [update-avm-modules-in-bicep](../skills/update-avm-modules-in-bicep/SKILL.md) | 更新 Bicep 檔案中的 Azure Verified Modules (AVM) 至最新版本。 | 無 |
 | [update-implementation-plan](../skills/update-implementation-plan/SKILL.md) | 根據新需求或更新，將現有的實作計畫檔案更新，以提供新功能、重構現有程式碼或升級套件、設計、架構或基礎設施。 | 無 |
 | [update-llms](../skills/update-llms/SKILL.md) | 根據 llms.txt 規範，更新根目錄的 llms.txt 文件以反映文件或規格的變更。 | 無 |
 | [update-markdown-file-index](../skills/update-markdown-file-index/SKILL.md) | 將指定資料夾的檔案索引／表格更新至指定的 markdown 文件區段。 | 無 |
-| [update-oo-component-documentation](../skills/update-oo-component-documentation/SKILL.md) | 依據業界最佳實務與架構文件標準，更新現有物件導向元件文件。 | 無 |
 | [update-specification](../skills/update-specification/SKILL.md) | 根據新需求或現有程式碼更新，優化解決方案的規格文件，並使其適合生成式 AI 使用。 | 無 |
 | [vscode-ext-commands](../skills/vscode-ext-commands/SKILL.md) | 在 VS Code 延伸模組中貢獻指令的指南。標示命名慣例、可見性、在地化及其他相關屬性，遵循 VS Code 延伸模組開發指南、函式庫及最佳實務。 | 無 |
 | [vscode-ext-localization](../skills/vscode-ext-localization/SKILL.md) | VS Code 延伸模組正確在地化的指南，遵循 VS Code 延伸模組開發指南、函式庫及最佳實務。 | 無 |

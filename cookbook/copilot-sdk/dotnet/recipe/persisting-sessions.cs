@@ -10,7 +10,8 @@ await client.StartAsync();
 var session = await client.CreateSessionAsync(new SessionConfig
 {
     SessionId = "user-123-conversation",
-    Model = "gpt-5"
+    Model = "gpt-5",
+    OnPermissionRequest = PermissionHandler.ApproveAll
 });
 
 await session.SendAsync(new MessageOptions { Prompt = "讓我們來討論 TypeScript 泛型 (Generics)" });
