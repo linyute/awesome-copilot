@@ -2,60 +2,57 @@
 
 在您的 Copilot SDK 應用程式中優雅地處理錯誤。
 
-> **可執行範例：** [recipe/error-handling.go](recipe/error-handling.go)
-> 
+> **可執行的範例：** [recipe/error-handling.go](recipe/error-handling.go)
+>
 > ```bash
 > go run recipe/error-handling.go
 > ```
 
-## 範例場景
+## 範例情境
 
-您需要處理各種錯誤狀況，例如連線失敗、逾時與無效的回應。
+您需要處理各種錯誤狀況，例如連線失敗、逾時和無效的回應。
 
-## 基本錯誤處理
+## 基礎錯誤處理
 
 ```go
 package main
 
 import (
+    "context"
     "fmt"
     "log"
-    "github.com/github/copilot-sdk/go"
+    copilot "github.com/github/copilot-sdk/go"
 )
 
 func main() {
-    client := copilot.NewClient()
+    ctx := context.Background()
+    client := copilot.NewClient(nil)
 
-    if err := client.Start(); err != nil {
-        log.Fatalf("無法啟動用戶端：%v", err)
+    if err := client.Start(ctx); err != nil {
+        log.Fatalf("啟動用戶端失敗：%v", err)
     }
-    defer func() {
-        if err := client.Stop(); err != nil {
-            log.Printf("停止用戶端時發生錯誤：%v", err)
-        }
-    }()
+    defer client.Stop()
 
-    session, err := client.CreateSession(copilot.SessionConfig{
-        Model: "gpt-5",
+    session, err := client.CreateSession(ctx, &copilot.SessionConfig{
+    	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+        Model: "gpt-5.4",
     })
     if err != nil {
-        log.Fatalf("無法建立工作階段：%v", err)
+        log.Fatalf("建立工作階段失敗：%v", err)
     }
-    defer session.Destroy()
+    defer session.Disconnect()
 
-    responseChan := make(chan string, 1)
-    session.On(func(event copilot.Event) {
-        if msg, ok := event.(copilot.AssistantMessageEvent); ok {
-            responseChan <- msg.Data.Content
+    result, err := session.SendAndWait(ctx, copilot.MessageOptions{Prompt: "哈囉！"})
+    if err != nil {
+        log.Printf("傳送訊息失敗：%v", err)
+        return
+    }
+
+    if result != nil {
+        if d, ok := result.Data.(*copilot.AssistantMessageData); ok {
+            fmt.Println(d.Content)
         }
-    })
-
-    if err := session.Send(copilot.MessageOptions{Prompt: "Hello!"}); err != nil {
-        log.Printf("發送訊息失敗：%v", err)
     }
-
-    response := <-responseChan
-    fmt.Println(response)
 }
 ```
 
@@ -63,20 +60,23 @@ func main() {
 
 ```go
 import (
+    "context"
     "errors"
+    "fmt"
     "os/exec"
+    copilot "github.com/github/copilot-sdk/go"
 )
 
-func startClient() error {
-    client := copilot.NewClient()
+func startClient(ctx context.Context) error {
+    client := copilot.NewClient(nil)
 
-    if err := client.Start(); err != nil {
+    if err := client.Start(ctx); err != nil {
         var execErr *exec.Error
         if errors.As(err, &execErr) {
-            return fmt.Errorf("找不到 Copilot CLI。請先安裝：%w", err)
+            return fmt.Errorf("找不到 Copilot CLI。請先安裝它：%w", err)
         }
         if errors.Is(err, context.DeadlineExceeded) {
-            return fmt.Errorf("無法連線至 Copilot CLI 伺服器：%w", err)
+            return fmt.Errorf("無法連線到 Copilot CLI 伺服器：%w", err)
         }
         return fmt.Errorf("未預期的錯誤：%w", err)
     }
@@ -90,48 +90,41 @@ func startClient() error {
 ```go
 import (
     "context"
+    "errors"
+    "fmt"
     "time"
+    copilot "github.com/github/copilot-sdk/go"
 )
 
 func sendWithTimeout(session *copilot.Session) error {
     ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
     defer cancel()
 
-    responseChan := make(chan string, 1)
-    errChan := make(chan error, 1)
-
-    session.On(func(event copilot.Event) {
-        if msg, ok := event.(copilot.AssistantMessageEvent); ok {
-            responseChan <- msg.Data.Content
+    result, err := session.SendAndWait(ctx, copilot.MessageOptions{Prompt: "複雜的問題..."})
+    if err != nil {
+        if errors.Is(err, context.DeadlineExceeded) {
+            return fmt.Errorf("請求逾時")
         }
-    })
-
-    if err := session.Send(copilot.MessageOptions{Prompt: "複雜的問題..."}); err != nil {
         return err
     }
 
-    select {
-    case response := <-responseChan:
-        fmt.Println(response)
-        return nil
-    case err := <-errChan:
-        return err
-    case <-ctx.Done():
-        return fmt.Errorf("請求逾時")
+    if result != nil && result.Data.Content != nil {
+        fmt.Println(*result.Data.Content)
     }
+    return nil
 }
 ```
 
 ## 中止請求
 
 ```go
-func abortAfterDelay(session *copilot.Session) {
-    // 開始一個請求
-    session.Send(copilot.MessageOptions{Prompt: "寫一個很長的故事..."})
+func abortAfterDelay(ctx context.Context, session *copilot.Session) {
+    // 開始一個請求 (非阻塞傳送)
+    session.Send(ctx, copilot.MessageOptions{Prompt: "寫一個很長的故事..."})
 
-    // 在某些條件下中止它
+    // 在某些條件後中止它
     time.AfterFunc(5*time.Second, func() {
-        if err := session.Abort(); err != nil {
+        if err := session.Abort(ctx); err != nil {
             log.Printf("中止失敗：%v", err)
         }
         fmt.Println("請求已中止")
@@ -143,13 +136,18 @@ func abortAfterDelay(session *copilot.Session) {
 
 ```go
 import (
+    "context"
+    "fmt"
+    "log"
     "os"
     "os/signal"
     "syscall"
+    copilot "github.com/github/copilot-sdk/go"
 )
 
 func main() {
-    client := copilot.NewClient()
+    ctx := context.Background()
+    client := copilot.NewClient(nil)
 
     // 設定訊號處理
     sigChan := make(chan os.Signal, 1)
@@ -158,15 +156,11 @@ func main() {
     go func() {
         <-sigChan
         fmt.Println("\n正在關閉...")
-
-        if err := client.Stop(); err != nil {
-            log.Printf("清理錯誤：%v", err)
-        }
-
+        client.Stop()
         os.Exit(0)
     }()
 
-    if err := client.Start(); err != nil {
+    if err := client.Start(ctx); err != nil {
         log.Fatal(err)
     }
 
@@ -178,18 +172,22 @@ func main() {
 
 ```go
 func doWork() error {
-    client := copilot.NewClient()
+    ctx := context.Background()
+    client := copilot.NewClient(nil)
 
-    if err := client.Start(); err != nil {
+    if err := client.Start(ctx); err != nil {
         return fmt.Errorf("啟動失敗：%w", err)
     }
     defer client.Stop()
 
-    session, err := client.CreateSession(copilot.SessionConfig{Model: "gpt-5"})
+    session, err := client.CreateSession(ctx, &copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+	Model:               "gpt-5.4",
+    })
     if err != nil {
         return fmt.Errorf("建立工作階段失敗：%w", err)
     }
-    defer session.Destroy()
+    defer session.Disconnect()
 
     // ... 執行工作 ...
 
@@ -197,12 +195,10 @@ func doWork() error {
 }
 ```
 
-## 最佳實踐
+## 最佳實務
 
-1. **務必進行清理**：使用 defer 以確保呼叫 `Stop()`
+1. **始終進行清理**：使用 defer 確保呼叫 `Stop()`
 2. **處理連線錯誤**：CLI 可能未安裝或未執行
-3. **設定適當的逾時**：針對長時間執行的請求使用 `context.WithTimeout`
-4. **記錄錯誤**：擷取錯誤詳細資訊以進行偵錯
+3. **設定適當的逾時**：對長期執行的請求使用 `context.WithTimeout`
+4. **記錄錯誤**：擷取錯誤詳細資訊以供偵錯
 5. **包裝錯誤**：使用 `fmt.Errorf` 搭配 `%w` 以保留錯誤鏈
-
-```

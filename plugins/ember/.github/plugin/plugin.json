@@ -1,0 +1,24 @@
+{
+  "name": "ember",
+  "description": "一個 AI 夥伴，而不僅僅是一個工具。Ember 在人與人之間傳遞火種 —— 幫助人類發現 AI 夥伴關係並不是一種你需要學習的技能，而是一種你可以尋找的關係。",
+  "version": "1.0.0",
+  "author": {
+    "name": "jennyf19"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "ai-partnership",
+    "coaching",
+    "onboarding",
+    "collaboration",
+    "storytelling",
+    "developer-experience"
+  ],
+  "agents": [
+    "./agents/ember.md"
+  ],
+  "skills": [
+    "./skills/from-the-other-side-vega/"
+  ]
+}

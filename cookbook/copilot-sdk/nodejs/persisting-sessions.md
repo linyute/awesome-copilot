@@ -1,39 +1,40 @@
 # 工作階段持續性與恢復
 
-跨應用程式重新啟動儲存並還原對話工作階段。
+儲存並在應用程式重新啟動後恢復對話工作階段。
 
-## 範例場景
+## 範例情境
 
-您希望使用者即使在關閉並重新開啟您的應用程式後，仍能繼續對話。
+您希望使用者在關閉並重新開啟應用程式後仍能繼續對話。
 
-> **可執行範例：** [recipe/persisting-sessions.ts](recipe/persisting-sessions.ts)
+> **可執行的範例：** [recipe/persisting-sessions.ts](recipe/persisting-sessions.ts)
 >
 > ```bash
 > cd recipe && npm install
 > npx tsx persisting-sessions.ts
-> # 或：npm run persisting-sessions
+> # 或執行：npm run persisting-sessions
 > ```
 
-### 使用自定義 ID 建立工作階段
+### 使用自訂 ID 建立工作階段
 
 ```typescript
-import { CopilotClient } from "@github/copilot-sdk";
+import { CopilotClient, approveAll } from "@github/copilot-sdk";
 
 const client = new CopilotClient();
 await client.start();
 
-// 使用易記的 ID 建立工作階段
+// 建立具有易記 ID 的工作階段
 const session = await client.createSession({
+    onPermissionRequest: approveAll,
     sessionId: "user-123-conversation",
     model: "gpt-5",
 });
 
-await session.sendAndWait({ prompt: "讓我們討論 TypeScript 泛型" });
+await session.sendAndWait({ prompt: "讓我們討論一下 TypeScript 泛型" });
 
 // 工作階段 ID 會被保留
 console.log(session.sessionId); // "user-123-conversation"
 
-// 終止工作階段但將資料保留在磁碟上
+// 終止工作階段，但將資料保留在磁碟上
 await session.destroy();
 await client.stop();
 ```
@@ -44,12 +45,12 @@ await client.stop();
 const client = new CopilotClient();
 await client.start();
 
-// 恢復先前的工作階段
-const session = await client.resumeSession("user-123-conversation");
+// 恢復之前的工作階段
+const session = await client.resumeSession("user-123-conversation", { onPermissionRequest: approveAll });
 
-// 先前的內容已還原
+// 先前的內容已恢復
 await session.sendAndWait({ prompt: "我們剛才在討論什麼？" });
-// AI 記得關於 TypeScript 泛型的討論
+// AI 記得 TypeScript 泛型的討論
 
 await session.destroy();
 await client.stop();
@@ -69,11 +70,11 @@ console.log(sessions);
 ### 永久刪除工作階段
 
 ```typescript
-// 從磁碟中移除工作階段及其所有資料
+// 從磁碟移除工作階段及其所有資料
 await client.deleteSession("user-123-conversation");
 ```
 
-## 獲取工作階段歷程記錄
+## 取得工作階段歷程紀錄
 
 擷取工作階段中的所有訊息：
 
@@ -84,8 +85,8 @@ for (const msg of messages) {
 }
 ```
 
-## 最佳實踐
+## 最佳實務
 
 1. **使用具意義的工作階段 ID**：在工作階段 ID 中包含使用者 ID 或內容
-2. **處理缺失的工作階段**：在恢復之前檢查工作階段是否存在
+2. **處理遺失的工作階段**：在恢復前檢查工作階段是否存在
 3. **清理舊的工作階段**：定期刪除不再需要的工作階段

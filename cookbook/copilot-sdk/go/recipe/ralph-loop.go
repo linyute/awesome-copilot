@@ -35,57 +35,55 @@ func ralphLoop(ctx context.Context, mode string, maxIterations int) error {
 
 	client := copilot.NewClient(nil)
 	if err := client.Start(ctx); err != nil {
-		return fmt.Errorf("failed to start client: %w", err)
+		return fmt.Errorf("啟動客戶端失敗：%w", err)
 	}
 	defer client.Stop()
 
 	cwd, err := os.Getwd()
 	if err != nil {
-		return fmt.Errorf("failed to get working directory: %w", err)
+		return fmt.Errorf("取得工作目錄失敗：%w", err)
 	}
 
 	fmt.Println(strings.Repeat("━", 40))
-	fmt.Printf("模式:   %s
-", mode)
-	fmt.Printf("提示字: %s
-", promptFile)
+	fmt.Printf("模式:   %s\n", mode)
+	fmt.Printf("提示字: %s\n", promptFile)
 	fmt.Printf("上限:    %d 次反覆運算\n", maxIterations)
 	fmt.Println(strings.Repeat("━", 40))
 
 	prompt, err := os.ReadFile(promptFile)
 	if err != nil {
-		return fmt.Errorf("failed to read %s: %w", promptFile, err)
+		return fmt.Errorf("讀取 %s 失敗：%w", promptFile, err)
 	}
 
 	for i := 1; i <= maxIterations; i++ {
 		fmt.Printf("\n=== 反覆運算 %d/%d ===\n", i, maxIterations)
 
 		session, err := client.CreateSession(ctx, &copilot.SessionConfig{
-			Model:            "gpt-5.1-codex-mini",
+			Model:            "gpt-5.3-codex",
 			WorkingDirectory: cwd,
-			OnPermissionRequest: func(_ copilot.PermissionRequest, _ map[string]string) copilot.PermissionRequestResult {
-				return copilot.PermissionRequestResult{Kind: "approved"}
+			OnPermissionRequest: func(_ copilot.PermissionRequest, _ copilot.PermissionInvocation) (copilot.PermissionRequestResult, error) {
+				return copilot.PermissionRequestResult{Kind: "approved"}, nil
 			},
 		})
 		if err != nil {
-			return fmt.Errorf("failed to create session: %w", err)
+			return fmt.Errorf("建立工作階段失敗：%w", err)
 		}
 
 		// 記錄工具使用情況以提高可見性
-		session.On(func(event copilot.Event) {
-			if toolExecution, ok := event.(copilot.ToolExecutionStartEvent); ok {
-				fmt.Printf("  ⚙ %s\n", toolExecution.Data.ToolName)
+		session.On(func(event copilot.SessionEvent) {
+			if d, ok := event.Data.(*copilot.ToolExecutionStartData); ok {
+				fmt.Printf("  ⚙ %s\n", d.ToolName)
 			}
 		})
 
 		_, err = session.SendAndWait(ctx, copilot.MessageOptions{
 			Prompt: string(prompt),
 		})
-		if destroyErr := session.Destroy(); destroyErr != nil {
-			log.Printf("failed to destroy session on iteration %d: %v", i, destroyErr)
+		if destroyErr := session.Disconnect(); destroyErr != nil {
+			log.Printf("在反覆運算 %d 中斷開工作階段失敗：%v", i, destroyErr)
 		}
 		if err != nil {
-			return fmt.Errorf("send failed on iteration %d: %w", i, err)
+			return fmt.Errorf("在反覆運算 %d 傳送失敗：%w", i, err)
 		}
 
 		fmt.Printf("\n反覆運算 %d 完成。\n", i)

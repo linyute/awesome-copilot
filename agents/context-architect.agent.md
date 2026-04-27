@@ -1,7 +1,7 @@
 ---
 description: '一個透過識別相關內容和相依性來協助規劃和執行多檔案變更的 Agent'
 model: 'GPT-5'
-tools: ['codebase', 'terminalCommand']
+tools: ['search/codebase', 'search/usages', 'read/problems', 'read/readFile', 'edit/editFiles', 'execute/runInTerminal', 'execute/getTerminalOutput', 'web/fetch']
 name: 'Context Architect'
 ---
 

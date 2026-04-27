@@ -2,15 +2,15 @@
 
 同時管理多個獨立的對話。
 
-> **可執行範例：** [recipe/multiple-sessions.go](recipe/multiple-sessions.go)
-> 
+> **可執行的範例：** [recipe/multiple-sessions.go](recipe/multiple-sessions.go)
+>
 > ```bash
 > go run recipe/multiple-sessions.go
 > ```
 
-## 範例場景
+## 範例情境
 
-您需要同時執行多個對話，每個對話都有其自己的內容與歷程記錄。
+您需要並行執行多個對話，每個對話都有自己的上下文和歷程紀錄。
 
 ## Go
 
@@ -18,58 +18,70 @@
 package main
 
 import (
+    "context"
     "fmt"
     "log"
-    "github.com/github/copilot-sdk/go"
+    copilot "github.com/github/copilot-sdk/go"
 )
 
 func main() {
-    client := copilot.NewClient()
+    ctx := context.Background()
+    client := copilot.NewClient(nil)
 
-    if err := client.Start(); err != nil {
+    if err := client.Start(ctx); err != nil {
         log.Fatal(err)
     }
     defer client.Stop()
 
     // 建立多個獨立的工作階段
-    session1, err := client.CreateSession(copilot.SessionConfig{Model: "gpt-5"})
+    session1, err := client.CreateSession(ctx, &copilot.SessionConfig{
+    	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+    	Model:               "gpt-5.4",
+    })
     if err != nil {
         log.Fatal(err)
     }
-    defer session1.Destroy()
+    defer session1.Disconnect()
 
-    session2, err := client.CreateSession(copilot.SessionConfig{Model: "gpt-5"})
+    session2, err := client.CreateSession(ctx, &copilot.SessionConfig{
+    	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+    	Model:               "gpt-5.4",
+    })
     if err != nil {
         log.Fatal(err)
     }
-    defer session2.Destroy()
+    defer session2.Disconnect()
 
-    session3, err := client.CreateSession(copilot.SessionConfig{Model: "claude-sonnet-4.5"})
+    session3, err := client.CreateSession(ctx, &copilot.SessionConfig{
+    	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+    	Model:               "claude-sonnet-4.6",
+    })
     if err != nil {
         log.Fatal(err)
     }
-    defer session3.Destroy()
+    defer session3.Disconnect()
 
-    // 每個工作階段都維護自己的對話歷程記錄
-    session1.Send(copilot.MessageOptions{Prompt: "您正在協助處理一個 Python 專案"})
-    session2.Send(copilot.MessageOptions{Prompt: "您正在協助處理一個 TypeScript 專案"})
-    session3.Send(copilot.MessageOptions{Prompt: "您正在協助處理一個 Go 專案"})
+    // 每個工作階段都維護自己的對話歷程紀錄
+    session1.Send(ctx, copilot.MessageOptions{Prompt: "您正在協助處理一個 Python 專案"})
+    session2.Send(ctx, copilot.MessageOptions{Prompt: "您正在協助處理一個 TypeScript 專案"})
+    session3.Send(ctx, copilot.MessageOptions{Prompt: "您正在協助處理一個 Go 專案"})
 
-    // 後續訊息會保留在各自的內容中
-    session1.Send(copilot.MessageOptions{Prompt: "如何建立虛擬環境？"})
-    session2.Send(copilot.MessageOptions{Prompt: "如何設定 tsconfig？"})
-    session3.Send(copilot.MessageOptions{Prompt: "如何初始化模組？"})
+    // 追蹤訊息會保留在各自的上下文中
+    session1.Send(ctx, copilot.MessageOptions{Prompt: "我該如何建立虛擬環境？"})
+    session2.Send(ctx, copilot.MessageOptions{Prompt: "我該如何設定 tsconfig？"})
+    session3.Send(ctx, copilot.MessageOptions{Prompt: "我該如何初始化模組？"})
 }
 ```
 
-## 自定義工作階段 ID
+## 自訂工作階段 ID
 
-使用自定義 ID 以便於追蹤：
+使用自訂 ID 以便於追蹤：
 
 ```go
-session, err := client.CreateSession(copilot.SessionConfig{
+session, err := client.CreateSession(ctx, &copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
     SessionID: "user-123-chat",
-    Model:     "gpt-5",
+    Model:     "gpt-5.4",
 })
 if err != nil {
     log.Fatal(err)
@@ -81,7 +93,7 @@ fmt.Println(session.SessionID) // "user-123-chat"
 ## 列出工作階段
 
 ```go
-sessions, err := client.ListSessions()
+sessions, err := client.ListSessions(ctx, nil)
 if err != nil {
     log.Fatal(err)
 }
@@ -94,8 +106,8 @@ for _, sessionInfo := range sessions {
 ## 刪除工作階段
 
 ```go
-// 刪除特定的工作階段
-if err := client.DeleteSession("user-123-chat"); err != nil {
+// 刪除特定工作階段
+if err := client.DeleteSession(ctx, "user-123-chat"); err != nil {
     log.Printf("刪除工作階段失敗：%v", err)
 }
 ```
@@ -103,5 +115,5 @@ if err := client.DeleteSession("user-123-chat"); err != nil {
 ## 使用案例
 
 - **多使用者應用程式**：每個使用者一個工作階段
-- **多任務工作流**：針對不同任務使用獨立的工作階段
-- **A/B 測試**：比較來自不同模型的回應
+- **多任務工作流程**：針對不同任務使用獨立的工作階段
+- **A/B 測試**：比較來自不同模型的回答

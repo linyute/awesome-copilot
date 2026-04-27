@@ -1,7 +1,7 @@
 ---
 applyTo: "**.go, go.mod"
-description: '本檔案提供使用 GitHub Copilot SDK 建構 Go 應用程式的指引。'
-name: 'GitHub Copilot SDK Go 指引'
+description: "使用 GitHub Copilot SDK 建構 Go 應用程式指南"
+name: "GitHub Copilot SDK Go 指令"
 ---
 
 ## 核心原則
@@ -9,18 +9,18 @@ name: 'GitHub Copilot SDK Go 指引'
 - SDK 處於技術預覽階段，可能會發生重大變更
 - 需要 Go 1.21 或更高版本
 - 需要安裝 GitHub Copilot CLI 並加入 PATH
-- 使用 goroutines 和 channels 進行並行操作
-- 除了標準函式庫之外，沒有外部相依性
+- 使用 Goroutine 與 Channel 進行並行作業
+- 除標準函式庫外無外部相依性
 
 ## 安裝
 
-請務必透過 Go 模組 (Go modules) 安裝：
+請始終透過 Go modules 安裝：
 
 ```bash
 go get github.com/github/copilot-sdk/go
 ```
 
-## 客戶端初始化 (Client Initialization)
+## 客戶端初始化
 
 ### 基本客戶端設定
 
@@ -34,23 +34,23 @@ if err := client.Start(); err != nil {
 defer client.Stop()
 ```
 
-### 客戶端設定選項 (Client Configuration Options)
+### 客戶端設定選項
 
 建立 CopilotClient 時，請使用 `ClientOptions`：
 
-- `CLIPath` - CLI 執行檔路徑 (預設值：從 PATH 中獲取 "copilot")
-- `CLIUrl` - 現有 CLI 伺服器的 URL (例如 "localhost:8080")。提供此選項時，客戶端不會啟動新處理程序 (process)
-- `Port` - 伺服器連接埠 (預設值：0 表示隨機)
-- `UseStdio` - 使用 stdio 傳輸而非 TCP (預設值：true)
-- `LogLevel` - 記錄層級 (預設值："info")
-- `AutoStart` - 自動啟動伺服器 (預設值：true，請使用指標：`boolPtr(true)`)
-- `AutoRestart` - 當機時自動重新啟動 (預設值：true，請使用指標：`boolPtr(true)`)
-- `Cwd` - CLI 處理程序的工作目錄
-- `Env` - CLI 處理程序的環境變數 ([]string)
+- `CLIPath` - CLI 可執行檔路徑 (預設：PATH 中的 "copilot")
+- `CLIUrl` - 現有 CLI 伺服器的 URL (例如 "localhost:8080")。若提供，客戶端將不會 spawn 處理序
+- `Port` - 伺服器連接埠 (預設：0 為隨機)
+- `UseStdio` - 使用 stdio 傳輸而非 TCP (預設：true)
+- `LogLevel` - 日誌層級 (預設："info")
+- `AutoStart` - 自動啟動伺服器 (預設：true，使用指標：`boolPtr(true)`)
+- `AutoRestart` - 當損毀時自動重新啟動 (預設：true，使用指標：`boolPtr(true)`)
+- `Cwd` - CLI 處理序的工作目錄
+- `Env` - CLI 處理序的環境變數 ([]string)
 
 ### 手動伺服器控制
 
-如需明確控制：
+若需明確控制：
 
 ```go
 autoStart := false
@@ -58,20 +58,21 @@ client := copilot.NewClient(&copilot.ClientOptions{AutoStart: &autoStart})
 if err := client.Start(); err != nil {
     log.Fatal(err)
 }
-// 使用客戶端...
+// 使用 client...
 client.Stop()
 ```
 
 當 `Stop()` 耗時過長時，請使用 `ForceStop()`。
 
-## 對話階段管理 (Session Management)
+## 會話管理 (Session Management)
 
-### 建立對話階段 (Creating Sessions)
+### 建立會話
 
 使用 `SessionConfig` 進行設定：
 
 ```go
 session, err := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
     Model: "gpt-5",
     Streaming: true,
     Tools: []copilot.Tool{...},
@@ -85,44 +86,44 @@ if err != nil {
 }
 ```
 
-### 對話階段設定選項 (Session Config Options)
+### 會話設定選項
 
-- `SessionID` - 自訂對話階段 ID
+- `SessionID` - 自訂會話 ID
 - `Model` - 模型名稱 ("gpt-5", "claude-sonnet-4.5" 等)
 - `Tools` - 公開給 CLI 的自訂工具 ([]Tool)
-- `SystemMessage` - 系統訊息自訂 (\*SystemMessageConfig)
-- `AvailableTools` - 工具名稱白名單 ([]string)
-- `ExcludedTools` - 工具名稱黑名單 ([]string)
-- `Provider` - 自訂 API 提供者設定 (BYOK) (\*ProviderConfig)
+- `SystemMessage` - 系統訊息自訂 (*SystemMessageConfig)
+- `AvailableTools` - 工具名稱允許清單 ([]string)
+- `ExcludedTools` - 工具名稱排除清單 ([]string)
+- `Provider` - 自訂 API 提供者設定 (BYOK) (*ProviderConfig)
 - `Streaming` - 啟用串流回應區塊 (bool)
 - `MCPServers` - MCP 伺服器設定
-- `CustomAgents` - 自訂代理人 (custom agents) 設定
-- `ConfigDir` - 設定目錄覆蓋
+- `CustomAgents` - 自訂代理設定
+- `ConfigDir` - 設定目錄覆寫
 - `SkillDirectories` - 技能目錄 ([]string)
-- `DisabledSkills` - 已停用的技能 ([]string)
+- `DisabledSkills` - 已停用技能 ([]string)
 
-### 恢復對話階段 (Resuming Sessions)
+### 恢復會話
 
 ```go
-session, err := client.ResumeSession("session-id")
-// 或搭配選項：
+session, err := client.ResumeSession("session-id", &copilot.ResumeSessionConfig{OnPermissionRequest: copilot.PermissionHandler.ApproveAll})
+// 或使用選項：
 session, err := client.ResumeSessionWithOptions("session-id", &copilot.ResumeSessionConfig{ ... })
 ```
 
-### 對話階段操作 (Session Operations)
+### 會話操作
 
-- `session.SessionID` - 獲取對話階段識別碼 (string)
+- `session.SessionID` - 取得會話識別碼 (string)
 - `session.Send(copilot.MessageOptions{Prompt: "...", Attachments: []copilot.Attachment{...}})` - 傳送訊息，回傳 (messageID string, error)
-- `session.SendAndWait(options, timeout)` - 傳送並等待閒置，回傳 (\*SessionEvent, error)
+- `session.SendAndWait(options, timeout)` - 傳送並等待閒置，回傳 (*SessionEvent, error)
 - `session.Abort()` - 中止目前處理，回傳 error
-- `session.GetMessages()` - 獲取所有事件/訊息，回傳 ([]SessionEvent, error)
-- `session.Destroy()` - 清理對話階段，回傳 error
+- `session.GetMessages()` - 取得所有事件/訊息，回傳 ([]SessionEvent, error)
+- `session.Destroy()` - 清理會話，回傳 error
 
-## 事件處理 (Event Handling)
+## 事件處理
 
-### 事件訂閱模式 (Event Subscription Pattern)
+### 事件訂閱模式
 
-請務必使用 channels 或完成訊號 (done signals) 來等待對話階段事件：
+ALWAYS 使用 Channel 或 done 訊號來等待會話事件：
 
 ```go
 done := make(chan struct{})
@@ -141,9 +142,9 @@ session.Send(copilot.MessageOptions{Prompt: "..."})
 <-done
 ```
 
-### 取消訂閱事件 (Unsubscribing from Events)
+### 取消訂閱事件
 
-`On()` 方法會回傳一個用於取消訂閱的函式：
+`On()` 方法回傳一個取消訂閱的函式：
 
 ```go
 unsubscribe := session.On(func(evt copilot.SessionEvent) {
@@ -153,9 +154,9 @@ unsubscribe := session.On(func(evt copilot.SessionEvent) {
 unsubscribe()
 ```
 
-### 事件型別 (Event Types)
+### 事件類型
 
-使用型別切換 (type switches) 進行事件處理：
+使用型別切換處理事件：
 
 ```go
 session.On(func(evt copilot.SessionEvent) {
@@ -171,12 +172,12 @@ session.On(func(evt copilot.SessionEvent) {
     case copilot.ToolExecutionComplete:
         // 工具執行完成
     case copilot.SessionStart:
-        // 對話階段開始
+        // 會話開始
     case copilot.SessionIdle:
-        // 對話階段處於閒置狀態 (處理完成)
+        // 會話閒置 (處理完成)
     case copilot.SessionError:
         if evt.Data.Message != nil {
-            fmt.Println("錯誤：", *evt.Data.Message)
+            fmt.Println("錯誤:", *evt.Data.Message)
         }
     }
 })
@@ -190,6 +191,7 @@ session.On(func(evt copilot.SessionEvent) {
 
 ```go
 session, err := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
     Model: "gpt-5",
     Streaming: true,
 })
@@ -197,7 +199,7 @@ session, err := client.CreateSession(&copilot.SessionConfig{
 
 ### 處理串流事件
 
-同時處理增量 (delta) 事件和最終事件：
+處理 delta 事件 (增量) 與最終事件：
 
 ```go
 done := make(chan struct{})
@@ -210,19 +212,19 @@ session.On(func(evt copilot.SessionEvent) {
             fmt.Print(*evt.Data.DeltaContent)
         }
     case copilot.AssistantReasoningDelta:
-        // 增量推論區塊 (取決於模型)
+        // 增量推理區塊 (視模型而定)
         if evt.Data.DeltaContent != nil {
             fmt.Print(*evt.Data.DeltaContent)
         }
     case copilot.AssistantMessage:
         // 最終完整訊息
-        fmt.Println("\n--- 最終結果 ---")
+        fmt.Println("\n--- 最終 ---")
         if evt.Data.Content != nil {
             fmt.Println(*evt.Data.Content)
         }
     case copilot.AssistantReasoning:
-        // 最終推論內容
-        fmt.Println("--- 推論過程 ---")
+        // 最終推理內容
+        fmt.Println("--- 推理 ---")
         if evt.Data.Content != nil {
             fmt.Println(*evt.Data.Content)
         }
@@ -231,29 +233,30 @@ session.On(func(evt copilot.SessionEvent) {
     }
 })
 
-session.Send(copilot.MessageOptions{Prompt: "講個故事給我聽"})
+session.Send(copilot.MessageOptions{Prompt: "給我一個故事"})
 <-done
 ```
 
-注意：無論串流設定為何，一律會傳送最終事件 (`AssistantMessage`, `AssistantReasoning`)。
+注意：無論是否啟用串流，都會傳送最終事件 (`AssistantMessage`, `AssistantReasoning`)。
 
-## 自訂工具 (Custom Tools)
+## 自訂工具
 
 ### 定義工具
 
 ```go
 session, err := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
     Model: "gpt-5",
     Tools: []copilot.Tool{
         {
             Name:        "lookup_issue",
-            Description: "從追蹤器獲取問題 (issue) 詳情",
+            Description: "從追蹤器擷取問題詳細資料",
             Parameters: map[string]interface{}{
                 "type": "object",
                 "properties": map[string]interface{}{
                     "id": map[string]interface{}{
                         "type":        "string",
-                        "description": "問題 (Issue) ID",
+                        "description": "問題 ID",
                     },
                 },
                 "required": []string{"id"},
@@ -268,7 +271,7 @@ session, err := client.CreateSession(&copilot.SessionConfig{
                 }
 
                 return copilot.ToolResult{
-                    TextResultForLLM: fmt.Sprintf("問題： %v", issue),
+                    TextResultForLLM: fmt.Sprintf("問題: %v", issue),
                     ResultType:       "success",
                     ToolTelemetry:    map[string]interface{}{},
                 }, nil
@@ -278,56 +281,58 @@ session, err := client.CreateSession(&copilot.SessionConfig{
 })
 ```
 
-### 工具回傳型別 (Tool Return Types)
+### 工具回傳型別
 
-- 回傳 `ToolResult` 結構，包含以下欄位：
-  - `TextResultForLLM` (string) - 顯示給 LLM 的結果文字
+- 回傳 `ToolResult` 結構，包含欄位：
+  - `TextResultForLLM` (string) - 給 LLM 的結果文字
   - `ResultType` (string) - "success" 或 "failure"
-  - `Error` (string，選填) - 內部錯誤訊息 (不顯示給 LLM)
-  - `ToolTelemetry` (map[string]interface{}) - 遙測資料 (Telemetry data)
+  - `Error` (string, 選填) - 內部錯誤訊息 (不會顯示給 LLM)
+  - `ToolTelemetry` (map[string]interface{}) - 遙測資料
 
-### 工具執行流程 (Tool Execution Flow)
+### 工具執行流程
 
 當 Copilot 呼叫工具時，客戶端會自動：
 
-1. 執行您的處理常式函式
+1. 執行你的處理常式函式
 2. 回傳 ToolResult
-3. 回應給 CLI
+3. 回應 CLI
 
 ## 系統訊息自訂 (System Message Customization)
 
-### 附加模式 (Append Mode) (預設值 - 保留防護欄)
+### 追加模式 (Append Mode，預設 — 保留安全護欄)
 
 ```go
 session, err := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
     Model: "gpt-5",
     SystemMessage: &copilot.SystemMessageConfig{
         Mode: "append",
         Content: `
 <workflow_rules>
 - 務必檢查安全漏洞
-- 在適用時提供效能改進建議
+- 若適用，請建議效能改進
 </workflow_rules>
 `,
     },
 })
 ```
 
-### 取代模式 (Replace Mode) (完整控制 - 移除防護欄)
+### 取代模式 (Replace Mode，完全控制 — 移除安全護欄)
 
 ```go
 session, err := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
     Model: "gpt-5",
     SystemMessage: &copilot.SystemMessageConfig{
         Mode:    "replace",
-        Content: "你是一個很有幫助的助手。",
+        Content: "你是一個有用的助理。",
     },
 })
 ```
 
-## 檔案附件 (File Attachments)
+## 檔案附件
 
-使用 `Attachment` 在訊息中附加檔案：
+使用 `Attachment` 將檔案附加至訊息：
 
 ```go
 messageID, err := session.Send(copilot.MessageOptions{
@@ -342,11 +347,11 @@ messageID, err := session.Send(copilot.MessageOptions{
 })
 ```
 
-## 訊息傳遞模式 (Message Delivery Modes)
+## 訊息傳送模式
 
 在 `MessageOptions` 中使用 `Mode` 欄位：
 
-- `"enqueue"` - 將訊息排入佇列進行處理
+- `"enqueue"` - 將訊息排入處理佇列
 - `"immediate"` - 立即處理訊息
 
 ```go
@@ -356,58 +361,67 @@ session.Send(copilot.MessageOptions{
 })
 ```
 
-## 多個對話階段 (Multiple Sessions)
+## 多重會話
 
-對話階段是獨立的，可以同時執行：
+會話彼此獨立，可並行執行：
 
 ```go
-session1, _ := client.CreateSession(&copilot.SessionConfig{Model: "gpt-5"})
-session2, _ := client.CreateSession(&copilot.SessionConfig{Model: "claude-sonnet-4.5"})
+session1, _ := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+	Model:               "gpt-5",
+})
+session2, _ := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+	Model:               "claude-sonnet-4.5",
+})
 
-session1.Send(copilot.MessageOptions{Prompt: "來自對話階段 1 的問候"})
-session2.Send(copilot.MessageOptions{Prompt: "來自對話階段 2 的問候"})
+session1.Send(copilot.MessageOptions{Prompt: "來自會話 1 的問候"})
+session2.Send(copilot.MessageOptions{Prompt: "來自會話 2 的問候"})
 ```
 
-## 自備金鑰 (Bring Your Own Key, BYOK)
+## 自帶金鑰 (BYOK)
 
-透過 `ProviderConfig` 使用自訂 API 提供者：
+透過設定 `ProviderConfig` 使用自訂 API 提供者：
 
 ```go
 session, err := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
     Provider: &copilot.ProviderConfig{
         Type:    "openai",
         BaseURL: "https://api.openai.com/v1",
-        APIKey:  "您的-api-key",
+        APIKey:  "your-api-key",
     },
 })
 ```
 
-## 對話階段生命週期管理 (Session Lifecycle Management)
+## 會話生命週期管理
 
-### 檢查連線狀態 (Checking Connection State)
+### 檢查連線狀態
 
 ```go
 state := client.GetState()
-// 回傳值："disconnected", "connecting", "connected", 或 "error"
+// 回傳: "disconnected", "connecting", "connected", 或 "error"
 ```
 
-## 錯誤處理 (Error Handling)
+## 錯誤處理
 
-### 標準例外處理 (Standard Exception Handling)
+### 標準異常處理
 
 ```go
-session, err := client.CreateSession(&copilot.SessionConfig{})
+session, err := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+})
 if err != nil {
-    log.Fatalf("建立對話階段失敗： %v", err)
+    log.Fatalf("無法建立會話: %v", err)
 }
 
-_, err = session.Send(copilot.MessageOptions{Prompt: "您好"})
+_, err = session.Send(copilot.MessageOptions{Prompt: "Hello"})
 if err != nil {
-    log.Printf("傳送失敗： %v", err)
+    log.Printf("傳送失敗: %v", err)
 }
 ```
 
-### 對話階段錯誤事件 (Session Error Events)
+### 會話錯誤事件
 
 監控 `SessionError` 型別以處理執行階段錯誤：
 
@@ -415,30 +429,30 @@ if err != nil {
 session.On(func(evt copilot.SessionEvent) {
     if evt.Type == copilot.SessionError {
         if evt.Data.Message != nil {
-            fmt.Fprintf(os.Stderr, "對話階段錯誤： %s\n", *evt.Data.Message)
+            fmt.Fprintf(os.Stderr, "會話錯誤: %s\n", *evt.Data.Message)
         }
     }
 })
 ```
 
-## 連線測試 (Connectivity Testing)
+## 連線測試
 
-使用 Ping 驗證伺服器連線性：
+使用 `Ping` 驗證伺服器連線能力：
 
 ```go
 resp, err := client.Ping("測試訊息")
 if err != nil {
-    log.Printf("無法連線至伺服器： %v", err)
+    log.Printf("無法連線至伺服器: %v", err)
 } else {
-    log.Printf("伺服器於 %d 回應", resp.Timestamp)
+    log.Printf("伺服器回應於 %d", resp.Timestamp)
 }
 ```
 
-## 資源清理 (Resource Cleanup)
+## 資源清理
 
 ### 使用 Defer 清理
 
-請務必使用 `defer` 進行清理：
+ALWAYS 使用 `defer` 進行清理：
 
 ```go
 client := copilot.NewClient(nil)
@@ -447,7 +461,7 @@ if err := client.Start(); err != nil {
 }
 defer client.Stop()
 
-session, err := client.CreateSession(nil)
+session, err := client.CreateSession(&copilot.SessionConfig{OnPermissionRequest: copilot.PermissionHandler.ApproveAll})
 if err != nil {
     log.Fatal(err)
 }
@@ -456,7 +470,7 @@ defer session.Destroy()
 
 ### 手動清理
 
-若不使用 defer：
+若未使用 defer：
 
 ```go
 client := copilot.NewClient(nil)
@@ -465,37 +479,37 @@ if err != nil {
     log.Fatal(err)
 }
 
-session, err := client.CreateSession(nil)
+session, err := client.CreateSession(&copilot.SessionConfig{OnPermissionRequest: copilot.PermissionHandler.ApproveAll})
 if err != nil {
     client.Stop()
     log.Fatal(err)
 }
 
-// 使用對話階段...
+// 使用 session...
 
 session.Destroy()
 errors := client.Stop()
 for _, err := range errors {
-    log.Printf("清理錯誤： %v", err)
+    log.Printf("清理錯誤: %v", err)
 }
 ```
 
-## 最佳做法 (Best Practices)
+## 最佳實務
 
-1. **務必使用 `defer`** 來清理客戶端和對話階段
-2. **使用 channels** 來等待對話階段閒置 (SessionIdle) 事件
-3. **處理對話階段錯誤 (SessionError)** 事件以建立穩健的錯誤處理機制
-4. **使用型別切換 (type switches)** 進行事件處理
-5. **啟用串流** 以在互動情境中提供更好的使用者體驗 (UX)
-6. **提供具描述性的工具名稱和說明**，以便模型更好地理解
-7. **在不再需要時呼叫取消訂閱函式**
-8. **使用模式為 "append" 的 SystemMessageConfig** 以保留安全防護欄
-9. **啟用串流時，同時處理增量 (delta) 和最終事件**
-10. **檢查事件資料中的空指標 (nil pointers)** (Content, Message 等均為指標)
+1. **ALWAYS** 使用 `defer` 清理客戶端與會話
+2. **使用 Channel** 等待 SessionIdle 事件
+3. **處理 SessionError** 事件以進行穩健的錯誤處理
+4. **使用型別切換** 進行事件處理
+5. **啟用串流** 以在互動情境中提供更好的 UX
+6. **提供描述性工具名稱與說明** 以利模型理解
+7. **當不再需要時** 呼叫取消訂閱函式
+8. **使用帶有 Mode: "append" 的 SystemMessageConfig** 以保留安全護欄
+9. **當啟用串流時** 同時處理 delta 與最終事件
+10. **檢查指標是否為 nil** (Content, Message 等皆為指標)
 
-## 常見模式 (Common Patterns)
+## 常見範例
 
-### 簡單的查詢-回應 (Simple Query-Response)
+### 簡單查詢-回應
 
 ```go
 client := copilot.NewClient(nil)
@@ -504,7 +518,10 @@ if err := client.Start(); err != nil {
 }
 defer client.Stop()
 
-session, err := client.CreateSession(&copilot.SessionConfig{Model: "gpt-5"})
+session, err := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+	Model:               "gpt-5",
+})
 if err != nil {
     log.Fatal(err)
 }
@@ -524,10 +541,10 @@ session.Send(copilot.MessageOptions{Prompt: "2+2 等於多少？"})
 <-done
 ```
 
-### 多輪對話 (Multi-Turn Conversation)
+### 多回合對話
 
 ```go
-session, _ := client.CreateSession(nil)
+session, _ := client.CreateSession(&copilot.SessionConfig{OnPermissionRequest: copilot.PermissionHandler.ApproveAll})
 defer session.Destroy()
 
 sendAndWait := func(prompt string) error {
@@ -561,23 +578,23 @@ sendAndWait("法國的首都是哪裡？")
 sendAndWait("它的人口是多少？")
 ```
 
-### SendAndWait 協助工具
+### SendAndWait 範例
 
 ```go
-// 使用內建的 SendAndWait 進行更簡單的同步互動
+// 使用內建的 SendAndWait 以簡化同步互動
 response, err := session.SendAndWait(copilot.MessageOptions{
     Prompt: "2+2 等於多少？",
-}, 0) // 0 表示使用預設的 60 秒逾時
+}, 0) // 0 使用預設 60 秒逾時
 
 if err != nil {
-    log.Printf("錯誤： %v", err)
+    log.Printf("Error: %v", err)
 }
 if response != nil && response.Data.Content != nil {
     fmt.Println(*response.Data.Content)
 }
 ```
 
-### 具備結構體 (Struct) 回傳型別的工具
+### 回傳結構體的工具
 
 ```go
 type UserInfo struct {
@@ -588,16 +605,17 @@ type UserInfo struct {
 }
 
 session, _ := client.CreateSession(&copilot.SessionConfig{
+	OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
     Tools: []copilot.Tool{
         {
             Name:        "get_user",
-            Description: "獲取使用者資訊",
+            Description: "擷取使用者資訊",
             Parameters: map[string]interface{}{
                 "type": "object",
                 "properties": map[string]interface{}{
                     "user_id": map[string]interface{}{
                         "type":        "string",
-                        "description": "使用者 ID",
+                        "description": "User ID",
                     },
                 },
                 "required": []string{"user_id"},

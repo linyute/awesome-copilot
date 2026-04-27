@@ -1,7 +1,7 @@
 ---
 applyTo: '**.cs, **.csproj'
-description: '本檔案提供使用 GitHub Copilot SDK 建構 C# 應用程式的指引。'
-name: 'GitHub Copilot SDK C# 指引'
+description: 'GitHub Copilot SDK C# 建構應用程式指南'
+name: 'GitHub Copilot SDK C# 指令'
 ---
 
 ## 核心原則
@@ -14,12 +14,12 @@ name: 'GitHub Copilot SDK C# 指引'
 
 ## 安裝
 
-請務必透過 NuGet 安裝：
+請始終透過 NuGet 安裝：
 ```bash
 dotnet add package GitHub.Copilot.SDK
 ```
 
-## 客戶端初始化 (Client Initialization)
+## 客戶端初始化
 
 ### 基本客戶端設定
 
@@ -28,43 +28,44 @@ await using var client = new CopilotClient();
 await client.StartAsync();
 ```
 
-### 客戶端設定選項 (Client Configuration Options)
+### 客戶端設定選項
 
 建立 CopilotClient 時，請使用 `CopilotClientOptions`：
 
-- `CliPath` - CLI 執行檔路徑 (預設值：從 PATH 中獲取 "copilot")
-- `CliArgs` - 在 SDK 管理的旗標 (flag) 之前附加的額外引數
-- `CliUrl` - 現有 CLI 伺服器的 URL (例如 "localhost:8080")。提供此選項時，客戶端不會啟動新處理程序 (process)
-- `Port` - 伺服器連接埠 (預設值：0 表示隨機)
-- `UseStdio` - 使用 stdio 傳輸而非 TCP (預設值：true)
-- `LogLevel` - 記錄層級 (預設值："info")
-- `AutoStart` - 自動啟動伺服器 (預設值：true)
-- `AutoRestart` - 當機時自動重新啟動 (預設值：true)
-- `Cwd` - CLI 處理程序的工作目錄
-- `Environment` - CLI 處理程序的環境變數
-- `Logger` - 用於 SDK 記錄的 ILogger 執行個體 (instance)
+- `CliPath` - CLI 可執行檔路徑 (預設：PATH 中的 "copilot")
+- `CliArgs` - 在 SDK 管理的旗標之前加入的額外引數
+- `CliUrl` - 現有 CLI 伺服器的 URL (例如 "localhost:8080")。若提供，客戶端將不會 spawn 處理序
+- `Port` - 伺服器連接埠 (預設：0 為隨機)
+- `UseStdio` - 使用 stdio 傳輸而非 TCP (預設：true)
+- `LogLevel` - 日誌層級 (預設："info")
+- `AutoStart` - 自動啟動伺服器 (預設：true)
+- `AutoRestart` - 當損毀時自動重新啟動 (預設：true)
+- `Cwd` - CLI 處理序的工作目錄
+- `Environment` - CLI 處理序的環境變數
+- `Logger` - 用於 SDK 日誌紀錄的 ILogger 執行個體
 
 ### 手動伺服器控制
 
-如需明確控制：
+若需明確控制：
 ```csharp
 var client = new CopilotClient(new CopilotClientOptions { AutoStart = false });
 await client.StartAsync();
-// 使用客戶端...
+// 使用 client...
 await client.StopAsync();
 ```
 
 當 `StopAsync()` 耗時過長時，請使用 `ForceStopAsync()`。
 
-## 對話階段管理 (Session Management)
+## 會話管理 (Session Management)
 
-### 建立對話階段 (Creating Sessions)
+### 建立會話
 
 使用 `SessionConfig` 進行設定：
 
 ```csharp
 await using var session = await client.CreateSessionAsync(new SessionConfig
 {
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     Model = "gpt-5",
     Streaming = true,
     Tools = [...],
@@ -75,36 +76,40 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
 });
 ```
 
-### 對話階段設定選項 (Session Config Options)
+### 會話設定選項
 
-- `SessionId` - 自訂對話階段 ID
+- `SessionId` - 自訂會話 ID
 - `Model` - 模型名稱 ("gpt-5", "claude-sonnet-4.5" 等)
 - `Tools` - 公開給 CLI 的自訂工具
 - `SystemMessage` - 系統訊息自訂
-- `AvailableTools` - 工具名稱白名單
-- `ExcludedTools` - 工具名稱黑名單
+- `AvailableTools` - 工具名稱允許清單
+- `ExcludedTools` - 工具名稱排除清單
 - `Provider` - 自訂 API 提供者設定 (BYOK)
-- `Streaming` - 啟用串流回應區塊 (預設值：false)
+- `Streaming` - 啟用串流回應區塊 (預設：false)
 
-### 恢復對話階段 (Resuming Sessions)
+### 恢復會話
 
 ```csharp
-var session = await client.ResumeSessionAsync(sessionId, new ResumeSessionConfig { ... });
+var session = await client.ResumeSessionAsync(sessionId, new ResumeSessionConfig
+{
+    OnPermissionRequest = PermissionHandler.ApproveAll,
+    // ...
+});
 ```
 
-### 對話階段操作 (Session Operations)
+### 會話操作
 
-- `session.SessionId` - 獲取對話階段識別碼
+- `session.SessionId` - 取得會話識別碼
 - `session.SendAsync(new MessageOptions { Prompt = "...", Attachments = [...] })` - 傳送訊息
 - `session.AbortAsync()` - 中止目前處理
-- `session.GetMessagesAsync()` - 獲取所有事件/訊息
+- `session.GetMessagesAsync()` - 取得所有事件/訊息
 - `await session.DisposeAsync()` - 清理資源
 
-## 事件處理 (Event Handling)
+## 事件處理
 
-### 事件訂閱模式 (Event Subscription Pattern)
+### 事件訂閱模式
 
-請務必使用 TaskCompletionSource 來等待對話階段事件：
+ALWAYS 使用 TaskCompletionSource 來等待會話事件：
 
 ```csharp
 var done = new TaskCompletionSource();
@@ -125,9 +130,9 @@ await session.SendAsync(new MessageOptions { Prompt = "..." });
 await done.Task;
 ```
 
-### 取消訂閱事件 (Unsubscribing from Events)
+### 取消訂閱事件
 
-`On()` 方法會回傳一個 IDisposable：
+`On()` 方法回傳 IDisposable：
 
 ```csharp
 var subscription = session.On(evt => { /* 處理常式 */ });
@@ -135,9 +140,9 @@ var subscription = session.On(evt => { /* 處理常式 */ });
 subscription.Dispose();
 ```
 
-### 事件型別 (Event Types)
+### 事件類型
 
-使用模式比對 (pattern matching) 或 switch 運算式進行事件處理：
+使用模式比對或 switch 表達式處理事件：
 
 ```csharp
 session.On(evt =>
@@ -157,13 +162,13 @@ session.On(evt =>
             // 工具執行完成
             break;
         case SessionStartEvent start:
-            // 對話階段開始
+            // 會話開始
             break;
         case SessionIdleEvent idle:
-            // 對話階段處於閒置狀態 (處理完成)
+            // 會話閒置 (處理完成)
             break;
         case SessionErrorEvent error:
-            Console.WriteLine($"錯誤：{error.Data.Message}");
+            Console.WriteLine($"錯誤: {error.Data.Message}");
             break;
     }
 });
@@ -178,6 +183,7 @@ session.On(evt =>
 ```csharp
 var session = await client.CreateSessionAsync(new SessionConfig
 {
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     Model = "gpt-5",
     Streaming = true
 });
@@ -185,7 +191,7 @@ var session = await client.CreateSessionAsync(new SessionConfig
 
 ### 處理串流事件
 
-同時處理增量 (delta) 事件和最終事件：
+處理 delta 事件 (增量) 與最終事件：
 
 ```csharp
 var done = new TaskCompletionSource();
@@ -199,17 +205,17 @@ session.On(evt =>
             Console.Write(delta.Data.DeltaContent);
             break;
         case AssistantReasoningDeltaEvent reasoningDelta:
-            // 增量推論區塊 (取決於模型)
+            // 增量推理區塊 (視模型而定)
             Console.Write(reasoningDelta.Data.DeltaContent);
             break;
         case AssistantMessageEvent msg:
             // 最終完整訊息
-            Console.WriteLine("\n--- 最終結果 ---");
+            Console.WriteLine("\n--- 最終 ---");
             Console.WriteLine(msg.Data.Content);
             break;
         case AssistantReasoningEvent reasoning:
-            // 最終推論內容
-            Console.WriteLine("--- 推論過程 ---");
+            // 最終推理內容
+            Console.WriteLine("--- 推理 ---");
             Console.WriteLine(reasoning.Data.Content);
             break;
         case SessionIdleEvent:
@@ -218,17 +224,17 @@ session.On(evt =>
     }
 });
 
-await session.SendAsync(new MessageOptions { Prompt = "講個故事給我聽" });
+await session.SendAsync(new MessageOptions { Prompt = "給我一個故事" });
 await done.Task;
 ```
 
-注意：無論串流設定為何，一律會傳送最終事件 (`AssistantMessageEvent`, `AssistantReasoningEvent`)。
+注意：無論是否啟用串流，都會傳送最終事件 (`AssistantMessageEvent`, `AssistantReasoningEvent`)。
 
-## 自訂工具 (Custom Tools)
+## 自訂工具
 
 ### 使用 AIFunctionFactory 定義工具
 
-使用 `Microsoft.Extensions.AI.AIFunctionFactory.Create` 建立型別安全的工具：
+使用 `Microsoft.Extensions.AI.AIFunctionFactory.Create` 進行型別安全工具定義：
 
 ```csharp
 using Microsoft.Extensions.AI;
@@ -236,38 +242,40 @@ using System.ComponentModel;
 
 var session = await client.CreateSessionAsync(new SessionConfig
 {
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     Model = "gpt-5",
     Tools = [
         AIFunctionFactory.Create(
-            async ([Description("問題 (Issue) ID")] string id) => {
+            async ([Description("問題 ID")] string id) => {
                 var issue = await FetchIssueAsync(id);
                 return issue;
             },
             "lookup_issue",
-            "從追蹤器獲取問題 (issue) 詳情"),
+            "從追蹤器擷取問題詳細資料"),
     ]
 });
 ```
 
-### 工具回傳型別 (Tool Return Types)
+### 工具回傳型別
 
-- 回傳任何可 JSON 序列化的值 (會自動包裝)
-- 或回傳包裝了 `ToolResultObject` 的 `ToolResultAIContent` 以進行 Metadata 的完整控制
+- 回傳任何 JSON 可序列化值 (自動包裝)
+- 或回傳包裝 `ToolResultObject` 的 `ToolResultAIContent`，以完全控制中繼資料
 
-### 工具執行流程 (Tool Execution Flow)
+### 工具執行流程
 
 當 Copilot 呼叫工具時，客戶端會自動：
-1. 執行您的處理常式函式
+1. 執行你的處理常式函式
 2. 序列化回傳值
-3. 回應給 CLI
+3. 回應 CLI
 
 ## 系統訊息自訂 (System Message Customization)
 
-### 附加模式 (Append Mode) (預設值 - 保留防護欄)
+### 追加模式 (Append Mode，預設 — 保留安全護欄)
 
 ```csharp
 var session = await client.CreateSessionAsync(new SessionConfig
 {
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     Model = "gpt-5",
     SystemMessage = new SystemMessageConfig
     {
@@ -275,30 +283,31 @@ var session = await client.CreateSessionAsync(new SessionConfig
         Content = @"
 <workflow_rules>
 - 務必檢查安全漏洞
-- 在適用時提供效能改進建議
+- 若適用，請建議效能改進
 </workflow_rules>
 "
     }
 });
 ```
 
-### 取代模式 (Replace Mode) (完整控制 - 移除防護欄)
+### 取代模式 (Replace Mode，完全控制 — 移除安全護欄)
 
 ```csharp
 var session = await client.CreateSessionAsync(new SessionConfig
 {
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     Model = "gpt-5",
     SystemMessage = new SystemMessageConfig
     {
         Mode = SystemMessageMode.Replace,
-        Content = "你是一個很有幫助的助手。"
+        Content = "你是一個有用的助理。"
     }
 });
 ```
 
-## 檔案附件 (File Attachments)
+## 檔案附件
 
-使用 `UserMessageDataAttachmentsItem` 在訊息中附加檔案：
+使用 `UserMessageDataAttachmentsItem` 將檔案附加至訊息：
 
 ```csharp
 await session.SendAsync(new MessageOptions
@@ -316,11 +325,11 @@ await session.SendAsync(new MessageOptions
 });
 ```
 
-## 訊息傳遞模式 (Message Delivery Modes)
+## 訊息傳送模式
 
 在 `MessageOptions` 中使用 `Mode` 屬性：
 
-- `"enqueue"` - 將訊息排入佇列進行處理
+- `"enqueue"` - 將訊息排入處理佇列
 - `"immediate"` - 立即處理訊息
 
 ```csharp
@@ -331,79 +340,88 @@ await session.SendAsync(new MessageOptions
 });
 ```
 
-## 多個對話階段 (Multiple Sessions)
+## 多重會話
 
-對話階段是獨立的，可以同時執行：
+會話彼此獨立，可並行執行：
 
 ```csharp
-var session1 = await client.CreateSessionAsync(new SessionConfig { Model = "gpt-5" });
-var session2 = await client.CreateSessionAsync(new SessionConfig { Model = "claude-sonnet-4.5" });
+var session1 = await client.CreateSessionAsync(new SessionConfig
+{
+    OnPermissionRequest = PermissionHandler.ApproveAll,
+    Model = "gpt-5",
+});
+var session2 = await client.CreateSessionAsync(new SessionConfig
+{
+    OnPermissionRequest = PermissionHandler.ApproveAll,
+    Model = "claude-sonnet-4.5",
+});
 
-await session1.SendAsync(new MessageOptions { Prompt = "來自對話階段 1 的問候" });
-await session2.SendAsync(new MessageOptions { Prompt = "來自對話階段 2 的問候" });
+await session1.SendAsync(new MessageOptions { Prompt = "來自會話 1 的問候" });
+await session2.SendAsync(new MessageOptions { Prompt = "來自會話 2 的問候" });
 ```
 
-## 自備金鑰 (Bring Your Own Key, BYOK)
+## 自帶金鑰 (BYOK)
 
 透過 `ProviderConfig` 使用自訂 API 提供者：
 
 ```csharp
 var session = await client.CreateSessionAsync(new SessionConfig
 {
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     Provider = new ProviderConfig
     {
         Type = "openai",
         BaseUrl = "https://api.openai.com/v1",
-        ApiKey = "您的-api-key"
+        ApiKey = "your-api-key"
     }
 });
 ```
 
-## 對話階段生命週期管理 (Session Lifecycle Management)
+## 會話生命週期管理
 
-### 列出對話階段 (Listing Sessions)
+### 列出會話
 
 ```csharp
 var sessions = await client.ListSessionsAsync();
 foreach (var metadata in sessions)
 {
-    Console.WriteLine($"對話階段： {metadata.SessionId}");
+    Console.WriteLine($"會話: {metadata.SessionId}");
 }
 ```
 
-### 刪除對話階段 (Deleting Sessions)
+### 刪除會話
 
 ```csharp
 await client.DeleteSessionAsync(sessionId);
 ```
 
-### 檢查連線狀態 (Checking Connection State)
+### 檢查連線狀態
 
 ```csharp
 var state = client.State;
 ```
 
-## 錯誤處理 (Error Handling)
+## 錯誤處理
 
-### 標準例外處理 (Standard Exception Handling)
+### 標準異常處理
 
 ```csharp
 try
 {
-    var session = await client.CreateSessionAsync();
-    await session.SendAsync(new MessageOptions { Prompt = "您好" });
+    var session = await client.CreateSessionAsync(new SessionConfig { OnPermissionRequest = PermissionHandler.ApproveAll });
+    await session.SendAsync(new MessageOptions { Prompt = "Hello" });
 }
 catch (StreamJsonRpc.RemoteInvocationException ex)
 {
-    Console.Error.WriteLine($"JSON-RPC 錯誤： {ex.Message}");
+    Console.Error.WriteLine($"JSON-RPC 錯誤: {ex.Message}");
 }
 catch (Exception ex)
 {
-    Console.Error.WriteLine($"錯誤： {ex.Message}");
+    Console.Error.WriteLine($"錯誤: {ex.Message}");
 }
 ```
 
-### 對話階段錯誤事件 (Session Error Events)
+### 會話錯誤事件
 
 監控 `SessionErrorEvent` 以處理執行階段錯誤：
 
@@ -412,41 +430,41 @@ session.On(evt =>
 {
     if (evt is SessionErrorEvent error)
     {
-        Console.Error.WriteLine($"對話階段錯誤： {error.Data.Message}");
+        Console.Error.WriteLine($"會話錯誤: {error.Data.Message}");
     }
 });
 ```
 
-## 連線測試 (Connectivity Testing)
+## 連線測試
 
-使用 PingAsync 驗證伺服器連線性：
+使用 PingAsync 驗證伺服器連線能力：
 
 ```csharp
 var response = await client.PingAsync("測試訊息");
 ```
 
-## 資源清理 (Resource Cleanup)
+## 資源清理
 
 ### 使用 Using 自動清理
 
-請務必使用 `await using` 來自動處置資源：
+ALWAYS 使用 `await using` 進行自動處置：
 
 ```csharp
 await using var client = new CopilotClient();
-await using var session = await client.CreateSessionAsync();
-// 資源將自動清理
+await using var session = await client.CreateSessionAsync(new SessionConfig { OnPermissionRequest = PermissionHandler.ApproveAll });
+// 資源會自動清理
 ```
 
 ### 手動清理
 
-若不使用 `await using`：
+若未使用 `await using`：
 
 ```csharp
 var client = new CopilotClient();
 try
 {
     await client.StartAsync();
-    // 使用客戶端...
+    // 使用 client...
 }
 finally
 {
@@ -454,22 +472,22 @@ finally
 }
 ```
 
-## 最佳做法 (Best Practices)
+## 最佳實務
 
-1. **務必針對 CopilotClient 和 CopilotSession 使用 `await using`**
-2. **使用 TaskCompletionSource** 來等待對話階段閒置 (SessionIdleEvent) 事件
-3. **處理對話階段錯誤 (SessionErrorEvent)** 事件以建立穩健的錯誤處理機制
-4. **使用模式比對 (pattern matching)** (switch 運算式) 進行事件處理
-5. **啟用串流** 以在互動情境中提供更好的使用者體驗 (UX)
-6. **使用 AIFunctionFactory** 進行型別安全的工具定義
-7. **在不再需要時處置事件訂閱**
-8. **使用 SystemMessageMode.Append** 以保留安全防護欄
-9. **提供具描述性的工具名稱和說明**，以便模型更好地理解
-10. **啟用串流時，同時處理增量 (delta) 和最終事件**
+1. **ALWAYS** 為 CopilotClient 與 CopilotSession 使用 `await using`
+2. **使用 TaskCompletionSource** 等待 SessionIdleEvent
+3. **處理 SessionErrorEvent** 以進行穩健的錯誤處理
+4. **使用模式比對** (switch 表達式) 進行事件處理
+5. **啟用串流** 以在互動情境中提供更好的 UX
+6. **使用 AIFunctionFactory** 進行型別安全工具定義
+7. **當不再需要時** 處置事件訂閱
+8. **使用 SystemMessageMode.Append** 以保留安全護欄
+9. **當啟用串流時** 同時處理 delta 與最終事件
+10. **提供描述性工具名稱與說明** 以利模型理解
 
-## 常見模式 (Common Patterns)
+## 常見範例
 
-### 簡單的查詢-回應 (Simple Query-Response)
+### 簡單查詢-回應
 
 ```csharp
 await using var client = new CopilotClient();
@@ -477,6 +495,7 @@ await client.StartAsync();
 
 await using var session = await client.CreateSessionAsync(new SessionConfig
 {
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     Model = "gpt-5"
 });
 
@@ -498,10 +517,10 @@ await session.SendAsync(new MessageOptions { Prompt = "2+2 等於多少？" });
 await done.Task;
 ```
 
-### 多輪對話 (Multi-Turn Conversation)
+### 多回合對話
 
 ```csharp
-await using var session = await client.CreateSessionAsync();
+await using var session = await client.CreateSessionAsync(new SessionConfig { OnPermissionRequest = PermissionHandler.ApproveAll });
 
 async Task SendAndWait(string prompt)
 {
@@ -527,11 +546,12 @@ await SendAndWait("法國的首都是哪裡？");
 await SendAndWait("它的人口是多少？");
 ```
 
-### 具備複雜回傳型別的工具
+### 具有複雜回傳型別的工具
 
 ```csharp
 var session = await client.CreateSessionAsync(new SessionConfig
 {
+    OnPermissionRequest = PermissionHandler.ApproveAll,
     Tools = [
         AIFunctionFactory.Create(
             ([Description("使用者 ID")] string userId) => {
@@ -543,7 +563,7 @@ var session = await client.CreateSessionAsync(new SessionConfig
                 };
             },
             "get_user",
-            "獲取使用者資訊")
+            "擷取使用者資訊")
     ]
 });
 ```

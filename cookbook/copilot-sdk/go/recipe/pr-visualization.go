@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"flag"
 	"fmt"
 	"log"
@@ -13,9 +14,9 @@ import (
 	"github.com/github/copilot-sdk/go"
 )
 
-// ============================================================================ 
+// ============================================================================
 // Git 與 GitHub 偵測
-// ============================================================================ 
+// ============================================================================
 
 func isGitRepo() bool {
 	cmd := exec.Command("git", "rev-parse", "--git-dir")
@@ -32,13 +33,13 @@ func getGitHubRemote() string {
 	remoteURL := strings.TrimSpace(string(output))
 
 	// 處理 SSH: git@github.com:owner/repo.git
-	sshRe := regexp.MustCompile(`git@github\.com:(.+/.+?)(?:\.git)?$`) 
+	sshRe := regexp.MustCompile(`git@github\.com:(.+/.+?)(?:\.git)?$`)
 	if matches := sshRe.FindStringSubmatch(remoteURL); matches != nil {
 		return matches[1]
 	}
 
 	// 處理 HTTPS: https://github.com/owner/repo.git
-	httpsRe := regexp.MustCompile(`https://github\.com/(.+/.+?)(?:\.git)?$`) 
+	httpsRe := regexp.MustCompile(`https://github\.com/(.+/.+?)(?:\.git)?$`)
 	if matches := httpsRe.FindStringSubmatch(remoteURL); matches != nil {
 		return matches[1]
 	}
@@ -53,9 +54,9 @@ func promptForRepo() string {
 	return strings.TrimSpace(repo)
 }
 
-// ============================================================================ 
+// ============================================================================
 // 主要應用程式
-// ============================================================================ 
+// ============================================================================
 
 func main() {
 	repoFlag := flag.String("repo", "", "GitHub 存放庫 (擁有者/存放庫)")
@@ -75,11 +76,11 @@ func main() {
 			repo = detected
 			fmt.Printf("📦 偵測到 GitHub 存放庫: %s\n", repo)
 		} else {
-			fmt.Println("⚠️  找到 Git 存放庫 but 未偵測到 GitHub 遠端。" ) 
+			fmt.Println("⚠️  找到 Git 存放庫 but 未偵測到 GitHub 遠端。" )
 			repo = promptForRepo()
 		}
 	} else {
-		fmt.Println("📁 不在 Git 存放庫中。" ) 
+		fmt.Println("📁 不在 Git 存放庫中。" )
 		repo = promptForRepo()
 	}
 
@@ -100,7 +101,8 @@ func main() {
 
 	cwd, _ := os.Getwd()
 	session, err := client.CreateSession(copilot.SessionConfig{
-		Model: "gpt-5",
+		OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+		Model:               "gpt-5.4",
 		SystemMessage: copilot.SystemMessage{
 			Content: fmt.Sprintf(`
 <context>
@@ -120,15 +122,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer session.Destroy()
+	defer session.Disconnect()
 
 	// 設定事件處理
-	session.On(func(event copilot.Event) {
-		switch e := event.(type) {
-		case copilot.AssistantMessageEvent:
-			fmt.Printf("\n🤖 %s\n\n", e.Data.Content)
-		case copilot.ToolExecutionStartEvent:
-			fmt.Printf("  ⚙️  %s\n", e.Data.ToolName)
+	session.On(func(event copilot.SessionEvent) {
+		switch d := event.Data.(type) {
+		case *copilot.AssistantMessageData:
+			fmt.Printf("\n🤖 %s\n\n", d.Content)
+		case *copilot.ToolExecutionStartData:
+			fmt.Printf("  ⚙️  %s\n", d.ToolName)
 		}
 	})
 

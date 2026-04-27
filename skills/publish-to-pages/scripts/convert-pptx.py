@@ -1,23 +1,27 @@
 #!/usr/bin/env python3
-"""將 PPTX 檔案轉換為保留格式且自帶內容的 HTML 簡報。"""
-import sys
+"""將 PPTX 檔案轉換為保留格式的 HTML 簡報。
+
+支援大型檔案的外部資產模式，以避免產生巨大的單一 HTML 檔案。
+"""
+import argparse
 import base64
 import io
+import os
 import re
+import sys
 from pathlib import Path
 
-try:
-    from pptx import Presentation
-    from pptx.util import Inches, Pt, Emu
-    from pptx.enum.text import PP_ALIGN
-    from pptx.dml.color import RGBColor
-except ImportError:
-    print("錯誤：未安裝 python-pptx。請使用此指令安裝：pip install python-pptx")
-    sys.exit(1)
+def _ensure_pptx():
+    try:
+        from pptx import Presentation
+        from pptx.enum.text import PP_ALIGN
+        return True
+    except ImportError:
+        print("錯誤：未安裝 python-pptx。請使用此指令安裝：pip install python-pptx")
+        sys.exit(1)
 
 
 def rgb_to_hex(rgb_color):
-    """將 RGBColor 轉換為十六進位字串。"""
     if rgb_color is None:
         return None
     try:
@@ -27,7 +31,6 @@ def rgb_to_hex(rgb_color):
 
 
 def get_text_style(run):
-    """從 Run 中擷取內嵌文字樣式。"""
     styles = []
     try:
         if run.font.bold:
@@ -48,7 +51,7 @@ def get_text_style(run):
 
 
 def get_alignment(paragraph):
-    """從段落對齊方式獲取 CSS text-align。"""
+    from pptx.enum.text import PP_ALIGN
     try:
         align = paragraph.alignment
         if align == PP_ALIGN.CENTER:
@@ -62,20 +65,7 @@ def get_alignment(paragraph):
     return "left"
 
 
-def extract_image(shape):
-    """從圖形中擷取圖片作為 Base64 資料 URI。"""
-    try:
-        image = shape.image
-        content_type = image.content_type
-        image_bytes = image.blob
-        b64 = base64.b64encode(image_bytes).decode('utf-8')
-        return f"data:{content_type};base64,{b64}"
-    except:
-        return None
-
-
 def get_shape_position(shape, slide_width, slide_height):
-    """獲取圖形位置（百分比形式）。"""
     try:
         left = (shape.left / slide_width) * 100 if shape.left else 0
         top = (shape.top / slide_height) * 100 if shape.top else 0
@@ -87,12 +77,10 @@ def get_shape_position(shape, slide_width, slide_height):
 
 
 def get_slide_background(slide, prs):
-    """從 XML 擷取投影片背景顏色。"""
     from pptx.oxml.ns import qn
     for source in [slide, slide.slide_layout]:
         try:
             bg_el = source.background._element
-            # 在 bgPr 中尋找 solidFill > srgbClr
             for sf in bg_el.iter(qn('a:solidFill')):
                 clr = sf.find(qn('a:srgbClr'))
                 if clr is not None and clr.get('val'):
@@ -103,14 +91,12 @@ def get_slide_background(slide, prs):
 
 
 def get_shape_fill(shape):
-    """從 XML 擷取圖形填滿顏色。"""
     from pptx.oxml.ns import qn
     try:
         sp_pr = shape._element.find(qn('p:spPr'))
         if sp_pr is None:
             sp_pr = shape._element.find(qn('a:spPr'))
         if sp_pr is None:
-            # 嘗試直接子項
             for tag in ['{http://schemas.openxmlformats.org/drawingml/2006/main}spPr',
                         '{http://schemas.openxmlformats.org/presentationml/2006/main}spPr']:
                 sp_pr = shape._element.find(tag)
@@ -128,7 +114,6 @@ def get_shape_fill(shape):
 
 
 def render_paragraph(paragraph):
-    """轉譯具有內嵌格式的段落。"""
     align = get_alignment(paragraph)
     parts = []
     for run in paragraph.runs:
@@ -147,12 +132,72 @@ def render_paragraph(paragraph):
     return f'<p style="text-align:{align};margin:0.3em 0;line-height:1.4">{content}</p>'
 
 
-def convert(pptx_path, output_path=None):
+def extract_image_data(shape):
+    """從形狀中提取原始圖片位元組和內容類型。"""
+    try:
+        image = shape.image
+        return image.blob, image.content_type
+    except:
+        return None, None
+
+
+def count_images(prs):
+    """計算所有投影片中的圖片總數。"""
+    count = 0
+    for slide in prs.slides:
+        for shape in slide.shapes:
+            if shape.shape_type == 13 or hasattr(shape, "image"):
+                try:
+                    _ = shape.image
+                    count += 1
+                except:
+                    pass
+    return count
+
+
+CONTENT_TYPE_TO_EXT = {
+    'image/png': '.png',
+    'image/jpeg': '.jpg',
+    'image/jpg': '.jpg',
+    'image/gif': '.gif',
+    'image/bmp': '.bmp',
+    'image/tiff': '.tiff',
+    'image/svg+xml': '.svg',
+    'image/webp': '.webp',
+}
+
+
+def convert(pptx_path, output_path=None, external_assets=None):
+    _ensure_pptx()
+    from pptx import Presentation
+
+    file_size_mb = os.path.getsize(pptx_path) / (1024 * 1024)
+
+    # 針對極大型檔案的預先檢查警告
+    if file_size_mb > 150:
+        print(f"警告：檔案大小為 {file_size_mb:.0f}MB — 考慮使用 PDF 轉換 (convert-pdf.py) 以獲得更好的效能。")
+
     prs = Presentation(pptx_path)
     slide_width = prs.slide_width
     slide_height = prs.slide_height
     aspect_ratio = slide_width / slide_height if slide_height else 16/9
 
+    total_images = count_images(prs)
+
+    # 自動偵測外部資產模式
+    if external_assets is None:
+        external_assets = file_size_mb > 20 or total_images > 50
+        if external_assets:
+            print(f"自動啟用外部資產模式（檔案：{file_size_mb:.1f}MB，圖片：{total_images}）")
+
+    output = output_path or str(Path(pptx_path).with_suffix('.html'))
+    output_dir = Path(output).parent
+
+    if external_assets:
+        assets_dir = output_dir / "assets"
+        assets_dir.mkdir(parents=True, exist_ok=True)
+
+    img_counter = 0
     slides_html = []
 
     for i, slide in enumerate(prs.slides, 1):
@@ -165,11 +210,20 @@ def convert(pptx_path, output_path=None):
 
             # 圖片
             if shape.shape_type == 13 or hasattr(shape, "image"):
-                data_uri = extract_image(shape)
-                if data_uri:
+                blob, content_type = extract_image_data(shape)
+                if blob:
+                    img_counter += 1
+                    if external_assets:
+                        ext = CONTENT_TYPE_TO_EXT.get(content_type, '.png')
+                        img_name = f"img-{img_counter:03d}{ext}"
+                        (assets_dir / img_name).write_bytes(blob)
+                        src = f"assets/{img_name}"
+                    else:
+                        b64 = base64.b64encode(blob).decode('utf-8')
+                        src = f"data:{content_type};base64,{b64}"
                     elements.append(
                         f'<div style="{pos_style};display:flex;align-items:center;justify-content:center">'
-                        f'<img src="{data_uri}" style="max-width:100%;max-height:100%;object-fit:contain" alt="">'
+                        f'<img src="{src}" style="max-width:100%;max-height:100%;object-fit:contain" alt="">'
                         f'</div>'
                     )
                     continue
@@ -205,7 +259,7 @@ def convert(pptx_path, output_path=None):
                     )
                 continue
 
-            # 具備填滿效果的裝飾性圖形（彩色矩形、條形等）
+            # 具填滿色的裝飾形狀
             fill = get_shape_fill(shape)
             if fill:
                 elements.append(
@@ -217,8 +271,7 @@ def convert(pptx_path, output_path=None):
             f'<section class="slide" style="{bg_style}">\n<div class="slide-inner">\n{slide_content}\n</div>\n</section>'
         )
 
-    title = "Presentation"
-    # 嘗試從第一張投影片獲取標題
+    title = "簡報"
     if prs.slides:
         for shape in prs.slides[0].shapes:
             if hasattr(shape, "text") and shape.text.strip() and len(shape.text.strip()) < 150:
@@ -293,14 +346,31 @@ scaleSlides();
 </script>
 </body></html>'''
 
-    output = output_path or str(Path(pptx_path).with_suffix('.html'))
     Path(output).write_text(html, encoding='utf-8')
+    output_size = os.path.getsize(output)
+
+    # 摘要
     print(f"已轉換至：{output}")
-    print(f"投影片張數：{len(slides_html)}")
+    print(f"投影片：{len(slides_html)}")
+    print(f"圖片：{img_counter}")
+    print(f"輸出大小：{output_size / (1024*1024):.1f}MB")
+    print(f"外部資產：{'是' if external_assets else '否'}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("用法：convert-pptx.py <file.pptx> [output.html]")
-        sys.exit(1)
-    convert(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
+    parser = argparse.ArgumentParser(description="將 PPTX 轉換為 HTML 簡報")
+    parser.add_argument("input", help=".pptx 檔案的路徑")
+    parser.add_argument("output", nargs="?", help="輸出 HTML 路徑（預設值：同名並使用 .html）")
+    parser.add_argument("--external-assets", action="store_true", default=None,
+                        help="將圖片另存為 assets/ 目錄中的獨立檔案（針對大型檔案自動偵測）")
+    parser.add_argument("--no-external-assets", action="store_true",
+                        help="即使是大型檔案也強制使用內嵌 base64")
+    args = parser.parse_args()
+
+    ext_assets = None  # 自動偵測
+    if args.external_assets:
+        ext_assets = True
+    elif args.no_external_assets:
+        ext_assets = False
+
+    convert(args.input, args.output, external_assets=ext_assets)

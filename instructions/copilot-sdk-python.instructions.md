@@ -1,17 +1,17 @@
 ---
 applyTo: "**.py, pyproject.toml, setup.py"
-description: '本檔案提供使用 GitHub Copilot SDK 建構 Python 應用程式的指引。'
+description: '本檔案提供使用 GitHub Copilot SDK 建立 Python 應用程式的指引。'
 name: 'GitHub Copilot SDK Python 指引'
 ---
 
 ## 核心原則
 
-- SDK 處於技術預覽階段，可能會發生重大變更
+- SDK 正處於技術預覽階段，可能會發生重大變更
 - 需要 Python 3.9 或更高版本
-- 需要安裝 GitHub Copilot CLI 並加入 PATH
-- 全程使用 async/await 模式 (asyncio)
-- 支援非同步上下文管理器 (async context managers) 和手動生命週期管理
-- 提供型別提示 (Type hints) 以獲得更好的 IDE 支援
+- 需要已安裝 GitHub Copilot CLI 並將其加入 PATH
+- 全程使用非同步/等待模式 (asyncio)
+- 支援非同步內容管理員和手動生命週期管理
+- 提供型別提示以獲得更好的 IDE 支援
 
 ## 安裝
 
@@ -25,35 +25,35 @@ poetry add github-copilot-sdk
 uv add github-copilot-sdk
 ```
 
-## 客戶端初始化 (Client Initialization)
+## 用戶端初始化
 
-### 基本客戶端設定
+### 基本用戶端設定
 
 ```python
-from copilot import CopilotClient
+from copilot import CopilotClient, PermissionHandler
 import asyncio
 
 async def main():
     async with CopilotClient() as client:
-        # 使用客戶端...
+        # 使用用戶端...
         pass
 
 asyncio.run(main())
 ```
 
-### 客戶端設定選項 (Client Configuration Options)
+### 用戶端設定選項
 
-建立 CopilotClient 時，請使用包含以下鍵 (key) 的字典 (dict)：
+建立 CopilotClient 時，請使用具有以下鍵值的 dict：
 
-- `cli_path` - CLI 執行檔路徑 (預設值：從 PATH 或 COPILOT_CLI_PATH 環境變數中獲取 "copilot")
-- `cli_url` - 現有 CLI 伺服器的 URL (例如 "localhost:8080")。提供此選項時，客戶端不會啟動新處理程序 (process)
+- `cli_path` - CLI 執行檔路徑 (預設值：PATH 或 COPILOT_CLI_PATH 環境變數中的 "copilot")
+- `cli_url` - 現有 CLI 伺服器的 URL (例如 "localhost:8080")。提供此選項時，用戶端不會衍生程序
 - `port` - 伺服器連接埠 (預設值：0 表示隨機)
 - `use_stdio` - 使用 stdio 傳輸而非 TCP (預設值：True)
-- `log_level` - 記錄層級 (預設值："info")
+- `log_level` - 日誌層級 (預設值："info")
 - `auto_start` - 自動啟動伺服器 (預設值：True)
 - `auto_restart` - 當機時自動重新啟動 (預設值：True)
-- `cwd` - CLI 處理程序的工作目錄 (預設值：os.getcwd())
-- `env` - CLI 處理程序的環境變數 (dict)
+- `cwd` - CLI 程序的目前工作目錄 (預設值：os.getcwd())
+- `env` - CLI 程序的環境變數 (dict)
 
 ### 手動伺服器控制
 
@@ -66,7 +66,7 @@ import asyncio
 async def main():
     client = CopilotClient({"auto_start": False})
     await client.start()
-    # Use client...
+    # 使用用戶端...
     await client.stop()
 
 asyncio.run(main())
@@ -74,14 +74,15 @@ asyncio.run(main())
 
 當 `stop()` 耗時過長時，請使用 `force_stop()`。
 
-## 對話階段管理 (Session Management)
+## 會話管理
 
-### 建立對話階段 (Creating Sessions)
+### 建立會話
 
-為 SessionConfig 使用字典 (dict)：
+使用 dict 作為 SessionConfig：
 
 ```python
 session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
     "model": "gpt-5",
     "streaming": True,
     "tools": [...],
@@ -92,45 +93,46 @@ session = await client.create_session({
 })
 ```
 
-### 對話階段設定選項 (Session Config Options)
+### 會話設定選項
 
-- `session_id` - 自訂對話階段 ID (str)
-- `model` - 模型名稱 ("gpt-5", "claude-sonnet-4.5" 等)
-- `tools` - 公開給 CLI 的自訂工具 (list[Tool])
+- `session_id` - 自訂會話 ID (str)
+- `model` - 模型名稱 ("gpt-5"、"claude-sonnet-4.5" 等)
+- `tools` - 向 CLI 公開的自訂工具 (list[Tool])
 - `system_message` - 系統訊息自訂 (dict)
 - `available_tools` - 工具名稱白名單 (list[str])
 - `excluded_tools` - 工具名稱黑名單 (list[str])
 - `provider` - 自訂 API 提供者設定 (BYOK) (ProviderConfig)
 - `streaming` - 啟用串流回應區塊 (bool)
 - `mcp_servers` - MCP 伺服器設定 (list)
-- `custom_agents` - 自訂代理人 (custom agents) 設定 (list)
+- `custom_agents` - 自訂代理人設定 (list)
 - `config_dir` - 設定目錄覆蓋 (str)
 - `skill_directories` - 技能目錄 (list[str])
 - `disabled_skills` - 已停用的技能 (list[str])
-- `on_permission_request` - 權限請求處理常式 (callable)
+- `on_permission_request` - 權限請求處理器 (callable)
 
-### 恢復對話階段 (Resuming Sessions)
+### 恢復會話
 
 ```python
 session = await client.resume_session("session-id", {
+    "on_permission_request": PermissionHandler.approve_all,
     "tools": [my_new_tool]
 })
 ```
 
-### 對話階段操作 (Session Operations)
+### 會話操作
 
-- `session.session_id` - 獲取對話階段識別碼 (str)
+- `session.session_id` - 取得會話識別碼 (str)
 - `await session.send({"prompt": "...", "attachments": [...]})` - 傳送訊息，回傳 str (訊息 ID)
 - `await session.send_and_wait({"prompt": "..."}, timeout=60.0)` - 傳送並等待閒置，回傳 SessionEvent | None
-- `await session.abort()` - 中止目前處理
-- `await session.get_messages()` - 獲取所有事件/訊息，回傳 list[SessionEvent]
-- `await session.destroy()` - 清理對話階段
+- `await session.abort()` - 中止目前的處理
+- `await session.get_messages()` - 取得所有事件/訊息，回傳 list[SessionEvent]
+- `await session.destroy()` - 清理會話
 
-## 事件處理 (Event Handling)
+## 事件處理
 
-### 事件訂閱模式 (Event Subscription Pattern)
+### 事件訂閱模式
 
-請務必使用 asyncio 事件或 futures 來等待對話階段事件：
+請務必使用 asyncio 事件或 future 來等待會話事件：
 
 ```python
 import asyncio
@@ -148,7 +150,7 @@ await session.send({"prompt": "..."})
 await done.wait()
 ```
 
-### 取消訂閱事件 (Unsubscribing from Events)
+### 取消訂閱事件
 
 `on()` 方法會回傳一個用於取消訂閱的函式：
 
@@ -158,9 +160,9 @@ unsubscribe = session.on(lambda event: print(event.type))
 unsubscribe()
 ```
 
-### 事件型別 (Event Types)
+### 事件類型
 
-使用屬性存取來進行事件型別檢查：
+使用屬性存取來進行事件類型檢查：
 
 ```python
 def handler(event):
@@ -170,24 +172,24 @@ def handler(event):
     elif event.type == "assistant.message":
         print(event.data.content)
     elif event.type == "tool.executionStart":
-        # 工具執行開始
+        # 工具執行已開始
         pass
     elif event.type == "tool.executionComplete":
-        # 工具執行完成
+        # 工具執行已完成
         pass
     elif event.type == "session.start":
-        # 對話階段開始
+        # 會話已開始
         pass
     elif event.type == "session.idle":
-        # 對話階段處於閒置狀態 (處理完成)
+        # 會話閒置中 (處理完成)
         pass
     elif event.type == "session.error":
-        print(f"錯誤：{event.data.message}")
+        print(f"Error: {event.data.message}")
 
 session.on(handler)
 ```
 
-## 串流回應 (Streaming Responses)
+## 串流回應
 
 ### 啟用串流
 
@@ -195,6 +197,7 @@ session.on(handler)
 
 ```python
 session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
     "model": "gpt-5",
     "streaming": True
 })
@@ -202,7 +205,7 @@ session = await client.create_session({
 
 ### 處理串流事件
 
-同時處理增量 (delta) 事件和最終事件：
+處理 delta 事件 (增量) 和最終事件：
 
 ```python
 import asyncio
@@ -214,27 +217,27 @@ def handler(event):
         # 增量文字區塊
         print(event.data.delta_content, end="", flush=True)
     elif event.type == "assistant.reasoning.delta":
-        # 增量推論區塊 (取決於模型)
+        # 增量推理區塊 (視模型而定)
         print(event.data.delta_content, end="", flush=True)
     elif event.type == "assistant.message":
         # 最終完整訊息
-        print("\n--- 最終結果 ---")
+        print("\n--- Final ---")
         print(event.data.content)
     elif event.type == "assistant.reasoning":
-        # 最終推論內容
-        print("--- 推論過程 ---")
+        # 最終推理內容
+        print("--- Reasoning ---")
         print(event.data.content)
     elif event.type == "session.idle":
         done.set()
 
 session.on(handler)
-await session.send({"prompt": "講個故事給我聽"})
+await session.send({"prompt": "Tell me a story"})
 await done.wait()
 ```
 
-注意：無論串流設定為何，一律會傳送最終事件 (`assistant.message`, `assistant.reasoning`)。
+注意：無論串流設定如何，都會傳送最終事件 (`assistant.message`、`assistant.reasoning`)。
 
-## 自訂工具 (Custom Tools)
+## 自訂工具
 
 ### 使用 define_tool 定義工具
 
@@ -244,19 +247,20 @@ await done.wait()
 from copilot import define_tool
 
 async def fetch_issue(issue_id: str):
-    # 從追蹤器獲取問題 (issue) 詳情
+    # 從追蹤器擷取問題
     return {"id": issue_id, "status": "open"}
 
 session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
     "model": "gpt-5",
     "tools": [
         define_tool(
             name="lookup_issue",
-            description="從追蹤器獲取問題 (issue) 詳情",
+            description="Fetch issue details from tracker",
             parameters={
                 "type": "object",
                 "properties": {
-                    "id": {"type": "string", "description": "問題 (Issue) ID"}
+                    "id": {"type": "string", "description": "Issue ID"}
                 },
                 "required": ["id"]
             },
@@ -274,17 +278,18 @@ SDK 與 Pydantic 模型配合良好：
 from pydantic import BaseModel, Field
 
 class WeatherArgs(BaseModel):
-    location: str = Field(description="城市名稱")
-    units: str = Field(default="fahrenheit", description="溫度單位")
+    location: str = Field(description="City name")
+    units: str = Field(default="fahrenheit", description="Temperature units")
 
 async def get_weather(args: WeatherArgs, inv):
     return {"temperature": 72, "units": args.units}
 
 session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
     "tools": [
         define_tool(
             name="get_weather",
-            description="獲取特定地點的天氣",
+            description="Get weather for a location",
             parameters=WeatherArgs.model_json_schema(),
             handler=lambda args, inv: get_weather(WeatherArgs(**args), inv)
         )
@@ -292,92 +297,94 @@ session = await client.create_session({
 })
 ```
 
-### 工具回傳型別 (Tool Return Types)
+### 工具回傳類型
 
-- 回傳任何可 JSON 序列化的值 (會自動包裝)
-- 或回傳 ToolResult 字典 (dict) 以進行完整控制：
+- 回傳任何可 JSON 序列化的值 (自動封裝)
+- 或回傳 ToolResult dict 以進行完整控制：
 
 ```python
 {
     "text_result_for_llm": str,  # 顯示給 LLM 的結果
     "result_type": "success" | "failure",
-    "error": str,  # 選填：內部錯誤 (不顯示給 LLM)
-    "tool_telemetry": dict  # 選填：遙測資料 (Telemetry data)
+    "error": str,  # 選用：內部錯誤 (不顯示給 LLM)
+    "tool_telemetry": dict  # 選用：遙測資料
 }
 ```
 
-### 工具處理常式簽章 (Tool Handler Signature)
+### 工具處理器簽署
 
-工具處理常式接收兩個引數：
+工具處理器接收兩個引數：
 
-- `args` (dict) - 由 LLM 傳遞的工具引數
+- `args` (dict) - LLM 傳遞的工具引數
 - `invocation` (ToolInvocation) - 關於呼叫的 Metadata
-  - `invocation.session_id` - 對話階段 ID
+  - `invocation.session_id` - 會話 ID
   - `invocation.tool_call_id` - 工具呼叫 ID
   - `invocation.tool_name` - 工具名稱
   - `invocation.arguments` - 與 args 參數相同
 
-### 工具執行流程 (Tool Execution Flow)
+### 工具執行流程
 
-當 Copilot 呼叫工具時，客戶端會自動：
+當 Copilot 呼叫工具時，用戶端會自動：
 
-1. 執行您的處理常式函式
+1. 執行您的處理器函式
 2. 序列化回傳值
-3. 回應給 CLI
+3. 回應 CLI
 
-## 系統訊息自訂 (System Message Customization)
+## 系統訊息自訂
 
-### 附加模式 (Append Mode) (預設值 - 保留防護欄)
+### 附加模式 (預設 - 保留安全護欄)
 
 ```python
 session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
     "model": "gpt-5",
     "system_message": {
         "mode": "append",
         "content": """
 <workflow_rules>
-- 務必檢查安全漏洞
-- 在適用時提供效能改進建議
+- Always check for security vulnerabilities
+- Suggest performance improvements when applicable
 </workflow_rules>
 """
     }
 })
 ```
 
-### 取代模式 (Replace Mode) (完整控制 - 移除防護欄)
+### 取代模式 (完整控制 - 移除安全護欄)
 
 ```python
 session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
     "model": "gpt-5",
     "system_message": {
         "mode": "replace",
-        "content": "你是一個很有幫助的助手。"
+        "content": "You are a helpful assistant."
     }
 })
 ```
 
-## 檔案附件 (File Attachments)
+## 檔案附件
 
-在訊息中附加檔案：
+將檔案附加到訊息：
 
 ```python
 await session.send({
-    "prompt": "分析此檔案",
+    "prompt": "Analyze this file",
     "attachments": [
         {
             "type": "file",
             "path": "/path/to/file.py",
-            "display_name": "我的檔案"
+            "display_name": "My File"
         }
     ]
 })
 ```
 
-## 訊息傳遞模式 (Message Delivery Modes)
+## 訊息傳遞模式
 
 在訊息選項中使用 `mode` 鍵：
 
-- `"enqueue"` - 將訊息排入佇列進行處理
+- `"enqueue"` - 將訊息放入佇列以供處理
 - `"immediate"` - 立即處理訊息
 
 ```python
@@ -387,37 +394,44 @@ await session.send({
 })
 ```
 
-## 多個對話階段 (Multiple Sessions)
+## 多個會話
 
-對話階段是獨立的，可以同時執行：
+會話彼此獨立，且可以並行執行：
 
 ```python
-session1 = await client.create_session({"model": "gpt-5"})
-session2 = await client.create_session({"model": "claude-sonnet-4.5"})
+session1 = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
+    "model": "gpt-5",
+})
+session2 = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
+    "model": "claude-sonnet-4.5",
+})
 
 await asyncio.gather(
-    session1.send({"prompt": "來自對話階段 1 的問候"}),
-    session2.send({"prompt": "來自對話階段 2 的問候"})
+    session1.send({"prompt": "Hello from session 1"}),
+    session2.send({"prompt": "Hello from session 2"})
 )
 ```
 
-## 自備金鑰 (Bring Your Own Key, BYOK)
+## 自備金鑰 (BYOK)
 
 透過 `provider` 使用自訂 API 提供者：
 
 ```python
 session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
     "provider": {
         "type": "openai",
         "base_url": "https://api.openai.com/v1",
-        "api_key": "您的-api-key"
+        "api_key": "your-api-key"
     }
 })
 ```
 
-## 對話階段生命週期管理 (Session Lifecycle Management)
+## 會話生命週期管理
 
-### 列出對話階段 (Listing Sessions)
+### 列出會話
 
 ```python
 sessions = await client.list_sessions()
@@ -425,73 +439,73 @@ for metadata in sessions:
     print(f"{metadata.session_id}: {metadata.summary}")
 ```
 
-### 刪除對話階段 (Deleting Sessions)
+### 刪除會話
 
 ```python
 await client.delete_session(session_id)
 ```
 
-### 獲取最後一個對話階段 ID
+### 取得最後一個會話 ID
 
 ```python
 last_id = await client.get_last_session_id()
 if last_id:
-    session = await client.resume_session(last_id)
+    session = await client.resume_session(last_id, on_permission_request=PermissionHandler.approve_all)
 ```
 
-### 檢查連線狀態 (Checking Connection State)
+### 檢查連線狀態
 
 ```python
 state = client.get_state()
-# 回傳值："disconnected" | "connecting" | "connected" | "error"
+# 回傳："disconnected" | "connecting" | "connected" | "error"
 ```
 
-## 錯誤處理 (Error Handling)
+## 錯誤處理
 
-### 標準例外處理 (Standard Exception Handling)
+### 標準例外處理
 
 ```python
 try:
-    session = await client.create_session()
-    await session.send({"prompt": "您好"})
+    session = await client.create_session(on_permission_request=PermissionHandler.approve_all)
+    await session.send({"prompt": "Hello"})
 except Exception as e:
-    print(f"錯誤：{e}")
+    print(f"Error: {e}")
 ```
 
-### 對話階段錯誤事件 (Session Error Events)
+### 會話錯誤事件
 
-監控 `session.error` 事件型別以處理執行階段錯誤：
+監控 `session.error` 事件類型以處理執行階段錯誤：
 
 ```python
 def handler(event):
     if event.type == "session.error":
-        print(f"對話階段錯誤：{event.data.message}")
+        print(f"Session Error: {event.data.message}")
 
 session.on(handler)
 ```
 
-## 連線測試 (Connectivity Testing)
+## 連線測試
 
 使用 ping 驗證伺服器連線性：
 
 ```python
-response = await client.ping("連線健康檢查")
-print(f"伺服器回應時間：{response['timestamp']}")
+response = await client.ping("health check")
+print(f"Server responded at {response['timestamp']}")
 ```
 
-## 資源清理 (Resource Cleanup)
+## 資源清理
 
-### 使用上下文管理器自動清理
+### 使用內容管理員自動清理
 
-請務必使用非同步上下文管理器來自動清理資源：
+請務必使用非同步內容管理員進行自動清理：
 
 ```python
 async with CopilotClient() as client:
-    async with await client.create_session() as session:
-        # 使用對話階段...
-        await session.send({"prompt": "您好"})
-    # 對話階段將自動銷毀
-# 客戶端將自動停止
+    async with await client.create_session(on_permission_request=PermissionHandler.approve_all) as session:
+        # 使用會話...
+        await session.send({"prompt": "Hello"})
+    # 會話會自動銷毀
+# 用戶端會自動停止
 ```
 
 ### 使用 Try-Finally 手動清理
@@ -500,9 +514,9 @@ async with CopilotClient() as client:
 client = CopilotClient()
 try:
     await client.start()
-    session = await client.create_session()
+    session = await client.create_session(on_permission_request=PermissionHandler.approve_all)
     try:
-        # 使用對話階段...
+        # 使用會話...
         pass
     finally:
         await session.destroy()
@@ -510,31 +524,34 @@ finally:
     await client.stop()
 ```
 
-## 最佳做法 (Best Practices)
+## 最佳實踐
 
-1. **務必使用非同步上下文管理器** (`async with`) 以自動清理資源
-2. **使用 asyncio.Event 或 asyncio.Future** 來等待對話階段閒置 (session.idle) 事件
-3. **處理對話階段錯誤 (session.error)** 事件以建立穩健的錯誤處理機制
-4. **使用 if/elif 鏈** 來檢查事件型別
-5. **啟用串流** 以在互動情境中提供更好的使用者體驗 (UX)
-6. **使用 define_tool** 進行工具定義
-7. **使用 Pydantic 模型** 進行型別安全的參數驗證
-8. **在不再需要時處置事件訂閱**
-9. **使用模式為 "append" 的系統訊息 (system_message)** 以保留安全防護欄
-10. **啟用串流時，同時處理增量 (delta) 和最終事件**
-11. **使用型別提示 (Type hints)** 以獲得更好的 IDE 支援並提升程式碼清晰度
+1. **務必使用非同步內容管理員** (`async with`) 進行自動清理
+2. **使用 asyncio.Event 或 asyncio.Future** 來等待 session.idle 事件
+3. **處理 session.error** 事件以獲得強健的錯誤處理
+4. **使用 if/elif 鏈** 進行事件類型檢查
+5. **啟用串流** 以在互動式案例中獲得更好的使用者體驗
+6. **使用 define_tool** 定義工具
+7. **使用 Pydantic 模型** 進行類型安全的參數驗證
+8. **處置事件訂閱**，當不再需要時
+9. **搭配使用 system_message 與 mode: "append"** 以保留安全護欄
+10. **處理 delta 和最終事件**，當啟用串流時
+11. **使用型別提示** 以獲得更好的 IDE 支援和程式碼清晰度
 
-## 常見模式 (Common Patterns)
+## 常見模式
 
-### 簡單的查詢-回應 (Simple Query-Response)
+### 簡單查詢-回應
 
 ```python
-from copilot import CopilotClient
+from copilot import CopilotClient, PermissionHandler
 import asyncio
 
 async def main():
     async with CopilotClient() as client:
-        async with await client.create_session({"model": "gpt-5"}) as session:
+        async with await client.create_session({
+            "on_permission_request": PermissionHandler.approve_all,
+            "model": "gpt-5",
+        }) as session:
             done = asyncio.Event()
 
             def handler(event):
@@ -544,13 +561,13 @@ async def main():
                     done.set()
 
             session.on(handler)
-            await session.send({"prompt": "2+2 等於多少？"})
+            await session.send({"prompt": "What is 2+2?"})
             await done.wait()
 
 asyncio.run(main())
 ```
 
-### 多輪對話 (Multi-Turn Conversation)
+### 多輪對話
 
 ```python
 async def send_and_wait(session, prompt: str):
@@ -574,18 +591,18 @@ async def send_and_wait(session, prompt: str):
 
     return result[0] if result else None
 
-async with await client.create_session() as session:
-    await send_and_wait(session, "法國的首都是哪裡？")
-    await send_and_wait(session, "它的人口是多少？")
+async with await client.create_session(on_permission_request=PermissionHandler.approve_all) as session:
+    await send_and_wait(session, "What is the capital of France?")
+    await send_and_wait(session, "What is its population?")
 ```
 
-### SendAndWait 協助工具
+### SendAndWait 輔助函式
 
 ```python
-# 使用內建的 send_and_wait 進行更簡單的同步互動
-async with await client.create_session() as session:
+# 使用內建的 send_and_wait 進行較簡單的同步互動
+async with await client.create_session(on_permission_request=PermissionHandler.approve_all) as session:
     response = await session.send_and_wait(
-        {"prompt": "2+2 等於多少？"},
+        {"prompt": "What is 2+2?"},
         timeout=60.0
     )
 
@@ -593,7 +610,7 @@ async with await client.create_session() as session:
         print(response.data.content)
 ```
 
-### 具備 Dataclass 回傳型別的工具
+### 具有 Dataclass 回傳類型的工具
 
 ```python
 from dataclasses import dataclass, asdict
@@ -616,14 +633,15 @@ async def get_user(args, inv) -> dict:
     return asdict(user)
 
 session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
     "tools": [
         define_tool(
             name="get_user",
-            description="獲取使用者資訊",
+            description="Retrieve user information",
             parameters={
                 "type": "object",
                 "properties": {
-                    "user_id": {"type": "string", "description": "使用者 ID"}
+                    "user_id": {"type": "string", "description": "User ID"}
                 },
                 "required": ["user_id"]
             },
@@ -633,7 +651,7 @@ session = await client.create_session({
 })
 ```
 
-### 具備進度顯示的串流 (Streaming with Progress)
+### 具備進度的串流
 
 ```python
 import asyncio
@@ -646,35 +664,35 @@ def handler(event):
         current_message.append(event.data.delta_content)
         print(event.data.delta_content, end="", flush=True)
     elif event.type == "assistant.message":
-        print(f"\n\n=== 完成 ===")
-        print(f"總長度：{len(event.data.content)} 字元")
+        print(f"\n\n=== Complete ===")
+        print(f"Total length: {len(event.data.content)} chars")
     elif event.type == "session.idle":
         done.set()
 
 unsubscribe = session.on(handler)
-await session.send({"prompt": "寫一個長篇故事"})
+await session.send({"prompt": "Write a long story"})
 await done.wait()
 unsubscribe()
 ```
 
-### 錯誤復原 (Error Recovery)
+### 錯誤復原
 
 ```python
 def handler(event):
     if event.type == "session.error":
-        print(f"對話階段錯誤：{event.data.message}")
-        # 可選擇重試或處理錯誤
+        print(f"Session error: {event.data.message}")
+        # 選用：重試或處理錯誤
 
 session.on(handler)
 
 try:
-    await session.send({"prompt": "危險的操作"})
+    await session.send({"prompt": "risky operation"})
 except Exception as e:
     # 處理傳送錯誤
-    print(f"傳送失敗：{e}")
+    print(f"Failed to send: {e}")
 ```
 
-### 使用 TypedDict 提升型別安全
+### 使用 TypedDict 確保類型安全
 
 ```python
 from typing import TypedDict, List
@@ -689,27 +707,28 @@ class SessionConfig(TypedDict, total=False):
     streaming: bool
     tools: List
 
-# 搭配型別提示使用
+# 使用型別提示
 options: MessageOptions = {
-    "prompt": "您好",
+    "prompt": "Hello",
     "mode": "enqueue"
 }
 await session.send(options)
 
 config: SessionConfig = {
+    "on_permission_request": PermissionHandler.approve_all,
     "model": "gpt-5",
     "streaming": True
 }
 session = await client.create_session(config)
 ```
 
-### 用於串流的非同步產生器 (Async Generator for Streaming)
+### 用於串流的非同步產生器
 
 ```python
 from typing import AsyncGenerator
 
 async def stream_response(session, prompt: str) -> AsyncGenerator[str, None]:
-    """將串流回應區塊作為非同步產生器回傳。"""
+    """將回應區塊作為非同步產生器進行串流。"""
     queue = asyncio.Queue()
     done = asyncio.Event()
 
@@ -729,18 +748,18 @@ async def stream_response(session, prompt: str) -> AsyncGenerator[str, None]:
         except asyncio.TimeoutError:
             continue
 
-    # 排除剩餘項目
+    # 耗盡剩餘項目
     while not queue.empty():
         yield queue.get_nowait()
 
     unsubscribe()
 
 # 使用方式
-async for chunk in stream_response(session, "講個故事給我聽"):
+async for chunk in stream_response(session, "Tell me a story"):
     print(chunk, end="", flush=True)
 ```
 
-### 工具的裝飾器模式 (Decorator Pattern for Tools)
+### 工具的裝飾器模式
 
 ```python
 from typing import Callable, Any
@@ -763,11 +782,11 @@ def copilot_tool(
 
 @copilot_tool(
     name="calculate",
-    description="進行計算",
+    description="Perform a calculation",
     parameters={
         "type": "object",
         "properties": {
-            "expression": {"type": "string", "description": "數學算式"}
+            "expression": {"type": "string", "description": "Math expression"}
         },
         "required": ["expression"]
     }
@@ -775,12 +794,14 @@ def copilot_tool(
 def calculate(expression: str) -> float:
     return eval(expression)
 
-session = await client.create_session({"tools": [calculate]})
+session = await client.create_session({
+    "on_permission_request": PermissionHandler.approve_all,
+    "tools": [calculate]})
 ```
 
-## Python 專屬特性 (Python-Specific Features)
+## Python 特定功能
 
-### 非同步上下文管理器協定 (Async Context Manager Protocol)
+### 非同步內容管理員協定
 
 SDK 實作了 `__aenter__` 和 `__aexit__`：
 
@@ -805,7 +826,7 @@ class CopilotSession:
 
 ### Dataclass 支援
 
-事件資料可透過屬性直接存取：
+事件資料可作為屬性使用：
 
 ```python
 def handler(event):

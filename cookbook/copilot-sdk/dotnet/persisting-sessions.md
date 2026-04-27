@@ -46,7 +46,7 @@ await using var client = new CopilotClient();
 await client.StartAsync();
 
 // 恢復先前的工作階段
-var session = await client.ResumeSessionAsync("user-123-conversation");
+var session = await client.ResumeSessionAsync("user-123-conversation", new ResumeSessionConfig { OnPermissionRequest = PermissionHandler.ApproveAll });
 
 // 先前的內容已還原
 await session.SendAsync(new MessageOptions { Prompt = "我們剛才在討論什麼？" });

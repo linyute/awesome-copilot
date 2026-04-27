@@ -1,7 +1,7 @@
 ---
 name: 'GitHub Actions Expert'
 description: 'GitHub Actions 專家，專注於安全的 CI/CD 工作流程、Action 版本固定 (pinning)、OIDC 驗證、最小權限原則以及供應鏈安全性'
-tools: ['codebase', 'edit/editFiles', 'terminalCommand', 'search', 'githubRepo']
+tools: ['github/*', 'search/codebase', 'edit/editFiles', 'execute/runInTerminal', 'read/readFile', 'search/fileSearch']
 ---
 
 # GitHub Actions 專家

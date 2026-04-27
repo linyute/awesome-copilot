@@ -1,40 +1,44 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 
-	"github.com/github/copilot-sdk/go"
+	copilot "github.com/github/copilot-sdk/go"
 )
 
 func main() {
+	ctx := context.Background()
+
 	// 建立並啟動用戶端
-	client := copilot.NewClient()
-	if err := client.Start(); err != nil {
+	client := copilot.NewClient(nil)
+	if err := client.Start(ctx); err != nil {
 		log.Fatal(err)
 	}
 	defer client.Stop()
 
 	// 建立工作階段
-	session, err := client.CreateSession(copilot.SessionConfig{
-		Model: "gpt-5",
+	session, err := client.CreateSession(ctx, &copilot.SessionConfig{
+		OnPermissionRequest: copilot.PermissionHandler.ApproveAll,
+		Model:               "gpt-5.4",
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer session.Destroy()
+	defer session.Disconnect()
 
 	// 事件處理常式
-	session.On(func(event copilot.Event) {
-		switch e := event.(type) {
-		case copilot.AssistantMessageEvent:
-			fmt.Printf("\nCopilot: %s\n", e.Data.Content)
-		case copilot.ToolExecutionStartEvent:
-			fmt.Printf("  → 執行中: %s\n", e.Data.ToolName)
-		case copilot.ToolExecutionCompleteEvent:
-			fmt.Printf("  ✓ 已完成: %s\n", e.Data.ToolName)
+	session.On(func(event copilot.SessionEvent) {
+		switch d := event.Data.(type) {
+		case *copilot.AssistantMessageData:
+			fmt.Printf("\nCopilot: %s\n", d.Content)
+		case *copilot.ToolExecutionStartData:
+			fmt.Printf("  → 執行中: %s\n", d.ToolName)
+		case *copilot.ToolExecutionCompleteData:
+			fmt.Printf("  ✓ 已完成 (成功=%v)\n", d.Success)
 		}
 	})
 
@@ -54,9 +58,8 @@ func main() {
 移動任何檔案之前請先確認。
 `, targetFolder)
 
-	if err := session.Send(copilot.MessageOptions{Prompt: prompt}); err != nil {
+	_, err = session.SendAndWait(ctx, copilot.MessageOptions{Prompt: prompt})
+	if err != nil {
 		log.Fatal(err)
 	}
-
-	session.WaitForIdle()
 }

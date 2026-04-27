@@ -1,420 +1,962 @@
 ---
-applyTo: '*'
-description: '最完整、實用且由工程師撰寫的效能最佳化指引，適用所有語言、框架與技術棧。涵蓋前端、後端與資料庫最佳實踐，並提供可執行的指南、情境式檢查清單、疑難排解與專家秘訣。'
+applyTo: '**'
+description: '基於 Core Web Vitals (LCP, INP, CLS) 的全面網頁效能標準，包含 50+ 反模式、檢測正規表示式、針對現代網頁框架的特定修正與現代 API 指引。'
 ---
 
-# 效能最佳化最佳實踐
+# 效能標準 (Performance Standards)
 
-## 前言
+網頁應用程式開發的全面效能規則。每個反模式 (anti-pattern) 皆包含嚴重性分類、檢測方法、受影響的 Core Web Vitals 指標以及修正程式碼範例。
 
-效能不只是流行語——它決定產品是受歡迎還是被拋棄。我親身見證過緩慢的應用程式如何讓使用者沮喪、雲端費用暴增，甚至失去客戶。本指南是我實際使用與審查過最有效的效能實踐彙整，涵蓋前端、後端、資料庫層級及進階主題。請將其作為參考、檢查清單與激發靈感的來源，協助你打造快速、高效且具延展性的軟體。
+**嚴重性等級：**
 
----
-
-## 一般原則
-
-- **先量測，後優化：** 優化前務必先分析與量測。用基準測試、效能分析器與監控工具找出真正瓶頸。猜測是效能的大敵。
-  - *專家秘訣：* 可用 Chrome DevTools、Lighthouse、New Relic、Datadog、Py-Spy 或語言內建分析器。
-- **優化常見情境：** 針對最常執行的程式路徑優化。除非必要，勿浪費時間在罕見邊界情境。
-- **避免過早優化：** 先寫清楚、易維護的程式碼，必要時再優化。過早優化會讓程式碼難以閱讀與維護。
-- **資源使用最小化：** 有效利用記憶體、CPU、網路與磁碟。時刻思考：「能否用更少資源完成？」
-- **偏好簡單：** 簡單的演算法與資料結構通常更快且易於優化。勿過度設計。
-- **註明效能假設：** 任何效能關鍵或非顯而易見的優化程式碼都要清楚註解。未來維護者（包括你自己）會感謝你。
-- **了解平台特性：** 熟悉語言、框架與執行環境的效能特性。Python 快的不一定在 JavaScript 也快，反之亦然。
-- **自動化效能測試：** 整合效能測試與基準測試到 CI/CD 流程。及早發現效能退化。
-- **設定效能預算：** 定義可接受的載入時間、記憶體用量、API 延遲等，並用自動化檢查強制執行。
+- **CRITICAL (關鍵)** — 直接使 Core Web Vital 劣化至「差」的閾值以下。合併前必須修正。
+- **IMPORTANT (重要)** — 顯著影響使用者體驗。在同一個開發週期內修正。
+- **SUGGESTION (建議)** — 優化機會。規劃於未來迭代中處理。
 
 ---
 
-## 前端效能
+## Core Web Vitals 快速參考
 
-### 渲染與 DOM
-- **減少 DOM 操作：** 盡量批次更新。頻繁 DOM 變更成本高。
-  - *反模式：* 在 for 迴圈中更新 DOM。改用 document fragment 一次 append。
-- **虛擬 DOM 框架：** 有效使用 React、Vue 等，避免不必要的重渲染。
-  - *React 範例：* 用 `React.memo`、`useMemo`、`useCallback` 避免重複渲染。
-- **列表鍵值：** 列表請用穩定鍵值協助虛擬 DOM 差異比對。除非列表靜態，勿用陣列索引。
-- **避免行內樣式：** 行內樣式會造成版面抖動。優先用 CSS 類別。
-- **CSS 動畫：** 優先用 CSS transition/animation，效能更佳且可 GPU 加速。
-- **延遲非關鍵渲染：** 用 `requestIdleCallback` 等方法，等瀏覽器閒置時再執行。
+### LCP (最大內容繪製)
 
-### 資源最佳化
-- **圖片壓縮：** 用 ImageOptim、Squoosh、TinyPNG 等工具。網頁優先用 WebP、AVIF 等新格式。
-- **SVG 圖示：** SVG 可縮放且通常比 PNG 小。
-- **壓縮與打包：** 用 Webpack、Rollup、esbuild 打包並壓縮 JS/CSS。啟用 tree-shaking 移除死程式碼。
-- **快取標頭：** 靜態資源設長效快取標頭。更新時用快取破壞（cache busting）。
-- **延遲載入：** 圖片用 `loading="lazy"`，JS 模組/元件用動態匯入。
-- **字型最佳化：** 僅載入所需字元集。字型子集化並用 `font-display: swap`。
+**良好：< 2.5s | 需要改善：2.5-4s | 差：> 4s**
 
-### 網路最佳化
-- **減少 HTTP 請求：** 合併檔案、用圖片 sprite、內嵌關鍵 CSS。
-- **HTTP/2 與 HTTP/3：** 啟用多路復用與低延遲。
-- **用戶端快取：** 用 Service Worker、IndexedDB、localStorage 提升離線與重複造訪效能。
-- **CDN：** 靜態資源用 CDN，靠近使用者。多 CDN 可冗餘。
-- **延遲/非同步腳本：** 非關鍵 JS 用 `defer` 或 `async`，避免阻塞渲染。
-- **預載與預取：** 用 `<link rel="preload">`、`<link rel="prefetch">` 預先載入關鍵資源。
+衡量最大可見內容元素完成渲染的時間。分為四個連續階段：
 
-### JavaScript 效能
-- **避免阻塞主執行緒：** 重運算用 Web Worker 分流。
-- **事件防抖/節流：** 滾動、縮放、輸入事件用 debounce/throttle 限制觸發頻率。
-- **記憶體洩漏：** 清理事件監聽、interval、DOM 參照。用瀏覽器開發工具檢查。
-- **高效資料結構：** 查詢用 Map/Set，數值資料用 TypedArray。
-- **避免全域變數：** 全域變數易造成記憶體洩漏與不可預期效能。
-- **避免深層物件複製：** 優先用淺複製，必要時才用 lodash 的 `cloneDeep`。
+| 階段 | 目標 | 衡量項目 |
+|-------|--------|-----------------|
+| TTFB | ~40% 的預算 | 伺服器回應時間 |
+| 資源載入延遲 | < 10% | TTFB 與 LCP 資源開始擷取之間的時間 |
+| 資源載入持續時間 | ~40% | LCP 資源的下載時間 |
+| 元素渲染延遲 | < 10% | 下載與繪製之間的時間 |
 
-### 無障礙與效能
-- **可及性元件：** ARIA 更新勿過度。語意化 HTML 兼顧可及性與效能。
-- **螢幕閱讀器效能：** 避免快速 DOM 更新，避免輔助技術負擔。
+### INP (互動至下一次繪製)
 
-### 框架專屬秘訣
-#### React
-- 用 `React.memo`、`useMemo`、`useCallback` 避免重複渲染。
-- 拆分大型元件並用程式碼分割（`React.lazy`、`Suspense`）。
-- 渲染時勿用匿名函式，每次渲染都會產生新參照。
-- 用 `ErrorBoundary` 捕捉並處理錯誤。
-- 用 React DevTools Profiler 分析。
+**良好：< 200ms | 需要改善：200-500ms | 差：> 500ms**
 
-#### Angular
-- 無需頻繁更新的元件用 OnPush 變更偵測。
-- 模板勿用複雜運算，邏輯移至元件類別。
-- `ngFor` 用 `trackBy` 提升列表渲染效能。
-- 路由懶載入模組與元件。
-- 用 Angular DevTools 分析。
+衡量所有使用者互動的延遲，並報告最差值。分為三個階段：
 
-#### Vue
-- 模板用 computed property 取代 method，利於快取。
-- `v-show` 與 `v-if` 適當選用（頻繁切換建議用 `v-show`）。
-- 元件與路由懶載入。
-- 用 Vue Devtools 分析。
+| 階段 | 優化 |
+|-------|-------------|
+| 輸入延遲 | 中斷長任務，讓出 (yield) 給瀏覽器 |
+| 處理時間 | 保持處理常式 < 50ms |
+| 呈現延遲 | 最小化 DOM 大小，避免強制佈局 |
 
-### 常見前端陷阱
-- 首頁載入大型 JS bundle。
-- 圖片未壓縮或用舊格式。
-- 事件監聽未清理，造成記憶體洩漏。
-- 簡單功能過度依賴第三方函式庫。
-- 忽略行動裝置效能（請用真機測試！）。
+> **診斷工具**：使用 Long Animation Frames (LoAF) API (Chrome 123+) 來偵錯 INP 問題。LoAF 提供比舊版 Long Tasks API 更好的歸因，包括指令碼來源與渲染時間。
 
-### 前端疑難排解
-- 用 Chrome DevTools 的 Performance 分析慢格。
-- 用 Lighthouse 稽核效能並獲得建議。
-- 用 WebPageTest 進行真實載入測試。
-- 監控 Core Web Vitals（LCP, FID, CLS）以使用者為中心。
+### CLS (累計版面配置位移)
+
+**良好：< 0.1 | 需要改善：0.1-0.25 | 差：> 0.25**
+
+版面配置位移來源：缺少維度的圖像、動態注入內容、Web 字型 FOUT、延遲載入的廣告。使用者互動後 500ms 內的位移可豁免。
 
 ---
 
-## 後端效能
+## 載入與 LCP 反模式 (L1-L10)
 
-### 演算法與資料結構最佳化
-- **選用正確資料結構：** 順序存取用陣列，快速查詢用 hash map，階層資料用樹等。
-- **高效演算法：** 適時用二分搜尋、快速排序、hash 演算法。
-- **避免 O(n^2) 或更差：** 分析巢狀迴圈與遞迴，重構以降低複雜度。
-- **批次處理：** 批次處理資料降低開銷（如批量資料庫寫入）。
-- **串流處理：** 大型資料集用串流 API，避免一次載入全部。
+### L1: 未提取關鍵 CSS 的渲染阻塞 CSS
 
-### 平行處理與非同步
-- **非同步 I/O：** 用 async/await、callback 或事件迴圈避免阻塞執行緒。
-- **執行緒/工作池：** 用池管理平行處理，避免資源耗盡。
-- **避免競爭條件：** 必要時用鎖、信號量或原子操作。
-- **批次操作：** 網路/資料庫呼叫批次處理，減少往返。
-- **背壓（Backpressure）：** 佇列與管線實作背壓，避免超載。
+- **嚴重性**：CRITICAL
+- **檢測**：`<head>` 中的 `<link.*rel="stylesheet"` 載入大型 CSS
+- **CWV**：LCP
 
-### 快取
-- **快取高成本運算：** 熱資料用記憶體快取（Redis、Memcached）。
-- **快取失效：** 用時間（TTL）、事件或手動失效。過期快取比沒快取更糟。
-- **分散式快取：** 多伺服器用分散式快取，注意一致性。
-- **快取暴衝保護：** 用鎖或請求合併防止羊群效應。
-- **勿全快取：** 有些資料太易變或敏感不宜快取。
-
-### API 與網路
-- **最小化傳輸量：** 用 JSON、壓縮回應（gzip、Brotli），避免多餘資料。
-- **分頁：** 大型結果集必須分頁。即時資料用游標。
-- **速率限制：** 保護 API 避免濫用與超載。
-- **連線池：** 資料庫與外部服務用連線池。
-- **協定選擇：** 高吞吐低延遲用 HTTP/2、gRPC、WebSocket。
-
-### 日誌與監控
-- **熱路徑減少日誌：** 關鍵程式勿過度記錄日誌。
-- **結構化日誌：** 用 JSON 或鍵值日誌，便於解析與分析。
-- **全面監控：** 延遲、吞吐、錯誤率、資源用量。用 Prometheus、Grafana、Datadog 等。
-- **警示：** 效能退化與資源耗盡設警示。
-
-### 語言/框架專屬秘訣
-#### Node.js
-- 用非同步 API，勿阻塞事件迴圈（如 production 勿用 `fs.readFileSync`）。
-- CPU 密集任務用 cluster 或 worker thread。
-- 限制同時開啟連線數，避免資源耗盡。
-- 大型檔案或網路資料用 stream 處理。
-- 用 `clinic.js`、`node --inspect` 或 Chrome DevTools 分析。
-
-#### Python
-- 用內建資料結構（`dict`、`set`、`deque`）提升速度。
-- 用 `cProfile`、`line_profiler`、`Py-Spy` 分析。
-- 平行處理用 `multiprocessing` 或 `asyncio`。
-- CPU 密集程式避免 GIL 瓶頸，可用 C 擴充或 subprocess。
-- 用 `lru_cache` 記憶化。
-
-#### Java
-- 用高效集合（`ArrayList`、`HashMap` 等）。
-- 用 VisualVM、JProfiler、YourKit 分析。
-- 平行處理用 thread pool（`Executors`）。
-- JVM 選項調整 heap 與 GC（`-Xmx`、`-Xms`、`-XX:+UseG1GC`）。
-- 非同步程式用 `CompletableFuture`。
-
-#### .NET
-- I/O 密集操作用 `async/await`。
-- 記憶體存取用 `Span<T>`、`Memory<T>`。
-- 用 dotTrace、Visual Studio Profiler、PerfView 分析。
-- 物件與連線適時池化。
-- 串流資料用 `IAsyncEnumerable<T>`。
-
-### 常見後端陷阱
-- Web 伺服器同步/阻塞 I/O。
-- 資料庫未用連線池。
-- 過度快取或快取敏感/易變資料。
-- 非同步程式碼未處理錯誤。
-- 未監控或警示效能退化。
-
-### 後端疑難排解
-- 用 flame graph 視覺化 CPU 使用。
-- 用分散式追蹤（OpenTelemetry、Jaeger、Zipkin）追蹤跨服務延遲。
-- 用 heap dump 與記憶體分析器找洩漏。
-- 記錄慢查詢與 API 呼叫供分析。
-
----
-
-## 資料庫效能
-
-### 查詢最佳化
-- **索引：** 常查詢、篩選或 join 欄位設索引。監控索引使用並移除未用索引。
-- **避免 SELECT *：** 只查詢所需欄位，減少 I/O 與記憶體。
-- **參數化查詢：** 防止 SQL injection 並提升計劃快取。
-- **查詢計劃：** 分析與優化查詢執行計劃。SQL 資料庫用 `EXPLAIN`。
-- **避免 N+1 查詢：** 用 join 或批次查詢，避免迴圈重複查詢。
-- **限制結果集：** 大型表用 `LIMIT`/`OFFSET` 或游標。
-
-### 結構設計
-- **正規化：** 降低冗餘，但讀取密集可適度反正規化。
-- **資料型別：** 用最有效型別並設適當約束。
-- **分割：** 大型表分割提升延展性與管理性。
-- **封存：** 定期封存或清除舊資料，保持表精簡與快速。
-- **外鍵：** 維護資料完整性，但高寫入場景需注意效能。
-
-### 交易
-- **交易短暫：** 交易越短越好，減少鎖競爭。
-- **隔離等級：** 用最低能滿足一致性的隔離等級。
-- **避免長時間交易：** 會阻塞其他操作並增加死鎖。
-
-### 快取與複寫
-- **讀取複本：** 讀取密集場景用複本延展。監控複寫延遲。
-- **查詢結果快取：** 熱查詢用 Redis 或 Memcached。
-- **寫入直通/延後：** 依一致性需求選擇策略。
-- **分片：** 多伺服器分片提升延展性。
-
-### NoSQL 資料庫
-- **依存取模式設計：** 資料模型依查詢需求設計。
-- **避免熱分片：** 寫入/讀取均勻分散。
-- **無界成長：** 注意無界陣列或文件。
-- **分片與複寫：** 提升延展性與可用性。
-- **一致性模型：** 了解最終一致與強一致，依需求選擇。
-
-### 常見資料庫陷阱
-- 缺少或未用索引。
-- SELECT * 用於 production 查詢。
-- 未監控慢查詢。
-- 忽略複寫延遲。
-- 未封存舊資料。
-
-### 資料庫疑難排解
-- 用慢查詢日誌找瓶頸。
-- 用 `EXPLAIN` 分析查詢計劃。
-- 監控快取命中率。
-- 用資料庫專屬監控工具（pg_stat_statements、MySQL Performance Schema）。
-
----
-
-## 效能程式碼審查清單
-
-- [ ] 是否有明顯演算法低效（O(n^2) 或更差）？
-- [ ] 資料結構是否適用？
-- [ ] 是否有不必要運算或重複工作？
-- [ ] 是否適當快取且正確失效？
-- [ ] 資料庫查詢是否最佳化、設索引且無 N+1 問題？
-- [ ] 大型資料是否分頁、串流或分塊？
-- [ ] 是否有記憶體洩漏或無界資源使用？
-- [ ] 網路請求是否最小化、批次處理並失敗重試？
-- [ ] 資源是否最佳化、壓縮且有效率提供？
-- [ ] 熱路徑是否有阻塞操作？
-- [ ] 熱路徑日誌是否最小化且結構化？
-- [ ] 效能關鍵程式碼是否有註解與測試？
-- [ ] 效能敏感程式碼是否有自動化測試或基準測試？
-- [ ] 是否有效能退化警示？
-- [ ] 是否有反模式（如 SELECT *、阻塞 I/O、全域變數）？
-
----
-
-## 進階主題
-
-### 效能分析與基準測試
-- **分析器：** 用語言專屬分析器（Chrome DevTools、Py-Spy、VisualVM、dotTrace 等）找瓶頸。
-- **微型基準測試：** 關鍵程式碼寫 microbenchmark。JavaScript 用 `benchmark.js`，Python 用 `pytest-benchmark`，Java 用 JMH。
-- **A/B 測試：** 以 A/B 或 canary 發佈量測優化實際影響。
-- **持續效能測試：** 整合效能測試到 CI/CD。用 k6、Gatling、Locust。
-
-### 記憶體管理
-- **資源釋放：** 檔案、socket、資料庫連線等資源要及時釋放。
-- **物件池化：** 頻繁建立/銷毀的物件（如資料庫連線、執行緒）可池化。
-- **heap 監控：** 監控 heap 用量與垃圾回收。依工作負載調整 GC。
-- **記憶體洩漏：** 用偵測工具（Valgrind、LeakCanary、Chrome DevTools）。
-
-### 延展性
-- **水平延展：** 設計無狀態服務、分片/分割、負載平衡。
-- **自動延展：** 用雲端自動延展群組並設合理門檻。
-- **瓶頸分析：** 找出並解決單點故障。
-- **分散式系統：** 用冪等操作、重試與斷路器。
-
-### 安全與效能
-- **高效加密：** 用硬體加速且維護良好的加密函式庫。
-- **驗證：** 輸入高效驗證，熱路徑避免用正則。
-- **速率限制：** 防止 DoS 並兼顧合法用戶。
-
-### 行動效能
-- **啟動時間：** 功能懶載入、延遲重運算、最小化初始 bundle。
-- **圖片/資源最佳化：** 行動頻寬優先用響應式圖片與壓縮資源。
-- **高效儲存：** 用 SQLite、Realm 或平台最佳化儲存。
-- **效能分析：** 用 Android Profiler、Instruments（iOS）、Firebase Performance Monitoring。
-
-### 雲端與無伺服器
-- **冷啟動：** 依賴最小化並保持函式常駐。
-- **資源分配：** 調整無伺服器函式記憶體/CPU。
-- **託管服務：** 用託管快取、佇列、資料庫提升延展性。
-- **成本最佳化：** 監控並以效能為指標優化雲端成本。
-
----
-
-## 實用範例
-
-### 範例 1：JavaScript 使用者輸入防抖
-```javascript
-// 不佳：每次輸入都觸發 API
-input.addEventListener('input', (e) => {
-  fetch(`/search?q=${e.target.value}`);
-});
-
-// 佳：API 呼叫防抖
-let timeout;
-input.addEventListener('input', (e) => {
-  clearTimeout(timeout);
-  timeout = setTimeout(() => {
-    fetch(`/search?q=${e.target.value}`);
-  }, 300);
-});
-```
-
-### 範例 2：高效 SQL 查詢
-```sql
--- 不佳：查詢所有欄位且未用索引
-SELECT * FROM users WHERE email = 'user@example.com';
-
--- 佳：只查必要欄位且用索引
-SELECT id, name FROM users WHERE email = 'user@example.com';
-```
-
-### 範例 3：Python 快取高成本運算
-```python
-# 不佳：每次都重新計算
-result = expensive_function(x)
-
-# 佳：快取結果
-from functools import lru_cache
-
-@lru_cache(maxsize=128)
-def expensive_function(x):
-    ...
-result = expensive_function(x)
-```
-
-### 範例 4：HTML 圖片延遲載入
 ```html
-<!-- 不佳：所有圖片立即載入 -->
-<img src="large-image.jpg" />
+<!-- 錯誤 -->
+<link rel="stylesheet" href="/styles/main.css" />
 
-<!-- 佳：圖片延遲載入 -->
-<img src="large-image.jpg" loading="lazy" />
+<!-- 正確 — 內嵌關鍵 CSS (建構時提取)，預載其餘部分 -->
+<style>/* 關鍵首屏 CSS，由 Critters/Beasties 等工具內嵌 */</style>
+<link rel="preload" href="/styles/main.css" as="style" />
+<link rel="stylesheet" href="/styles/main.css" />
 ```
 
-### 範例 5：Node.js 非同步 I/O
-```javascript
-// 不佳：阻塞式檔案讀取
-const data = fs.readFileSync('file.txt');
+建議採用建構時的關鍵 CSS 提取 (例如 Critters, Beasties, Next.js `experimental.optimizeCss`)，並搭配一般的 `<link rel="stylesheet">`。避免使用舊式的 `media="print" onload="this.media='all'"` 技巧：在嚴格的 CSP (無 `'unsafe-inline'` / 無 `script-src-attr 'unsafe-inline'`) 下，內嵌事件處理程式會被封鎖，導致樣式表永遠無法啟動，造成樣式回歸。若確實必須延遲載入非關鍵 CSS，請透過 **外部** 指令碼進行切換，而非使用內嵌處理程式。
 
-// 佳：非阻塞式檔案讀取
-fs.readFile('file.txt', (err, data) => {
-  if (err) throw err;
-  // process data
-});
+### L2: 渲染阻塞同步指令碼
+
+- **嚴重性**：CRITICAL
+- **檢測**：`<script.*src=` 未使用 `async|defer|type="module"`
+- **CWV**：LCP
+
+```html
+<!-- 錯誤 -->
+<script src="/vendor/analytics.js"></script>
+
+<!-- 正確 -->
+<script src="/vendor/analytics.js" defer></script>
 ```
 
-### 範例 6：Python 函式效能分析
-```python
-import cProfile
-import pstats
+### L3: 缺少對關鍵來源的預連線 (Preconnect)
 
-def slow_function():
-    ...
+- **嚴重性**：IMPORTANT
+- **檢測**：缺少 `<link rel="preconnect">` 的第三方 API/CDN URL
+- **CWV**：LCP
 
-cProfile.run('slow_function()', 'profile.stats')
-p = pstats.Stats('profile.stats')
-p.sort_stats('cumulative').print_stats(10)
+```html
+<link rel="preconnect" href="https://api.example.com" />
+<link rel="dns-prefetch" href="https://analytics.example.com" />
 ```
 
-### 範例 7：Node.js 用 Redis 快取
-```javascript
-const redis = require('redis');
-const client = redis.createClient();
+### L4: 缺少 LCP 資源的預載 (Preload)
 
-function getCachedData(key, fetchFunction) {
-  return new Promise((resolve, reject) => {
-    client.get(key, (err, data) => {
-      if (data) return resolve(JSON.parse(data));
-      fetchFunction().then(result => {
-        client.setex(key, 3600, JSON.stringify(result));
-        resolve(result);
-      });
-    });
-  });
+- **嚴重性**：CRITICAL
+- **檢測**：LCP 圖像/字型未預載
+- **CWV**：LCP
+
+```html
+<link rel="preload" as="image" href="/hero.webp" fetchpriority="high" />
+```
+
+### L5: 主要內容的用戶端資料擷取
+
+- **嚴重性**：CRITICAL
+- **檢測**：`useEffect.*fetch|useEffect.*axios|ngOnInit.*subscribe`
+- **CWV**：LCP
+
+```tsx
+// 錯誤 — 內容在 JS 執行 + API 呼叫後出現
+'use client';
+function Page() {
+  const [data, setData] = useState(null);
+  useEffect(() => { fetch('/api/data').then(r => r.json()).then(setData); }, []);
+  return <div>{data?.title}</div>;
+}
+
+// 正確 — Server Component 在 HTML 發送前擷取資料
+async function Page() {
+  const data = await fetch('https://api.example.com/data').then(r => r.json());
+  return <div>{data.title}</div>;
 }
 ```
 
+### L6: 過多的重新導向鏈 (Redirect Chains)
+
+- **嚴重性**：IMPORTANT
+- **檢測**：多次連續重新導向 (HTTP 301/302 鏈)
+- **CWV**：LCP
+
+每次重新導向會增加 200-300ms。最多僅允許一次重新導向。
+
+### L7: LCP 元素缺少 fetchpriority
+
+- **嚴重性**：IMPORTANT
+- **檢測**：首屏 Hero 圖像缺少 `fetchpriority="high"` 或 `priority` 屬性
+- **CWV**：LCP
+
+```tsx
+// Next.js
+<Image src="/hero.webp" alt="Hero" width={1200} height={600} priority />
+
+// Angular
+<img ngSrc="/hero.webp" alt="Hero" width="1200" height="600" priority>
+
+// 一般 HTML
+<img src="/hero.webp" alt="Hero" width="1200" height="600" fetchpriority="high" />
+```
+
+### L8: Head 中的第三方指令碼未設定 Async/Defer
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`<script.*src="https://` 未設定 `async|defer`
+- **CWV**：LCP
+
+延遲載入非必要指令碼。針對聊天視窗等使用 Facade 模式。
+
+### L9: 過大的初始 HTML (>14KB)
+
+- **嚴重性**：SUGGESTION
+- **檢測**：伺服器渲染 HTML 大於 14KB
+- **CWV**：LCP
+
+減少內嵌 CSS/JS，移除空白字元，使用帶有 Suspense 邊界的串流 SSR。
+
+### L10: 缺少壓縮
+
+- **嚴重性**：IMPORTANT
+- **檢測**：伺服器未回傳 `content-encoding: br` 或 `gzip`
+- **CWV**：LCP
+
+於 CDN/伺服器層級啟用 Brotli (比 gzip 縮小 15-25%)。
+
 ---
 
-## 參考資料與延伸閱讀
-- [Google Web Fundamentals: Performance](https://web.dev/performance/)
-- [MDN Web Docs: Performance](https://developer.mozilla.org/en-US/docs/Web/Performance)
-- [OWASP: Performance Testing](https://owasp.org/www-project-performance-testing/)
-- [Microsoft Performance Best Practices](https://learn.microsoft.com/en-us/azure/architecture/best-practices/performance)
-- [PostgreSQL Performance Optimization](https://wiki.postgresql.org/wiki/Performance_Optimization)
-- [MySQL Performance Tuning](https://dev.mysql.com/doc/refman/8.0/en/optimization.html)
-- [Node.js Performance Best Practices](https://nodejs.org/en/docs/guides/simple-profiling/)
-- [Python Performance Tips](https://docs.python.org/3/library/profile.html)
-- [Java Performance Tuning](https://www.oracle.com/java/technologies/javase/performance.html)
-- [.NET Performance Guide](https://learn.microsoft.com/en-us/dotnet/standard/performance/)
-- [WebPageTest](https://www.webpagetest.org/)
-- [Lighthouse](https://developers.google.com/web/tools/lighthouse)
-- [Prometheus](https://prometheus.io/)
-- [Grafana](https://grafana.com/)
-- [k6 負載測試](https://k6.io/)
-- [Gatling](https://gatling.io/)
-- [Locust](https://locust.io/)
-- [OpenTelemetry](https://opentelemetry.io/)
-- [Jaeger](https://www.jaegertracing.io/)
-- [Zipkin](https://zipkin.io/)
+## 渲染與水合 (Hydration) 反模式 (R1-R8)
+
+### R1: 整個元件樹標記為 "use client"
+
+- **嚴重性**：CRITICAL
+- **檢測**：頂層 Layout 或頁面元件使用 `"use client"`
+- **CWV**：LCP + INP
+
+將 `"use client"` 下放到需要互動性的葉元件 (leaf components) 中。
+
+### R2: 非同步資料缺少 Suspense 邊界
+
+- **嚴重性**：IMPORTANT
+- **檢測**：Server Components 執行資料擷取卻沒有 `<Suspense>`
+- **CWV**：LCP
+
+```tsx
+// 正確 — 立即串流 Shell，並逐步填入資料
+async function Page() {
+  const user = await getUser();
+  return (
+    <div>
+      <Header user={user} />
+      <Suspense fallback={<PostsSkeleton />}>
+        <Posts />
+      </Suspense>
+    </div>
+  );
+}
+```
+
+### R3: 動態用戶端內容導致水合不匹配 (Hydration Mismatch)
+
+- **嚴重性**：IMPORTANT
+- **檢測**：SSR 元件中使用 `Date.now()|Math.random()|window\.innerWidth`
+- **CWV**：CLS
+
+針對僅限用戶端的數值使用 `useEffect`，或針對已知差異使用 `suppressHydrationWarning`。
+
+### R4: 緩慢資料來源缺少串流
+
+- **嚴重性**：IMPORTANT
+- **檢測**：頁面等待所有資料取得後才發送 HTML
+- **CWV**：LCP (TTFB)
+
+使用帶有 Suspense 邊界的串流 SSR。Shell 立即串流；緩慢資料逐步填入。
+
+### R5: 不穩定的參考 (References) 導致重新渲染
+
+- **嚴重性**：IMPORTANT
+- **檢測**：JSX 中內嵌 `style=\{\{|onClick=\{\(\) =>`
+- **CWV**：INP
+
+React 19+ 啟用 React Compiler (獨立的 babel/SWC 建構外掛)：自動記憶化 (memoization)。若無編譯器：使用 `useMemo`/`useCallback` 提取或記憶化。Angular：OnPush。Vue：`computed()`。
+
+### R6: 大型清單缺少虛擬化 (Virtualization)
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`.map(` 渲染 >100 個項目且無虛擬捲動
+- **CWV**：INP
+
+使用 TanStack Virtual, react-window, Angular CDK Virtual Scroll, 或 vue-virtual-scroller。
+
+### R7: SSR 立即隱藏的內容
+
+- **嚴重性**：SUGGESTION
+- **檢測**：伺服器渲染 `display: none` 元件
+- **CWV**：LCP (TTFB)
+
+針對 Modal、抽屜、下拉選單使用用戶端渲染。Angular：`@defer`。React：`React.lazy`。
+
+### R8: 清單項目缺少 `key` 屬性
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`.map(` 未設定 `key=` 屬性
+- **CWV**：INP
+
+```tsx
+// 正確 — 穩定且唯一 key
+{items.map(item => <Row key={item.id} data={item} />)}
+```
+
+若清單可重排序，絕對不要使用陣列索引做為 key。
 
 ---
 
-## 結論
+## JavaScript 執行階段與 INP 反模式 (J1-J8)
 
-效能最佳化是持續的過程。請不斷量測、分析與迭代。善用本指南的最佳實踐、檢查清單與疑難排解技巧，協助你開發與審查高效能、可延展且高效率的軟體。若有新秘訣或經驗，歡迎補充，讓本指南持續成長！
+### J1: 事件處理常式中的長時間同步任務
+
+- **嚴重性**：CRITICAL
+- **檢測**：處理常式執行繁重運算 (>50ms)
+- **CWV**：INP
+
+```typescript
+// 正確 — 讓出給瀏覽器
+async function handleClick() {
+  setLoading(true);
+  await (globalThis.scheduler?.yield?.() ?? new Promise(r => setTimeout(r, 0)));
+  const result = expensiveComputation(data);
+  setResult(result);
+}
+```
+
+將繁重工作移至 Web Worker 以獲得最佳結果。
+
+> **注意**：`scheduler.yield()` 支援於 Chrome 129+, Firefox 129+，但截至 2026 年 4 月尚未支援 Safari。備援方案：`await (globalThis.scheduler?.yield?.() ?? new Promise(r => setTimeout(r, 0)))`。
+
+### J2: 佈局顛簸 (Layout Thrashing)
+
+- **嚴重性**：CRITICAL
+- **檢測**：迴圈中使用 `offsetHeight|offsetWidth|getBoundingClientRect|clientHeight`
+- **CWV**：INP
+
+```typescript
+// 正確 — 先批次讀取，再批次寫入
+const heights = elements.map(el => el.offsetHeight);
+elements.forEach((el, i) => { el.style.height = `${heights[i] + 10}px`; });
+```
+
+### J3: setInterval/setTimeout 缺少清理
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`setInterval|setTimeout` 未清理
+- **影響**：記憶體
+
+```tsx
+useEffect(() => {
+  const id = setInterval(() => fetchData(), 5000);
+  return () => clearInterval(id);
+}, []);
+```
+
+### J4: addEventListener 缺少 removeEventListener
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`addEventListener` 未清理
+- **影響**：記憶體
+
+```tsx
+useEffect(() => {
+  const controller = new AbortController();
+  window.addEventListener('resize', handleResize, { signal: controller.signal });
+  return () => controller.abort();
+}, []);
+```
+
+### J5: 脫離的 DOM 節點參考
+
+- **嚴重性**：SUGGESTION
+- **檢測**：持有已移除 DOM 元素參考的變數
+- **影響**：記憶體
+
+當元素移除時，將參考設為 `null`。
+
+### J6: 同步 XHR
+
+- **嚴重性**：CRITICAL
+- **檢測**：帶有同步旗標的 `XMLHttpRequest`
+- **CWV**：INP
+
+使用 `fetch()` (永遠為非同步)。
+
+### J7: 主執行緒上的繁重運算
+
+- **嚴重性**：IMPORTANT
+- **檢測**：元件程式碼中的 CPU 密集型操作
+- **CWV**：INP
+
+移動至 Web Worker 或透過 `scheduler.yield()` 切分為多個區塊。
+
+### J8: 缺少 Effect 清理
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`useEffect` 未回傳清理函式；`subscribe` 未取消訂閱
+- **影響**：記憶體
+
+React：從 `useEffect` 回傳清理函式。Angular：`takeUntilDestroyed()`。Vue：`onUnmounted`。
 
 ---
 
-<!-- 效能最佳化指引結束 --> 
+## CSS 效能反模式 (C1-C7)
+
+### C1: 使用觸發佈局屬性的動畫
+
+- **嚴重性**：CRITICAL
+- **檢測**：`animation:|transition:` 使用 `top|left|width|height|margin|padding`
+- **CWV**：INP
+
+```css
+/* 錯誤 — 主執行緒，<60fps */
+.card { transition: width 0.3s, height 0.3s; }
+
+/* 正確 — GPU 合成器，60fps */
+.card { transition: transform 0.3s, opacity 0.3s; }
+.card:hover { transform: scale(1.05); }
+```
+
+### C2: 頁面外區段缺少 content-visibility
+
+- **嚴重性**：SUGGESTION
+- **檢測**：長頁面未設定 `content-visibility: auto`
+- **CWV**：INP
+
+```css
+.below-fold-section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 500px;
+}
+```
+
+### C3: will-change 永久應用
+
+- **嚴重性**：SUGGESTION
+- **檢測**：基礎 CSS 中的 `will-change:` (而非 `:hover|:focus`)
+- **影響**：記憶體
+
+僅在互動時應用，或讓瀏覽器自動優化。
+
+### C4: 大量未使用的 CSS
+
+- **嚴重性**：IMPORTANT
+- **檢測**：CSS 中 >50% 的規則未使用
+- **CWV**：LCP
+
+使用 PurgeCSS, Tailwind purge, 或 critters。針對路由進行 CSS 程式碼分割。
+
+### C5: 熱路徑中的通用選擇器
+
+- **嚴重性**：SUGGESTION
+- **檢測**：CSS 中的 `\* \{`
+- **CWV**：INP
+
+```css
+/* 正確 — 零特異性重設 */
+:where(*, *::before, *::after) { box-sizing: border-box; }
+```
+
+### C6: 缺少 CSS 封裝 (Containment)
+
+- **嚴重性**：SUGGESTION
+- **檢測**：複雜元件缺少 `contain` 屬性
+- **CWV**：INP
+
+```css
+.sidebar { contain: layout style paint; }
+```
+
+### C7: 路由切換缺少 View Transitions API
+
+- **嚴重性**：SUGGESTION
+- **檢測**：SPA 路由變更未使用 View Transitions API
+- **CWV**：CLS (感知上)
+
+```javascript
+// 使用 View Transitions 進行平滑路由變更 (需功能檢查)
+if (document.startViewTransition) {
+  document.startViewTransition(() => {
+    // 更新 DOM / 導覽
+  });
+} else {
+  // 備援: 直接更新 DOM
+}
+```
+
+同文件轉換在所有主流瀏覽器皆支援。跨文件轉換支援於 Chrome/Edge 126+, Safari 18.5+。呼叫前務必進行功能檢查 — 不支援的瀏覽器若無防護會拋出錯誤。
+
+---
+
+## 圖像、媒體與字型反模式 (I1-I8)
+
+### I1: 圖像缺少尺寸
+
+- **嚴重性**：CRITICAL
+- **檢測**：`<img` 未使用 `width=` 與 `height=`
+- **CWV**：CLS
+
+務必在圖像上設定 `width` 與 `height`，或在 CSS 中使用 `aspect-ratio`。
+
+### I2: 首屏圖像延遲載入 (Lazy Loading)
+
+- **嚴重性**：CRITICAL
+- **檢測**：Hero/Banner 圖像設定 `loading="lazy"`
+- **CWV**：LCP
+
+```html
+<!-- 正確 — 高優先順序立即載入 -->
+<img src="/hero.webp" alt="Hero" fetchpriority="high" />
+```
+
+### I3: 僅支援舊版格式 (JPEG/PNG)
+
+- **嚴重性**：IMPORTANT
+- **檢測**：圖像未提供 WebP/AVIF 替代方案
+- **CWV**：LCP
+
+```html
+<picture>
+  <source srcset="/hero.avif" type="image/avif" />
+  <source srcset="/hero.webp" type="image/webp" />
+  <img src="/hero.jpg" alt="Hero" width="1200" height="600" />
+</picture>
+```
+
+### I4: 缺少回應式 srcset/sizes
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`<img` 缺少 `srcset`
+- **CWV**：LCP
+
+```html
+<img src="/hero-800.jpg" alt="Hero"
+     srcset="/hero-400.jpg 400w, /hero-800.jpg 800w, /hero-1200.jpg 1200w"
+     sizes="(max-width: 600px) 400px, (max-width: 1024px) 800px, 1200px" />
+```
+
+### I5: 字型缺少 font-display
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`@font-face` 缺少 `font-display`
+- **CWV**：CLS
+
+```css
+@font-face {
+  font-family: 'CustomFont';
+  src: url('/fonts/custom.woff2') format('woff2');
+  font-display: swap; /* 或 "optional" 以獲得最佳 CLS */
+}
+```
+
+### I6: 關鍵字型未預載
+
+- **嚴重性**：IMPORTANT
+- **檢測**：自訂字型缺少 `<link rel="preload">`
+- **CWV**：LCP + CLS
+
+```html
+<link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin />
+```
+
+### I7: 當子集字型足夠時載入完整字型
+
+- **嚴重性**：SUGGESTION
+- **檢測**：字型檔案 > 50KB WOFF2
+- **CWV**：LCP
+
+使用 `unicode-range`、透過 glyphhanger 進行子集化，或使用 `next/font` (自動子集化 Google 字型)。
+
+### I8: 未優化 SVG
+
+- **嚴重性**：SUGGESTION
+- **檢測**：包含編輯器中繼資料的 SVG
+- **CWV**：LCP (次要)
+
+```bash
+npx svgo input.svg -o output.svg
+```
+
+---
+
+## 捆綁 (Bundle) 與 Tree Shaking 反模式 (B1-B6)
+
+### B1: Barrel File 匯入整個模組
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`from '\.\/(?:.*\/index|components)'`
+- **CWV**：INP
+
+```typescript
+// 錯誤
+import { Button } from './components';
+
+// 正確 — 直接匯入
+import { Button } from './components/Button';
+```
+
+### B2: CommonJS require() 導致無法 Tree Shaking
+
+- **嚴重性**：IMPORTANT
+- **檢測**：前端程式碼中的 `require(`
+- **CWV**：INP
+
+使用 ESM `import/export`。以 `import` 取代 `require`。
+
+### B3: 小型工具引入大型相依性
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`from "moment"|from "lodash"` (完整匯入)
+- **CWV**：INP
+
+```typescript
+// 正確 — Tree-shakeable 替代方案
+import { format } from 'date-fns';
+import { pick } from 'lodash-es';
+
+// 最佳 — 原生 JS
+const formatted = new Intl.DateTimeFormat('en').format(date);
+```
+
+### B4: 路由分割缺少動態匯入
+
+- **嚴重性**：CRITICAL
+- **檢測**：所有路由元件皆靜態匯入
+- **CWV**：INP
+
+```tsx
+// Next.js: 透過基於檔案路由自動化
+// React:
+const Page = React.lazy(() => import('./pages/Page'));
+// Angular:
+{ path: 'settings', loadComponent: () => import('./pages/settings.component') }
+// Vue:
+const Page = defineAsyncComponent(() => import('./pages/Page.vue'));
+```
+
+### B5: package.json 缺少 sideEffects
+
+- **嚴重性**：SUGGESTION
+- **檢測**：函式庫 package.json 未定義 `"sideEffects"` 欄位
+- **CWV**：INP
+
+```json
+{ "sideEffects": false }
+```
+
+### B6: 重複相依性
+
+- **嚴重性**：SUGGESTION
+- **檢測**：同一函式庫存在多個版本
+- **CWV**：INP
+
+```bash
+npm dedupe
+```
+
+---
+
+## 框架特定：Next.js (NX1-NX6)
+
+### NX1: 未使用 next/image
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`.tsx` 中的 `<img ` 而非 `<Image>`
+- **CWV**：LCP + CLS
+
+```tsx
+import Image from 'next/image';
+<Image src="/hero.jpg" alt="Hero" width={1200} height={600} priority />
+```
+
+### NX2: 針對部分預渲染 (Partial Prerendering) 未使用 Cache 元件
+
+- **嚴重性**：IMPORTANT
+- **檢測**：Next.js 16+ 專案的頁面缺少 `"use cache"` 指令
+- **CWV**：LCP
+
+```typescript
+// 錯誤 — 整頁動態
+export default async function Page() {
+  const data = await fetchData(); // 阻塞整頁渲染
+  return <div>{data.title}</div>;
+}
+
+// 正確 — 啟用帶有 "use cache" 的部分預渲染
+// next.config.ts: { cacheComponents: true }
+"use cache";
+export default async function Page() {
+  const data = await fetchData(); // 靜態 shell 立即渲染，動態內容串流
+  return <div>{data.title}</div>;
+}
+```
+
+於 `next.config.ts` 設定 `cacheComponents: true`。在檔案、元件或函式層級使用 `"use cache"`。靜態 shell 立即載入；動態內容透過 Suspense 邊界進行串流。
+
+### NX3: Server-Renderable 元件不必要的 "use client"
+
+- **嚴重性**：IMPORTANT
+- **檢測**：元件未使用 Hook 或瀏覽器 API，卻標記了 `"use client"`
+- **CWV**：INP
+
+移除僅渲染靜態內容元件上的 `"use client"`。
+
+### NX4: 在 useEffect 中擷取資料，而非伺服器端
+
+- **嚴重性**：CRITICAL
+- **檢測**：Next.js App Router 頁面中的 `useEffect` + `fetch`
+- **CWV**：LCP
+
+直接在 Server Components 中擷取資料 (非同步函式主體)。
+
+### NX5: 缺少 next/font
+
+- **嚴重性**：IMPORTANT
+- **檢測**：CSS/HTML 中的 `fonts.googleapis|fonts.gstatic`
+- **CWV**：CLS + LCP
+
+```tsx
+import { Inter } from 'next/font/google';
+const inter = Inter({ subsets: ['latin'] });
+```
+
+### NX6: 可快取伺服器函式缺少 "use cache"
+
+- **嚴重性**：IMPORTANT
+- **檢測**：Next.js 16+ 中 `cacheComponents: true` 且非同步伺服器函式未定義 `"use cache"`
+- **CWV**：LCP
+
+```typescript
+// 錯誤 — 每次請求皆擷取資料
+async function getProducts() {
+  return await db.products.findMany();
+}
+
+// 正確 — 以重新驗證進行快取
+"use cache";
+import { cacheLife } from 'next/cache';
+async function getProducts() {
+  cacheLife('hours');
+  return await db.products.findMany();
+}
+```
+
+`"use cache"` 取代了舊有的 `unstable_cache` 與 `fetch` 快取選項。使用 `cacheLife()` 與 `cacheTag()` 進行細粒度控制。
+
+---
+
+## 框架特定：Angular (NG1-NG6)
+
+### NG1: 呈現元件預設變更偵測
+
+- **嚴重性**：IMPORTANT
+- **檢測**：元件未設定 `ChangeDetectionStrategy.OnPush` (Angular <19) 或未使用 signals (Angular 19+)
+- **CWV**：INP
+
+```typescript
+// Angular <19: 使用 OnPush
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  ...
+})
+
+// Angular 19+: 使用訊號 (signals) 優先採用無區域 (zoneless)
+// app.config.ts: provideZonelessChangeDetection()
+@Component({ ... })
+export class ProductCard {
+  product = input.required<Product>(); // 訊號輸入
+  price = computed(() => this.product().price * 1.19); // 衍生訊號
+}
+```
+
+Angular 19+：偏好採用訊號的無區域變更偵測。使用訊號反應機制時，OnPush 為不必要的。Angular 20+ 具備穩定的無區域支援。
+
+### NG2: 未使用 NgOptimizedImage
+
+- **嚴重性**：IMPORTANT
+- **檢測**：`.component.html` 中的 `<img` 未設定 `ngSrc`
+- **CWV**：LCP + CLS
+
+```html
+<img ngSrc="/hero.jpg" alt="Hero" width="1200" height="600" priority />
+```
+
+### NG3: 螢幕下方內容缺少 @defer
+
+- **嚴重性**：SUGGESTION
+- **檢測**：螢幕下方重型元件過早載入 (Angular 17+)
+- **CWV**：INP
+
+```html
+@defer (on viewport) {
+  <app-heavy-chart [data]="chartData" />
+} @placeholder {
+  <div class="chart-skeleton"></div>
+}
+```
+
+### NG4: 未使用訊號處理響應式狀態
+
+- **嚴重性**：SUGGESTION
+- **檢測**：Angular 19+ 中類別屬性未設定為訊號
+- **CWV**：INP
+
+使用 `signal()` 處理響應式狀態，`computed()` 處理衍生值。訊號 API (`signal()`, `computed()`, `effect()`) 自 Angular 20 起已穩定。
+
+### NG5: 完整水合但缺少增量水合
+
+- **嚴重性**：IMPORTANT
+- **檢測**：Angular 19+ SSR 應用程式未設定 `withIncrementalHydration()`
+- **CWV**：LCP, INP
+
+```typescript
+// 錯誤 — 完整水合阻塞互動性
+provideClientHydration()
+
+// 正確 — 具備觸發條件的增量水合
+provideClientHydration(withIncrementalHydration())
+```
+
+使用 `@defer` 觸發條件 (`on viewport`, `on interaction`) 按需水合元件。透過延遲非關鍵元件的水合來降低 TTI。
+
+### NG6: Angular 20+ 專案仍在使用 zone.js
+
+- **嚴重性**：SUGGESTION
+- **檢測**：polyfills 陣列中的 `zone.js`，Angular 20+ 專案缺少 `provideZonelessChangeDetection()`
+- **CWV**：INP
+
+```typescript
+// app.config.ts
+export const appConfig = {
+  providers: [
+    provideZonelessChangeDetection(), // 從 Bundle 中移除 ~15-30KB
+    // ...
+  ]
+};
+```
+
+使用訊號的無區域變更偵測可減少 Bundle 大小並提升執行階段效能。自 Angular 20 起穩定。
+
+---
+
+## 框架特定：React (RX1-RX4)
+
+### RX1: 缺少 React Compiler 採用
+
+- **嚴重性**：SUGGESTION
+- **檢測**：React 19+ 專案中手動編寫 `useMemo|useCallback`
+- **CWV**：INP
+
+啟用 React Compiler (v19+) 以自動記憶化。移除手動包裹。
+
+### RX2: 針對昂貴更新缺少 useTransition
+
+- **嚴重性**：IMPORTANT
+- **檢測**：狀態更新導致昂貴重新渲染但未使用 `useTransition`
+- **CWV**：INP
+
+```tsx
+const [isPending, startTransition] = useTransition();
+function handleFilter(value) {
+  startTransition(() => setFilter(value));
+}
+```
+
+### RX3: 針對昂貴渲染缺少 useDeferredValue
+
+- **嚴重性**：IMPORTANT
+- **檢測**：來自快速變更輸入的昂貴渲染
+- **CWV**：INP
+
+```tsx
+const deferredQuery = useDeferredValue(query);
+const results = expensiveFilter(items, deferredQuery);
+```
+
+### RX4: 缺少用於路由分割的 React.lazy
+
+- **嚴重性**：IMPORTANT
+- **檢測**：路由元件為靜態匯入
+- **CWV**：INP
+
+```tsx
+const Settings = React.lazy(() => import('./pages/Settings'));
+```
+
+---
+
+## 框架特定：Vue (VU1-VU4)
+
+### VU1: 針對大型資料結構使用 reactive()
+
+- **嚴重性**：IMPORTANT
+- **檢測**：對大型陣列或深層物件使用 `reactive(`
+- **CWV**：INP
+
+針對大型資料使用 `shallowRef()` 或 `shallowReactive()`。
+
+### VU2: 昂貴清單渲染缺少 v-memo
+
+- **嚴重性**：SUGGESTION
+- **檢測**：大型清單未設定 `v-memo`
+- **CWV**：INP
+
+```vue
+<div v-for="item in items" :key="item.id" v-memo="[item.id, item.updatedAt]">
+  <ExpensiveItem :data="item" />
+</div>
+```
+
+### VU3: 缺少 defineAsyncComponent
+
+- **嚴重性**：IMPORTANT
+- **檢測**：重量級元件靜態匯入
+- **CWV**：INP
+
+```typescript
+const HeavyChart = defineAsyncComponent(() => import('./HeavyChart.vue'));
+```
+
+### VU4: 針對效能關鍵元件未使用 Vapor Mode
+
+- **嚴重性**：SUGGESTION
+- **檢測**：Vue 3.6+ 中效能關鍵元件使用虛擬 DOM
+- **CWV**：INP
+
+Vue 3.6+ Vapor Mode 將範本編譯為直接 DOM 操作，繞過虛擬 DOM。用於效能關鍵的子樹。可與標準元件混用。
+
+---
+
+## 資源提示快速參考
+
+| 提示 | 目的 | 使用時機 |
+|------|---------|-------------|
+| `preconnect` | 提早 DNS + TCP + TLS | 關鍵第三方來源 (API, CDN, 字型) |
+| `preload` | 立即擷取，高優先順序 | LCP 圖像，關鍵字型 |
+| `prefetch` | 未來導覽的低優先順序 | 下頁資產 |
+| `dns-prefetch` | 僅 DNS 解析 | 非關鍵第三方來源 |
+| `modulepreload` | 預載 + 解析 ES 模組 | 關鍵 JS 模組 |
+| `<script type="speculationrules">` | 預抓取/預渲染下一次導覽 | 可能的下一頁 (Chrome 121+, 漸進增強) |
+
+---
+
+## 圖像優化快速參考
+
+| 面向 | 建議 |
+|--------|---------------|
+| 格式 | WebP (小 25-34%), AVIF (小 50%) |
+| LCP 圖像 | `fetchpriority="high"` 或框架 `priority` 屬性 |
+| 螢幕下方 | `loading="lazy"` |
+| 尺寸 | 永遠設定 `width` + `height` |
+| 回應式 | `srcset` + `sizes` 或框架 Image 元件 |
+| 壓縮 | 相片品質 75-85 |
+
+---
+
+## 字型載入快速參考
+
+| 策略 | 適用對象 | CLS 影響 |
+|----------|---------|-----------|
+| `font-display: swap` | 正文文字 | 輕微 FOUT，最小 CLS |
+| `font-display: optional` | 所有字型 (最佳 CLS) | 無 FOUT，無 CLS |
+| `next/font` | Next.js 專案 | 零 CLS |
+| 可變字型 (Variable fonts) | 多種字重 | 所有字重共用單一檔案 |
+
+規則：僅預載 1-2 種關鍵字型，使用 WOFF2，針對所需字元進行子集化，儘可能自託管。
+
+---
+
+## 效能檢查清單 (CWV)
+
+### LCP (< 2.5s)
+- [ ] LCP 圖像具備 `fetchpriority="high"` 或 `priority` 屬性
+- [ ] LCP 圖像若未在 HTML 原始碼中則預載
+- [ ] 螢幕上方圖像未使用 `loading="lazy"`
+- [ ] 關鍵 CSS 已內嵌或提取
+- [ ] 無渲染阻塞指令碼 (使用 `defer` 或 `async`)
+- [ ] 預連線至關鍵第三方來源
+- [ ] 主要內容伺服器渲染 (非用戶端擷取)
+- [ ] 圖像使用現代格式 (WebP/AVIF) 並搭配回應式 `srcset`
+- [ ] 啟用壓縮 (偏好 Brotli)
+- [ ] 字型透過 `font-display: swap` 或 `optional` 進行預載
+
+### INP (< 200ms)
+- [ ] 事件處理常式完成時間 < 50ms
+- [ ] 長任務切分為較小區塊
+- [ ] 實作基於路由的程式碼分割
+- [ ] 繁重運算移至 Web Worker
+- [ ] 具有 > 100 個項目的清單已虛擬化
+- [ ] 無 Barrel file 匯入 (直接元件匯入)
+- [ ] 使用 ESM 匯入 (而非 CommonJS `require`)
+- [ ] `"use client"` 僅用於需要互動性的元件
+- [ ] 未動畫化觸發佈局的 CSS 屬性
+- [ ] 實作 Effect 清理 (無洩漏監聽器/計時器)
+
+### CLS (< 0.1)
+- [ ] 所有圖像具備 `width` 與 `height` 屬性
+- [ ] 字型使用 `font-display: swap` 或 `optional`
+- [ ] 沒有動態注入內容置於既有內容上方
+- [ ] 廣告/嵌入物件預留空間
+- [ ] 無水合不匹配
+- [ ] `content-visibility: auto` 已設定 `contain-intrinsic-size`

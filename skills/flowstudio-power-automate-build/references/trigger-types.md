@@ -1,12 +1,12 @@
-# FlowStudio MCP — 觸發程序類型
+# FlowStudio MCP — 觸發程序型別 (Trigger Types)
 
-用於 Power Automate 流程定義的複製貼上式觸發程序定義。
+供 Power Automate 流程定義使用的觸發程序定義範本。
 
 ---
 
-## 週期 (Recurrence)
+## 週期性觸發 (Recurrence)
 
-根據排程執行。
+依排程執行。
 
 ```json
 "Recurrence": {
@@ -20,7 +20,7 @@
 }
 ```
 
-每週特定日期：
+每週在特定日期執行：
 ```json
 "Recurrence": {
   "type": "Recurrence",
@@ -36,20 +36,19 @@
 }
 ```
 
-常見的 `timeZone` (時區) 數值：
-- `"AUS Eastern Standard Time"` — 悉尼/墨爾本 (UTC+10/+11)
-- `"UTC"` — 通用協調時間
+常見的 `timeZone` 值：
+- `"AUS Eastern Standard Time"` — 雪梨/墨爾本 (UTC+10/+11)
+- `"UTC"` — 世界協調時間
 - `"E. Australia Standard Time"` — 布里斯本 (UTC+10 無夏令時間)
 - `"New Zealand Standard Time"` — 奧克蘭 (UTC+12/+13)
 - `"Pacific Standard Time"` — 洛杉磯 (UTC-8/-7)
 - `"GMT Standard Time"` — 倫敦 (UTC+0/+1)
-- `"Taipei Standard Time"` — 台北 (UTC+8)
 
 ---
 
-## 手動 (Manual，HTTP 請求 / Power Apps)
+## 手動 (HTTP Request / Power Apps)
 
-接收帶有 JSON 本文的 HTTP POST。
+接收包含 JSON 本文的 HTTP POST 請求。
 
 ```json
 "manual": {
@@ -68,12 +67,12 @@
 }
 ```
 
-存取數值：`@triggerBody()?['name']`
+存取數值：`@triggerBody()?['name']`  
 儲存後可取得觸發程序 URL：`@listCallbackUrl()`
 
-#### 無 Schema 變體 (接受任意 JSON)
+#### 無結構描述變體 (接受任意 JSON)
 
-當連入的裝載 (payload) 結構未知或多變時，可省略 Schema 以接受任何有效的 JSON 本文而不進行驗證：
+當傳入負載結構未知或變動時，省略 schema 以在沒有驗證的情況下接受任何有效的 JSON 本文：
 
 ```json
 "manual": {
@@ -87,11 +86,11 @@
 
 動態存取任何欄位：`@triggerBody()?['anyField']`
 
-> 針對外部 Webhook (Stripe、GitHub、Employment Hero 等) 使用此方式，因為其裝載形狀可能會變更或未完全記錄。流程會接受任何 JSON，而不會因為非預期的屬性而傳回 400 錯誤。
+> 用於外部 Webhook (Stripe, GitHub, Employment Hero 等)，其中負載形狀可能會變更或未完全記錄。流程接受任何 JSON 而不會因未預期的屬性而回傳 400 錯誤。
 
 ---
 
-## 自動化 (Automated，SharePoint 項目已建立)
+## 自動化 (SharePoint 項目已建立)
 
 ```json
 "When_an_item_is_created": {
@@ -117,11 +116,11 @@
 }
 ```
 
-存取觸發程序資料：`@triggerBody()?['ID']`、`@triggerBody()?['Title']` 等。
+存取觸發資料：`@triggerBody()?['ID']`, `@triggerBody()?['Title']` 等。
 
 ---
 
-## 自動化 (Automated，SharePoint 項目已修改)
+## 自動化 (SharePoint 項目已修改)
 
 ```json
 "When_an_existing_item_is_modified": {
@@ -149,7 +148,7 @@
 
 ---
 
-## 自動化 (Automated，Outlook：當新電子郵件送達時)
+## 自動化 (Outlook：當收到新電子郵件時)
 
 ```json
 "When_a_new_email_arrives": {
@@ -174,7 +173,7 @@
 
 ---
 
-## 子流程 (Child Flow，由另一個流程呼叫)
+## 子流程 (由另一個流程呼叫)
 
 ```json
 "manual": {
@@ -194,9 +193,9 @@
 }
 ```
 
-存取由父流程提供的資料：`@triggerBody()?['items']`
+存取父流程提供的資料：`@triggerBody()?['items']`
 
-若要將資料傳回給父流程，請加入一個「回應 (Response)」動作：
+若要將資料回傳給父流程，請加入一個 `Response` 動作：
 ```json
 "Respond_to_Parent": {
   "type": "Response",

@@ -22,7 +22,7 @@ await session.DisposeAsync();
 Console.WriteLine("工作階段已銷毀（狀態已持久化）");
 
 // 恢復先前的工作階段
-var resumed = await client.ResumeSessionAsync("user-123-conversation");
+var resumed = await client.ResumeSessionAsync("user-123-conversation", new ResumeSessionConfig { OnPermissionRequest = PermissionHandler.ApproveAll });
 Console.WriteLine($"已恢復: {resumed.SessionId}");
 
 await resumed.SendAsync(new MessageOptions { Prompt = "我們剛才在討論什麼？" });

@@ -1,28 +1,27 @@
 #!/usr/bin/env python3
 
 """
-Ralph loop：具有每次反覆運算全新內容的自主 AI 任務迴圈。
+Ralph loop: 自主 AI 任務迴圈，每次疊代都有新的上下文。
 
-兩種模式：
-  - "plan"：讀取 PROMPT_plan.md，產生/更新 IMPLEMENTATION_PLAN.md
-  - "build"：讀取 PROMPT_build.md，實作任務、執行測試、提交
+兩種模式:
+  - "plan": 讀取 PROMPT_plan.md，產生/更新 IMPLEMENTATION_PLAN.md
+  - "build": 讀取 PROMPT_build.md，執行任務、執行測試、提交程式碼
 
-每次反覆運算都會建立一個新的工作階段，以便代理程式始終在其內容視窗的
-「智慧區域」內運作。狀態透過磁碟上的檔案 (IMPLEMENTATION_PLAN.md、AGENTS.md、specs/*)
-在反覆運算之間共享。
+每次疊代都會建立新的對話，確保 AI 永遠在上下文視窗的「最佳運作區」中運作。
+狀態透過磁碟檔案 (IMPLEMENTATION_PLAN.md, AGENTS.md, specs/*) 在疊代之間共享。
 
-用法：
-  python ralph_loop.py              # 建構模式，50 次反覆運算
-  python ralph_loop.py plan         # 規劃模式
-  python ralph_loop.py 20           # 建構模式，20 次反覆運算
-  python ralph_loop.py plan 5       # 規劃模式，5 次反覆運算
+用法:
+  python ralph_loop.py              # 執行 build 模式，50 次疊代
+  python ralph_loop.py plan         # 執行規劃模式
+  python ralph_loop.py 20           # 執行 build 模式，20 次疊代
+  python ralph_loop.py plan 5       # 執行規劃模式，5 次疊代
 """
 
 import asyncio
 import sys
 from pathlib import Path
 
-from copilot import CopilotClient, MessageOptions, SessionConfig
+from copilot import CopilotClient, MessageOptions, SessionConfig, PermissionHandler
 
 
 async def ralph_loop(mode: str = "build", max_iterations: int = 50):
@@ -33,28 +32,25 @@ async def ralph_loop(mode: str = "build", max_iterations: int = 50):
 
     print("━" * 40)
     print(f"模式:   {mode}")
-    print(f"提示字: {prompt_file}")
-    print(f"上限:    {max_iterations} 次反覆運算")
+    print(f"提示: {prompt_file}")
+    print(f"最大疊代次數:    {max_iterations}")
     print("━" * 40)
 
     try:
         prompt = Path(prompt_file).read_text()
 
         for i in range(1, max_iterations + 1):
-            print(f"\n=== 反覆運算 {i}/{max_iterations} ===")
+            print(f"\n=== 疊代 {i}/{max_iterations} ===")
 
             session = await client.create_session(SessionConfig(
                 model="gpt-5.1-codex-mini",
-                # 將代理程式固定在專案目錄
+                # 將 AI 固定在專案目錄
                 working_directory=str(Path.cwd()),
-                # 自動核准工具呼叫以進行自動化執行
-                on_permission_request=lambda _req, _ctx: {
-                    "kind": "approved",
-                    "rules": [],
-                },
+                # 為無人值守的操作自動批准工具呼叫
+                on_permission_request=PermissionHandler.approve_all,
             ))
 
-            # 記錄工具使用情況以提高可見性
+            # 記錄工具使用以利檢視
             def log_tool_event(event):
                 if event.type.value == "tool.execution_start":
                     print(f"  ⚙ {event.data.tool_name}")
@@ -67,9 +63,9 @@ async def ralph_loop(mode: str = "build", max_iterations: int = 50):
             finally:
                 await session.destroy()
 
-            print(f"\n反覆運算 {i} 完成。")
+            print(f"\n疊代 {i} 已完成。")
 
-        print(f"\n已達到最大反覆運算次數：{max_iterations}")
+        print(f"\n達到最大疊代次數: {max_iterations}")
     finally:
         await client.stop()
 

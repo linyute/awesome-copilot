@@ -1,0 +1,24 @@
+{
+  "name": "roundup",
+  "description": "自動設定狀態簡報產生器。從範例中學習您的溝通風格，發掘您的資料來源，並根據需求為任何受眾產生草稿更新。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "status-updates",
+    "briefings",
+    "management",
+    "productivity",
+    "communication",
+    "synthesis",
+    "roundup",
+    "copilot-cli"
+  ],
+  "skills": [
+    "./skills/roundup-setup/",
+    "./skills/roundup/"
+  ]
+}

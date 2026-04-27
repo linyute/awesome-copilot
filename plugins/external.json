@@ -1,7 +1,7 @@
 [
   {
     "name": "dataverse",
-    "description": "使用自然語言建立並管理 Microsoft Dataverse 解決方案。包括資料表/資料行建立、解決方案生命週期、資料操作以及 MCP 伺服器組態。",
+    "description": "使用自然語言建構並管理 Microsoft Dataverse 解決方案。包含資料表/資料行建立、解決方案生命週期、資料運算與 MCP 伺服器設定。",
     "version": "1.0.0",
     "author": {
       "name": "Microsoft",
@@ -19,7 +19,7 @@
   },
   {
     "name": "azure",
-    "description": "用於雲端資源管理、部署與 Azure 服務的 Microsoft Azure MCP 伺服器與技能。直接從 Copilot 管理您的 Azure 基礎架構、監視應用程式並部署資源。",
+    "description": "Microsoft Azure MCP 伺服器與技能，用於雲端資源管理、部署與 Azure 服務。直接從 Copilot 管理您的 Azure 基礎架構、監控應用程式並部署資源。",
     "version": "1.0.0",
     "author": {
       "name": "Microsoft",
@@ -37,7 +37,7 @@
   },
   {
     "name": "dotnet",
-    "description": "常見的日常 C#/.NET 撰寫程式碼技能。預計對所有 .NET 開發人員都有幫助。",
+    "description": "常見的日常 C#/.NET 程式碼撰寫技能。預期對所有 .NET 開發人員皆有助益。",
     "version": "0.1.0",
     "author": {
       "name": "Microsoft",
@@ -55,7 +55,7 @@
   },
   {
     "name": "dotnet-diag",
-    "description": "用於 .NET 效能調查、偵錯與事件分析的技能。",
+    "description": "用於 .NET 效能調查、除錯與事故分析的技能。",
     "version": "0.1.0",
     "author": {
       "name": "Microsoft",
@@ -69,6 +69,91 @@
       "source": "github",
       "repo": "dotnet/skills",
       "path": "plugins/dotnet-diag"
+    }
+  },
+  {
+  "name": "skills-for-copilot-studio",
+  "description": "用於 AI 程式碼撰寫代理的 Microsoft Copilot Studio 外掛程式",
+  "version": "1.0.3",
+  "author": {
+    "name": "Microsoft Copilot Studio CAT Team",
+    "url": "https://www.microsoft.com"
+    },
+  "homepage": "https://github.com/microsoft/skills-for-copilot-studio",
+  "keywords": ["copilot", "copilot-studio", "studio", "agent", "microsoft", "coding"],
+  "license": "MIT",
+  "repository": "https://github.com/microsoft/skills-for-copilot-studio",
+  "source": {
+    "source": "github",
+    "repo": "microsoft/skills-for-copilot-studio"
+    }
+  },
+  {
+    "name": "modernize-dotnet",
+    "description": "AI 驅動的 .NET 現代化與升級助手。協助將 .NET Framework 與 .NET 應用程式升級至最新的 .NET 版本。",
+    "version": "1.0.1037-preview1",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://www.microsoft.com"
+    },
+    "homepage": "https://github.com/dotnet/modernize-dotnet",
+    "keywords": ["modernization", "upgrade", "migration", "dotnet"],
+    "license": "MIT",
+    "repository": "https://github.com/dotnet/modernize-dotnet",
+    "source": {
+      "source": "github",
+      "repo": "dotnet/modernize-dotnet",
+      "path": "plugins/modernize-dotnet"
+    }
+  },
+  {
+    "name": "microsoft-docs",
+    "description": "存取 Azure、.NET、Windows 等官方 Microsoft 文件、API 參考與程式碼範例。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://www.microsoft.com"
+    },
+    "homepage": "https://learn.microsoft.com",
+    "keywords": ["microsoft", "azure", "dotnet", "windows", "api", "documentation", "rag", "dynamics", "powerbi", "code-samples"],
+    "license": "MIT",
+    "repository": "https://github.com/MicrosoftDocs/mcp",
+    "source": {
+      "source": "github",
+      "repo": "MicrosoftDocs/mcp"
+    }
+  },
+  {
+    "name": "figma",
+    "description": "包含 Figma MCP 伺服器以及常用工作流程技能的外掛程式。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Figma",
+      "url": "https://www.figma.com"
+    },
+    "homepage": "https://github.com/figma/mcp-server-guide",
+    "keywords": ["figma", "design", "mcp", "ui", "code-connect"],
+    "repository": "https://github.com/figma/mcp-server-guide",
+    "source": {
+      "source": "github",
+      "repo": "figma/mcp-server-guide"
+    }
+  },
+  {
+    "name": "whatidid",
+    "description": "將您的 Copilot 工作階段轉化為影響力的證明 —— 根據研究基礎產生的 HTML 報告，包含工作評估、技能分析與來自本地工作階段日誌的 ROI 指標。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://www.microsoft.com"
+    },
+    "homepage": "https://github.com/microsoft/What-I-Did-Copilot",
+    "keywords": ["copilot", "productivity", "impact", "report", "estimation", "roi", "session-logs"],
+    "license": "MIT",
+    "repository": "https://github.com/microsoft/What-I-Did-Copilot",
+    "source": {
+      "source": "github",
+      "repo": "microsoft/What-I-Did-Copilot"
     }
   }
 ]

@@ -1,37 +1,35 @@
 # FlowStudio MCP — 工具回應目錄 (Tool Response Catalog)
 
-FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
+FlowStudio Power Automate MCP 伺服器的回應形狀與行為備註。
 
-> **關於工具名稱與參數**：請務必在伺服器上呼叫 `tools/list`。
-> 它會傳回每個工具的授權且最新的結構描述。
-> 本文件涵蓋了 `tools/list` **無法** 告訴您的內容：透過實際使用發現的 **回應格式** 
-> 與 **非顯而易見的行為**。
+> **關於工具名稱與參數**：請務必呼叫伺服器上的 `tools/list`。
+> 它回傳每個工具的權威且最新的結構描述。
+> 本文件涵蓋 `tools/list` 沒有告訴您的內容：**回應形狀** 與透過實際使用發現的 **非明顯行為**。
 
 ---
 
-## 真實來源 (Source of Truth)
+## 真理來源 (Source of Truth)
 
-| 優先順序 | 來源 | 涵蓋範圍 |
+| 優先順序 | 來源 | 涵蓋內容 |
 |----------|--------|--------|
-| 1 | **真實 API 回應** | 始終信任伺服器實際傳回的內容 |
-| 2 | **`tools/list`** | 工具名稱、參數名稱、類型、必要旗標 |
-| 3 | **本文件** | 回應格式、行為說明、注意事項 |
+| 1 | **實際 API 回應** | 一律信任伺服器實際回傳的內容 |
+| 2 | **`tools/list`** | 工具名稱、參數名稱、型別、必要旗標 |
+| 3 | **本文件** | 回應形狀、行為備註、陷阱 |
 
-> 如果本文件與 `tools/list` 或真實的 API 行為不符，
-> 以 API 為準。請據此更新本文件。
+> 如果本文件與 `tools/list` 或實際的 API 行為有衝突，請以 API 為準。請據此更新本文件。
 
 ---
 
-## 環境與租用戶探索 (Environment & Tenant Discovery)
+## 環境與租用戶探索
 
 ### `list_live_environments`
 
-回應：環境的直接陣列。
+回應：環境直接陣列。
 ```json
 [
   {
     "id": "Default-26e65220-5561-46ef-9783-ce5f20489241",
-    "displayName": "FlowStudio (預設)",
+    "displayName": "FlowStudio (default)",
     "sku": "Production",
     "location": "australia",
     "state": "Enabled",
@@ -43,19 +41,19 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 ]
 ```
 
-> 在所有其他工具中，請將 `id` 值作為 `environmentName` 使用。
+> 在所有其他工具中，將 `id` 值用作 `environmentName`。
 
 ### `list_store_environments`
 
-與 `list_live_environments` 格式相同，但從快取讀取 (速度較快)。
+形狀與 `list_live_environments` 相同，但從快取讀取（較快）。
 
 ---
 
-## 連線探索 (Connection Discovery)
+## 連接探索
 
 ### `list_live_connections`
 
-回應：包含 `connections` 陣列的包裝物件。
+回應：包含 `connections` 陣列的封裝物件。
 ```json
 {
   "connections": [
@@ -63,7 +61,7 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
       "id": "shared-office365-9f9d2c8e-55f1-49c9-9f9c-1c45d1fbbdce",
       "displayName": "user@contoso.com",
       "connectorName": "shared_office365",
-      "createdBy": "使用者名稱",
+      "createdBy": "User Name",
       "statuses": [{"status": "Connected"}],
       "createdTime": "2024-03-12T21:23:55.206815Z"
     }
@@ -78,35 +76,34 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 > **關鍵欄位**：`connectorName` 對應至 apiId：
 > `"/providers/Microsoft.PowerApps/apis/" + connectorName`
 >
-> 依狀態篩選：`statuses[0].status == "Connected"`。
+> 依狀態過濾：`statuses[0].status == "Connected"`。
 >
-> **注意**：`tools/list` 將 `environmentName` 標記為選填，但若省略它，伺服器
-> 會傳回 `MissingEnvironmentFilter` (HTTP 400)。請務必傳遞 `environmentName`。
+> **注意**：`tools/list` 將 `environmentName` 標記為選用，但如果您省略它，伺服器會回傳 `MissingEnvironmentFilter` (HTTP 400)。請務必傳遞 `environmentName`。
 
 ### `list_store_connections`
 
-來自快取的相同連線資料。
+來自快取的相同連接資料。
 
 ---
 
-## 流程探索與列出 (Flow Discovery & Listing)
+## 流程探索與清單
 
 ### `list_live_flows`
 
-回應：包含 `flows` 陣列的包裝物件。
+回應：包含 `flows` 陣列的封裝物件。
 ```json
 {
   "mode": "owner",
   "flows": [
     {
       "id": "0757041a-8ef2-cf74-ef06-06881916f371",
-      "displayName": "我的流程",
+      "displayName": "My Flow",
       "state": "Started",
       "triggerType": "Request",
       "triggerKind": "Http",
       "createdTime": "2023-08-18T01:18:17Z",
       "lastModifiedTime": "2023-08-18T12:47:42Z",
-      "owners": "<aad-物件-id>",
+      "owners": "<aad-object-id>",
       "definitionAvailable": true
     }
   ],
@@ -115,18 +112,18 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 }
 ```
 
-> 透過 `result["flows"]` 存取。`id` 是純 UUID --- 直接作為 `flowName` 使用。
+> 透過 `result["flows"]` 存取。`id` 為純 UUID — 直接當作 `flowName` 使用。
 >
-> `mode` 表示所使用的存取範圍 (`"owner"` 或 `"admin"`)。
+> `mode` 指示所使用的存取範圍 (`"owner"` 或 `"admin"`)。
 
 ### `list_store_flows`
 
-回應：**直接陣列** (無包裝)。
+回應：**直接陣列**（無封裝）。
 ```json
 [
   {
     "id": "3991358a-f603-e49d-b1ed-a9e4f72e2dcb.0757041a-8ef2-cf74-ef06-06881916f371",
-    "displayName": "管理員 | 同步範本 v3 (解決方案)",
+    "displayName": "Admin | Sync Template v3 (Solutions)",
     "state": "Started",
     "triggerType": "OpenApiConnectionWebhook",
     "environmentName": "3991358a-f603-e49d-b1ed-a9e4f72e2dcb",
@@ -137,16 +134,16 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 ]
 ```
 
-> **`id` 格式**：`envId.flowId` --- 在第一個 `.` 處分割以擷取流程 UUID：
+> **`id` 格式**：`<environmentId>.<flowId>` — 以第一個 `.` 分割以擷取流程 UUID：
 > `flow_id = item["id"].split(".", 1)[1]`
 
 ### `get_store_flow`
 
-回應：來自快取的單一流程 Metadata (選定欄位)。
+回應：來自快取的單一流程中繼資料（選定欄位）。
 ```json
 {
-  "id": "envId.flowId",
-  "displayName": "我的流程",
+  "id": "<environmentId>.<flowId>",
+  "displayName": "My Flow",
   "state": "Started",
   "triggerType": "Recurrence",
   "runPeriodTotal": 100,
@@ -157,7 +154,7 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
   "runPeriodDurationAverage": 29410.8,
   "runPeriodDurationMax": 158900.0,
   "runError": "{\"code\": \"EACCES\", ...}",
-  "description": "流程描述",
+  "description": "Flow description",
   "tier": "Premium",
   "complexity": "{...}",
   "actions": 42,
@@ -167,8 +164,8 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 }
 ```
 
-> `runPeriodDurationAverage` / `runPeriodDurationMax` 的單位為 **毫秒** (除以 1000 即為秒)。
-> `runError` 是一個 **JSON 字串** --- 請使用 `json.loads()` 解析。
+> `runPeriodDurationAverage` / `runPeriodDurationMax` 的單位為 **毫秒** (除以 1000)。
+> `runError` 為 **JSON 字串** — 請使用 `json.loads()` 解析。
 
 ---
 
@@ -181,7 +178,7 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 {
   "name": "<flow-guid>",
   "properties": {
-    "displayName": "我的流程",
+    "displayName": "My Flow",
     "state": "Started",
     "definition": {
       "triggers": { "..." },
@@ -195,40 +192,40 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 
 ### `update_live_flow`
 
-**建立模式**：省略 `flowName` --- 建立新流程。需要 `definition` 與 `displayName`。
+**建立模式**：省略 `flowName` — 建立新流程。必需 `definition` 和 `displayName`。
 
-**更新模式**：提供 `flowName` --- 修補 (PATCH) 現有流程。
+**更新模式**：提供 `flowName` — PATCH 現有流程。
 
 回應：
 ```json
 {
   "created": false,
-  "flowKey": "envId.flowId",
+  "flowKey": "<environmentId>.<flowId>",
   "updated": ["definition", "connectionReferences"],
-  "displayName": "我的流程",
+  "displayName": "My Flow",
   "state": "Started",
   "definition": { "...完整定義..." },
   "error": null
 }
 ```
 
-> `error` **始終存在**，但可能為 `null`。請檢查 `result.get("error") is not None`。
+> `error` **一律存在** 但可能是 `null`。請檢查 `result.get("error") is not None`。
 >
-> 建立時：`created` 為新流程的 GUID (字串)。更新時：`created` 為 `false`。
+> 建立時：`created` 為新流程 GUID (字串)。更新時：`created` 為 `false`。
 >
-> `description` **始終為必要項** (建立與更新模式)。
+> `description` **一律為必要** (建立與更新模式)。
 
 ### `add_live_flow_to_solution`
 
-將非解決方案流程遷移至解決方案中。如果流程已在解決方案中則傳回錯誤。
+將非解決方案的流程遷移至解決方案中。若已在解決方案中，則回傳錯誤。
 
 ---
 
-## 執行歷程記錄與監視 (Run History & Monitoring)
+## 執行歷程記錄與監控
 
 ### `get_live_flow_runs`
 
-回應：執行的直接陣列 (最新的在前)。
+回應：執行記錄的直接陣列（最新的在前）。
 ```json
 [{
   "name": "<run-id>",
@@ -240,14 +237,13 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 }]
 ```
 
-> `top` 預設為 **30**，針對更高的值會自動分頁。針對每 5 分鐘執行一次的流程，
-> 請設定 `top: 300` 以涵蓋 24 小時。
+> `top` 預設為 **30**，對於較高數值會自動分頁。若需 24 小時覆蓋率（針對每 5 分鐘執行一次的流程），請設定 `top: 300`。
 >
-> 執行 ID 欄位為 **`name`** (並非 `runName`)。在其他工具中請將此值作為 `runName` 參數使用。
+> 執行 ID 欄位為 **`name`** (非 `runName`)。在其他工具中請使用此值作為 `runName` 參數。
 
 ### `get_live_flow_run_error`
 
-回應：針對失敗執行的結構化錯誤分析。
+回應：失敗執行的結構化錯誤詳細資料。
 ```json
 {
   "runName": "08584296068667933411438594643CU15",
@@ -255,7 +251,7 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
     {
       "actionName": "Apply_to_each_prepare_workers",
       "status": "Failed",
-      "error": {"code": "ActionFailed", "message": "動作失敗。"},
+      "error": {"code": "ActionFailed", "message": "An action failed."},
       "code": "ActionFailed",
       "startTime": "2026-02-25T06:13:52Z",
       "endTime": "2026-02-25T06:15:24Z"
@@ -276,12 +272,12 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 }
 ```
 
-> `failedActions` 的順序是由外而內 --- **最後一個項目即為根源原因**。
+> `failedActions` 依外層至內層排序 — **最後一項為根本原因**。
 > 使用 `failedActions[-1]["actionName"]` 作為診斷的起點。
 
 ### `get_live_flow_run_action_outputs`
 
-回應：動作詳細資料物件的陣列。
+回應：動作詳細物件陣列。
 ```json
 [
   {
@@ -296,14 +292,12 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 ]
 ```
 
-> **`actionName` 為選填**：省略它將傳回執行中的「所有」動作；
-> 提供它則僅傳回該動作的單一元素陣列。
->
-> 針對大量資料動作，輸出可能會非常大 (50 MB+)。請使用 120 秒以上的逾時設定。
+> **`actionName` 為選用**：省略可回傳執行中的所有動作；提供則僅回傳該動作的單一元素陣列。
+> 針對大型資料動作，輸出可能非常巨大 (50 MB+)。請使用 120 秒以上的逾時設定。
 
 ---
 
-## 執行控制 (Run Control)
+## 執行控制
 
 ### `resubmit_live_flow_run`
 
@@ -311,65 +305,98 @@ FlowStudio Power Automate MCP 伺服器的回應格式與行為備註。
 
 ### `cancel_live_flow_run`
 
-取消 `Running` 狀態的流程執行。
+取消當前執行的流程執行記錄。
 
-> 請勿取消正在等待自適應卡片回應的執行 --- 當 Teams 卡片正在等待使用者輸入時，
-> `Running` 狀態是正常的。
+> 請勿取消等待調適型卡片回應的執行記錄 — 狀態 `Running` 是正常的，表示流程正在等待人工回應 Teams 卡片。取消它將導致遺失待處理的卡片。
 
 ---
 
-## HTTP 觸發工具 (HTTP Trigger Tools)
+## HTTP 觸發程序工具
 
 ### `get_live_flow_http_schema`
 
-回應鍵值：
+回應鍵：
 ```
 flowKey            - 流程 GUID
 displayName        - 流程顯示名稱
 triggerName        - 觸發動作名稱 (例如 "manual")
-triggerType        - 觸發類型 (例如 "Request")
+triggerType        - 觸發型別 (例如 "Request")
 triggerKind        - 觸發種類 (例如 "Http")
 requestMethod      - HTTP 方法 (例如 "POST")
-relativePath       - 在觸發程序上設定的相對路徑 (如果有)
-requestSchema      - 觸發程序預期作為 POST 主體的 JSON 結構描述
+relativePath       - 觸發程序上設定的相對路徑 (如有)
+requestSchema      - 觸發程序預期的 JSON 結構描述 (POST body)
 requestHeaders     - 觸發程序預期的標頭
-responseSchemas    - 在回應動作上定義的 JSON 結構描述陣列
-responseSchemaCount - 定義輸出結構描述的回應動作數量
+responseSchemas    - Response 動作定義的 JSON 結構描述陣列
+responseSchemaCount - 定義輸出結構描述的 Response 動作數量
 ```
 
-> 請求主體結構描述位於 `requestSchema` (並非 `triggerSchema`)。
+> 請求本文結構描述位於 `requestSchema` (而非 `triggerSchema`)。
 
 ### `get_live_flow_trigger_url`
 
-傳回 HTTP 觸發流程的已簽署回呼 URL。回應包含
-`flowKey`、`triggerName`、`triggerType`、`triggerKind`、`triggerMethod`、`triggerUrl`。
+回傳 HTTP 觸發流程的簽名回呼 URL。回應包含 `flowKey`, `triggerName`, `triggerType`, `triggerKind`, `triggerMethod`, `triggerUrl`。
 
 ### `trigger_live_flow`
 
-回應鍵值：`flowKey`、`triggerName`、`triggerUrl`、`requiresAadAuth`、`authType`、
-`responseStatus`、`responseBody`。
+回應鍵：`flowKey`, `triggerName`, `triggerUrl`, `requiresAadAuth`, `authType`,
+`responseStatus`, `responseBody`。
 
-> **僅適用於 `Request` (HTTP) 觸發程序。** 針對週期間隔 (Recurrence) 
-> 與其他觸發類型會傳回錯誤：`"only HTTP Request triggers can be invoked via this tool"`。
+> **僅適用於 `Request` (HTTP) 觸發程序。** 若用於 Recurrence、連接器及其他觸發程序型別，將回傳錯誤：`"only HTTP Request triggers can be invoked via this tool"`。
+> `Button` 型別觸發程序會回傳 `ListCallbackUrlOperationBlocked`。
 >
-> `responseStatus` + `responseBody` 包含流程回應動作的輸出。
-> 自動處理 AAD 驗證的觸發程序。
+> `responseStatus` + `responseBody` 包含流程 Response 動作的輸出。
+> AAD 驗證觸發程序會自動處理。
+>
+> **內容型別注意事項**：本文以 `application/octet-stream` (原始) 而非 `application/json` 傳送。具有包含 `required` 欄位的觸發結構描述的流程，會因為 PA 在根據結構描述解析前先驗證 `Content-Type` 而拒絕請求並回傳 `InvalidRequestContent` (400)。沒有結構描述的流程，或設計為接受原始輸入的流程 (例如內部解析本文的 Baker 模式流程)，將可正常運作。流程會收到以 Base64 編碼的 JSON，包含 `$content` 及 `$content-type: application/octet-stream`。
 
 ---
 
-## 流程狀態管理 (Flow State Management)
+## 流程狀態管理
+
+### `set_live_flow_state`
+
+透過即時 PA API 啟動或停止 Power Automate 流程。**不需** Power Clarity 工作區 — 適用於任何經授權帳戶可存取的流程。會先讀取當前狀態，僅在確實需要變更時才發出啟動/停止呼叫。
+
+參數：`environmentName`, `flowName`, `state` (`"Started"` | `"Stopped"`) — 皆為必要。
+
+回應：
+```json
+{
+  "flowName": "6321ab25-7eb0-42df-b977-e97d34bcb272",
+  "environmentName": "Default-26e65220-...",
+  "requestedState": "Started",
+  "actualState": "Started"
+}
+```
+
+> **請使用此工具** — 而非 `update_live_flow` — 來啟動或停止流程。
+> `update_live_flow` 僅變更 displayName/definition；PA API 會忽略透過該端點傳遞的狀態。
 
 ### `set_store_flow_state`
 
-啟動或停止流程。傳遞 `state: "Started"` 或 `state: "Stopped"`。
+透過即時 PA API 啟動或停止流程，**並** 將更新後的狀態保存回 Power Clarity 快取。參數與 `set_live_flow_state` 相同，但需要 Power Clarity 工作區。
+
+回應 (形狀與 `set_live_flow_state` 不同)：
+```json
+{
+  "flowKey": "<environmentId>.<flowId>",
+  "requestedState": "Stopped",
+  "currentState": "Stopped",
+  "flow": { /* 完整的 gFlows 記錄，形狀與 get_store_flow 相同 */ }
+}
+```
+
+> 當您需要立即更新快取 (無需等待下次每日掃描) **且** 需要在同一呼叫中取得完整更新的治理記錄時，請使用 `set_store_flow_state` — 這對於停止流程並立即標記或檢查其治理中繼資料的工作流程非常有用。
+>
+> 若只需切換狀態，建議使用 `set_live_flow_state` — 它更簡單且無需訂閱需求。
 
 ---
 
-## 儲存工具 (Store Tools) --- 僅限 FlowStudio for Teams
+## 儲存區工具 (僅限 FlowStudio for Teams)
 
 ### `get_store_flow_summary`
 
-回應：彙總的執行統計資料。
+回應：彙總執行統計資料。
 ```json
 {
   "totalRuns": 100,
@@ -377,17 +404,17 @@ responseSchemaCount - 定義輸出結構描述的回應動作數量
   "failRate": 0.1,
   "averageDurationSeconds": 29.4,
   "maxDurationSeconds": 158.9,
-  "firstFailRunRemediation": "<提示或 null>"
+  "firstFailRunRemediation": "<hint or null>"
 }
 ```
 
 ### `get_store_flow_runs`
 
-過去 N 天的快取執行歷程記錄，包含持續時間與補救提示。
+包含持續時間與修復建議的快取執行歷程記錄 (過去 N 天)。
 
 ### `get_store_flow_errors`
 
-僅限失敗的快取執行，包含失敗動作名稱與補救提示。
+僅包含失敗的執行記錄，附帶動作名稱與修復建議。
 
 ### `get_store_flow_trigger_url`
 
@@ -395,48 +422,48 @@ responseSchemaCount - 定義輸出結構描述的回應動作數量
 
 ### `update_store_flow`
 
-更新治理 Metadata (描述、標籤、監視旗標、通知規則、商務影響)。
+更新治理中繼資料 (說明、標籤、監控旗標、通知規則、業務影響)。
 
 ### `list_store_makers` / `get_store_maker`
 
-製作者 (公民開發者) 探索與詳細資料。
+建立者 (公民開發者) 探索與詳細資料。
 
 ### `list_store_power_apps`
 
-從快取列出所有 Power Apps 畫布應用程式。
+來自快取的所有 Power Apps 畫布應用程式清單。
 
 ---
 
-## 行為備註 (Behavioral Notes)
+## 行為備註
 
-透過實際 API 使用發現的非顯而易見行為。這些是 
-`tools/list` 無法告訴您的內容。
+透過實際 API 使用發現的非明顯行為。這些是 `tools/list` 無法告訴您的內容。
 
 ### `get_live_flow_run_action_outputs`
-- **`actionName` 為選填**：省略以取得所有動作，提供以取得單一動作。
-  這會將回應從 N 個元素變更為 1 個元素 (仍為陣列)。
-- 針對大量資料動作，輸出可能超過 50 MB --- 請務必使用 120 秒以上的逾時設定。
+- **`actionName` 為選用**：省略可回傳所有動作，提供則僅回傳一個。
+  這會將回應從 N 個元素改為 1 個元素 (仍然是陣列)。
+- 大量資料動作的輸出可能非常巨大 (50 MB+) — 一律使用 120 秒以上的逾時設定。
 
 ### `update_live_flow`
-- `description` **始終為必要項** (建立與更新模式)。
-- 回應中 **始終存在** `error` 鍵值 --- `null` 表示成功。
-  請勿使用 `if "error" in result` 檢查；請檢查 `result.get("error") is not None`。
-- 建立時，`created` = 新流程的 GUID (字串)。更新時，`created` = `false`。
+- `description` **一律為必要** (建立與更新模式)。
+- 回應中 **一律存在** `error` 鍵 — `null` 表示成功。
+  請勿檢查 `if "error" in result`；應檢查 `result.get("error") is not None`。
+- 建立時：`created` = 新流程 GUID (字串)。更新時：`created` = `false`。
+- **無法變更流程狀態**。僅更新 displayName、definition 和 connectionReferences。請使用 `set_live_flow_state` 來啟動/停止流程。
 
 ### `trigger_live_flow`
-- **僅適用於 HTTP Request 觸發程序。** 針對週期間隔、連接器與其他觸發類型會傳回錯誤。
-- 自動處理 AAD 驗證的觸發程序 (模擬 Bearer 權杖)。
+- **僅適用於 HTTP Request 觸發程序**。對 Recurrence、連接器及其他觸發程序型別回傳錯誤。
+- AAD 驗證的觸發程序會自動處理 (模擬 Bearer 權杖)。
 
 ### `get_live_flow_runs`
-- `top` 預設為 **30**，針對更高的值具備自動分頁功能。
-- 執行 ID 欄位為 `name`，並非 `runName`。在其他工具中請將此值作為 `runName` 使用。
-- 執行結果會以「最新的在前」順序傳回。
+- `top` 預設為 **30**，對更高數值會自動分頁。
+- 執行 ID 欄位為 `name`，非 `runName`。請在其他工具中使用此值作為 `runName`。
+- 執行記錄回傳順序為最新的在前。
 
 ### Teams `PostMessageToConversation` (透過 `update_live_flow`)
-- **「與流程機器人聊天」**：`body/recipient` = `"user@domain.com;"` (帶有尾隨分號的字串)。
-- **「頻道」**：`body/recipient` = `{"groupId": "...", "channelId": "..."}` (物件)。
-- `poster`：針對工作流程機器人身分使用 `"Flow bot"`，針對使用者身分使用 `"User"`。
+- **"Chat with Flow bot"**：`body/recipient` = `"user@domain.com;"` (帶有後綴分號的字串)。
+- **"Channel"**：`body/recipient` = `{"groupId": "...", "channelId": "..."}` (物件)。
+- `poster`：工作流程機器人身分設為 `"Flow bot"`，使用者身分設為 `"User"`。
 
 ### `list_live_connections`
-- `id` 是您在 `connectionReferences` 中所需使用的 `connectionName` 值。
+- `id` 是您在 `connectionReferences` 中進行 `connectionName` 所需的值。
 - `connectorName` 對應至 apiId：`"/providers/Microsoft.PowerApps/apis/" + connectorName`。

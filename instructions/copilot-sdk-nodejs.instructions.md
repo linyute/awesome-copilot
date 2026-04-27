@@ -1,7 +1,7 @@
 ---
 applyTo: "**.ts, **.js, package.json"
-description: '本檔案提供使用 GitHub Copilot SDK 建構 Node.js/TypeScript 應用程式的指引。'
-name: 'GitHub Copilot SDK Node.js 指引'
+description: "使用 GitHub Copilot SDK 建構 Node.js/TypeScript 應用程式指南"
+name: "GitHub Copilot SDK Node.js 指令"
 ---
 
 ## 核心原則
@@ -9,13 +9,13 @@ name: 'GitHub Copilot SDK Node.js 指引'
 - SDK 處於技術預覽階段，可能會發生重大變更
 - 需要 Node.js 18.0 或更高版本
 - 需要安裝 GitHub Copilot CLI 並加入 PATH
-- 使用 TypeScript 建構以確保型別安全
+- 使用 TypeScript 建構以提供型別安全
 - 全程使用 async/await 模式
 - 提供完整的 TypeScript 型別定義
 
 ## 安裝
 
-請務必透過 npm/pnpm/yarn 安裝：
+請始終透過 npm/pnpm/yarn 安裝：
 
 ```bash
 npm install @github/copilot-sdk
@@ -25,55 +25,56 @@ pnpm add @github/copilot-sdk
 yarn add @github/copilot-sdk
 ```
 
-## 客戶端初始化 (Client Initialization)
+## 客戶端初始化
 
 ### 基本客戶端設定
 
 ```typescript
-import { CopilotClient } from "@github/copilot-sdk";
+import { CopilotClient, approveAll } from "@github/copilot-sdk";
 
 const client = new CopilotClient();
 await client.start();
-// 使用客戶端...
+// 使用 client...
 await client.stop();
 ```
 
-### 客戶端設定選項 (Client Configuration Options)
+### 客戶端設定選項
 
 建立 CopilotClient 時，請使用 `CopilotClientOptions`：
 
-- `cliPath` - CLI 執行檔路徑 (預設值：從 PATH 中獲取 "copilot")
-- `cliArgs` - 在 SDK 管理的旗標 (flag) 之前附加的額外引數 (string[])
-- `cliUrl` - 現有 CLI 伺服器的 URL (例如 "localhost:8080")。提供此選項時，客戶端不會啟動新處理程序 (process)
-- `port` - 伺服器連接埠 (預設值：0 表示隨機)
-- `useStdio` - 使用 stdio 傳輸而非 TCP (預設值：true)
-- `logLevel` - 記錄層級 (預設值："debug")
-- `autoStart` - 自動啟動伺服器 (預設值：true)
-- `autoRestart` - 當機時自動重新啟動 (預設值：true)
-- `cwd` - CLI 處理程序的工作目錄 (預設值：process.cwd())
-- `env` - CLI 處理程序的環境變數 (預設值：process.env)
+- `cliPath` - CLI 可執行檔路徑 (預設：PATH 中的 "copilot")
+- `cliArgs` - 在 SDK 管理的旗標之前加入的額外引數 (string[])
+- `cliUrl` - 現有 CLI 伺服器的 URL (例如 "localhost:8080")。若提供，客戶端將不會 spawn 處理序
+- `port` - 伺服器連接埠 (預設：0 為隨機)
+- `useStdio` - 使用 stdio 傳輸而非 TCP (預設：true)
+- `logLevel` - 日誌層級 (預設："debug")
+- `autoStart` - 自動啟動伺服器 (預設：true)
+- `autoRestart` - 當損毀時自動重新啟動 (預設：true)
+- `cwd` - CLI 處理序的工作目錄 (預設：process.cwd())
+- `env` - CLI 處理序的環境變數 (預設：process.env)
 
 ### 手動伺服器控制
 
-如需明確控制：
+若需明確控制：
 
 ```typescript
 const client = new CopilotClient({ autoStart: false });
 await client.start();
-// 使用客戶端...
+// 使用 client...
 await client.stop();
 ```
 
 當 `stop()` 耗時過長時，請使用 `forceStop()`。
 
-## 對話階段管理 (Session Management)
+## 會話管理 (Session Management)
 
-### 建立對話階段 (Creating Sessions)
+### 建立會話
 
 使用 `SessionConfig` 進行設定：
 
 ```typescript
 const session = await client.createSession({
+    onPermissionRequest: approveAll,
     model: "gpt-5",
     streaming: true,
     tools: [...],
@@ -84,45 +85,46 @@ const session = await client.createSession({
 });
 ```
 
-### 對話階段設定選項 (Session Config Options)
+### 會話設定選項
 
-- `sessionId` - 自訂對話階段 ID (string)
+- `sessionId` - 自訂會話 ID (string)
 - `model` - 模型名稱 ("gpt-5", "claude-sonnet-4.5" 等)
 - `tools` - 公開給 CLI 的自訂工具 (Tool[])
 - `systemMessage` - 系統訊息自訂 (SystemMessageConfig)
-- `availableTools` - 工具名稱白名單 (string[])
-- `excludedTools` - 工具名稱黑名單 (string[])
+- `availableTools` - 工具名稱允許清單 (string[])
+- `excludedTools` - 工具名稱排除清單 (string[])
 - `provider` - 自訂 API 提供者設定 (BYOK) (ProviderConfig)
 - `streaming` - 啟用串流回應區塊 (boolean)
 - `mcpServers` - MCP 伺服器設定 (MCPServerConfig[])
-- `customAgents` - 自訂代理人 (custom agents) 設定 (CustomAgentConfig[])
-- `configDir` - 設定目錄覆蓋 (string)
+- `customAgents` - 自訂代理設定 (CustomAgentConfig[])
+- `configDir` - 設定目錄覆寫 (string)
 - `skillDirectories` - 技能目錄 (string[])
-- `disabledSkills` - 已停用的技能 (string[])
-- `onPermissionRequest` - 權限請求處理常式 (PermissionHandler)
+- `disabledSkills` - 已停用技能 (string[])
+- `onPermissionRequest` - 權限要求處理常式 (PermissionHandler)
 
-### 恢復對話階段 (Resuming Sessions)
+### 恢復會話
 
 ```typescript
 const session = await client.resumeSession("session-id", {
   tools: [myNewTool],
+  onPermissionRequest: approveAll,
 });
 ```
 
-### 對話階段操作 (Session Operations)
+### 會話操作
 
-- `session.sessionId` - 獲取對話階段識別碼 (string)
+- `session.sessionId` - 取得會話識別碼 (string)
 - `await session.send({ prompt: "...", attachments: [...] })` - 傳送訊息，回傳 Promise<string>
 - `await session.sendAndWait({ prompt: "..." }, timeout)` - 傳送並等待閒置，回傳 Promise<AssistantMessageEvent | null>
 - `await session.abort()` - 中止目前處理
-- `await session.getMessages()` - 獲取所有事件/訊息，回傳 Promise<SessionEvent[]>
-- `await session.destroy()` - 清理對話階段
+- `await session.getMessages()` - 取得所有事件/訊息，回傳 Promise<SessionEvent[]>
+- `await session.destroy()` - 清理會話
 
-## 事件處理 (Event Handling)
+## 事件處理
 
-### 事件訂閱模式 (Event Subscription Pattern)
+### 事件訂閱模式
 
-請務必使用 async/await 或 Promises 來等待對話階段事件：
+ALWAYS 使用 async/await 或 Promises 來等待會話事件：
 
 ```typescript
 await new Promise<void>((resolve) => {
@@ -138,9 +140,9 @@ await new Promise<void>((resolve) => {
 });
 ```
 
-### 取消訂閱事件 (Unsubscribing from Events)
+### 取消訂閱事件
 
-`on()` 方法會回傳一個用於取消訂閱的函式：
+`on()` 方法回傳一個取消訂閱的函式：
 
 ```typescript
 const unsubscribe = session.on((event) => {
@@ -150,9 +152,9 @@ const unsubscribe = session.on((event) => {
 unsubscribe();
 ```
 
-### 事件型別 (Event Types)
+### 事件類型
 
-使用可辨識聯集 (discriminated unions) 搭配型別防護 (type guards) 來進行事件處理：
+使用區分聯集 (discriminated unions) 與型別防護 (type guards) 來處理事件：
 
 ```typescript
 session.on((event) => {
@@ -170,13 +172,13 @@ session.on((event) => {
       // 工具執行完成
       break;
     case "session.start":
-      // 對話階段開始
+      // 會話開始
       break;
     case "session.idle":
-      // 對話階段處於閒置狀態 (處理完成)
+      // 會話閒置 (處理完成)
       break;
     case "session.error":
-      console.error(`錯誤：${event.data.message}`);
+      console.error(`錯誤: ${event.data.message}`);
       break;
   }
 });
@@ -190,35 +192,36 @@ session.on((event) => {
 
 ```typescript
 const session = await client.createSession({
-  model: "gpt-5",
-  streaming: true,
+    onPermissionRequest: approveAll,
+    model: "gpt-5",
+    streaming: true,
 });
 ```
 
 ### 處理串流事件
 
-同時處理增量 (delta) 事件和最終事件：
+處理 delta 事件 (增量) 與最終事件：
 
 ```typescript
 await new Promise<void>((resolve) => {
   session.on((event) => {
     switch (event.type) {
-      case "assistant.message.delta":
+      case "assistant.message_delta":
         // 增量文字區塊
         process.stdout.write(event.data.deltaContent);
         break;
-      case "assistant.reasoning.delta":
-        // 增量推論區塊 (取決於模型)
+      case "assistant.reasoning_delta":
+        // 增量推理區塊 (視模型而定)
         process.stdout.write(event.data.deltaContent);
         break;
       case "assistant.message":
         // 最終完整訊息
-        console.log("\n--- 最終結果 ---");
+        console.log("\n--- 最終 ---");
         console.log(event.data.content);
         break;
       case "assistant.reasoning":
-        // 最終推論內容
-        console.log("--- 推論過程 ---");
+        // 最終推理內容
+        console.log("--- 推理 ---");
         console.log(event.data.content);
         break;
       case "session.idle":
@@ -227,31 +230,32 @@ await new Promise<void>((resolve) => {
     }
   });
 
-  session.send({ prompt: "講個故事給我聽" });
+  session.send({ prompt: "給我一個故事" });
 });
 ```
 
-注意：無論串流設定為何，一律會傳送最終事件 (`assistant.message`, `assistant.reasoning`)。
+注意：無論是否啟用串流，都會傳送最終事件 (`assistant.message`, `assistant.reasoning`)。
 
-## 自訂工具 (Custom Tools)
+## 自訂工具
 
 ### 使用 defineTool 定義工具
 
-使用 `defineTool` 進行型別安全的工具定義：
+使用 `defineTool` 進行型別安全工具定義：
 
 ```typescript
 import { defineTool } from "@github/copilot-sdk";
 
 const session = await client.createSession({
-  model: "gpt-5",
+    onPermissionRequest: approveAll,
+    model: "gpt-5",
   tools: [
     defineTool({
       name: "lookup_issue",
-      description: "從追蹤器獲取問題 (issue) 詳情",
+      description: "從追蹤器擷取問題詳細資料",
       parameters: {
         type: "object",
         properties: {
-          id: { type: "string", description: "問題 (Issue) ID" },
+          id: { type: "string", description: "問題 ID" },
         },
         required: ["id"],
       },
@@ -264,18 +268,19 @@ const session = await client.createSession({
 });
 ```
 
-### 使用 Zod 處理參數
+### 使用 Zod 定義參數
 
-SDK 支援使用 Zod 結構描述 (schema) 處理參數：
+SDK 支援 Zod 結構定義參數：
 
 ```typescript
 import { z } from "zod";
 
 const session = await client.createSession({
+    onPermissionRequest: approveAll,
   tools: [
     defineTool({
       name: "get_weather",
-      description: "獲取特定地點的天氣",
+      description: "取得地點的天氣",
       parameters: z.object({
         location: z.string().describe("城市名稱"),
         units: z.enum(["celsius", "fahrenheit"]).optional(),
@@ -288,61 +293,64 @@ const session = await client.createSession({
 });
 ```
 
-### 工具回傳型別 (Tool Return Types)
+### 工具回傳型別
 
-- 回傳任何可 JSON 序列化的值 (會自動包裝)
-- 或回傳 `ToolResultObject` 以進行 Metadata 的完整控制：
+- 回傳任何 JSON 可序列化值 (自動包裝)
+- 或回傳 `ToolResultObject` 以完全控制中繼資料：
 
 ```typescript
 {
     textResultForLlm: string;  // 顯示給 LLM 的結果
     resultType: "success" | "failure";
-    error?: string;  // 內部錯誤 (不顯示給 LLM)
+    error?: string;  // 內部錯誤 (不會顯示給 LLM)
     toolTelemetry?: Record<string, unknown>;
 }
 ```
 
-### 工具執行流程 (Tool Execution Flow)
+### 工具執行流程
 
 當 Copilot 呼叫工具時，客戶端會自動：
 
-1. 執行您的處理常式函式
+1. 執行你的處理常式函式
 2. 序列化回傳值
-3. 回應給 CLI
+3. 回應 CLI
+
 ## 系統訊息自訂 (System Message Customization)
 
-### 附加模式 (Append Mode) (預設值 - 保留防護欄)
+### 追加模式 (Append Mode，預設 — 保留安全護欄)
 
 ```typescript
 const session = await client.createSession({
-  model: "gpt-5",
+    onPermissionRequest: approveAll,
+    model: "gpt-5",
   systemMessage: {
     mode: "append",
     content: `
 <workflow_rules>
 - 務必檢查安全漏洞
-- 在適用時提供效能改進建議
+- 若適用，請建議效能改進
 </workflow_rules>
 `,
   },
 });
 ```
 
-### 取代模式 (Replace Mode) (完整控制 - 移除防護欄)
+### 取代模式 (Replace Mode，完全控制 — 移除安全護欄)
 
 ```typescript
 const session = await client.createSession({
-  model: "gpt-5",
+    onPermissionRequest: approveAll,
+    model: "gpt-5",
   systemMessage: {
     mode: "replace",
-    content: "你是一個很有幫助的助手。",
+    content: "你是一個有用的助理。",
   },
 });
 ```
 
-## 檔案附件 (File Attachments)
+## 檔案附件
 
-在訊息中附加檔案：
+將檔案附加至訊息：
 
 ```typescript
 await session.send({
@@ -357,11 +365,11 @@ await session.send({
 });
 ```
 
-## 訊息傳遞模式 (Message Delivery Modes)
+## 訊息傳送模式
 
 在訊息選項中使用 `mode` 屬性：
 
-- `"enqueue"` - 將訊息排入佇列進行處理
+- `"enqueue"` - 將訊息排入處理佇列
 - `"immediate"` - 立即處理訊息
 
 ```typescript
@@ -371,37 +379,44 @@ await session.send({
 });
 ```
 
-## 多個對話階段 (Multiple Sessions)
+## 多重會話
 
-對話階段是獨立的，可以同時執行：
+會話彼此獨立，可並行執行：
 
 ```typescript
-const session1 = await client.createSession({ model: "gpt-5" });
-const session2 = await client.createSession({ model: "claude-sonnet-4.5" });
+const session1 = await client.createSession({
+    onPermissionRequest: approveAll,
+    model: "gpt-5",
+});
+const session2 = await client.createSession({
+    onPermissionRequest: approveAll,
+    model: "claude-sonnet-4.5",
+});
 
 await Promise.all([
-  session1.send({ prompt: "來自對話階段 1 的問候" }),
-  session2.send({ prompt: "來自對話階段 2 的問候" }),
+  session1.send({ prompt: "來自會話 1 的問候" }),
+  session2.send({ prompt: "來自會話 2 的問候" }),
 ]);
 ```
 
-## 自備金鑰 (Bring Your Own Key, BYOK)
+## 自帶金鑰 (BYOK)
 
 透過 `provider` 使用自訂 API 提供者：
 
 ```typescript
 const session = await client.createSession({
+    onPermissionRequest: approveAll,
   provider: {
     type: "openai",
     baseUrl: "https://api.openai.com/v1",
-    apiKey: "您的-api-key",
+    apiKey: "your-api-key",
   },
 });
 ```
 
-## 對話階段生命週期管理 (Session Lifecycle Management)
+## 會話生命週期管理
 
-### 列出對話階段 (Listing Sessions)
+### 列出會話
 
 ```typescript
 const sessions = await client.listSessions();
@@ -410,75 +425,75 @@ for (const metadata of sessions) {
 }
 ```
 
-### 刪除對話階段 (Deleting Sessions)
+### 刪除會話
 
 ```typescript
 await client.deleteSession(sessionId);
 ```
 
-### 獲取最後一個對話階段 ID
+### 取得最後會話 ID
 
 ```typescript
 const lastId = await client.getLastSessionId();
 if (lastId) {
-  const session = await client.resumeSession(lastId);
+  const session = await client.resumeSession(lastId, { onPermissionRequest: approveAll });
 }
 ```
 
-### 檢查連線狀態 (Checking Connection State)
+### 檢查連線狀態
 
 ```typescript
 const state = client.getState();
-// 回傳值："disconnected" | "connecting" | "connected" | "error"
+// 回傳: "disconnected" | "connecting" | "connected" | "error"
 ```
 
-## 錯誤處理 (Error Handling)
+## 錯誤處理
 
-### 標準例外處理 (Standard Exception Handling)
+### 標準異常處理
 
 ```typescript
 try {
-  const session = await client.createSession();
-  await session.send({ prompt: "您好" });
+  const session = await client.createSession({ onPermissionRequest: approveAll });
+  await session.send({ prompt: "Hello" });
 } catch (error) {
-  console.error(`錯誤：${error.message}`);
+  console.error(`錯誤: ${error.message}`);
 }
 ```
 
-### 對話階段錯誤事件 (Session Error Events)
+### 會話錯誤事件
 
 監控 `session.error` 事件型別以處理執行階段錯誤：
 
 ```typescript
 session.on((event) => {
   if (event.type === "session.error") {
-    console.error(`對話階段錯誤：${event.data.message}`);
+    console.error(`會話錯誤: ${event.data.message}`);
   }
 });
 ```
 
-## 連線測試 (Connectivity Testing)
+## 連線測試
 
-使用 ping 驗證伺服器連線性：
+使用 ping 驗證伺服器連線能力：
 
 ```typescript
-const response = await client.ping("連線健康檢查");
-console.log(`伺服器回應時間：${new Date(response.timestamp)}`);
+const response = await client.ping("health check");
+console.log(`伺服器回應於 ${new Date(response.timestamp)}`);
 ```
 
-## 資源清理 (Resource Cleanup)
+## 資源清理
 
 ### 使用 Try-Finally 自動清理
 
-請務必使用 try-finally 或在 finally 區塊中進行清理：
+ALWAYS 使用 try-finally 或在 finally 區塊中清理：
 
 ```typescript
 const client = new CopilotClient();
 try {
   await client.start();
-  const session = await client.createSession();
+  const session = await client.createSession({ onPermissionRequest: approveAll });
   try {
-    // 使用對話階段...
+    // 使用 session...
   } finally {
     await session.destroy();
   }
@@ -487,7 +502,7 @@ try {
 }
 ```
 
-### 清理函式模式 (Cleanup Function Pattern)
+### 清理函式模式
 
 ```typescript
 async function withClient<T>(
@@ -506,7 +521,7 @@ async function withSession<T>(
   client: CopilotClient,
   fn: (session: CopilotSession) => Promise<T>,
 ): Promise<T> {
-  const session = await client.createSession();
+  const session = await client.createSession({ onPermissionRequest: approveAll });
   try {
     return await fn(session);
   } finally {
@@ -517,37 +532,40 @@ async function withSession<T>(
 // 使用方式
 await withClient(async (client) => {
   await withSession(client, async (session) => {
-    await session.send({ prompt: "您好！" });
+    await session.send({ prompt: "Hello!" });
   });
 });
 ```
 
-## 最佳做法 (Best Practices)
+## 最佳實務
 
-1. **務必使用 try-finally** 進行資源清理
-2. **使用 Promises** 來等待對話階段閒置 (session.idle) 事件
-3. **處理對話階段錯誤 (session.error)** 事件以建立穩健的錯誤處理機制
-4. **使用型別防護 (type guards) 或 switch 陳述式** 來進行事件處理
-5. **啟用串流** 以在互動情境中提供更好的使用者體驗 (UX)
-6. **使用 defineTool** 進行型別安全的工具定義
-7. **使用 Zod 結構描述 (schema)** 進行執行階段參數驗證
-8. **在不再需要時處置事件訂閱**
-9. **使用模式為 "append" 的系統訊息 (systemMessage)** 以保留安全防護欄
-10. **啟用串流時，同時處理增量 (delta) 和最終事件**
-11. **善用 TypeScript 型別** 以確保編譯時的安全性
+1. **Always use try-finally** 進行資源清理
+2. **Use Promises** 等待 session.idle 事件
+3. **Handle session.error** 事件以進行穩健的錯誤處理
+4. **Use type guards or switch statements** 進行事件處理
+5. **Enable streaming** 以在互動情境中提供更好的 UX
+6. **Use defineTool** 進行型別安全工具定義
+7. **Use Zod schemas** 進行執行階段參數驗證
+8. **Dispose event subscriptions** 當不再需要時
+9. **Use systemMessage with mode: "append"** 以保留安全護欄
+10. **Handle both delta and final events** 當啟用串流時
+11. **Leverage TypeScript types** 以獲得編譯時安全
 
-## 常見模式 (Common Patterns)
+## 常見範例
 
-### 簡單的查詢-回應 (Simple Query-Response)
+### 簡單查詢-回應
 
 ```typescript
-import { CopilotClient } from "@github/copilot-sdk";
+import { CopilotClient, approveAll } from "@github/copilot-sdk";
 
 const client = new CopilotClient();
 try {
   await client.start();
 
-  const session = await client.createSession({ model: "gpt-5" });
+  const session = await client.createSession({
+    onPermissionRequest: approveAll,
+    model: "gpt-5",
+  });
   try {
     await new Promise<void>((resolve) => {
       session.on((event) => {
@@ -568,10 +586,10 @@ try {
 }
 ```
 
-### 多輪對話 (Multi-Turn Conversation)
+### 多回合對話
 
 ```typescript
-const session = await client.createSession();
+const session = await client.createSession({ onPermissionRequest: approveAll });
 
 async function sendAndWait(prompt: string): Promise<void> {
   await new Promise<void>((resolve, reject) => {
@@ -591,14 +609,14 @@ async function sendAndWait(prompt: string): Promise<void> {
   });
 }
 
-await sendAndWait("法國的首都是哪裡？");
+await sendAndWait("法國的首都是哪裡？"));
 await sendAndWait("它的人口是多少？");
 ```
 
-### SendAndWait 協助工具
+### SendAndWait 輔助函式
 
 ```typescript
-// 使用內建的 sendAndWait 進行更簡單的同步互動
+// 使用內建的 sendAndWait 以簡化同步互動
 const response = await session.sendAndWait({ prompt: "2+2 等於多少？" }, 60000);
 
 if (response) {
@@ -606,7 +624,7 @@ if (response) {
 }
 ```
 
-### 具備型別安全參數的工具
+### 具型別安全參數的工具
 
 ```typescript
 import { z } from "zod";
@@ -620,12 +638,13 @@ interface UserInfo {
 }
 
 const session = await client.createSession({
+    onPermissionRequest: approveAll,
   tools: [
     defineTool({
       name: "get_user",
-      description: "獲取使用者資訊",
+      description: "擷取使用者資訊",
       parameters: z.object({
-        userId: z.string().describe("使用者 ID"),
+        userId: z.string().describe("User ID"),
       }),
       handler: async (args): Promise<UserInfo> => {
         return {
@@ -640,13 +659,13 @@ const session = await client.createSession({
 });
 ```
 
-### 具備進度顯示的串流 (Streaming with Progress)
+### 串流與進度
 
 ```typescript
 let currentMessage = "";
 
 const unsubscribe = session.on((event) => {
-  if (event.type === "assistant.message.delta") {
+  if (event.type === "assistant.message_delta") {
     currentMessage += event.data.deltaContent;
     process.stdout.write(event.data.deltaContent);
   } else if (event.type === "assistant.message") {
@@ -660,40 +679,40 @@ const unsubscribe = session.on((event) => {
 await session.send({ prompt: "寫一個長篇故事" });
 ```
 
-### 錯誤復原 (Error Recovery)
+### 錯誤復原
 
 ```typescript
 session.on((event) => {
   if (event.type === "session.error") {
-    console.error("對話階段錯誤：", event.data.message);
-    // 可選擇重試或處理錯誤
+    console.error("工作階段錯誤：", event.data.message);
+    // 可選地重試或處理錯誤
   }
 });
 
 try {
-  await session.send({ prompt: "危險的操作" });
+  await session.send({ prompt: "高風險操作" });
 } catch (error) {
   // 處理傳送錯誤
   console.error("傳送失敗：", error);
 }
 ```
 
-## TypeScript 專屬特性 (TypeScript-Specific Features)
+## TypeScript 專屬功能
 
-### 型別推論 (Type Inference)
+### 型別推論
 
 ```typescript
 import type { SessionEvent, AssistantMessageEvent } from "@github/copilot-sdk";
 
 session.on((event: SessionEvent) => {
   if (event.type === "assistant.message") {
-    // TypeScript 在此處知道 event 是 AssistantMessageEvent
+    // 在這裡 TypeScript 知道 event 是 AssistantMessageEvent
     const content: string = event.data.content;
   }
 });
 ```
 
-### 泛型協助工具 (Generic Helper)
+### 泛型輔助函式
 
 ```typescript
 async function waitForEvent<T extends SessionEvent["type"]>(
@@ -710,7 +729,7 @@ async function waitForEvent<T extends SessionEvent["type"]>(
   });
 }
 
-// 使用方式
+// 用法
 const message = await waitForEvent(session, "assistant.message");
 console.log(message.data.content);
 ```

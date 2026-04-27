@@ -1,23 +1,4 @@
 {
-  "name": "gem-team",
-  "description": "一個模組化的多代理程式團隊，用於執行複雜專案，具備基於 DAG 的規劃、平行執行、TDD 驗證，以及由充滿活力的團隊領導帶領的自動化測試。",
-  "version": "1.2.1",
-  "author": {
-    "name": "Awesome Copilot Community"
-  },
-  "repository": "https://github.com/github/awesome-copilot",
-  "license": "MIT",
-  "keywords": [
-    "multi-agent",
-    "orchestration",
-    "dag-planning",
-    "parallel-execution",
-    "tdd",
-    "verification",
-    "automation",
-    "security",
-    "prd"
-  ],
   "agents": [
     "./agents/gem-orchestrator.md",
     "./agents/gem-researcher.md",
@@ -26,6 +7,33 @@
     "./agents/gem-browser-tester.md",
     "./agents/gem-devops.md",
     "./agents/gem-reviewer.md",
-    "./agents/gem-documentation-writer.md"
-  ]
+    "./agents/gem-documentation-writer.md",
+    "./agents/gem-debugger.md",
+    "./agents/gem-critic.md",
+    "./agents/gem-code-simplifier.md",
+    "./agents/gem-designer.md",
+    "./agents/gem-implementer-mobile.md",
+    "./agents/gem-designer-mobile.md",
+    "./agents/gem-mobile-tester.md"
+  ],
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "description": "用於規格驅動開發與自動化驗證的多代理協調框架。",
+  "keywords": [
+    "multi-agent",
+    "orchestration",
+    "tdd",
+    "testing",
+    "e2e",
+    "devops",
+    "security-audit",
+    "code-review",
+    "prd",
+    "mobile"
+  ],
+  "license": "MIT",
+  "name": "gem-team",
+  "repository": "https://github.com/github/awesome-copilot",
+  "version": "1.6.6"
 }

@@ -1,0 +1,25 @@
+{
+  "name": "fastah-ip-geo-tools",
+  "description": "此外掛程式旨在協助網路維運工程師調校並發佈 RFC 8805 格式的 IP 地理位置資訊饋給。它包含一個 AI 技能以及一個相關聯的 MCP 伺服器，可將地理位置地名進行地理編碼以對應至真實城市，確保準確性。",
+  "version": "0.0.9",
+  "author": {
+    "name": "Fastah Inc.",
+    "url": "https://getfastah.com"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "Apache-2.0",
+  "keywords": [
+    "geofeed",
+    "ip-geolocation",
+    "rfc-8805",
+    "rfc-9632",
+    "network-operations",
+    "isp",
+    "cloud",
+    "hosting",
+    "ixp"
+  ],
+  "skills": [
+    "./skills/geofeed-tuner/"
+  ]
+}

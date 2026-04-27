@@ -1,0 +1,36 @@
+{
+  "name": "react18-upgrade",
+  "description": "企業級 React 18 遷移工具組，具備用於將 React 16/17 類別元件程式碼庫升級至 React 18.3.1 的專門代理與技能。包含稽核員、套件依賴外科醫生、類別元件遷移專家、自動批次處理修復工具與測試監護人。",
+  "version": "1.0.0",
+  "keywords": [
+    "react18",
+    "react",
+    "migration",
+    "upgrade",
+    "class-components",
+    "lifecycle",
+    "batching"
+  ],
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+   "agents": [
+    "./agents/react18-auditor.md",
+    "./agents/react18-commander.md",
+    "./agents/react18-dep-surgeon.md",
+    "./agents/react18-class-surgeon.md",
+    "./agents/react18-batching-fixer.md",
+    "./agents/react18-test-guardian.md"
+  ],
+  "skills": [
+    "./skills/react-audit-grep-patterns/",
+    "./skills/react18-batching-patterns/",
+    "./skills/react18-dep-compatibility/",
+    "./skills/react18-enzyme-to-rtl/",
+    "./skills/react18-legacy-context/",
+    "./skills/react18-lifecycle-patterns/",
+    "./skills/react18-string-refs/"
+  ]
+}

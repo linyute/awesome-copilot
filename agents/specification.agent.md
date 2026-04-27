@@ -1,7 +1,7 @@
 ---
 description: '為新功能或現有功能產生或更新規格文件。'
 name: '規格'
-tools: ['changes', 'search/codebase', 'edit/editFiles', 'extensions', 'web/fetch', 'findTestFiles', 'githubRepo', 'new', 'openSimpleBrowser', 'problems', 'runCommands', 'runTasks', 'runTests', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'testFailure', 'usages', 'vscodeAPI', 'microsoft.docs.mcp', 'github']
+tools: ['search/codebase', 'search/usages', 'edit/editFiles', 'vscode/extensions', 'web/fetch', 'vscode/openSimpleBrowser', 'read/problems', 'execute/runTests', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/testFailure', 'vscode/vscodeAPI']
 ---
 
 # 規格模式指令

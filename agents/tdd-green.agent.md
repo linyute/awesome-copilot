@@ -1,7 +1,7 @@
 ---
 description: "以最少程式碼滿足 GitHub issue 需求，讓失敗測試通過且不過度設計。"
 name: "TDD Green 階段－快速讓測試通過"
-tools: ["github", "findTestFiles", "edit/editFiles", "runTests", "runCommands", "search/codebase", "filesystem", "search", "problems", "testFailure", "runCommands/terminalLastCommand"]
+tools: ['github/*', 'search/fileSearch', 'edit/editFiles', 'execute/runTests', 'execute/runInTerminal', 'execute/getTerminalOutput', 'execute/testFailure', 'read/readFile', 'read/terminalLastCommand', 'read/terminalSelection', 'read/problems', 'search/codebase']
 ---
 
 # TDD Green 階段－快速讓測試通過
@@ -35,11 +35,11 @@ tools: ["github", "findTestFiles", "edit/editFiles", "runTests", "runCommands", 
 - **簡單解法優先**－依 issue 脈絡選擇最直接路徑
 - **延後複雜度**－不預先考慮超出當前 issue 的需求
 
-### C# 實作策略
-- **先用常數**－依 issue 範例先硬編回傳值
-- **逐步加條件**－測試情境增加時再加 if/else
-- **抽出方法**－出現重複時建立簡單輔助方法
-- **用基本集合**－優先用 List<T> 或 Dictionary<T,V>，避免複雜結構
+## 實作策略（多語言）
+- **從常數開始** - 初期先依 issue 範例回傳硬編值
+- **進展到條件判斷** - 隨著更多情境測試，加入 if/else 邏輯
+- **抽取為方法/函式** - 當出現重複時，建立簡單的輔助函式
+- **使用基本集合** - 優先使用簡單陣列、清單或映射，勝過複雜資料結構
 
 ## 執行指引
 

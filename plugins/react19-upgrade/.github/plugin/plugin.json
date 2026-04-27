@@ -1,0 +1,30 @@
+{
+  "name": "react19-upgrade",
+  "description": "企業級 React 19 遷移工具組，具備用於將 React 18 程式碼庫升級至 React 19 的專門代理與技能。包含稽核員、套件依賴外科醫生、原始碼遷移工具與測試監護人。處理已棄用 API 的移除工作，包括 ReactDOM.render、forwardRef、defaultProps、舊版 context、字串 refs 等。",
+  "version": "1.0.0",
+  "keywords": [
+    "react19",
+    "react",
+    "migration",
+    "upgrade",
+    "hooks",
+    "modern-react"
+  ],
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "agents": [
+    "./agents/react19-auditor.md",
+    "./agents/react19-commander.md",
+    "./agents/react19-dep-surgeon.md",
+    "./agents/react19-migrator.md",
+    "./agents/react19-test-guardian.md"
+  ],
+  "skills": [
+    "./skills/react19-concurrent-patterns/",
+    "./skills/react19-source-patterns/",
+    "./skills/react19-test-patterns/"
+  ]
+}

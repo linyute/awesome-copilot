@@ -1,0 +1,115 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Schema for CodeTour tour files",
+  "type": "object",
+  "required": ["title", "steps"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "指定程式碼導覽的標題。"
+    },
+    "description": {
+      "type": "string",
+      "description": "指定程式碼導覽的選用描述。"
+    },
+    "ref": {
+      "type": "string",
+      "description": "指出此導覽所關聯的 git ref（分支/提交/標籤）。"
+    },
+    "isPrimary": {
+      "type": "boolean",
+      "description": "指定此導覽是否代表此程式碼庫的主要導覽。"
+    },
+    "nextTour": {
+      "type": "string",
+      "description": "指定接在此導覽之後的導覽標題。"
+    },
+    "stepMarker": {
+      "type": "string",
+      "description": "指定標記，指出程式碼行代表此導覽的步驟。"
+    },
+    "when": {
+      "type": "string",
+      "description": "指定在顯示此導覽之前必須滿足的條件（JavaScript 運算式）。"
+    },
+    "steps": {
+      "type": "array",
+      "description": "指定程式碼導覽中包含的步驟清單。",
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": ["description"],
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "步驟的選用標題。"
+          },
+          "description": {
+            "type": "string",
+            "description": "步驟的描述。支援 markdown。"
+          },
+          "file": {
+            "type": "string",
+            "description": "步驟關聯的檔案路徑（相對於工作區根目錄）。"
+          },
+          "directory": {
+            "type": "string",
+            "description": "步驟關聯的目錄路徑（相對於工作區根目錄）。"
+          },
+          "uri": {
+            "type": "string",
+            "description": "與步驟關聯的絕對 URI (https://...)。用於 PR、議題、文件、ADR。"
+          },
+          "line": {
+            "type": "number",
+            "description": "步驟關聯的行號（從 1 開始）。"
+          },
+          "pattern": {
+            "type": "string",
+            "description": "藉由內容而非行號將步驟與行關聯的正規表示式。當行號頻繁變動時很有用。"
+          },
+          "selection": {
+            "type": "object",
+            "required": ["start", "end"],
+            "description": "與步驟關聯的文字選取範圍。當重點是程式碼區塊（而非單行）時使用。",
+            "properties": {
+              "start": {
+                "type": "object",
+                "required": ["line", "character"],
+                "properties": {
+                  "line": { "type": "number", "description": "選取範圍開始的行號（從 1 開始）。" },
+                  "character": { "type": "number", "description": "選取範圍開始的欄號（從 1 開始）。" }
+                }
+              },
+              "end": {
+                "type": "object",
+                "required": ["line", "character"],
+                "properties": {
+                  "line": { "type": "number", "description": "選取範圍結束的行號（從 1 開始）。" },
+                  "character": { "type": "number", "description": "選取範圍結束的欄號（從 1 開始）。" }
+                }
+              }
+            }
+          },
+          "view": {
+            "type": "string",
+            "description": "瀏覽到此步驟時要自動聚焦的 VS Code 檢視表 ID（例如 'terminal'、'explorer'、'problems'、'scm'）。"
+          },
+          "commands": {
+            "type": "array",
+            "description": "瀏覽到此步驟時要執行的 VS Code 命令 URI。",
+            "default": [],
+            "items": { "type": "string" },
+            "examples": [
+              ["editor.action.goToDeclaration"],
+              ["workbench.action.terminal.focus"],
+              ["editor.action.showHover"],
+              ["references-view.findReferences"],
+              ["workbench.action.tasks.runTask"]
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,7 @@
 ---
 description: '偵錯你的應用程式以找出並修正錯誤'
 name: '偵錯模式指引'
-tools: ['edit/editFiles', 'search', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'search/usages', 'read/problems', 'execute/testFailure', 'web/fetch', 'web/githubRepo', 'execute/runTests']
+tools: ['edit/editFiles', 'search/codebase', 'search/usages', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'read/problems', 'execute/testFailure', 'web/fetch', 'execute/runTests']
 ---
 
 # 偵錯模式指引

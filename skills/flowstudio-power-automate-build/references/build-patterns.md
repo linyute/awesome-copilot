@@ -1,10 +1,10 @@
-# 常見建構模式
+# 常見建構模式 (Common Build Patterns)
 
-完整的流程定義範本，可直接複製並進行自定義。
+準備好供複製與自訂的完整流程定義範本。
 
 ---
 
-## 模式：週期 + SharePoint 清單讀取 + Teams 通知
+## 模式：週期性觸發 (Recurrence) + SharePoint 清單讀取 + Teams 通知
 
 ```json
 {
@@ -52,10 +52,10 @@
               "poster": "Flow bot",
               "location": "Channel",
               "body/recipient": {
-                "groupId": "<team-識別碼>",
-                "channelId": "<頻道-識別碼>"
+                "groupId": "<team-id>",
+                "channelId": "<channel-id>"
               },
-              "body/messageBody": "項目：@{items('Apply_To_Each')?['Title']}"
+              "body/messageBody": "Item: @{items('Apply_To_Each')?['Title']}"
             }
           }
         }
@@ -91,7 +91,7 @@
     "Compose_Response": {
       "type": "Compose",
       "runAfter": {},
-      "inputs": "已收到：@{triggerBody()?['name']} = @{triggerBody()?['value']}"
+      "inputs": "Received: @{triggerBody()?['name']} = @{triggerBody()?['value']}"
     },
     "Response": {
       "type": "Response",

@@ -1,0 +1,25 @@
+{
+  "name": "phoenix",
+  "description": "Phoenix AI 可觀測性技能，用於 LLM 應用程式除錯、評估與追蹤。包含 CLI 除錯工具、LLM 評估工作流程以及 OpenInference 追蹤儀表板化。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Arize AI"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "phoenix",
+    "arize",
+    "llm",
+    "observability",
+    "tracing",
+    "evaluation",
+    "openinference",
+    "instrumentation"
+  ],
+  "skills": [
+    "./skills/phoenix-cli/",
+    "./skills/phoenix-evals/",
+    "./skills/phoenix-tracing/"
+  ]
+}

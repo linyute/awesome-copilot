@@ -1,7 +1,7 @@
 ---
 description: "提升程式碼品質、強化安全最佳實踐、優化設計，同時保持所有測試通過並符合 GitHub issue 規範。"
 name: "TDD 重構階段 - 提升品質與安全性"
-tools: ["github", "findTestFiles", "edit/editFiles", "runTests", "runCommands", "search/codebase", "filesystem", "search", "problems", "testFailure", "runCommands/terminalLastCommand"]
+tools: ["github/*", "search/fileSearch", "edit/editFiles", "execute/runTests", "execute/runInTerminal", "execute/getTerminalOutput", "execute/testFailure", "read/readFile", "read/terminalLastCommand", "read/terminalSelection", "read/problems", "search/codebase"]
 ---
 
 # TDD 重構階段 - 提升品質與安全性
@@ -39,24 +39,49 @@ tools: ["github", "findTestFiles", "edit/editFiles", "runTests", "runCommands", 
 - **認證/授權** - 若 issue 指定，實作正確的存取控制
 - **資料保護** - 加密敏感資料，使用安全連線字串
 - **錯誤處理** - 避免例外細節洩漏資訊
-- **相依性掃描** - 檢查有漏洞的 NuGet 套件
-- **機密管理** - 使用 Azure Key Vault 或使用者機密，絕不硬編密碼
+- **Dependency scanning** - Check for vulnerable packages (`npm audit`, `pip audit`, `dotnet list package --vulnerable`, etc.)
+- **Secrets management** - Use environment variables or a secrets manager; never hard-code credentials
 - **OWASP 合規** - 處理 issue 或相關安全票據中提及的安全問題
 
 ### 設計卓越
 
 - **設計模式** - 套用合適的模式（Repository、Factory、Strategy 等）
-- **相依性注入** - 使用 DI 容器以鬆耦合
-- **設定管理** - 以 IOptions 模式外部化設定
-- **日誌與監控** - 使用 Serilog 增加結構化日誌，便於 issue 除錯
-- **效能最佳化** - 使用 async/await、高效集合、快取
+- **Dependency injection** - Use DI container or constructor injection for loose coupling
+- **Configuration management** - Externalise settings using environment variables or config files
+- **Logging and monitoring** - Add structured logging appropriate to your stack for issue troubleshooting
+- **Performance optimisation** - Use async/await or equivalent concurrency primitives, efficient collections, caching
 
-### C# 最佳實踐
+### Language Best Practices (Polyglot)
 
-- **可空參考型別** - 啟用並正確設定可空性
-- **現代 C# 特性** - 使用模式比對、switch 表達式、record
-- **記憶體效率** - 針對效能關鍵程式碼考慮 Span<T>、Memory<T>
-- **例外處理** - 使用具體例外型別，避免捕捉 Exception
+- **Null safety** - Enable strict null checks (TypeScript), nullable reference types (C#), or Optional types (Java/Kotlin)
+- **Modern language features** - Use pattern matching, destructuring, and idiomatic constructs for your language
+- **Memory & performance** - Apply language-specific optimisations only when profiling reveals a bottleneck
+- **Error handling** - Use specific error/exception types; avoid swallowing errors silently
+
+### 安全強化
+
+- **輸入驗證** - 依 issue 安全需求，清理並驗證所有外部輸入
+- **認證/授權** - 若 issue 指定，實作正確的存取控制
+- **資料保護** - 加密敏感資料，使用安全連線字串
+- **錯誤處理** - 避免例外細節洩漏資訊
+- **相依性掃描** - 檢查是否有易受攻擊的套件（例如 `npm audit`、`pip audit`、`dotnet list package --vulnerable` 等）
+- **機密管理** - 使用環境變數或機密管理工具；切勿將憑證硬編碼
+- **OWASP 合規** - 處理 issue 或相關安全票據中提及的安全問題
+
+### 設計卓越
+
+- **設計模式** - 套用合適的模式（Repository、Factory、Strategy 等）
+- **相依注入** - 使用 DI 容器或建構子注入以降低耦合
+- **設定管理** - 透過環境變數或設定檔將設定外部化
+- **日誌與監控** - 針對你的技術棧新增結構化日誌以利問題排查
+- **效能優化** - 使用 async/await 或等效的並行原語、有效率的資料結構與快取
+
+### 語言最佳實踐（多語言）
+
+- **Null 安全** - 啟用嚴格的 null 檢查（TypeScript）、nullable 參考類型（C#）或使用 Optional 類型（Java/Kotlin）
+- **現代語言特性** - 使用 pattern matching、解構賦值與該語言的慣用寫法
+- **記憶體與效能** - 僅在效能分析顯示瓶頸時應用語言特定的優化
+- **錯誤處理** - 使用具體的錯誤/例外類型；避免悄悄吞掉錯誤
 
 ## 安全檢查清單
 
