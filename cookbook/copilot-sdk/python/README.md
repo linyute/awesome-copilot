@@ -5,10 +5,12 @@
 ## 食譜
 
 - [錯誤處理](error-handling.md)：優雅地處理錯誤，包括連線失敗、逾時與清理。
+- [錯誤復原 Hooks](error-recovery-hooks.md)：將工具失敗分類，並引導 LLM 繼續調查而非放棄。
 - [多個工作階段](multiple-sessions.md)：同時管理多個獨立的對話。
 - [管理本機檔案](managing-local-files.md)：使用 AI 驅動的分組策略，按 Metadata 組織檔案。
 - [PR 視覺化](pr-visualization.md)：使用 GitHub MCP 伺服器產生互動式 PR 時長圖表。
 - [持續性工作階段](persisting-sessions.md)：跨重新啟動儲存並恢復工作階段。
+- [PyInstaller 封裝](pyinstaller-frozen-build.md)：使用 PyInstaller 將 Copilot SDK 應用打包為獨立執行檔。
 
 ## 貢獻
 

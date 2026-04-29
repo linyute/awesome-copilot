@@ -490,6 +490,21 @@ function getSkillFiles(skillPath, relativePath) {
 }
 
 /**
+ * 取得資料夾中所有 agent Markdown 檔案
+ */
+function getAgentFiles(agentDir, pluginRootPath) {
+  if (!fs.existsSync(agentDir)) return [];
+
+  return fs
+    .readdirSync(agentDir)
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => ({
+      kind: "agent",
+      path: `${pluginRootPath}/agents/${f}`,
+    }));
+}
+
+/**
  * 產生外掛程式 Metadata
  */
 function generatePluginsData(gitDates) {
@@ -514,9 +529,25 @@ function generatePluginsData(gitDates) {
       const relPath = `plugins/${dir.name}`;
       const dates = gitDates[relPath] || gitDates[`${relPath}/`] || {};
 
+      const agentItems = (data.agents || []).flatMap((agent) => {
+        const agentPath = agent.replace("./", "");
+        const fullPath = path.join(pluginDir, agentPath);
+
+        if (fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory()) {
+          return getAgentFiles(fullPath, relPath);
+        }
+
+        return [
+          {
+            kind: "agent",
+            path: `${relPath}/${agentPath}`,
+          },
+        ];
+      });
+
       // 根據規格欄位 (agents, commands, skills) 建立項目清單
       const items = [
-        ...(data.agents || []).map((p) => ({ kind: "agent", path: p })),
+        ...agentItems,
         ...(data.commands || []).map((p) => ({ kind: "prompt", path: p })),
         ...(data.skills || []).map((p) => ({ kind: "skill", path: p })),
       ];
@@ -532,9 +563,8 @@ function generatePluginsData(gitDates) {
         itemCount: items.length,
         items: items,
         lastUpdated: dates.lastModified || null,
-        searchText: `${data.name || dir.name} ${
-          data.description || ""
-        } ${tags.join(" ")}`.toLowerCase(),
+        searchText: `${data.name || dir.name} ${data.description || ""
+          } ${tags.join(" ")}`.toLowerCase(),
       });
     } catch (e) {
       console.warn(`解析外掛程式 ${dir.name} 失敗：`, e.message);
@@ -701,9 +731,8 @@ function generateSearchIndex(
       description: instruction.description,
       path: instruction.path,
       lastUpdated: instruction.lastUpdated,
-      searchText: `${instruction.title} ${instruction.description} ${
-        instruction.applyTo || ""
-      }`.toLowerCase(),
+      searchText: `${instruction.title} ${instruction.description} ${instruction.applyTo || ""
+        }`.toLowerCase(),
     });
   }
 
@@ -729,9 +758,8 @@ function generateSearchIndex(
       description: workflow.description,
       path: workflow.path,
       lastUpdated: workflow.lastUpdated,
-      searchText: `${workflow.title} ${
-        workflow.description
-      } ${workflow.triggers.join(" ")}`.toLowerCase(),
+      searchText: `${workflow.title} ${workflow.description
+        } ${workflow.triggers.join(" ")}`.toLowerCase(),
     });
   }
 

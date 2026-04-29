@@ -1,6 +1,6 @@
 {
   "name": "context-matic",
-  "description": "ContextMatic 將您的 AI 代理從 API 猜測者轉變為 API 專家。透過為 PayPal、Spotify 和 Twilio 等提供者提供精確、版本感知且具備型別的 SDK 方法與模型，ContextMatic 以高品質的基礎真理取代了猜測與過時的訓練資料。這消除了幻覺與損壞的程式碼，確保了跨 7 種以上語言的精確度，讓您的代理能以高精確度進行建構，而不是將 token 浪費在試錯上。",
+  "description": "程式代理會對 API 產生幻覺。ContextMatic 提供經過整理與版本化的 API 與 SDK 文件。當你請代理「整合付款 API」時，它可能會胡亂猜測——依賴過時的訓練資料與不符合實際 SDK 的通用模式。ContextMatic 的解決方式是在代理需要的精確時刻，提供確定性、具版本意識且符合 SDK 的原生上下文。",
   "version": "0.1.0",
   "keywords": [
     "api-context",

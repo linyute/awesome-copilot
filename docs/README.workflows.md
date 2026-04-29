@@ -37,6 +37,7 @@
 | [OSPO 貢獻者報告](../workflows/ospo-contributors-report.md) | 組織儲存庫中的每月貢獻者活動指標。 | schedule, workflow_dispatch |
 | [OSPO 過時儲存庫報告](../workflows/ospo-stale-repos.md) | 識別組織中非作用中的儲存庫，並產生封存建議報告。 | schedule, workflow_dispatch |
 | [每日 Issue 報告](../workflows/daily-issues-report.md) | 產生每日未解決 Issue 與近期活動的摘要，並以 GitHub Issue 形式呈現 | schedule |
+| [每週註解同步](../workflows/weekly-comment-sync.md) | 每週執行的工作流程，旨在尋找過時的程式碼註解或 README 片段，進行僅限文字的同步更新，並在需要變更時開啟一個草稿提取請求。 | schedule, workflow_dispatch |
 | [開源釋出合規檢查器](../workflows/ospo-release-compliance-checker.md) | 針對開源釋出需求分析目標儲存庫，並將詳細的合規報告作為 Issue 留言發佈。 | issues, workflow_dispatch |
 | [關聯性摘要 (Relevance Summary)](../workflows/relevance-summary.md) | 手動觸發的工作流程，將所有帶有 /relevance-check 回應的未結 Issue 與 PR 彙總到單一 Issue 中 | workflow_dispatch |
 | [關聯性檢查 (Relevance Check)](../workflows/relevance-check.md) | 評估 Issue 或 Pull Request 是否仍與專案相關的斜線指令 | slash_command, roles |

@@ -5,7 +5,7 @@ applyTo: '**/*.md'
 
 # Markdown 協助工具檢閱指引
 
-在檢閱 Markdown 檔案時，請根據 GitHub 的 [「讓您的 GitHub 個人檔案頁面具備協助工具支援的 5 個提示」](https://github.blog/developer-skills/github/5-tips-for-making-your-github-profile-page-accessible/)，檢查是否存在以下協助工具 (accessibility) 問題。標記違規項目並建議修復方案，同時清楚解釋對協助工具支援的影響。
+在檢閱 Markdown 檔案時，請根據 GitHub 的「5 個讓你的 GitHub 頁面更具可及性的建議」(https://github.blog/developer-skills/github/5-tips-for-making-your-github-profile-page-accessible/) 以及 Smashing Magazine 的文章「改善 Markdown 的可及性」(https://www.smashingmagazine.com/2021/09/improving-accessibility-of-markdown/) 檢查下列可及性問題。標記違規項目並提出修正建議，清楚說明其對可及性的影響。
 
 ## 1. 描述性連結
 
@@ -56,6 +56,18 @@ applyTo: '**/*.md'
 - 標記用於傳達意義但未同時以文字說明的表情符號。
 - 表情符號應節制且深思熟慮地使用。
 
+## 6. 多媒體
+
+- 為影片提供字幕，為錄製的音訊提供文字逐字稿。
+- 不要自動播放音訊或影片。
+- 建議動畫圖片與其他動畫在頁面載入時預設為暫停狀態。
+
+## 7. Other
+
+- 連結：避免在新分頁或新視窗中開啟連結。
+- 粗體與斜體：螢幕閱讀器通常不會特別宣讀粗體或斜體強調，因此重要資訊不應僅依賴這類格式。
+- 表格：僅將表格用於資料呈現；不要使用表格做為頁面版面配置。避免巢狀表格與過於複雜的表格，因為它們在標準 Markdown 中較難以無障礙的方式呈現。
+
 ## 檢閱優先順序
 
 當存在多個問題時，請按以下順序排定優先權：
@@ -65,9 +77,12 @@ applyTo: '**/*.md'
 3. 非描述性連結文字
 4. 將表情符號用作項目符號或清單標記
 5. 簡易語言改進
+6. 多媒體
+7. 其他
 
 ## 檢閱語氣
 
 - 解釋每個問題對協助工具支援的影響，具體說明哪些使用者受到影響 (例如：螢幕閱讀器使用者、認知障礙人士、非母語人士)。
 - 不要從寫作中移除個性或語氣。協助工具支援與引人入勝的內容並非互斥。
 - 保持建議具備可操作性且具體。
+

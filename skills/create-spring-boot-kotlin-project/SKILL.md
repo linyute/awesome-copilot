@@ -11,9 +11,9 @@ description: '建立 Spring Boot Kotlin 專案骨架'
   - Docker
   - Docker Compose
 
-- 如果您需要自訂專案名稱，請在 [下載 Spring Boot 專案範本](./create-spring-boot-kotlin-project.prompt.md#download-spring-boot-project-template) 中更改 `artifactId` 和 `packageName`。
+- 如果您需要自訂專案名稱，請在 [下載 Spring Boot 專案範本](#download-spring-boot-project-template) 中更改 `artifactId` 和 `packageName`。
 
-- 如果您需要更新 Spring Boot 版本，請在 [下載 Spring Boot 專案範本](./create-spring-boot-kotlin-project.prompt.md#download-spring-boot-project-template) 中更改 `bootVersion`。
+- 如果您需要更新 Spring Boot 版本，請在 [下載 Spring Boot 專案範本](#download-spring-boot-project-template) 中更改 `bootVersion`。
 
 ## 檢查 Java 版本
 

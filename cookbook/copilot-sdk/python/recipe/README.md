@@ -23,13 +23,15 @@ python <檔名>.py
 
 ### 可用的食譜
 
-| 食譜                 | 命令                             | 說明                                       |
-| -------------------- | -------------------------------- | ------------------------------------------ |
-| 錯誤處理             | `python error_handling.py`       | 示範錯誤處理模式                           |
-| 多個工作階段         | `python multiple_sessions.py`    | 管理多個獨立的對話                         |
-| 管理本機檔案         | `python managing_local_files.py` | 使用 AI 分組組織檔案                       |
-| PR 視覺化            | `python pr_visualization.py`     | 產生 PR 時長圖表                           |
-| 持續性工作階段       | `python persisting_sessions.py`  | 跨重新啟動儲存並恢復工作階段               |
+| 食譜              | 命令                                 | 說明                            |
+| ----------------- | ------------------------------------ | ------------------------------- |
+| 錯誤處理          | `python error_handling.py`           | 示範錯誤處理模式                |
+| 錯誤復原掛鉤      | `python error_recovery_hooks.py`     | 將工具失敗分類並自動重試        |
+| 多個工作階段      | `python multiple_sessions.py`        | 管理多個獨立的對話              |
+| 管理本機檔案      | `python managing_local_files.py`     | 使用 AI 分組組織檔案            |
+| PR 視覺化         | `python pr_visualization.py`         | 產生 PR 時長圖表                |
+| 持續性工作階段    | `python persisting_sessions.py`      | 跨重新啟動儲存並恢復工作階段    |
+| PyInstaller Build | `python pyinstaller_frozen_build.py` | 將 SDK 應用封裝成獨立的可執行檔 |
 
 ### 帶有引數的範例
 

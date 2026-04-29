@@ -1,0 +1,27 @@
+{
+  "name": "ai-team-orchestration",
+  "description": "引導建立並執行一個具有具名角色（製作人、開發團隊、測試）的多代理 AI 開發團隊。包含衝刺規劃、具有不同代理聲音的腦力激盪提示、跨對話上下文生存以及平行團隊工作流。基於一個經過驗證的範本，該範本在 5 天內交付了一個包含 30 款遊戲且完全沒有人類編寫程式碼的應用程式。",
+  "version": "1.0.0",
+  "keywords": [
+    "ai-team",
+    "multi-agent",
+    "sprint-planning",
+    "brainstorm",
+    "project-management",
+    "orchestration",
+    "developer-workflow"
+  ],
+  "author": {
+    "name": "Denis Evdokimov"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "agents": [
+    "./agents/ai-team-producer.md",
+    "./agents/ai-team-dev.md",
+    "./agents/ai-team-qa.md"
+  ],
+  "skills": [
+    "./skills/ai-team-orchestration/"
+  ]
+}

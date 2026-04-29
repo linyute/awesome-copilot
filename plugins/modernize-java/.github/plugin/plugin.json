@@ -1,0 +1,29 @@
+{
+  "name": "modernize-java",
+  "version": "1.0.0",
+  "description": "以 AI 驅動的 Java 現代化與升級助手。協助將 Java 和 Spring Boot 應用程式升級到最新版本。",
+  "author": {
+    "name": "Microsoft"
+  },
+  "keywords": [
+    "java",
+    "modernization",
+    "upgrade",
+    "migration",
+    "spring-boot"
+  ],
+  "license": "MIT",
+  "agents": [
+    "./agents/modernize-java.md"
+  ],
+  "mcpServers": {
+    "appmod-mcp-server": {
+      "type": "local",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@microsoft/github-copilot-app-modernization-mcp-server"
+      ]
+    }
+  }
+}
