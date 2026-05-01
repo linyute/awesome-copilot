@@ -17,9 +17,11 @@
     "./agents/gem-mobile-tester.md"
   ],
   "author": {
-    "name": "Awesome Copilot Community"
+    "email": "mubaidr@gmail.com",
+    "name": "mubaidr",
+    "url": "https://github.com/mubaidr"
   },
-  "description": "用於規格驅動開發與自動化驗證的多代理協調框架。",
+  "description": "用於規格驅動開發與自動驗證的多代理程式協調框架。",
   "keywords": [
     "multi-agent",
     "orchestration",
@@ -32,8 +34,8 @@
     "prd",
     "mobile"
   ],
-  "license": "MIT",
+  "license": "Apache-2.0",
   "name": "gem-team",
-  "repository": "https://github.com/github/awesome-copilot",
-  "version": "1.6.6"
+  "repository": "https://github.com/mubaidr/gem-team",
+  "version": "1.13.0"
 }

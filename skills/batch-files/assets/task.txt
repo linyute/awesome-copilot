@@ -1,0 +1,177 @@
+@echo off
+REM myTask
+::  一個用於排程或手動執行的自動化腳本。
+::
+::  用法: myTask [選項]
+::   [1]  =  工作目標或設定值（選用）
+::
+::  選項:
+::   /?       顯示此說明訊息
+::   -h       顯示此說明訊息
+::   --help   顯示此說明訊息
+::   --dry    試執行模式（預覽動作而不實際執行）
+::
+::  範例:
+::   > myTask
+::     - 執行預設工作。
+::   > myTask --dry
+::     - 預覽工作內容而不進行任何變更。
+::   > myTask "C:\data\reports"
+::     - 對特定目標目錄執行工作。
+::
+set "_helpLinesMyTask=20"
+
+:: ========================================================================
+:: 範本說明
+:: 1. 尋找並取代 "myTask" 為您的工作名稱 (camelCase)。
+:: 2. 尋找並取代 "MyTask" 為您的工作名稱 (PascalCase)。
+:: 3. 更新上方說明區塊（第 2-20 行）以符合您的工作。
+:: 4. 在 :_runMyTask 中實作您的邏輯。
+:: 5. 將任何新變數加入至 :_removeBatchVariablesMyTask。
+:: ========================================================================
+
+:: 設定變數。
+set "_dryRunMyTask=0"
+set "_logFileMyTask=%TEMP%\%~n0.log"
+
+:: 定義路徑。
+set "_scriptDirMyTask=%~dp0"
+set "_scriptNameMyTask=%~n0"
+
+:: 將引數剖析至變數。
+set "_parOneMyTask=%~1"
+set "_checkParOneMyTask=-%_parOneMyTask%-"
+set "_parTwoMyTask=%~2"
+set "_checkParTwoMyTask=-%_parTwoMyTask%-"
+
+:: -----------------------------------------------------------------------
+:: 處理說明旗標。
+:: -----------------------------------------------------------------------
+if "%_parOneMyTask%"=="/?" call :_showHelpMyTask & goto _removeBatchVariablesMyTask
+if /i "%_parOneMyTask%"=="-h" call :_showHelpMyTask & goto _removeBatchVariablesMyTask
+if /i "%_parOneMyTask%"=="--help" call :_showHelpMyTask & goto _removeBatchVariablesMyTask
+
+:: -----------------------------------------------------------------------
+:: 處理 --dry 旗標（若存在則位移引數）。
+:: -----------------------------------------------------------------------
+if /i "%_parOneMyTask%"=="--dry" (
+    set "_dryRunMyTask=1"
+    set "_parOneMyTask=%~2"
+    set "_checkParOneMyTask=-%~2-"
+)
+
+:: 儲存目前目錄，以便在工作完成後返回。
+set "_savedDirMyTask=%CD%"
+
+:: 為中間檔案建立暫存目錄。
+call :_makeTempDirMyTask
+
+:: -----------------------------------------------------------------------
+:: 記錄開始並開始執行。
+:: -----------------------------------------------------------------------
+call :_logMyTask "=========================================="
+call :_logMyTask "工作開始: %_scriptNameMyTask%"
+call :_logMyTask "=========================================="
+
+call :_runMyTask
+
+call :_logMyTask "工作完成: %_scriptNameMyTask%"
+goto _removeBatchVariablesMyTask
+
+:: ========================================================================
+:: 主要邏輯
+:: ========================================================================
+
+:_runMyTask
+    REM ===================================================================
+    REM 待辦: 將此區段取代為您工作的邏輯。
+    REM ===================================================================
+
+    if "%_dryRunMyTask%"=="1" (
+        call :_logMyTask "[試執行] 將會處理目標: %_parOneMyTask%"
+        goto :eof
+    )
+
+    REM 範例: 處理目標目錄中的檔案。
+    if NOT "%_checkParOneMyTask%"=="--" (
+        if NOT EXIST "%_parOneMyTask%" (
+            call :_logMyTask "錯誤: 找不到目標: %_parOneMyTask%"
+            goto :eof
+        )
+        call :_logMyTask "正在處理目標: %_parOneMyTask%"
+        REM 在此處加入工作操作。
+    ) else (
+        call :_logMyTask "正在執行預設工作（未指定目標）。"
+        REM 在此處加入預設工作操作。
+    )
+
+    call :_logMyTask "工作操作已完成。"
+goto :eof
+
+:: ========================================================================
+:: 支援函式
+:: ========================================================================
+
+:_logMyTask
+    REM 將帶有時間戳記的訊息同時寫入主控台與記錄檔。
+    setlocal EnableDelayedExpansion
+    for /f "tokens=2 delims==" %%a in ('wmic os get localdatetime /value') do (
+        set "_dtMyTask=%%a"
+    )
+    set "_tsMyTask=!_dtMyTask:~0,4!-!_dtMyTask:~4,2!-!_dtMyTask:~6,2! !_dtMyTask:~8,2!:!_dtMyTask:~10,2!:!_dtMyTask:~12,2!"
+    echo [!_tsMyTask!] %~1
+    echo [!_tsMyTask!] %~1 >>"%_logFileMyTask%"
+    endlocal
+goto :eof
+
+:_showHelpMyTask
+    echo:
+    for /f "skip=1 tokens=* delims=" %%a in ('findstr /n "^" "%~f0"') do (
+        set "_line=%%a"
+        setlocal EnableDelayedExpansion
+        set "_lineNum=!_line:~0,2!"
+        if !_lineNum! GTR %_helpLinesMyTask% (
+            endlocal
+            goto :eof
+        )
+        set "_text=!_line:*:=!"
+        if defined _text (
+            echo !_text:~4!
+        ) else (
+            echo:
+        )
+        endlocal
+    )
+goto :eof
+
+:_makeTempDirMyTask
+    set "_tmpDirMyTask=%TEMP%\%~n0"
+    if NOT EXIST "%_tmpDirMyTask%" (
+        mkdir "%_tmpDirMyTask%" >nul 2>nul
+    )
+goto :eof
+
+:: ========================================================================
+:: 清理 - 移除所有批次變數並還原目錄。
+:: ========================================================================
+:_removeBatchVariablesMyTask
+    set _helpLinesMyTask=
+    set _dryRunMyTask=
+    set _logFileMyTask=
+    set _scriptDirMyTask=
+    set _scriptNameMyTask=
+    set _parOneMyTask=
+    set _checkParOneMyTask=
+    set _parTwoMyTask=
+    set _checkParTwoMyTask=
+    REM 在此行上方加入新變數。
+
+    if EXIST "%_tmpDirMyTask%" rmdir /S /Q "%_tmpDirMyTask%" >nul 2>nul
+    set _tmpDirMyTask=
+
+    REM 還原原始目錄。
+    if DEFINED _savedDirMyTask (
+        cd /D "%_savedDirMyTask%"
+        set _savedDirMyTask=
+    )
+    exit /b

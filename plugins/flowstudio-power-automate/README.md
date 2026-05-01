@@ -1,20 +1,20 @@
 # FlowStudio Power Automate 外掛程式
 
-為您的 AI 代理程式提供與您在 Power Automate 入口網站中相同的檢視權限。Graph API 僅回傳最高層級的執行狀態 — 代理程式無法查看動作輸入、迴圈迭代、巢狀失敗或流程擁有者。Flow Studio MCP 公開了所有這些資訊。
+賦予您的 AI 代理程式與您在 Power Automate 入口網站中擁有的相同能見度。Graph API 僅傳回頂層的執行狀態 — 代理程式無法查看動作輸入、迴圈反覆項目、巢狀失敗或流程的所有者。Flow Studio MCP 會公開所有這些資訊。
 
-此外掛程式包含五種技能，涵蓋完整生命週期：連接、偵錯、建構、監控與管理 Power Automate 雲端流程。
+此外掛程式包含五項涵蓋完整生命週期的技能：連接、偵錯、建置、監控及控管 Power Automate 雲端流程。
 
 需要 [FlowStudio MCP](https://mcp.flowstudio.app) 訂閱。
 
-## 代理程式目前無法看到的資訊
+## 目前代理程式無法看到的內容
 
 | 您在入口網站中看到的內容 | 代理程式透過 Graph API 看到的內容 |
-|---|---|
-| 動作輸入與輸出 | 執行成功或失敗（無詳細資訊） |
-| 迴圈迭代資料 | 無 |
-| 子流程失敗 | 僅最高層級錯誤代碼 |
-| 流程健康狀態與失敗率 | 無 |
-| 誰建構了流程、它使用了哪些連接器 | 無 |
+| ----------------------------------------- | -------------------------------- |
+| 動作輸入與輸出 | 執行通過或失敗 (無詳細資訊) |
+| 迴圈反覆項目資料 | 無 |
+| 子流程失敗 | 僅限頂層錯誤代碼 |
+| 流程健全狀況與失敗率 | 無 |
+| 誰建置了流程、使用了哪些連接器 | 無 |
 
 Flow Studio MCP 填補了這些空白。
 
@@ -24,49 +24,50 @@ Flow Studio MCP 填補了這些空白。
 copilot plugin install flowstudio-power-automate@awesome-copilot
 ```
 
-## 包含的內容
+## 包含內容
 
 ### 技能
 
-| 技能 | 描述 |
-|-------|-------------|
-| `flowstudio-power-automate-mcp` | 核心連接設定、工具探索與運作 — 列出流程、讀取定義、檢查執行、重新提交、取消。 |
-| `flowstudio-power-automate-debug` | 逐步診斷工作流程 — 動作層級的輸入與輸出，而不僅是錯誤代碼。跨巢狀子流程與迴圈迭代識別根本原因。 |
-| `flowstudio-power-automate-build` | 從零建構與部署流程定義 — 鷹架觸發器 (scaffold triggers)、連線連接器、部署，並透過重新提交進行測試。 |
-| `flowstudio-power-automate-monitoring` | 從快取儲存庫獲取的流程健康狀態 — 失敗率、包含修復提示的執行紀錄、建立者清單、Power Apps、環境與連接器計數。 |
-| `flowstudio-power-automate-governance` | 管理工作流程 — 依業務影響分類流程、偵測孤立資源、稽核連接器、管理通知規則、計算封存分數。 |
+| 技能 | 說明 |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `flowstudio-power-automate-mcp` | 基礎技能 — 驗證設定、可重複使用的 MCP 輔助程式 (Python + Node.js)、透過 `list_skills`/`tool_search` 進行工具探索、超大回應處理。請先載入此技能。 |
+| `flowstudio-power-automate-debug` | 逐步診斷工作流程 — 提供動作層級的輸入與輸出，而不僅僅是錯誤代碼。識別跨巢狀子流程和迴圈反覆項目的根本原因。 |
+| `flowstudio-power-automate-build` | 從頭開始建置並部署流程定義 — 腳手架觸發器、佈線連接、部署，並透過重新提交進行測試。 |
+| `flowstudio-power-automate-monitoring` | 來自快取儲存庫的流程健全狀況 — 失敗率、包含修復提示的執行歷程記錄、建立者清單、Power Apps、環境和連接計數。 |
+| `flowstudio-power-automate-governance` | 控管工作流程 — 按業務影響對流程進行分類、偵測孤立資源、稽核連接器、管理通知規則、計算封存分數。 |
 
-前三項技能呼叫即時 Power Automate API。監控與管理技能則讀取自每日快取快照，其中包含彙總統計資料與管理 Metadata。
+前三項技能會呼叫即時的 Power Automate API。監控與控管技能則從具有彙總統計資料和控管中繼資料的每日快取快照中讀取。
 
-## 前置需求
+## 前提條件
 
 - [FlowStudio MCP](https://mcp.flowstudio.app) 訂閱
 - MCP 端點：`https://mcp.flowstudio.app/mcp`
-- API 金鑰（作為 `x-api-key` 標頭傳遞 — 非 Bearer）
+- API 金鑰 (作為 `x-api-key` 標頭傳遞 — 非 Bearer)
 
-## 入門
+## 入門指南
 
 1. 安裝外掛程式
 2. 在 [mcp.flowstudio.app](https://mcp.flowstudio.app) 取得您的 API 金鑰
-3. 在 VS Code (`.vscode/mcp.json`) 中設定 MCP 連接：
+3. 在 VS Code 中設定 MCP 連接 (`.vscode/mcp.json`)：
+   
    ```json
    {
      "servers": {
        "flowstudio": {
          "type": "http",
          "url": "https://mcp.flowstudio.app/mcp",
-         "headers": { "x-api-key": "<YOUR_TOKEN>" }
+         "headers": { "x-api-key": "<您的權杖>" }
        }
      }
    }
    ```
-4. 請 Copilot 列出您的流程、偵錯失敗、建構新流程、檢查流程健康狀態或執行管理審查
+4. 要求 Copilot 列出您的流程、對失敗進行偵錯、建置新流程、檢查流程健全狀況或執行控管檢閱
 
-## 來源
+## 原始資料
 
 此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
 
-技能來源：[ninihen1/power-automate-mcp-skills](https://github.com/ninihen1/power-automate-mcp-skills)
+技能原始碼：[ninihen1/power-automate-mcp-skills](https://github.com/ninihen1/power-automate-mcp-skills)
 
 ## 授權
 

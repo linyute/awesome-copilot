@@ -1,0 +1,188 @@
+@echo off
+REM myLib
+::  一個具有可呼叫標籤 (CALL-able labels) 的可重複使用函式庫。
+::
+::  用法: call myLib [函式] [引數...]
+::   函式:
+::     trimWhitespace  [輸入變數]            去除字首/字尾空格
+::     toLower         [輸入變數]            將數值轉換為小寫
+::     getTimestamp     [輸出變數]           取得目前的日期時間戳記
+::     logMessage       [等級] [訊息]        寫入一則紀錄項
+::     padRight         [字串] [寬度]        在字串右側填補空格
+::
+::  範例:
+::   > set "myVar=  Hello World  "
+::   > call myLib trimWhitespace myVar
+::   > call myLib getTimestamp _now
+::   > call myLib logMessage INFO "Acme Corp 備份已開始"
+::
+set "_helpLinesMyLib=17"
+
+:: ========================================================================
+:: 範本說明
+:: 1. 尋找並取代 "myLib" 為您的函式庫名稱 (camelCase)。
+:: 2. 尋找並取代 "MyLib" 為您的函式庫名稱 (PascalCase)。
+:: 3. 在下方加入您自己的 :_funcNameMyLib 標籤。
+:: 4. 更新上方說明區塊（第 2-17 行）以符合您的函式庫。
+:: 5. 將任何新變數加入至 :_removeBatchVariablesMyLib。
+:: ========================================================================
+
+:: 路由至請求的函式。
+set "_funcMyLib=%~1"
+set "_argOneMyLib=%~2"
+set "_argTwoMyLib=%~3"
+set "_argThreeMyLib=%~4"
+
+if "%_funcMyLib%"=="/?" call :_showHelpMyLib & goto _removeBatchVariablesMyLib
+if /i "%_funcMyLib%"=="-h" call :_showHelpMyLib & goto _removeBatchVariablesMyLib
+if /i "%_funcMyLib%"=="--help" call :_showHelpMyLib & goto _removeBatchVariablesMyLib
+
+if /i "%_funcMyLib%"=="trimWhitespace" call :_trimWhitespaceMyLib & goto _removeBatchVariablesMyLib
+if /i "%_funcMyLib%"=="toLower" call :_toLowerMyLib & goto _removeBatchVariablesMyLib
+if /i "%_funcMyLib%"=="getTimestamp" call :_getTimestampMyLib & goto _removeBatchVariablesMyLib
+if /i "%_funcMyLib%"=="logMessage" call :_logMessageMyLib & goto _removeBatchVariablesMyLib
+if /i "%_funcMyLib%"=="padRight" call :_padRightMyLib & goto _removeBatchVariablesMyLib
+
+echo 錯誤: 未知的函式 "%_funcMyLib%"。請執行 "%~n0 /?" 查看用法。
+goto _removeBatchVariablesMyLib
+
+:: ========================================================================
+:: 函式庫函式 (LIBRARY FUNCTIONS)
+:: ========================================================================
+
+:_trimWhitespaceMyLib
+    REM 去除變數中的領頭與字尾空格。
+    REM   %_argOneMyLib% = 要處理的變數名稱（以名稱傳遞）。
+    if not defined _argOneMyLib goto :eof
+    setlocal EnableDelayedExpansion
+    set "_valMyLib=!%_argOneMyLib%!"
+    REM 去除領頭空格。
+    for /f "tokens=* delims= " %%a in ("!_valMyLib!") do set "_valMyLib=%%a"
+    REM 去除字尾空格。
+    :_trimTrailingMyLib
+    if "!_valMyLib:~-1!"==" " (
+        set "_valMyLib=!_valMyLib:~0,-1!"
+        goto _trimTrailingMyLib
+    )
+    endlocal & set "%_argOneMyLib%=%_valMyLib%"
+goto :eof
+
+:_toLowerMyLib
+    REM 將變數值轉換為小寫。
+    REM   %_argOneMyLib% = 要轉換的變數名稱（以名稱傳遞）。
+    if not defined _argOneMyLib goto :eof
+    setlocal EnableDelayedExpansion
+    set "_valMyLib=!%_argOneMyLib%!"
+    set "_valMyLib=!_valMyLib:A=a!"
+    set "_valMyLib=!_valMyLib:B=b!"
+    set "_valMyLib=!_valMyLib:C=c!"
+    set "_valMyLib=!_valMyLib:D=d!"
+    set "_valMyLib=!_valMyLib:E=e!"
+    set "_valMyLib=!_valMyLib:F=f!"
+    set "_valMyLib=!_valMyLib:G=g!"
+    set "_valMyLib=!_valMyLib:H=h!"
+    set "_valMyLib=!_valMyLib:I=i!"
+    set "_valMyLib=!_valMyLib:J=j!"
+    set "_valMyLib=!_valMyLib:K=k!"
+    set "_valMyLib=!_valMyLib:L=l!"
+    set "_valMyLib=!_valMyLib:M=m!"
+    set "_valMyLib=!_valMyLib:N=n!"
+    set "_valMyLib=!_valMyLib:O=o!"
+    set "_valMyLib=!_valMyLib:P=p!"
+    set "_valMyLib=!_valMyLib:Q=q!"
+    set "_valMyLib=!_valMyLib:R=r!"
+    set "_valMyLib=!_valMyLib:S=s!"
+    set "_valMyLib=!_valMyLib:T=t!"
+    set "_valMyLib=!_valMyLib:U=u!"
+    set "_valMyLib=!_valMyLib:V=v!"
+    set "_valMyLib=!_valMyLib:W=w!"
+    set "_valMyLib=!_valMyLib:X=x!"
+    set "_valMyLib=!_valMyLib:Y=y!"
+    set "_valMyLib=!_valMyLib:Z=z!"
+    endlocal & set "%_argOneMyLib%=%_valMyLib%"
+goto :eof
+
+:_getTimestampMyLib
+    REM 將 YYYY-MM-DD_HH-MM-SS 時間戳記寫入具名變數。
+    REM   %_argOneMyLib% = 輸出變數名稱。
+    REM 注意: 使用取決於區域設定的 %DATE% 和 %TIME%。
+    REM   下方的剖析假設為美式格式（例如 "Fri 04/18/2026" 或 "04/18/2026"）。
+    REM   請根據您的區域設定調整子字串偏移量，或改用 PowerShell 以獲得與
+    REM   區域設定無關的替代方案：
+    REM     for /f %%a in ('powershell -nop -c "Get-Date -F yyyy-MM-dd_HH-mm-ss"') do set "var=%%a"
+    if not defined _argOneMyLib goto :eof
+    setlocal EnableDelayedExpansion
+    REM 剖析日期 — 若存在則去除領頭的星期名稱（例如 "Fri "）。
+    set "_dtMyLib=%DATE%"
+    if "!_dtMyLib:~3,1!"==" " set "_dtMyLib=!_dtMyLib:~4!"
+    set "_stampMyLib=!_dtMyLib:~6,4!-!_dtMyLib:~0,2!-!_dtMyLib:~3,2!"
+    REM 剖析時間 — 將個位數小時前的領頭空格替換為 0。
+    set "_tmMyLib=%TIME: =0%"
+    set "_stampMyLib=!_stampMyLib!_!_tmMyLib:~0,2!-!_tmMyLib:~3,2!-!_tmMyLib:~6,2!"
+    endlocal & set "%_argOneMyLib%=%_stampMyLib%"
+goto :eof
+
+:_logMessageMyLib
+    REM 將帶有時間戳記的紀錄行寫入 stdout。
+    REM   %_argOneMyLib% = 等級 (INFO, WARN, ERROR)
+    REM   %_argTwoMyLib% = 訊息文字
+    REM 注意: 使用 %DATE% 和 %TIME%（取決於區域設定）。請參閱 :_getTimestampMyLib。
+    setlocal EnableDelayedExpansion
+    set "_dtMyLib=%DATE%"
+    if "!_dtMyLib:~3,1!"==" " set "_dtMyLib=!_dtMyLib:~4!"
+    set "_tmMyLib=%TIME: =0%"
+    set "_tsMyLib=!_dtMyLib:~6,4!-!_dtMyLib:~0,2!-!_dtMyLib:~3,2! !_tmMyLib:~0,2!:!_tmMyLib:~3,2!:!_tmMyLib:~6,2!"
+    echo [!_tsMyLib!] [%_argOneMyLib%] %_argTwoMyLib%
+    endlocal
+goto :eof
+
+:_padRightMyLib
+    REM 在字串右側填補空格至指定寬度。
+    REM   %_argOneMyLib% = 要填補的字串
+    REM   %_argTwoMyLib% = 總寬度
+    if not defined _argOneMyLib goto :eof
+    if not defined _argTwoMyLib goto :eof
+    setlocal EnableDelayedExpansion
+    set "_valMyLib=%_argOneMyLib%"
+    set "_padMyLib=%_valMyLib%                                                  "
+    set "_padMyLib=!_padMyLib:~0,%_argTwoMyLib%!"
+    echo !_padMyLib!
+    endlocal
+goto :eof
+
+:: ========================================================================
+:: 說明 (HELP)
+:: ========================================================================
+
+:_showHelpMyLib
+    echo:
+    for /f "skip=1 delims=" %%a in ('findstr /n "^" "%~f0"') do (
+        set "_line=%%a"
+        setlocal EnableDelayedExpansion
+        for /f "delims=:" %%n in ("!_line!") do set "_lineNum=%%n"
+        if !_lineNum! GTR %_helpLinesMyLib% (
+            endlocal
+            goto :eof
+        )
+        set "_text=!_line:*:=!"
+        if defined _text (
+            echo !_text:~4!
+        ) else (
+            echo:
+        )
+        endlocal
+    )
+goto :eof
+
+:: ========================================================================
+:: 清理 — 移除所有批次變數。
+:: ========================================================================
+:_removeBatchVariablesMyLib
+    set _helpLinesMyLib=
+    set _funcMyLib=
+    set _argOneMyLib=
+    set _argTwoMyLib=
+    set _argThreeMyLib=
+    set _valMyLib=
+    REM 在此行上方加入新變數。
+    exit /b

@@ -22,7 +22,7 @@ tools:
     "runCommands/terminalSelection",
     "testFailure",
     "usages",
-    "vscodeAPI",
+    "vscodeAPI"
   ]
 ---
 

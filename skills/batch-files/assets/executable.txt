@@ -1,0 +1,171 @@
+@echo off
+REM myTool
+::  一個包含引數剖析的獨立命令列工具範本。
+::
+::  用法: myTool [選項] [1] [2]
+::   [1]  =  輸入檔案路徑或數值
+::   [2]  =  輸出檔案路徑（選用）
+::
+::  選項:
+::   /?        顯示此說明訊息
+::   -h        顯示此說明訊息
+::   --help    顯示此說明訊息
+::   -v        顯示版本資訊
+::   --verbose 啟用詳細輸出
+::
+::  範例:
+::   > myTool "C:\data\input.txt"
+::   > myTool "C:\data\input.txt" "C:\data\output.txt"
+::   > myTool --verbose "C:\data\input.txt"
+::
+set "_helpLinesMyTool=19"
+
+:: ========================================================================
+:: 範本說明
+:: 1. 尋找並取代 "myTool" 為您的執行檔名稱 (camelCase)。
+:: 2. 尋找並取代 "MyTool" 為您的執行檔名稱 (PascalCase)。
+:: 3. 更新上方說明區塊（第 2-19 行）以符合您的工具。
+:: 4. 在 :_runMyTool 中實作您的邏輯。
+:: 5. 將任何新變數加入至 :_removeBatchVariablesMyTool。
+:: ========================================================================
+
+:: 設定變數。
+set "_versionMyTool=1.0.0"
+set "_verboseMyTool=0"
+
+:: 定義路徑。
+set "_scriptDirMyTool=%~dp0"
+set "_scriptNameMyTool=%~n0"
+
+:: 將引數剖析至變數。
+set "_parOneMyTool=%~1"
+set "_checkParOneMyTool=-%_parOneMyTool%-"
+set "_parTwoMyTool=%~2"
+set "_checkParTwoMyTool=-%_parTwoMyTool%-"
+set "_parThreeMyTool=%~3"
+set "_checkParThreeMyTool=-%_parThreeMyTool%-"
+
+:: -----------------------------------------------------------------------
+:: 處理說明與版本旗標。
+:: -----------------------------------------------------------------------
+if "%_parOneMyTool%"=="/?" call :_showHelpMyTool & goto _removeBatchVariablesMyTool
+if /i "%_parOneMyTool%"=="-h" call :_showHelpMyTool & goto _removeBatchVariablesMyTool
+if /i "%_parOneMyTool%"=="--help" call :_showHelpMyTool & goto _removeBatchVariablesMyTool
+if /i "%_parOneMyTool%"=="-v" (
+    echo %_scriptNameMyTool% 版本 %_versionMyTool%
+    goto _removeBatchVariablesMyTool
+)
+
+:: -----------------------------------------------------------------------
+:: 處理 --verbose 旗標（若存在則位移引數）。
+:: -----------------------------------------------------------------------
+if /i "%_parOneMyTool%"=="--verbose" (
+    set "_verboseMyTool=1"
+    set "_parOneMyTool=%~2"
+    set "_checkParOneMyTool=-%~2-"
+    set "_parTwoMyTool=%~3"
+    set "_checkParTwoMyTool=-%~3-"
+)
+
+:: 為中間檔案建立暫存目錄。
+call :_makeTempDirMyTool
+
+:: -----------------------------------------------------------------------
+:: 驗證必要輸入並開始執行。
+:: -----------------------------------------------------------------------
+if "%_checkParOneMyTool%"=="--" (
+    echo 錯誤: 未指定輸入。請執行 "%_scriptNameMyTool% /?" 查看用法。 1>&2
+    goto _removeBatchVariablesMyTool
+)
+
+call :_startMyTool
+goto _removeBatchVariablesMyTool
+
+:: ========================================================================
+:: 主要邏輯
+:: ========================================================================
+
+:_startMyTool
+    if "%_verboseMyTool%"=="1" (
+        echo [詳細資訊] 輸入:  %_parOneMyTool%
+        echo [詳細資訊] 輸出: %_parTwoMyTool%
+    )
+
+    REM 驗證輸入檔案是否存在。
+    if NOT EXIST "%_parOneMyTool%" (
+        echo 錯誤: 找不到輸入檔案: %_parOneMyTool% 1>&2
+        goto :eof
+    )
+
+    call :_runMyTool
+goto :eof
+
+:_runMyTool
+    REM ===================================================================
+    REM 待辦: 將此區段取代為您工具的邏輯。
+    REM ===================================================================
+    echo 正在處理: %_parOneMyTool%
+
+    if NOT "%_checkParTwoMyTool%"=="--" (
+        echo 輸出至:  %_parTwoMyTool%
+        REM 範例: 將輸入複製到輸出。
+        REM copy /Y "%_parOneMyTool%" "%_parTwoMyTool%" >nul
+    )
+
+    echo 完成。
+goto :eof
+
+:: ========================================================================
+:: 支援函式
+:: ========================================================================
+
+:_showHelpMyTool
+    echo:
+    for /f "skip=1 delims=" %%a in ('findstr /n "^" "%~f0"') do (
+        set "_line=%%a"
+        setlocal EnableDelayedExpansion
+        for /f "delims=:" %%n in ("!_line!") do set "_lineNum=%%n"
+        if !_lineNum! GTR %_helpLinesMyTool% (
+            endlocal
+            goto :eof
+        )
+        set "_text=!_line:*:=!"
+        if defined _text (
+            echo !_text:~4!
+        ) else (
+            echo:
+        )
+        endlocal
+    )
+goto :eof
+
+:_makeTempDirMyTool
+    set "_tmpDirMyTool=%TEMP%\%~n0_%RANDOM%%RANDOM%"
+    set "_tmpDirCreatedMyTool=0"
+    if NOT EXIST "%_tmpDirMyTool%" (
+        mkdir "%_tmpDirMyTool%" >nul 2>nul
+        set "_tmpDirCreatedMyTool=1"
+    )
+goto :eof
+
+:: ========================================================================
+:: 清理 — 移除所有批次變數。
+:: ========================================================================
+:_removeBatchVariablesMyTool
+    set _helpLinesMyTool=
+    set _versionMyTool=
+    set _verboseMyTool=
+    set _scriptDirMyTool=
+    set _scriptNameMyTool=
+    set _parOneMyTool=
+    set _checkParOneMyTool=
+    set _parTwoMyTool=
+    set _checkParTwoMyTool=
+    set _parThreeMyTool=
+    set _checkParThreeMyTool=
+    REM 在此行上方加入新變數。
+
+    if "%_tmpDirCreatedMyTool%"=="1" if EXIST "%_tmpDirMyTool%" rmdir /S /Q "%_tmpDirMyTool%" >nul 2>nul
+    set _tmpDirMyTool=
+    set _tmpDirCreatedMyTool=
+    exit /b

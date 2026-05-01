@@ -1,0 +1,28 @@
+{
+  "name": "project-documenter",
+  "description": "產生具備 draw.io 架構圖與包含圖片之 Word (.docx) 輸出的專業專案文件。自動探索任何專案的技術棧，並產生 Markdown、圖表、PNG 匯出以及格式化的 Word 文件。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "documentation",
+    "architecture-diagrams",
+    "drawio",
+    "word-document",
+    "docx",
+    "png-images",
+    "c4-model",
+    "project-summary",
+    "auto-discovery"
+  ],
+  "agents": [
+    "./agents/project-documenter.md"
+  ],
+  "skills": [
+    "./skills/drawio/",
+    "./skills/md-to-docx/"
+  ]
+}

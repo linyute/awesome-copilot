@@ -1058,9 +1058,7 @@ async function main() {
         writeFileIfChanged(mainReadmePath, readmeContent);
         console.log("主 README.md 已更新精選外掛程式");
       } else {
-        console.warn(
-          "找不到 README.md，跳過精選外掛程式更新"
-        );
+        console.warn("找不到 README.md，跳過精選外掛程式更新");
       }
     } else {
       console.log("未找到可加入 README.md 的精選外掛程式");

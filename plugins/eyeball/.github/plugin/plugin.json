@@ -1,0 +1,22 @@
+{
+  "name": "eyeball",
+  "description": "具備內建原始資料螢幕截圖的文件分析。當您要求 Copilot 分析文件時，Eyeball 會產生一個 Word 文件，其中每項事實主張都包含原始資料的反白顯示螢幕截圖，讓您可以親眼驗證。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "document-analysis",
+    "citation-verification",
+    "screenshot",
+    "contracts",
+    "legal",
+    "trust",
+    "visual-verification"
+  ],
+  "skills": [
+    "./skills/eyeball/"
+  ]
+}

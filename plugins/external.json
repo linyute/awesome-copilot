@@ -91,7 +91,7 @@
   {
     "name": "modernize-dotnet",
     "description": "AI 驅動的 .NET 現代化與升級助手。協助將 .NET Framework 與 .NET 應用程式升級至最新的 .NET 版本。",
-    "version": "1.0.1047-preview1",
+    "version": "1.0.1063-preview1",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
