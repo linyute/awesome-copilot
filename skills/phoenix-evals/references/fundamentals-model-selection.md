@@ -1,27 +1,27 @@
-# 模型選擇 (Model Selection)
+# 模型選擇
 
-先進行錯誤分析 (Error analysis)，最後才考慮變更模型。
+先進行錯誤分析，最後才更換模型。
 
-## 決策樹 (Decision Tree)
+## 決策樹
 
 ```
-有效能問題？
+效能問題？
        │
        ▼
-錯誤分析是否顯示是模型問題？
-    否 (NO)  → 修正提示 (prompts)、擷取 (retrieval)、工具 (tools)
-    是 (YES) → 這是能力差距 (capability gap) 嗎？
-              是 (YES) → 考慮變更模型
-              否 (NO)  → 修正實際問題
+錯誤分析顯示是模型問題嗎？
+    否 (NO)  → 修正提示詞、檢索、工具
+    是 (YES) → 是否為能力差距？
+          是 (YES) → 考慮更換模型
+          否 (NO)  → 修正實際問題
 ```
 
-## 裁判模型選擇 (Judge Model Selection)
+## 評審模型選擇
 
 | 原則 | 行動 |
 | --------- | ------ |
 | 從能力強的開始 | 先使用 gpt-4o |
-| 稍後進行最佳化 | 在準則穩定後測試較便宜的模型 |
-| 使用相同模型亦可 | 裁判執行的是不同的任務 |
+| 稍後進行優化 | 在標準穩定後測試較便宜的模型 |
+| 使用相同模型亦可 | 評審執行的是不同的任務 |
 
 ```python
 # 從能力強的模型開始
@@ -38,21 +38,29 @@ judge_cheap = ClassificationEvaluator(
 # 在同一個測試集上比較 TPR/TNR
 ```
 
-## 不要隨意挑選模型 (Don't Model Shop)
+## 不要隨意更換模型 (Don't Model Shop)
 
 ```python
+from phoenix.client import Client
+
+client = Client()
+
 # 差 (BAD)
 for model in ["gpt-4o", "claude-3", "gemini-pro"]:
-    results = run_experiment(dataset, task, model)
+    results = client.experiments.run_experiment(
+        dataset=dataset,
+        task=lambda input, _model=model: task(input, model=_model),
+        evaluators=evaluators,
+    )
 
 # 好 (GOOD)
 failures = analyze_errors(results)
-# 「忽略內容」 → 修正提示 (prompt)
-# 「不擅長數學」 → 也許可以嘗試更好的模型
+# "忽略上下文 (Ignores context)" → 修正提示詞
+# "無法計算數學 (Can't do math)" → 也許嘗試更好的模型
 ```
 
-## 何時有理由變更模型
+## 何時更換模型是合理的
 
-- 在提示最佳化後，失敗仍持續發生
-- 能力差距（推理、數學、程式碼）
-- 錯誤分析證實了模型限制
+- 提示詞優化後失敗依然存在
+- 能力差距 (推理、數學、程式碼)
+- 錯誤分析確認了模型限制

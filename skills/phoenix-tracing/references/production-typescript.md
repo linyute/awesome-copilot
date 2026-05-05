@@ -1,18 +1,18 @@
-# Phoenix 追蹤：生產指南 (Production Guide) (TypeScript)
+# Phoenix 追蹤：生產環境指南 (TypeScript) (Phoenix Tracing: Production Guide (TypeScript))
 
-**關鍵提醒：請為生產部署設定批次處理 (batching)、資料遮罩 (data masking) 以及 span 過濾。**
+**至關重要：為生產環境部署配置批次處理、資料遮蔽與 Span 篩選。**
 
-## Metadata
+## 中介資料 (Metadata)
 
 | 屬性 | 值 |
 |-----------|-------|
-| 優先權 (Priority) | 關鍵 - 生產就緒性 |
-| 影響 (Impact) | 安全性、效能 |
-| 設定時間 (Setup Time) | 5-15 分鐘 |
+| 優先順序 | 緊急 (Critical) - 生產就緒必需 |
+| 影響程度 | 安全性、效能 |
+| 設定時間 | 5-15 分鐘 |
 
 ## 批次處理 (Batch Processing)
 
-**啟用批次處理以提升生產效率。** 批次處理透過成組發送 spans 而非個別發送，來減少網路開銷 (network overhead)。
+**啟用批次處理以提升生產環境效率。** 批次處理透過分組發送 Span 而非逐一發送，來減少網路開銷。
 
 ```typescript
 import { register } from "@arizeai/phoenix-otel";
@@ -23,12 +23,12 @@ const provider = register({
 });
 ```
 
-### 關機處理 (Shutdown Handling)
+### 關閉作業處理 (Shutdown Handling)
 
-**關鍵提醒：** 如果在程序結束時 spans 仍留在處理器的佇列中，則可能無法匯出。請呼叫 `provider.shutdown()` 以在結束前明確進行排清 (flush)。
+**至關重要：** 若您的程序結束時 Span 仍排隊在處理器中，則可能不會被匯出。請呼叫 `provider.shutdown()` 在結束前進行明確排清。
 
 ```typescript
-// 明確關機以排清待處理的 spans
+// 明確關閉以排清佇列中的 Span
 const provider = register({
   projectName: "my-app",
   batch: true,
@@ -36,20 +36,20 @@ const provider = register({
 
 async function main() {
   await doWork();
-  await provider.shutdown();  // 結束前排清 spans
+  await provider.shutdown();  // 結束前排清 Span
 }
 
 main().catch(async (error) => {
   console.error(error);
-  await provider.shutdown();  // 發生錯誤時也排清
+  await provider.shutdown();  // 發生錯誤時也要排清
   process.exit(1);
 });
 ```
 
-**優雅終止信號 (Graceful termination signals)：**
+**優雅終止訊號：**
 
 ```typescript
-// 收到 SIGTERM 時優雅關機
+// 收到 SIGTERM 時優雅關閉
 const provider = register({
   projectName: "my-server",
   batch: true,
@@ -63,7 +63,7 @@ process.on("SIGTERM", async () => {
 
 ---
 
-## 資料遮罩 (PII 保護) (Data Masking (PII Protection))
+## 資料遮蔽（PII 防護） (Data Masking (PII Protection))
 
 **環境變數：**
 
@@ -92,28 +92,28 @@ const traceConfig = {
 const instrumentation = new OpenAIInstrumentation({ traceConfig });
 ```
 
-**優先順序 (Precedence)：** 程式碼 > 環境變數 > 預設值
+**優先順序：** 程式碼 > 環境變數 > 預設值
 
 ---
 
-## Span 過濾 (Span Filtering)
+## Span 篩選 (Span Filtering)
 
-**抑制 (Suppress) 特定的程式碼區塊：**
+**抑制特定程式碼區塊的追蹤：**
 
 ```typescript
 import { suppressTracing } from "@opentelemetry/core";
 import { context } from "@opentelemetry/api";
 
 await context.with(suppressTracing(context.active()), async () => {
-  internalLogging(); // 不會產生 spans
+  internalLogging(); // 不會產生 Span
 });
 ```
 
-**抽樣 (Sampling)：**
+**採樣 (Sampling)：**
 
 ```bash
 export OTEL_TRACES_SAMPLER="parentbased_traceidratio"
-export OTEL_TRACES_SAMPLER_ARG="0.1"  # 抽樣 10%
+export OTEL_TRACES_SAMPLER_ARG="0.1"  # 採樣 10%
 ```
 
 ---
@@ -135,14 +135,14 @@ try {
 
 ---
 
-## 生產檢查清單 (Production Checklist)
+## 生產環境檢查清單 (Production Checklist)
 
 - [ ] 已啟用批次處理
-- [ ] **關機處理：** 結束前呼叫 `provider.shutdown()` 以排清佇列中的 spans
-- [ ] **優雅終止：** 收到 SIGTERM/SIGINT 信號時排清 spans
-- [ ] 已設定資料遮罩（若是包含 PII，請設定 `HIDE_INPUTS`/`HIDE_OUTPUTS`）
-- [ ] 已為健康檢查 (health checks) 或雜訊路徑 (noisy paths) 設定 span 過濾
+- [ ] **關閉作業處理**：在結束前呼叫 `provider.shutdown()` 以排清佇列中的 Span
+- [ ] **優雅終止**：在收到 SIGTERM/SIGINT 訊號時排清 Span
+- [ ] 已配置資料遮蔽（若涉及 PII 則設定 `HIDE_INPUTS`/`HIDE_OUTPUTS`）
+- [ ] 針對健康檢查/高雜訊路徑進行 Span 篩選
 - [ ] 已實作錯誤處理
-- [ ] 若 Phoenix 無法使用，具備優雅降級 (graceful degradation) 機制
-- [ ] 已通過效能測試
-- [ ] 已設定監控（已檢查 Phoenix UI）
+- [ ] 在 Phoenix 無法使用時能優雅降級
+- [ ] 已完成效能測試
+- [ ] 已配置監控（已檢查 Phoenix UI）

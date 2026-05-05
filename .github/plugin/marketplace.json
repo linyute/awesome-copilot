@@ -11,6 +11,12 @@
   },
   "plugins": [
     {
+      "name": "acreadiness-cockpit",
+      "source": "acreadiness-cockpit",
+      "description": "從 Copilot 聊天操控 Microsoft AgentRC：評估 AI 就緒度、產生 Copilot 指令（支援平面或巢狀結構，並可在 monorepo 中使用 applyTo 通配符），以及管理政策。產生自包含的靜態 HTML 儀表板，位於 reports/index.html。",
+      "version": "1.0.0"
+    },
+    {
       "name": "ai-team-orchestration",
       "source": "ai-team-orchestration",
       "description": "引導並執行一個具有命名角色（Producer、Dev Team、QA）的多代理 AI 開發團隊。衝刺計畫、具備不同代理聲音的腦力激盪提示、跨聊天內容保存以及平行團隊工作流程。基於一個在 5 天內交付了 30 個遊戲應用程式且零人手編寫程式碼的成熟範本。",
@@ -75,6 +81,12 @@
       "name": "clojure-interactive-programming",
       "source": "clojure-interactive-programming",
       "description": "用於 REPL 優先的 Clojure 工作流程工具，具有 Clojure 指令、互動式程式設計對話模式和支援指引。",
+      "version": "1.0.0"
+    },
+    {
+      "name": "cms-development",
+      "source": "cms-development",
+      "description": "針對 CMS 開發的技能集，涵蓋佈景主題、外掛、管理工具、媒體工作流程、Markdown 呈現，以及靜態匯出流程。",
       "version": "1.0.0"
     },
     {

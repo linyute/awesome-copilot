@@ -1,6 +1,6 @@
-# 設定：TypeScript (Setup)
+# 設定：TypeScript (Setup: TypeScript)
 
-執行 Phoenix 評估與實驗所需的套件 (Packages)。
+Phoenix 評估與實驗所需的套件。
 
 ## 安裝 (Installation)
 
@@ -12,9 +12,9 @@ npm install @arizeai/phoenix-client @arizeai/phoenix-evals @arizeai/phoenix-otel
 pnpm add @arizeai/phoenix-client @arizeai/phoenix-evals @arizeai/phoenix-otel
 ```
 
-## LLM 供應商 (LLM Providers)
+## LLM 提供者 (LLM Providers)
 
-對於 LLM 作為裁判 (LLM-as-judge) 的評估器，請安裝 Vercel AI SDK 供應商：
+針對 LLM-as-judge 評估者，請安裝 Vercel AI SDK 提供者：
 
 ```bash
 npm install ai @ai-sdk/openai      # Vercel AI SDK + OpenAI
@@ -22,11 +22,11 @@ npm install @ai-sdk/anthropic      # Anthropic
 npm install @ai-sdk/google         # Google
 ```
 
-或者使用直接供應商 SDK：
+或使用直接提供者 SDK：
 
 ```bash
-npm install openai                 # OpenAI 直連
-npm install @anthropic-ai/sdk      # Anthropic 直連
+npm install openai                 # OpenAI direct
+npm install @anthropic-ai/sdk      # Anthropic direct
 ```
 
 ## 快速驗證 (Quick Verify)
@@ -36,6 +36,6 @@ import { createClient } from "@arizeai/phoenix-client";
 import { createClassificationEvaluator } from "@arizeai/phoenix-evals";
 import { registerPhoenix } from "@arizeai/phoenix-otel";
 
-// 所有匯入都應能正常運作
+// 所有匯入都應正常運作
 console.log("Phoenix TypeScript 設定完成");
 ```

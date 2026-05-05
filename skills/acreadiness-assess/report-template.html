@@ -1,0 +1,227 @@
+<!--
+  AI Readiness 報告 — 規範範本
+  --------------------------------------------
+  此檔案是 reports/index.html 輸出的外觀與風格的單一事實來源。
+  @ai-readiness-reporter 代理程式必須載入此檔案，將 {{placeholders}} 
+  替換為來自 `agentrc readiness --json` 的實際資料，
+  並將結果寫入 reports/index.html。
+
+  代理程式規則：
+  - 請勿更改 HTML 結構、類別名稱、CSS 變數或
+    內嵌 <style> 區塊。此範本是刻意固定的，以便此外掛程式的每位
+    使用者都能獲得外觀一致的報告。
+  - 將每個 {{placeholder}} 替換為具體資料。為每個項目重複標記的
+    區塊（支柱卡片、計畫列、成熟度列、額外列）
+    為每個項目。移除不適用的區塊
+    （例如，如果沒有作用中的原則，則移除原則區段）。
+  - 保持檔案自包含：不使用外部 CSS/JS，不使用網路字體。
+  - 保留 <script type="application/json" id="raw-data"> 區塊
+    並在其中內嵌精簡的 AgentRC JSON。
+
+  使用的預留位置：
+    {{repoName}}       儲存庫名稱
+    {{date}}           產生報告的 ISO 日期
+    {{level}}          成熟度等級編號 (1-5)
+    {{levelName}}      成熟度等級名稱 (Functional, Documented, ...)
+    {{overallPct}}     整體整備度（整數百分比）
+    {{grade}}          字母等級 A-F
+    {{passRatePct}}    通過率（整數百分比，如果不可用則為 "—"）
+    {{thresholdPct}}   原則通過率閾值（或 "—"）
+    {{policyName}}     作用中的原則名稱（如果沒有則省略原則區段）
+    {{policySummary}}  禁用/覆蓋標準的一段摘要
+    {{rawJsonCompact}} 用於內嵌的精簡 JSON
+    {{rawJsonPretty}}  用於 <details> 檢視的易讀 JSON
+
+  支柱卡片預留位置（為每個支柱重複）：
+    {{pillarName}} {{pillarScore}} {{pillarRelevance}} (high|medium|low)
+    {{pillarStatus}} (good|warn|bad — 驅動橫條 + 圓點顏色)
+    {{pillarWhat}} {{pillarWhyAi}} {{pillarCurrent}} {{pillarRecommendation}}
+-->
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Readiness — {{repoName}}</title>
+  <style>
+    :root {
+      --bg:#0f1115; --panel:#161a22; --panel-2:#1d2230; --border:#262c3a;
+      --text:#e6e9ef; --muted:#8a93a6; --accent:#6ea8ff;
+      --good:#4ade80; --warn:#fbbf24; --bad:#f87171;
+    }
+    * { box-sizing: border-box; }
+    html,body { margin:0; background:var(--bg); color:var(--text);
+      font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+    a { color: var(--accent); }
+    header { padding: 28px 32px; border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg,#141823,#0f1115); }
+    header h1 { margin: 0 0 4px; font-size: 22px; }
+    header .meta { color: var(--muted); font-size: 13px; }
+    main { max-width: 1180px; margin: 0 auto; padding: 24px 32px 80px; }
+    .panel { background:var(--panel); border:1px solid var(--border);
+      border-radius:10px; padding:20px; margin-bottom:18px; }
+    .grid { display:grid; gap:16px; }
+    .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .kpi .num { font-size: 30px; font-weight: 700; }
+    .kpi .lbl { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
+    .badge { display:inline-block; padding:3px 10px; border-radius:999px;
+      font-size:12px; font-weight:600; }
+    .lvl-1 { background:#3a1f24; color:#f87171; }
+    .lvl-2 { background:#3b2c1d; color:#fbbf24; }
+    .lvl-3 { background:#2c3119; color:#d3e85e; }
+    .lvl-4 { background:#1d3325; color:#4ade80; }
+    .lvl-5 { background:#1c2c3d; color:#6ea8ff; }
+    .bar { height:8px; background:var(--panel-2); border-radius:4px; overflow:hidden; }
+    .bar > span { display:block; height:100%; background: var(--accent); }
+    .bar.good > span { background: var(--good); }
+    .bar.warn > span { background: var(--warn); }
+    .bar.bad  > span { background: var(--bad); }
+    table { width:100%; border-collapse:collapse; }
+    th,td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); font-size:13px; }
+    th { color:var(--muted); font-weight:500; text-transform:uppercase; font-size:11px; letter-spacing:.8px; }
+    code { background:#0a0c11; padding:1px 6px; border-radius:4px; }
+    h2 { font-size:14px; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; margin:0 0 12px; }
+    .dot { width:8px; height:8px; border-radius:50%; display:inline-block; }
+    .dot.good { background:var(--good); } .dot.warn { background:var(--warn); } .dot.bad { background:var(--bad); }
+    footer { color: var(--muted); font-size: 12px; text-align: center; padding: 20px; }
+
+    /* 支柱卡片 */
+    .pillar { background:var(--panel-2); border:1px solid var(--border);
+      border-radius:8px; padding:14px 16px; }
+    .pillar h3 { margin:0 0 6px; font-size:15px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .pillar .why  { color:var(--muted); font-size:13px; margin:8px 0 0; }
+    .pillar .what { font-size:13px; margin:6px 0 0; }
+    .pillar .rec  { font-size:13px; margin:8px 0 0; }
+    .rel { font-size:10px; padding:2px 8px; border-radius:999px; text-transform:uppercase; letter-spacing:.6px; font-weight:600; }
+    .rel.high   { background:#1c2c3d; color:#6ea8ff; }
+    .rel.medium { background:#2c3119; color:#d3e85e; }
+    .rel.low    { background:#262c3a; color:#8a93a6; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Readiness 報告</h1>
+    <div class="meta">
+      <strong>{{repoName}}</strong> · 已評估 {{date}} ·
+      <span class="badge lvl-{{level}}">L{{level}} — {{levelName}}</span> ·
+      整體 <strong>{{overallPct}}%</strong> · 等級 <strong>{{grade}}</strong>
+      <!-- 如果原則處於作用中，則附加： · 原則 <code>{{policyName}}</code> -->
+    </div>
+  </header>
+
+  <main>
+
+    <!-- 1. 什麼是 AI Readiness？ -->
+    <section class="panel">
+      <h2>什麼是 AI Readiness？</h2>
+      <p>AI 程式碼編寫代理程式的效能取決於它們接收到的內容。AgentRC 從兩個類別（儲存庫健康狀況和 AI 設定）的 <strong>9 個支柱</strong>來衡量儲存庫的 AI 整備程度，並將結果對應到 <strong>5 級成熟度模型</strong>。本報告是 AgentRC <em>衡量 → 產生 → 維護</em> 迴圈中的 <em>衡量</em> 步驟。</p>
+      <p style="color:var(--muted);font-size:13px;margin-top:8px">每個支柱都有一個 <strong>AI 相關性</strong> 評等（高 / 中 / 低），因此您可以一目了然地知道哪些差距最直接影響 Copilot 的輸出，哪些是通用的工程衛生。</p>
+    </section>
+
+    <!-- 2. 關鍵績效指標 (KPI) -->
+    <section class="grid cols-3">
+      <div class="panel kpi"><span class="lbl">成熟度</span><div class="num"><span class="badge lvl-{{level}}">L{{level}} — {{levelName}}</span></div></div>
+      <div class="panel kpi"><span class="lbl">整體分數</span><div class="num">{{overallPct}}%</div><div style="color:var(--muted);font-size:12px">等級 {{grade}}</div></div>
+      <div class="panel kpi"><span class="lbl">通過率</span><div class="num">{{passRate}}</div><div style="color:var(--muted);font-size:12px">閾值 {{threshold}}</div></div>
+    </section>
+
+    <!-- 3. 成熟度進展 -->
+    <section class="panel">
+      <h2>成熟度進展</h2>
+      <table>
+        <thead><tr><th>等級</th><th>名稱</th><th>狀態</th></tr></thead>
+        <tbody>
+          <!-- 呈現等級 5 → 1。使用 "◼ 您在這裡" 標記目前等級。範例列：
+            <tr><td>L3</td><td>標準化</td><td>◼ 您在這裡</td></tr>
+          -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 4. 作用中的原則（如果沒有作用中的原則，則完全省略此區段） -->
+    <section class="panel">
+      <h2>作用中的原則</h2>
+      <p><code>{{policyName}}</code> — {{policySummary}}</p>
+    </section>
+
+    <!-- 5. 儲存庫健康狀況支柱 -->
+    <section class="panel">
+      <h2>儲存庫健康狀況明細</h2>
+      <div class="grid cols-2">
+        <!--
+          為每個儲存庫健康狀況支柱（共 8 個）重複一個 .pillar 區塊：
+          風格 (Style)、建構 (Build)、測試 (Testing)、文件 (Docs)、開發環境 (Dev Environment)、程式碼品質 (Code Quality)、觀測能力 (Observability)、安全性 (Security)。
+
+          <div class="pillar">
+            <h3>
+              <span class="dot {{pillarStatus}}"></span>
+              {{pillarName}}
+              <span class="rel {{pillarRelevance}}">AI 相關性：{{pillarRelevance}}</span>
+              <span style="margin-left:auto;color:var(--muted);font-size:13px">{{pillarScore}}%</span>
+            </h3>
+            <div class="bar {{pillarStatus}}"><span style="width:{{pillarScore}}%"></span></div>
+            <p class="what"><strong>衡量指標：</strong> {{pillarWhat}}</p>
+            <p class="why"><strong>為何對 AI 很重要：</strong> {{pillarWhyAi}}</p>
+            <p class="rec"><strong>目前狀態：</strong> {{pillarCurrent}}</p>
+            <p class="rec"><strong>建議：</strong> {{pillarRecommendation}}</p>
+          </div>
+        -->
+      </div>
+    </section>
+
+    <!-- 6. AI 設定支柱 -->
+    <section class="panel">
+      <h2>AI 設定明細</h2>
+      <div class="grid cols-2">
+        <!-- AI 工具化 (AI Tooling) 支柱區塊 — 結構與上方相同，AI 相關性始終為 "high"。 -->
+      </div>
+    </section>
+
+    <!-- 7. 額外項目 -->
+    <section class="panel">
+      <h2>額外項目（僅供參考，不影響分數）</h2>
+      <table>
+        <thead><tr><th></th><th>額外項目</th><th>狀態</th></tr></thead>
+        <tbody>
+          <!-- agents-doc, pr-template, pre-commit, architecture-doc 列。使用 ✅ 或 ◻。 -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 8. 優先修復計畫 -->
+    <section class="panel">
+      <h2>優先修復計畫</h2>
+      <h3 style="color:var(--bad)">🔴 優先修復（高影響 / 低工作量）</h3>
+      <table><thead><tr><th>#</th><th>發現事項</th><th>檔案 / 設定</th><th>為何重要</th></tr></thead><tbody><!-- 列 --></tbody></table>
+      <h3 style="color:var(--warn)">🟡 後續修復（中影響 / 低工作量）</h3>
+      <table><thead><tr><th>#</th><th>發現事項</th><th>檔案 / 設定</th><th>原因</th></tr></thead><tbody><!-- 列 --></tbody></table>
+      <h3 style="color:var(--accent)">🔵 規劃（中影響 / 中工作量）</h3>
+      <table><thead><tr><th>#</th><th>發現事項</th><th>檔案 / 設定</th><th>原因</th></tr></thead><tbody><!-- 列 --></tbody></table>
+    </section>
+
+    <!-- 9. 後續步驟 -->
+    <section class="panel">
+      <h2>後續步驟</h2>
+      <ol>
+        <li>產生或重新整理指示：<code>agentrc instructions --output .github/copilot-instructions.md</code>（或使用 <code>generate-instructions</code> 技能）。</li>
+        <li>處理 <strong>🔴 優先修復</strong> 下的各個項目；重新執行此報告以確認分數有所提升。</li>
+        <li>透過 JSON 原則（<code>strict.json</code>、<code>ai-only.json</code> 等）編寫組織標準，並使用 <code>--policy</code> 重新執行。</li>
+        <li>將 <code>agentrc readiness --fail-level &lt;n&gt;</code> 介接至 CI 以防止迴歸。</li>
+      </ol>
+    </section>
+
+    <!-- 10. 原始資料 -->
+    <details class="panel">
+      <summary style="cursor:pointer;color:var(--muted)">原始 AgentRC JSON</summary>
+      <pre style="overflow:auto;font-size:11px;color:#b8c0d2">{{rawJsonPretty}}</pre>
+    </details>
+    <script type="application/json" id="raw-data">{{rawJsonCompact}}</script>
+  </main>
+
+  <footer>
+    產生自 <a href="https://github.com/github/awesome-copilot/tree/main/plugins/acreadiness-cockpit">acreadiness-cockpit</a>
+    · 技術提供：<a href="https://github.com/microsoft/agentrc">microsoft/agentrc</a>。
+  </footer>
+</body>
+</html>

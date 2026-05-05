@@ -1,100 +1,100 @@
 ---
 name: arize-link
-description: 產生 Arize UI 的深層連結。當使用者想要一個可點選的 URL 來開啟特定的追蹤 (Trace)、Span、會話 (Session)、資料集、標註佇列、評估器或標註組態時使用。
+description: 產生 Arize UI 的深層連結。當使用者想要一個可點擊的 URL 來開啟或分享特定的 Trace, Span, Session, 資料集 (dataset), 標記佇列 (labeling queue), 評估者 (evaluator) 或標核配置 (annotation config)，或與團隊成員分享 Arize 資源時使用。
 ---
 
 # Arize 連結 (Arize Link)
 
-產生 Arize UI 的深層連結，用於追蹤 (Trace)、Span、會話 (Session)、資料集、標註佇列、評估器與標註組態。
+產生指向 Arize UI 的 Trace, Span, Session, 資料集、標記佇列、評估者與標核配置的深層連結。
 
-## 何時使用
+## 何時使用 (When to Use)
 
-- 使用者想要一個指向追蹤、Span、會話、資料集、標註佇列、評估器或標註組態的連結
-- 您從匯出的資料或日誌中獲得了 ID，並需要連結回 UI
-- 使用者要求在 Arize 中「開啟」或「檢視」上述任何一項
+- 使用者想要一個指向 Trace, Span, Session, 資料集、標記佇列、評估者或標核配置的連結。
+- 您有來自匯出資料或日誌的 ID，且需要連結回 UI。
+- 使用者要求「開啟」或「檢視」上述任何 Arize 內容。
 
-## 必要的輸入
+## 必填輸入 (Required Inputs)
 
-從使用者或內容中收集 (匯出的追蹤資料、解析過的 URL)：
+從使用者或上下文（匯出的追蹤資料、解析後的 URL）中收集：
 
-| 始終必要 | 特定資源所需 |
+| 一律必填 | 資源特定 |
 |---|---|
-| `org_id` (Base64) | `project_id` + `trace_id` [+ `span_id`] — 追蹤/Span |
-| `space_id` (Base64) | `project_id` + `session_id` — 會話 |
+| `org_id` (base64) | `project_id` + `trace_id` [+ `span_id`] — Trace/Span |
+| `space_id` (base64) | `project_id` + `session_id` — Session |
 | | `dataset_id` — 資料集 |
-| | `queue_id` — 特定佇列 (省略則指向列表) |
-| | `evaluator_id` [+ `version`] — 評估器 |
+| | `queue_id` — 特定佇列（若為清單則省略） |
+| | `evaluator_id` [+ `version`] — 評估者 |
 
-**路徑中的所有 ID 必須經過 Base64 編碼** (字元：`A-Za-z0-9+/=`)。原始的數值 ID 會產生一個看起來正確但會導致 404 錯誤的 URL。若使用者提供的是數字，請要求他們直接從 Arize 瀏覽器 URL 複製 ID (`https://app.arize.com/organizations/{org_id}/spaces/{space_id}/…`)。若您擁有原始的內部 ID (例如：`Organization:1:abC1`)，請在插入 URL 之前對其進行 Base64 編碼。
+**所有路徑 ID 必須經過 base64 編碼**（字元範圍：`A-Za-z0-9+/=`）。原始的數值 ID 會產生一個看起來有效但會導致 404 的 URL。如果使用者提供的是數字，請要求他們直接從 Arize 瀏覽器 URL (`https://app.arize.com/organizations/{org_id}/spaces/{space_id}/…`) 複製 ID。如果您有原始的內部 ID（例如 `Organization:1:abC1`），請先進行 base64 編碼，然後再插入 URL。
 
-## URL 範本
+## URL 範本 (URL Templates)
 
-基準 URL：`https://app.arize.com` (地端部署請覆蓋此值)
+基礎 URL：`https://app.arize.com`（若是內部部署則進行覆寫）
 
-**追蹤 (Trace)** (加入 `&selectedSpanId={span_id}` 以醒目提示特定 Span)：
+**Trace**（加入 `&selectedSpanId={span_id}` 以標示特定 Span）：
 ```
 {base_url}/organizations/{org_id}/spaces/{space_id}/projects/{project_id}?selectedTraceId={trace_id}&queryFilterA=&selectedTab=llmTracing&timeZoneA=America%2FLos_Angeles&startA={start_ms}&endA={end_ms}&envA=tracing&modelType=generative_llm
 ```
 
-**會話 (Session)：**
+**Session：**
 ```
 {base_url}/organizations/{org_id}/spaces/{space_id}/projects/{project_id}?selectedSessionId={session_id}&queryFilterA=&selectedTab=llmTracing&timeZoneA=America%2FLos_Angeles&startA={start_ms}&endA={end_ms}&envA=tracing&modelType=generative_llm
 ```
 
-**資料集 (Dataset)** (`selectedTab`：`examples` (範例) 或 `experiments` (實驗))：
+**資料集 (Dataset)** (`selectedTab` 為 `examples` 或 `experiments`)：
 ```
 {base_url}/organizations/{org_id}/spaces/{space_id}/datasets/{dataset_id}?selectedTab=examples
 ```
 
-**佇列列表 / 特定佇列：**
+**佇列清單 / 特定佇列：**
 ```
 {base_url}/organizations/{org_id}/spaces/{space_id}/queues
 {base_url}/organizations/{org_id}/spaces/{space_id}/queues/{queue_id}
 ```
 
-**評估器 (Evaluator)** (省略 `?version=…` 則指向最新版本)：
+**評估者 (Evaluator)**（遺漏 `?version=…` 則指向最新版本）：
 ```
 {base_url}/organizations/{org_id}/spaces/{space_id}/evaluators/{evaluator_id}
 {base_url}/organizations/{org_id}/spaces/{space_id}/evaluators/{evaluator_id}?version={version_url_encoded}
 ```
-`version` 數值必須經過 URL 編碼 (例如：末尾的 `=` 變為 `%3D`)。
+`version` 的值必須經過 URL 編碼（例如結尾的 `=` 變為 `%3D`）。
 
-**標註組態：**
+**標核配置 (Annotation configs)：**
 ```
 {base_url}/organizations/{org_id}/spaces/{space_id}/annotation-configs
 ```
 
 ## 時間範圍 (Time Range)
 
-關鍵：`startA` 與 `endA` (Unix 紀元毫秒數) 是追蹤/Span/會話連結**必要**的 — 省略這些值將預設為過去 7 天，若該追蹤落在該視窗之外，則會顯示「無最近資料 (no recent data)」。
+至關重要：針對 Trace/Span/Session 連結，`startA` 與 `endA`（Epoch 毫秒）是 **必填項** — 遺漏它們將預設為過去 7 天，且若 Trace 落在該視窗之外，將顯示「無近期資料 (no recent data)」。
 
 **優先順序：**
 1. **使用者提供的 URL** — 直接擷取並重複使用 `startA`/`endA`。
-2. **Span 的 `start_time`** — 前後各緩衝 ±1 天 (或前後各 ±1 小時以縮小範圍)。
-3. **備援方案** — 過去 90 天 (`現在 - 90天` 到 `現在`)。
+2. **Span 的 `start_time`** — 前後各緩衝 ±1 天（或若需更窄視窗則為 ±1 小時）。
+3. **備用方案** — 過去 90 天（`now - 90d` 到 `now`）。
 
-優先選用較小的視窗；90 天的視窗載入速度較慢。
+優先選擇較窄的視窗；90 天視窗載入速度較慢。
 
-## 說明
+## 指示 (Instructions)
 
-1. 從使用者、匯出的資料或 URL 內容中收集 ID。
-2. 核實路徑中的所有 ID 皆為 Base64 編碼。
+1. 從使用者、匯出資料或 URL 上下文中收集 ID。
+2. 驗證所有路徑 ID 皆已過 base64 編碼。
 3. 根據上述優先順序確定 `startA`/`endA`。
-4. 代入適當的範本並以可點選的 Markdown 連結呈現。
+4. 代入適當的範本中，並以可點擊的 Markdown 連結形式呈現。
 
-## 疑難排解
+## 疑難排解 (Troubleshooting)
 
 | 問題 | 解決方案 |
 |---|---|
-| 「無資料 (No data)」/ 空檢視 | 追蹤落在時間範圍之外 — 放寬 `startA`/`endA` (±1h → ±1d → 90d)。 |
-| 404 | ID 錯誤或非 Base64 編碼。請重新檢查瀏覽器 URL 中的 `org_id`, `space_id`, `project_id`。 |
-| Span 未醒目提示 | `span_id` 可能屬於不同的追蹤。請對照匯出的 Span 資料進行核實。 |
-| `org_id` 未知 | `ax` CLI 未提供此 ID。請要求使用者從 `https://app.arize.com/organizations/{org_id}/spaces/{space_id}/…` 複製。 |
+| 「無資料 (No data)」 / 空白檢視 | Trace 超出時間視窗 — 擴大 `startA`/`endA` (±1h → ±1d → 90d)。 |
+| 404 | ID 錯誤或非 base64。從瀏覽器 URL 重新檢查 `org_id`, `space_id`, `project_id`。 |
+| Span 未標示 | `span_id` 可能屬於不同的 Trace。針對匯出的 Span 資料進行驗證。 |
+| `org_id` 未知 | `ax` CLI 並未揭露此資訊。要求使用者從 `https://app.arize.com/organizations/{org_id}/spaces/{space_id}/…` 複製。 |
 
-## 相關技能
+## 相關技能 (Related Skills)
 
-- **arize-trace**：匯出 Span 以獲取 `trace_id` (追蹤 ID)、`span_id` 與 `start_time` (開始時間)。
+- **arize-trace**：匯出 Span 以獲取 `trace_id`, `span_id` 與 `start_time`。
 
-## 範例
+## 範例 (Examples)
 
-有關每種連結類型的完整具體 URL，請參閱 references/EXAMPLES.md。
+參見 references/EXAMPLES.md 以獲取每種連結類型的完整具體 URL 集合。

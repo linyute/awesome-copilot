@@ -1,37 +1,37 @@
-# 生產：持續評估 (Continuous Evaluation)
+# 生產環境：持續評估 (Production: Continuous Evaluation)
 
-能力評估 (Capability evals) 與回歸評估 (Regression evals) 以及持續進行的回饋迴圈。
+能力評估 (Capability) vs 退化評估 (Regression) 以及持續的回饋循環。
 
-## 兩種評估類型
+## 兩種評估類型 (Two Types of Evals)
 
 | 類型 | 通過率目標 | 目的 | 更新方式 |
 | ---- | ---------------- | ------- | ------ |
-| **能力評估 (Capability)** | 50-80% | 測量改進程度 | 新增更難的案例 |
-| **回歸評估 (Regression)** | 95-100% | 捕捉損壞情況 | 加入已修復的錯誤 |
+| **能力 (Capability)** | 50-80% | 測量改進程度 | 加入更難的案例 |
+| **退化 (Regression)** | 95-100% | 捕捉損壞情況 | 加入已修復的錯誤 |
 
 ## 飽和 (Saturation)
 
-當能力評估的通過率達到 >95% 時，表示它們已飽和：
-1. 將通過的案例移至回歸測試套件 (regression suite)
-2. 在能力測試套件中新增具挑戰性的案例
+當能力評估的通過率達到 >95% 時，表示已飽和：
+1. 將通過的案例晉升至退化測試套件。
+2. 在能力測試套件中加入新的、具挑戰性的案例。
 
-## 回饋迴圈 (Feedback Loop)
+## 回饋循環 (Feedback Loop)
 
 ```
-生產 (Production) → 抽樣流量 → 執行評估器 → 發現失敗
-    ↑                                              ↓
-部署 (Deploy)  ←  執行 CI 評估  ←  建立測試案例  ←  錯誤分析
+生產環境 → 取樣流量 → 執行評估者 → 尋找失敗
+    ↑                                  ↓
+部署  ←  執行 CI 評估  ←  建立測試案例  ←  錯誤分析
 ```
 
 ## 實作 (Implementation)
 
-建立一個持續監控迴圈：
+建構一個持續監控循環：
 
-1. **定期抽樣最近的追蹤 (traces)**（例如：每小時 100 個追蹤）
-2. **在抽樣的追蹤上執行評估器**
-3. **將結果紀錄 (Log)** 到 Phoenix 以進行追蹤
-4. **將有疑慮的結果加入佇列** 以供人類審查
-5. **根據重複發生的失敗模式建立測試案例**
+1. **定期取樣近期 Trace**（例如：每小時 100 個 Trace）。
+2. **針對採樣的 Trace 執行評估者**。
+3. **將結果記錄至 Phoenix** 以進行追蹤。
+4. **將有問題的結果排入隊列** 供人工審閱。
+5. **從重複發生的失敗模式建立測試案例**。
 
 ### Python
 
@@ -41,7 +41,7 @@ from datetime import datetime, timedelta
 
 client = Client()
 
-# 1. 抽樣最近的 spans（包含用於評估的完整屬性）
+# 1. 採樣近期的 Span（包含完整的評估屬性）
 spans_df = client.spans.get_spans_dataframe(
     project_identifier="my-app",
     start_time=datetime.now() - timedelta(hours=1),
@@ -49,7 +49,7 @@ spans_df = client.spans.get_spans_dataframe(
     limit=100,
 )
 
-# 2. 執行評估器
+# 2. 執行評估者
 from phoenix.evals import evaluate_dataframe
 
 results_df = evaluate_dataframe(
@@ -57,7 +57,7 @@ results_df = evaluate_dataframe(
     evaluators=[quality_eval, safety_eval],
 )
 
-# 3. 將結果作為 annotations 上傳
+# 3. 將結果作為標核上傳
 from phoenix.evals.utils import to_annotation_dataframe
 
 annotations_df = to_annotation_dataframe(results_df)
@@ -70,15 +70,15 @@ client.spans.log_span_annotations_dataframe(dataframe=annotations_df)
 import { getSpans } from "@arizeai/phoenix-client/spans";
 import { logSpanAnnotations } from "@arizeai/phoenix-client/spans";
 
-// 1. 抽樣最近的 spans
+// 1. 採樣近期的 Span
 const { spans } = await getSpans({
   project: { projectName: "my-app" },
   startTime: new Date(Date.now() - 60 * 60 * 1000),
-  parentId: null, // 僅限頂層 spans
+  parentId: null, // 僅限根 Span
   limit: 100,
 });
 
-// 2. 執行評估器（使用者定義）
+// 2. 執行評估者（由使用者定義）
 const results = await Promise.all(
   spans.map(async (span) => ({
     spanId: span.context.span_id,
@@ -86,7 +86,7 @@ const results = await Promise.all(
   }))
 );
 
-// 3. 將結果作為 annotations 上傳
+// 3. 將結果作為標核上傳
 await logSpanAnnotations({
   spanAnnotations: results.map((r) => ({
     spanId: r.spanId,
@@ -98,10 +98,10 @@ await logSpanAnnotations({
 });
 ```
 
-對於追蹤層級 (trace-level) 的監控（例如：代理工作流程），使用 `get_traces`/`getTraces` 來識別追蹤：
+對於 Trace 層級的監控（例如：代理程式工作流程），請使用 `get_traces`/`getTraces` 來識別 Trace：
 
 ```python
-# Python：識別延遲較高的追蹤
+# Python: 識別慢速 Trace
 traces = client.traces.get_traces(
     project_identifier="my-app",
     start_time=datetime.now() - timedelta(hours=1),
@@ -112,7 +112,7 @@ traces = client.traces.get_traces(
 ```
 
 ```typescript
-// TypeScript：識別延遲較高的追蹤
+// TypeScript: 識別慢速 Trace
 import { getTraces } from "@arizeai/phoenix-client/traces";
 
 const { traces } = await getTraces({
@@ -126,12 +126,12 @@ const { traces } = await getTraces({
 
 | 條件 | 嚴重性 | 行動 |
 | --------- | -------- | ------ |
-| 回歸評估 < 98% | 緊急 (Critical) | 呼叫值班人員 (Page oncall) |
-| 能力評估下降 | 警告 (Warning) | Slack 通知 |
-| 能力評估 > 95% 持續 7 天 | 資訊 (Info) | 排定審查 |
+| 退化率 < 98% | 緊急 (Critical) | 傳呼值班人員 |
+| 能力下降 | 警告 (Warning) | Slack 通知 |
+| 能力 > 95% 持續 7 天 | 資訊 (Info) | 安排審閱 |
 
-## 關鍵原則
+## 關鍵原則 (Key Principles)
 
-- **兩個套件** - 始終保持能力評估 + 回歸評估
-- **案例升級** - 將一致通過的案例移至回歸評估
-- **追蹤趨勢** - 隨時間監控，而不僅僅是快照
+- **兩套測試套件** - 始終維持 能力 + 退化 兩套評估。
+- **晉升案例** - 將持續通過的案例移至退化測試。
+- **追蹤趨勢** - 監控一段時間內的變化，而非僅看快照。

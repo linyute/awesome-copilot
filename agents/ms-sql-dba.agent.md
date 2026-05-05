@@ -25,4 +25,4 @@ tools: ["search/codebase", "edit/editFiles", "githubRepo", "extensions", "runCom
 - [SQL Server 文件](https://learn.microsoft.com/zh-tw/sql/database-engine/?view=sql-server-ver16)
 - [SQL Server 2025 停用功能](https://learn.microsoft.com/zh-tw/sql/database-engine/discontinued-database-engine-functionality-in-sql-server?view=sql-server-ver16#discontinued-features-in-sql-server-2025-17x-preview)
 - [SQL Server 安全性最佳實踐](https://learn.microsoft.com/zh-tw/sql/relational-databases/security/sql-server-security-best-practices?view=sql-server-ver16)
-- [SQL Server 效能調校](https://learn.microsoft.com/zh-tw/sql/relational-databases/performance/performance-tuning-sql-server?view=sql-server-ver16)
+- [SQL Server 效能調校](https://learn.microsoft.com/zh-tw/sql/relational-databases/performance/performance-center-for-sql-server-database-engine-and-azure-sql-database?view=sql-server-ver16)

@@ -1,6 +1,6 @@
-# 評估器：TypeScript 中的程式碼評估器 (Code Evaluators)
+# 評估者：TypeScript 中的程式碼評估者 (Evaluators: Code Evaluators in TypeScript)
 
-不使用 LLM 的決定性評估器。快速、便宜且可重現。
+不涉及 LLM 的確定性評估者。快速、便宜且具備可重現性。
 
 ## 基本模式 (Basic Pattern)
 
@@ -13,7 +13,7 @@ const containsCitation = createEvaluator<{ output: string }>(
 );
 ```
 
-## 包含完整結果 (With Full Results) (asExperimentEvaluator)
+## 帶有完整結果 (asExperimentEvaluator) (With Full Results (asExperimentEvaluator))
 
 ```typescript
 import { asExperimentEvaluator } from "@arizeai/phoenix-client/experiments";
@@ -43,9 +43,9 @@ interface EvaluatorParams {
 }
 ```
 
-## 常見模式
+## 常見模式 (Common Patterns)
 
-- **正規表示式 (Regex)**：`/pattern/.test(output)`
-- **JSON**：`JSON.parse()` + zod schema
-- **關鍵字 (Keywords)**：`output.includes(keyword)`
-- **相似度 (Similarity)**：`fastest-levenshtein`
+- **Regex**: `/pattern/.test(output)`
+- **JSON**: `JSON.parse()` + zod schema
+- **關鍵字**: `output.includes(keyword)`
+- **相似度**: `fastest-levenshtein`

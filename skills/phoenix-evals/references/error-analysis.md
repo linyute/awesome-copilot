@@ -1,24 +1,24 @@
 # 錯誤分析 (Error Analysis)
 
-在建立評估器之前，先審查追蹤 (traces) 以發現失敗模式。
+在建構評估者之前，先審閱 Trace 以發現失敗模式。
 
 ## 流程 (Process)
 
-1. **抽樣 (Sample)** - 100 個以上的追蹤 (包含錯誤、負面回饋、隨機抽樣)
-2. **開放編碼 (Open Code)** - 為每個追蹤編寫自由格式的筆記
-3. **軸向編碼 (Axial Code)** - 將筆記歸類為失敗類別
-4. **量化 (Quantify)** - 計算每個類別的失敗次數
-5. **優先排序 (Prioritize)** - 根據頻率 × 嚴重性進行排名
+1. **採樣 (Sample)** - 100 個以上的 Trace（包含錯誤、負面回饋、隨機）。
+2. **開放式編碼 (Open Code)** - 為每個 Trace 撰寫自由格式的筆記。
+3. **軸心式編碼 (Axial Code)** - 將筆記分組為失敗類別。
+4. **量化 (Quantify)** - 計算每個類別的失敗次數。
+5. **優先排序 (Prioritize)** - 根據 頻率 × 嚴重程度 進行排名。
 
-## 抽樣追蹤 (Sample Traces)
+## 採樣 Trace (Sample Traces)
 
-### Span 層級抽樣 (Python — DataFrame)
+### Span 層級採樣 (Python — DataFrame)
 
 ```python
 from phoenix.client import Client
 
-# Client() 用於本機 Phoenix (會退而使用環境變數或 localhost:6006)
-# 用於遠端/雲端：Client(base_url="https://app.phoenix.arize.com", api_key="...")
+# Client() 適用於本地端 Phoenix（回退至環境變數或 localhost:6006）
+# 對於遠端/雲端：Client(base_url="https://app.phoenix.arize.com", api_key="...")
 client = Client()
 spans_df = client.spans.get_spans_dataframe(project_identifier="my-app")
 
@@ -30,7 +30,7 @@ sample = pd.concat([
 ]).drop_duplicates("span_id").head(100)
 ```
 
-### Span 層級抽樣 (TypeScript)
+### Span 層級採樣 (TypeScript)
 
 ```typescript
 import { getSpans } from "@arizeai/phoenix-client/spans";
@@ -48,9 +48,9 @@ const sample = [...errors, ...allSpans.sort(() => Math.random() - 0.5).slice(0, 
 const unique = [...new Map(sample.map((s) => [s.context.span_id, s])).values()].slice(0, 100);
 ```
 
-### 追蹤層級抽樣 (Trace-level sampling) (Python)
+### Trace 層級採樣 (Python)
 
-當錯誤跨越多個 spans 時（例如代理工作流程），請對整個追蹤進行抽樣：
+當錯誤跨越多個 Span 時（例如代理程式工作流程），請採樣整個 Trace：
 
 ```python
 from datetime import datetime, timedelta
@@ -63,10 +63,10 @@ traces = client.traces.get_traces(
     order="desc",
     limit=100,
 )
-# 每個追蹤包含：trace_id, start_time, end_time, spans
+# 每個 Trace 包含：trace_id, start_time, end_time, spans
 ```
 
-### 追蹤層級抽樣 (Trace-level sampling) (TypeScript)
+### Trace 層級採樣 (TypeScript)
 
 ```typescript
 import { getTraces } from "@arizeai/phoenix-client/traces";
@@ -79,16 +79,16 @@ const { traces } = await getTraces({
 });
 ```
 
-## 新增筆記 (Python)
+## 新增筆記 (Python) (Add Notes (Python))
 
 ```python
 client.spans.add_span_note(
     span_id="abc123",
-    note="時區錯誤 - 說的是東部標準時間 (EST)，但使用者在太平洋標準時間 (PST)"
+    note="時區錯誤 - 說是美東時間下午 3 點，但使用者在美西時間"
 )
 ```
 
-## 新增筆記 (TypeScript)
+## 新增筆記 (TypeScript) (Add Notes (TypeScript))
 
 ```typescript
 import { addSpanNote } from "@arizeai/phoenix-client/spans";
@@ -96,45 +96,45 @@ import { addSpanNote } from "@arizeai/phoenix-client/spans";
 await addSpanNote({
   spanNote: {
     spanId: "abc123",
-    note: "時區錯誤 - 說的是東部標準時間 (EST)，但使用者在太平洋標準時間 (PST)"
+    note: "時區錯誤 - 說是美東時間下午 3 點，但使用者在美西時間"
   }
 });
 ```
 
-## 筆記重點 (What to Note)
+## 筆記內容建議 (What to Note)
 
 | 類型 | 範例 |
 | ---- | -------- |
-| 事實錯誤 | 錯誤的日期、價格、編造的功能 |
-| 資訊缺失 | 未回答問題、遺漏細節 |
-| 語氣問題 | 對於內容而言過於隨意/正式 |
-| 工具問題 | 錯誤的工具、錯誤的參數 |
-| 擷取 (Retrieval) | 錯誤的文件、遺漏相關文件 |
+| 事實錯誤 | 錯誤的日期、價格、捏造的功能 |
+| 遺漏資訊 | 未回答問題、省略細節 |
+| 語氣問題 | 對於情境而言太隨意/太正式 |
+| 工具問題 | 工具錯誤、參數錯誤 |
+| 檢索問題 | 文件錯誤、遺漏相關文件 |
 
-## 優質筆記範例
+## 優質筆記範例 (Good Notes)
 
 ```
-差 (BAD)：  "回答很糟"
-好 (GOOD)： "回答說 2 天內出貨，但政策是 5-7 天"
+差：  「回應不佳」
+優： 「回應說 2 天內發貨，但政策是 5-7 天」
 ```
 
-## 歸類
+## 分組至類別 (Group into Categories)
 
 ```python
 categories = {
-    "factual_inaccuracy": ["錯誤的出貨時間", "不正確的價格"],
-    "hallucination": ["編造了折扣", "虛構的功能"],
-    "tone_mismatch": ["對企業客戶語氣過於非正式"],
+    "factual_inaccuracy": ["錯誤的運送時間", "錯誤的價格"],
+    "hallucination": ["捏造了折扣", "發明了功能"],
+    "tone_mismatch": ["對企業客戶語氣過於隨意"],
 }
-# 優先權 = 頻率 × 嚴重性
+# 優先順序 = 頻率 × 嚴重程度
 ```
 
-## 擷取現有的 Annotations
+## 擷取現有的標核 (Retrieve Existing Annotations)
 
 ### Python
 
 ```python
-# 從 spans DataFrame
+# 從 spans DataFrame 中擷取
 annotations_df = client.spans.get_span_annotations_dataframe(
     spans_dataframe=sample,
     project_identifier="my-app",
@@ -142,7 +142,7 @@ annotations_df = client.spans.get_span_annotations_dataframe(
 )
 # annotations_df 包含：span_id (索引), name, label, score, explanation
 
-# 或從特定的 span IDs
+# 或從特定的 Span ID 擷取
 annotations_df = client.spans.get_span_annotations_dataframe(
     span_ids=["span-id-1", "span-id-2"],
     project_identifier="my-app",
@@ -167,4 +167,4 @@ for (const ann of annotations) {
 
 ## 飽和度 (Saturation)
 
-當新的追蹤不再揭示新的失敗模式時即可停止。最少建議：100 個追蹤。
+當新的 Trace 不再揭示新的失敗模式時停止。最少建議 100 個 Trace。

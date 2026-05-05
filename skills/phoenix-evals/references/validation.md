@@ -1,24 +1,24 @@
 # 驗證 (Validation)
 
-在部署之前，針對人類標記驗證 LLM 裁判。目標為 >80% 的一致性 (agreement)。
+在部署前，針對人工標籤驗證 LLM 評審。目標是達成 >80% 的一致性。
 
 ## 需求 (Requirements)
 
 | 需求 | 目標 |
 | ----------- | ------ |
 | 測試集大小 | 100 個以上的範例 |
-| 平衡 (Balance) | 約 50/50 的通過/失敗比例 |
-| 準確率 (Accuracy) | >80% |
-| TPR/TNR | 皆 >70% |
+| 平衡性 | 通過/失敗各約 50/50 |
+| 準確度 (Accuracy) | >80% |
+| TPR/TNR | 皆需 >70% |
 
 ## 指標 (Metrics)
 
 | 指標 | 公式 | 何時使用 |
 | ------ | ------- | -------- |
-| **準確率 (Accuracy)** | (TP+TN) / 總數 | 一般情況 |
-| **TPR (召回率/Recall)** | TP / (TP+FN) | 品質保證 (Quality assurance) |
-| **TNR (特異度/Specificity)** | TN / (TN+FP) | 安全至上 (Safety-critical) |
-| **Cohen's Kappa** | 超出隨機機率的一致性 | 比較多個評估器 |
+| **準確度 (Accuracy)** | (TP+TN) / 總數 | 通用 |
+| **TPR (召回率 Recall)** | TP / (TP+FN) | 品質保證 |
+| **TNR (特異度 Specificity)** | TN / (TN+FP) | 安全至上 (Safety-critical) |
+| **Cohen's Kappa** | 超越隨機機率的一致性 | 比較評估者時 |
 
 ## 快速驗證 (Quick Validation)
 
@@ -28,7 +28,7 @@ from sklearn.metrics import classification_report, confusion_matrix, cohen_kappa
 print(classification_report(human_labels, evaluator_predictions))
 print(f"Kappa: {cohen_kappa_score(human_labels, evaluator_predictions):.3f}")
 
-# 取得 TPR/TNR
+# 獲取 TPR/TNR
 cm = confusion_matrix(human_labels, evaluator_predictions)
 tn, fp, fn, tp = cm.ravel()
 tpr = tp / (tp + fn)
@@ -47,28 +47,28 @@ golden_example = {
 
 ## 建立黃金資料集 (Building Golden Datasets)
 
-1. 抽樣生產追蹤 (包含錯誤、負面回饋、邊緣案例)
-2. 保持約 50/50 的通過/失敗平衡
-3. 由專家標記每個範例
-4. 對資料集進行版本控制（永不修改現有資料集）
+1. 對生產環境追蹤進行採樣（錯誤、負面回饋、邊緣案例）。
+2. 平衡通過/失敗範例，比例約各佔 50%。
+3. 由專家為每個範例加上標籤。
+4. 進行資料集版本管理（絕不修改現有的資料集）。
 
 ```python
-# 好 (GOOD) - 建立新版本
+# 良好做法 - 建立新版本
 golden_v2 = golden_v1 + [new_examples]
 
-# 差 (BAD) - 永不修改現有版本
+# 錯誤做法 - 絕不修改現有內容
 golden_v1.append(new_example)
 ```
 
-## 警訊 (Warning Signs)
+## 警示訊號 (Warning Signs)
 
-- 全數通過或全數失敗 → 過於寬鬆/嚴格
-- 結果隨機 → 準則 (criteria) 不明確
-- TPR/TNR < 70% → 需要改進
+- 全部通過或全部失敗 → 過於寬鬆/嚴格。
+- 結果隨機 → 標準不明確。
+- TPR/TNR < 70% → 需要改進。
 
-## 下列情況請重新驗證
+## 何時需要重新驗證 (Re-Validate When)
 
-- 提示範本 (Prompt template) 變更
-- 裁判模型變更
-- 準則變更
-- 每月定期檢查
+- 提示詞範本變更。
+- 評審模型變更。
+- 標準變更。
+- 每個月定期執行。

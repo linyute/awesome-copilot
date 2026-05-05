@@ -1,37 +1,37 @@
-# 基本概念 (Fundamentals)
+# 基礎知識 (Fundamentals)
 
-針對 AI 系統的應用程式特定測試。程式碼優先，LLM 用於細微差別，人類用於真實標準。
+針對 AI 系統的應用程式專用測試。程式碼優先，LLM 用於細微差別，人工用於判定真理。
 
-## 評估器類型 (Evaluator Types)
+## 評估者類型 (Evaluator Types)
 
-| 類型 | 速度 | 成本 | 使用案例 |
+| 類型 | 速度 | 成本 | 使用情境 |
 | ---- | ----- | ---- | -------- |
-| **程式碼 (Code)** | 快 | 便宜 | Regex、JSON、格式、完全符合 |
-| **LLM** | 中 | 中 | 主觀品質、複雜準則 |
-| **人類 (Human)** | 慢 | 昂貴 | 地面實況 (Ground truth)、校準 |
+| **程式碼 (Code)** | 快 | 便宜 | Regex, JSON, 格式, 精確比對 |
+| **LLM** | 中 | 中 | 主觀品質, 複雜標準 |
+| **人工 (Human)** | 慢 | 昂貴 | 地面實況 (Ground truth), 校準 |
 
-**決策：** 程式碼優先 → 僅當程式碼無法捕捉準則時才使用 LLM → 人類用於校準。
+**決策路徑：** 程式碼優先 → 僅在程式碼無法捕捉標準時使用 LLM → 使用人工進行校準。
 
 ## 分數結構 (Score Structure)
 
-| 屬性 | 必要 | 說明 |
+| 屬性 | 必填 | 描述 |
 | -------- | -------- | ----------- |
-| `name` | 是 | 評估器名稱 |
-| `kind` | 是 | `"code"`、`"llm"` 或 `"human"` |
+| `name` | 是 | 評估者名稱 |
+| `kind` | 是 | `"code"`, `"llm"`, `"human"` |
 | `score` | 否* | 0-1 數值 |
-| `label` | 否* | `"pass"` (通過)、`"fail"` (失敗) |
-| `explanation` | 否 | 依據/理由 |
+| `label` | 否* | `"pass"`, `"fail"` |
+| `explanation` | 否 | 理由說明 |
 
-*`score` 或 `label` 必須擇一提供。
+*`score` 或 `label` 必須提供其中之一。
 
-## 二元 (Binary) > 李克特量表 (Likert)
+## 二元評分 > 李克特量表 (Binary > Likert)
 
-使用通過/失敗，而非 1-5 的量表。準則更明確，也更容易校準。
+使用 通過/失敗，而非 1-5 分的量表。標準更清晰，校準更為容易。
 
 ```python
-# 使用多個二元檢查，而非單一李克特量表
+# 使用多個二元檢查，而非單一個李克特量表
 evaluators = [
-    AnswersQuestion(),    # 是/否
+    AnswersQuestion(),    # 是/否 (Yes/No)
     UsesContext(),        # 是/否
     NoHallucination(),    # 是/否
 ]
@@ -39,7 +39,7 @@ evaluators = [
 
 ## 快速模式 (Quick Patterns)
 
-### 程式碼評估器 (Code Evaluator)
+### 程式碼評估者 (Code Evaluator)
 
 ```python
 from phoenix.evals import create_evaluator
@@ -49,7 +49,7 @@ def has_citation(output: str) -> bool:
     return bool(re.search(r'\[\d+\]', output))
 ```
 
-### LLM 評估器 (LLM Evaluator)
+### LLM 評估者 (LLM Evaluator)
 
 ```python
 from phoenix.evals import ClassificationEvaluator, LLM

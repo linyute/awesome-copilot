@@ -1,6 +1,6 @@
-# 評估器：Python 中的 LLM 評估器 (LLM Evaluators)
+# 評估者：Python 中的 LLM 評估者 (Evaluators: LLM Evaluators in Python)
 
-LLM 評估器使用語言模型來判斷輸出。當準則具有主觀性時使用。
+LLM 評估者使用語言模型來判斷輸出。當標準較為主觀時使用。
 
 ## 快速開始 (Quick Start)
 
@@ -29,7 +29,7 @@ helpfulness = ClassificationEvaluator(
 
 ## 範本變數 (Template Variables)
 
-使用 XML 標籤來封裝變數以提高清晰度：
+使用 XML 標籤包覆變數以提高清晰度：
 
 | 變數 | XML 標籤 |
 | -------- | ------- |
@@ -38,9 +38,9 @@ helpfulness = ClassificationEvaluator(
 | `{{reference}}` | `<reference>{{reference}}</reference>` |
 | `{{context}}` | `<context>{{context}}</context>` |
 
-## create_classifier (工廠) (Factory)
+## create_classifier (Factory)
 
-回傳 `ClassificationEvaluator` 的簡寫工廠。為了獲得更多參數/客製化，建議優先使用直接的 `ClassificationEvaluator` 具現化 (instantiation)：
+傳回 `ClassificationEvaluator` 的簡寫工廠。針對更多參數/自訂需求，優先建議直接實體化 `ClassificationEvaluator`：
 
 ```python
 from phoenix.evals import create_classifier, LLM
@@ -58,10 +58,10 @@ Answer (relevant/irrelevant):""",
 
 ## 輸入映射 (Input Mapping)
 
-欄位名稱必須與範本變數相符。重新命名欄位或使用 `bind_evaluator`：
+資料欄名稱必須與範本變數相符。重新命名資料欄或使用 `bind_evaluator`：
 
 ```python
-# 選項 1：重新命名欄位以符合範本變數
+# 選項 1：重新命名資料欄以符合範本變數
 df = df.rename(columns={"user_query": "input", "ai_response": "output"})
 
 # 選項 2：使用 bind_evaluator
@@ -73,7 +73,7 @@ bound = bind_evaluator(
 )
 ```
 
-## 執行 (Running)
+## 執行中 (Running)
 
 ```python
 from phoenix.evals import evaluate_dataframe
@@ -81,9 +81,9 @@ from phoenix.evals import evaluate_dataframe
 results_df = evaluate_dataframe(dataframe=df, evaluators=[helpfulness])
 ```
 
-## 最佳實務 (Best Practices)
+## 最佳實踐 (Best Practices)
 
-1. **具體明確** - 精確定義通過/失敗的含義
-2. **包含範例** - 顯示每個標籤的具體案例
-3. **預設提供解釋** - `ClassificationEvaluator` 會自動包含解釋 (explanations)
-4. **研讀內建提示** - 參閱 `phoenix.evals.__generated__.classification_evaluator_configs` 以取得結構良好的評估提示範例（例如 Faithfulness、Correctness、DocumentRelevance 等）
+1. **具體化** - 精確定義通過/失敗的含義。
+2. **包含範例** - 針對每個標籤展示具體案例。
+3. **預設包含解釋** - `ClassificationEvaluator` 會自動包含解釋。
+4. **研究內建提示詞** - 參考 `phoenix.evals.__generated__.classification_evaluator_configs` 以獲取結構良好的評估提示詞範例（Faithfulness, Correctness, DocumentRelevance 等）。

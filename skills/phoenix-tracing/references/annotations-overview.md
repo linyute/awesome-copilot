@@ -1,69 +1,69 @@
-# 標記 (Annotations) 總覽
+# 標核概觀 (Annotations Overview)
 
-標記 (Annotations) 可讓您針對追蹤 (traces)、spans、文件和階段 (sessions) 加入人類或自動化回饋。標記對於評估、品質評定以及建立訓練資料集至關重要。
+標核 (Annotations) 允許您對 Trace, Span, 文件與工作階段 (session) 新增人工或自動回饋。標核對於評估、品質評定以及建立訓練資料集至關重要。
 
-## 標記類型 (Annotation Types)
+## 標核類型 (Annotation Types)
 
-Phoenix 支援四種標記類型：
+Phoenix 支援四種標核類型：
 
 | 類型 | 目標 | 目的 | 範例使用案例 |
 | ----------------------- | -------------------------------- | ---------------------------------------- | -------------------------------- |
-| **Span 標記** | 個別 span | 針對特定操作的回饋 | 「此 LLM 回應很準確」 |
-| **文件標記** | RETRIEVER (擷取器) span 中的文件 | 針對擷取文件相關性的回饋 | 「此文件沒有幫助」 |
-| **追蹤標記** | 整個追蹤 | 針對端到端互動的回饋 | 「使用者對結果感到滿意」 |
-| **階段標記** | 使用者階段 | 針對多輪對話的回饋 | 「階段成功結束」 |
+| **Span 標核** | 個別 Span | 對特定操作的回饋 | 「此 LLM 回應很準確」 |
+| **文件標核** | RETRIEVER Span 中的文件 | 對擷取文件相關性的回饋 | 「此文件沒有幫助」 |
+| **Trace 標核** | 整個 Trace | 對端對端互動的回饋 | 「使用者對結果感到滿意」 |
+| **工作階段標核** | 使用者工作階段 | 對多輪對話的回饋 | 「工作階段成功結束」 |
 
-## 標記欄位 (Annotation Fields)
+## 標核欄位 (Annotation Fields)
 
-每個標記都包含以下欄位：
+每個標核都具有以下欄位：
 
 ### 必要欄位 (Required Fields)
 
-| 欄位 | 類型 | 說明 |
+| 欄位 | 類型 | 描述 |
 | --------- | ------ | ----------------------------------------------------------------------------- |
-| 實體 ID (Entity ID) | String | 目標實體的 ID (span_id、trace_id、session_id 或 document_position) |
-| `name` | String | 標記名稱/標籤（例如：「quality」、「relevance」、「helpfulness」） |
+| 實體 ID | 字串 | 目標實體的 ID (span_id, trace_id, session_id 或 document_position) |
+| `name` | 字串 | 標核名稱/標籤（例如 "quality", "relevance", "helpfulness"） |
 
-### 結果欄位 (至少需提供一個)
+### 結果欄位（至少需提供一項） (Result Fields (At Least One Required))
 
-| 欄位 | 類型 | 說明 |
+| 欄位 | 類型 | 描述 |
 | ------------- | ----------------- | ----------------------------------------------------------------- |
-| `label` | String (選用) | 類別值（例如：「good」、「bad」、「relevant」、「irrelevant」） |
-| `score` | Float (選用) | 數值（通常為 0-1，但可以是任何範圍） |
-| `explanation` | String (選用) | 針對標記的純文字解釋 |
+| `label` | 字串 (選填) | 類別型的值（例如 "good", "bad", "relevant", "irrelevant"） |
+| `score` | 浮點數 (選填) | 數值（通常為 0-1，但可以是任何範圍） |
+| `explanation` | 字串 (選填) | 標核的自由格式說明 |
 
-必須提供 `label`、`score` 或 `explanation` 中的**至少一個**。
+必須提供 `label`、`score` 或 `explanation` 中的 **至少一項**。
 
-### 選用欄位 (Optional Fields)
+### 選填欄位 (Optional Fields)
 
-| 欄位 | 類型 | 說明 |
+| 欄位 | 類型 | 描述 |
 | ---------------- | ------ | --------------------------------------------------------------------------------------- |
-| `annotator_kind` | String | 誰建立了此標記：「HUMAN」、「LLM」或「CODE」（預設為「HUMAN」） |
-| `identifier` | String | 用於更新或插入 (upsert) 行為的唯一識別碼（若名稱+實體+識別碼相同，則更新現有內容） |
-| `metadata` | Object | 以鍵值對 (key-value pairs) 形式呈現的自訂 Metadata |
+| `annotator_kind` | 字串 | 誰建立了此標核："HUMAN", "LLM" 或 "CODE"（預設值："HUMAN"） |
+| `identifier` | 字串 | 用於 Upsert 行為的唯一識別碼（若名稱+實體+識別碼相同則更新現有內容） |
+| `metadata` | 物件 | 以鍵值對錶示的自訂中介資料 |
 
-## 標記器類型 (Annotator Kinds)
+## 標核人員種類 (Annotator Kinds)
 
-| 類型 | 說明 | 範例 |
+| 種類 | 描述 | 範例 |
 | ------- | ------------------------------ | --------------------------------- |
-| `HUMAN` | 來自人類的手動回饋 | 使用者評分、專家標籤 |
-| `LLM` | 來自 LLM 的自動化回饋 | GPT-4 評估回應品質 |
-| `CODE` | 來自程式碼的自動化回饋 | 基於規則的檢查、啟發式 (heuristics) |
+| `HUMAN` | 來自人員的手動回饋 | 使用者評分、專家標記 |
+| `LLM` | 來自 LLM 的自動回饋 | GPT-4 評估回應品質 |
+| `CODE` | 來自程式碼的自動回饋 | 基於規則的檢查、啟發式方法 |
 
 ## 範例 (Examples)
 
 **品質評定：**
 
-- `quality` - 整體品質 (label: good/fair/poor, score: 0-1)
-- `correctness` - 事實準確性 (label: correct/incorrect, score: 0-1)
-- `helpfulness` - 使用者滿意度 (label: helpful/not_helpful, score: 0-1)
+- `quality` - 整體品質（標籤：good/fair/poor，分數：0-1）
+- `correctness` - 事實準確性（標籤：correct/incorrect，分數：0-1）
+- `helpfulness` - 使用者滿意度（標籤：helpful/not_helpful，分數：0-1）
 
-**RAG 特定：**
+**RAG 專用：**
 
-- `relevance` - 文件與查詢的相關性 (label: relevant/irrelevant, score: 0-1)
-- `faithfulness` - 回答是否立基於內容 (label: faithful/unfaithful, score: 0-1)
+- `relevance` - 文件對查詢的相關性（標籤：relevant/irrelevant，分數：0-1）
+- `faithfulness` - 答案是否基於上下文（標籤：faithful/unfaithful，分數：0-1）
 
-**安全：**
+**安全性：**
 
-- `toxicity` - 包含有害內容 (score: 0-1)
-- `pii_detected` - 包含個人識別資訊 (label: yes/no)
+- `toxicity` - 是否包含有害內容（分數：0-1）
+- `pii_detected` - 是否偵測到個人身分識別資訊（標籤：yes/no）

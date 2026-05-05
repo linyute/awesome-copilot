@@ -1,6 +1,6 @@
-# 評估器：自訂範本 (Custom Templates)
+# 評估者：自訂範本 (Evaluators: Custom Templates)
 
-設計 LLM 裁判提示 (judge prompts)。
+設計 LLM 評審提示詞。
 
 ## 完整範本模式 (Complete Template Pattern)
 
@@ -28,14 +28,14 @@ Answer (faithful/unfaithful):"""
 
 ## 範本結構 (Template Structure)
 
-1. 任務說明 (Task description)
-2. XML 標籤中的輸入變數
-3. 準則定義 (Criteria definitions)
+1. 任務描述 (Task description)
+2. 使用 XML 標籤包覆的輸入變數
+3. 標準定義 (Criteria definitions)
 4. 範例 (2-4 個案例)
-5. 邊緣案例 (Edge cases)
+5. 邊緣情況 (Edge cases)
 6. 輸出格式 (Output format)
 
-## XML 標籤
+## XML 標籤 (XML Tags)
 
 ```
 <question>{{input}}</question>
@@ -46,9 +46,9 @@ Answer (faithful/unfaithful):"""
 
 ## 常見錯誤 (Common Mistakes)
 
-| 錯誤 | 修正方式 |
+| 錯誤 | 修復方式 |
 | ------- | --- |
-| 準則模糊 | 精確定義每個標籤 |
-| 缺乏範例 | 包含 2-4 個案例 |
+| 標準模糊 | 精確定義每個標籤 |
+| 沒有範例 | 包含 2-4 個案例 |
 | 格式不明確 | 指定精確的輸出 |
-| 未考慮邊緣案例 | 處理歧義情況 |
+| 未考慮邊緣情況 | 處理模糊性 |

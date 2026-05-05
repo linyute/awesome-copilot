@@ -1,4 +1,4 @@
-# 實驗：TypeScript 中的資料集 (Datasets)
+# 實驗：TypeScript 中的資料集 (Experiments: Datasets in TypeScript)
 
 建立與管理評估資料集。
 
@@ -15,7 +15,7 @@ const { datasetId } = await createDataset({
   name: "qa-test-v1",
   examples: [
     {
-      input: { question: "What is 2+2?" },
+      input: { question: "2+2 等於多少？" },
       output: { answer: "4" },
       metadata: { category: "math" },
     },
@@ -29,18 +29,18 @@ const { datasetId } = await createDataset({
 interface DatasetExample {
   input: Record<string, unknown>;    // 任務輸入
   output?: Record<string, unknown>;  // 預期輸出
-  metadata?: Record<string, unknown>; // 額外的內容 (context)
+  metadata?: Record<string, unknown>; // 額外的上下文資訊
 }
 ```
 
-## 從生產追蹤 (Production Traces) 建立
+## 來自生產環境追蹤 (From Production Traces)
 
 ```typescript
 import { getSpans } from "@arizeai/phoenix-client/spans";
 
 const { spans } = await getSpans({
   project: { projectName: "my-app" },
-  parentId: null, // 僅限頂層 spans
+  parentId: null, // 僅限根 Span
   limit: 100,
 });
 
@@ -62,8 +62,8 @@ const dataset = await getDataset({ client, datasetId: "..." });
 const all = await listDatasets({ client });
 ```
 
-## 最佳實務 (Best Practices)
+## 最佳實踐 (Best Practices)
 
-- **版本控制 (Versioning)**：建立新的資料集，不要修改現有的
-- **Metadata**：追蹤來源、類別與原始出處 (provenance)
-- **型別安全 (Type safety)**：針對結構使用 TypeScript 介面 (interfaces)
+- **版本管理**：建立新的資料集，不要修改現有的。
+- **中介資料 (Metadata)**：追蹤來源、類別、出處。
+- **型別安全 (Type safety)**：為結構使用 TypeScript 介面。

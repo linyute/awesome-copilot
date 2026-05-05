@@ -1,0 +1,27 @@
+{
+  "name": "acreadiness-cockpit",
+  "description": "從 Copilot 聊天視窗驅動 Microsoft AgentRC：評估 AI 就緒程度、建立 Copilot 指令（適用於 Monorepo 的扁平或帶有 applyTo glob 的巢狀結構），以及管理政策。在 reports/index.html 產出一個獨立的靜態 HTML 儀表板。",
+  "version": "1.0.0",
+  "keywords": [
+    "agentrc",
+    "ai-readiness",
+    "copilot-instructions",
+    "readiness-report",
+    "monorepo",
+    "policy",
+    "dashboard"
+  ],
+  "author": {
+    "name": "mvanderbend-msoft"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "agents": [
+    "./agents/ai-readiness-reporter.md"
+  ],
+  "skills": [
+    "./skills/acreadiness-assess/",
+    "./skills/acreadiness-generate-instructions/",
+    "./skills/acreadiness-policy/"
+  ]
+}

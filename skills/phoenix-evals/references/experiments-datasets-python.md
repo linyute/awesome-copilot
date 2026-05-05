@@ -1,4 +1,4 @@
-# 實驗：Python 中的資料集 (Datasets)
+# 實驗：Python 中的資料集 (Experiments: Datasets in Python)
 
 建立與管理評估資料集。
 
@@ -9,12 +9,12 @@ from phoenix.client import Client
 
 client = Client()
 
-# 從範例 (examples) 建立
+# 從範例建立
 dataset = client.datasets.create_dataset(
     name="qa-test-v1",
     examples=[
         {
-            "input": {"question": "What is 2+2?"},
+            "input": {"question": "2+2 等於多少？"},
             "output": {"answer": "4"},
             "metadata": {"category": "math"},
         },
@@ -31,7 +31,7 @@ dataset = client.datasets.create_dataset(
 )
 ```
 
-## 從生產追蹤 (Production Traces) 建立
+## 來自生產環境追蹤 (From Production Traces)
 
 ```python
 spans_df = client.spans.get_spans_dataframe(project_identifier="my-app")
@@ -51,41 +51,41 @@ dataset = client.datasets.get_dataset(name="qa-test-v1")
 df = dataset.to_dataframe()
 ```
 
-## 關鍵參數
+## 關鍵參數 (Key Parameters)
 
-| 參數 | 說明 |
+| 參數 | 描述 |
 | --------- | ----------- |
-| `input_keys` | 用於任務輸入的欄位 |
-| `output_keys` | 用於預期輸出的欄位 |
-| `metadata_keys` | 額外的內容 (context) |
+| `input_keys` | 用於任務輸入的資料欄 |
+| `output_keys` | 用於預期輸出的資料欄 |
+| `metadata_keys` | 額外的上下文資訊 |
 
-## 在實驗中使用評估器
+## 在實驗中使用評估者 (Using Evaluators in Experiments)
 
-### 評估器作為實驗評估器 (Evaluators as experiment evaluators)
+### 將評估者作為實驗評估者 (Evaluators as experiment evaluators)
 
-將 phoenix-evals 評估器直接作為 `evaluators` 引數傳遞給 `run_experiment`：
+將 phoenix-evals 評估者作為 `evaluators` 引數直接傳遞給 `run_experiment`：
 
 ```python
 from functools import partial
 from phoenix.client import AsyncClient
 from phoenix.evals import ClassificationEvaluator, LLM, bind_evaluator
 
-# 定義一個 LLM 評估器
+# 定義一個 LLM 評估者
 refusal = ClassificationEvaluator(
     name="refusal",
-    prompt_template="Is this a refusal?\nQuestion: {{query}}\nResponse: {{response}}",
+    prompt_template="這是否為拒絕回答？\n問題：{{query}}\n回應：{{response}}",
     llm=LLM(provider="openai", model="gpt-4o"),
     choices={"refusal": 0, "answer": 1},
 )
 
-# 綁定 (Bind) 以將資料集欄位映射到評估器參數
+# 進行繫結以將資料集資料欄映射至評估者參數
 refusal_evaluator = bind_evaluator(refusal, {"query": "input.query", "response": "output"})
 
 # 定義實驗任務
 async def run_rag_task(input, rag_engine):
     return rag_engine.query(input["query"])
 
-# 使用評估器執行實驗
+# 執行帶有評估者的實驗
 experiment = await AsyncClient().experiments.run_experiment(
     dataset=ds,
     task=partial(run_rag_task, rag_engine=query_engine),
@@ -95,24 +95,24 @@ experiment = await AsyncClient().experiments.run_experiment(
 )
 ```
 
-### 評估器作為任務 (Meta 評估)
+### 將評估者作為任務（中介評估） (Evaluators as the task (meta evaluation))
 
-將 LLM 評估器用作實驗**任務** (task)，以針對人類標註來測試評估器本身：
+將 LLM 評估者作為實驗的 **任務 (task)**，以針對人工標核測試評估者本身：
 
 ```python
 from phoenix.evals import create_evaluator
 
-# 評估器本身就是被測試的任務
+# 評估者本身即為被測試的任務
 def run_refusal_eval(input, evaluator):
     result = evaluator.evaluate(input)
     return result[0]
 
-# 一個簡單的啟發式 (heuristic) 檢查裁判與人類的一致性
+# 使用簡單的啟發式方法檢查評審與人工的一致性
 @create_evaluator(name="exact_match")
 def exact_match(output, expected):
     return float(output["score"]) == float(expected["refusal_score"])
 
-# 執行：評估器是任務，exact_match 則對其進行評估
+# 執行：評估者為任務，使用 exact_match 進行評估
 experiment = await AsyncClient().experiments.run_experiment(
     dataset=annotated_dataset,
     task=partial(run_refusal_eval, evaluator=refusal),
@@ -122,11 +122,10 @@ experiment = await AsyncClient().experiments.run_experiment(
 )
 ```
 
-此模式可讓您反覆調整評估器提示，直到它們與人類判斷一致。
-請參閱 `tutorials/evals/evals-2/evals_2.0_rag_demo.ipynb` 以取得完整範例。
+此模式可讓您迭代評估者提示詞，直到它們與人工判斷一致。完整範例請參閱 `tutorials/evals/evals-2/evals_2.0_rag_demo.ipynb`。
 
-## 最佳實務 (Best Practices)
+## 最佳實踐 (Best Practices)
 
-- **版本控制 (Versioning)**：建立新的資料集（例如 `qa-test-v2`），不要修改現有資料集
-- **Metadata**：追蹤來源、類別與難易度
-- **平衡**：確保各種類別都有多樣化的涵蓋範圍
+- **版本管理**：建立新的資料集（例如 `qa-test-v2`），不要修改現有的。
+- **中介資料 (Metadata)**：追蹤來源、類別、難度。
+- **平衡性**：確保涵蓋各種類別。

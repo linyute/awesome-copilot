@@ -1,20 +1,20 @@
-# Phoenix 追蹤：生產指南 (Production Guide) (Python)
+# Phoenix 追蹤：生產環境指南 (Python) (Phoenix Tracing: Production Guide (Python))
 
-**關鍵提醒：請為生產部署設定批次處理 (batching)、資料遮罩 (data masking) 以及 span 過濾。**
+**至關重要：為生產環境部署配置批次處理、資料遮蔽與 Span 篩選。**
 
-## Metadata
+## 中介資料 (Metadata)
 
 | 屬性 | 值 |
 |-----------|-------|
-| 優先權 (Priority) | 關鍵 - 生產就緒性 |
-| 影響 (Impact) | 安全性、效能 |
-| 設定時間 (Setup Time) | 5-15 分鐘 |
+| 優先順序 | 緊急 (Critical) - 生產就緒必需 |
+| 影響程度 | 安全性、效能 |
+| 設定時間 | 5-15 分鐘 |
 
 ## 批次處理 (Batch Processing)
 
-**啟用批次處理以提升生產效率。** 批次處理透過成組發送 spans 而非個別發送，來減少網路開銷 (network overhead)。
+**啟用批次處理以提升生產環境效率。** 批次處理透過分組發送 Span 而非逐一發送，來減少網路開銷。
 
-## 資料遮罩 (PII 保護) (Data Masking (PII Protection))
+## 資料遮蔽（PII 防護） (Data Masking (PII Protection))
 
 **環境變數：**
 
@@ -42,17 +42,17 @@ config = TraceConfig(
 register(trace_config=config)
 ```
 
-**優先順序 (Precedence)：** 程式碼 > 環境變數 > 預設值
+**優先順序：** 程式碼 > 環境變數 > 預設值
 
 ---
 
-## Span 過濾 (Span Filtering)
+## Span 篩選 (Span Filtering)
 
-**抑制 (Suppress) 特定的程式碼區塊：**
+**抑制特定程式碼區塊的追蹤：**
 
 ```python
 from phoenix.otel import suppress_tracing
 
 with suppress_tracing():
-    internal_logging()  # 不會產生 spans
+    internal_logging()  # 不會產生 Span
 ```

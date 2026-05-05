@@ -1,6 +1,6 @@
-# 手動檢測 (Manual Instrumentation) (TypeScript)
+# 手動檢測 (TypeScript) (Manual Instrumentation (TypeScript))
 
-使用便利包裝器 (convenience wrappers) 或 `withSpan` 新增自訂 spans，以實現細粒度的追蹤控制。
+使用便利的包裝器 (wrappers) 或 `withSpan` 新增自訂 Span，以實現細粒度的追蹤控制。
 
 ## 設定 (Setup)
 
@@ -15,16 +15,16 @@ register({ projectName: "my-app" });
 
 ## 快速參考 (Quick Reference)
 
-| Span 種類 | 方法 | 使用案例 |
+| Span 種類 | 方法 | 使用情境 |
 |-----------|--------|----------|
-| CHAIN | `traceChain` | 工作流程、管線 (pipelines)、協排 (orchestration) |
+| CHAIN | `traceChain` | 工作流程、管線、編排 |
 | AGENT | `traceAgent` | 多步驟推理、規劃 |
 | TOOL | `traceTool` | 外部 API、函式呼叫 |
 | RETRIEVER | `withSpan` | 向量搜尋、文件擷取 |
-| LLM | `withSpan` | LLM API 呼叫（建議優先使用自動檢測） |
-| EMBEDDING | `withSpan` | 嵌入 (Embedding) 產生 |
-| RERANKER | `withSpan` | 文件重排 |
-| GUARDRAIL | `withSpan` | 安全檢查、內容審查 |
+| LLM | `withSpan` | LLM API 呼叫（優先建議使用自動檢測） |
+| EMBEDDING | `withSpan` | 嵌入向量產生 |
+| RERANKER | `withSpan` | 文件重新排序 |
+| GUARDRAIL | `withSpan` | 安全檢查、內容審核 |
 | EVALUATOR | `withSpan` | LLM 評估 |
 
 ## 便利包裝器 (Convenience Wrappers)
@@ -57,12 +57,12 @@ const getWeather = traceTool(
 );
 ```
 
-## 適用於其他種類的 withSpan (withSpan for Other Kinds)
+## 針對其他種類使用 withSpan (withSpan for Other Kinds)
 
 ```typescript
 import { withSpan, getInputAttributes, getRetrieverAttributes } from "@arizeai/openinference-core";
 
-// 包含自訂屬性的 RETRIEVER
+// 帶有自訂屬性的 RETRIEVER
 const retrieve = withSpan(
   async (query: string) => {
     const results = await vectorDb.search(query, { topK: 5 });
@@ -77,11 +77,11 @@ const retrieve = withSpan(
 );
 ```
 
-**選項：**
+**選項 (Options)：**
 
 ```typescript
 withSpan(fn, {
-  kind: "RETRIEVER",              // OpenInference span 種類
+  kind: "RETRIEVER",              // OpenInference Span 種類
   name: "span-name",              // Span 名稱（預設為函式名稱）
   processInput: (args) => {},     // 將輸入轉換為屬性
   processOutput: (result) => {},  // 將輸出轉換為屬性
@@ -91,7 +91,7 @@ withSpan(fn, {
 
 ## 擷取輸入/輸出 (Capturing Input/Output)
 
-**請務必為可用於評估的 spans 擷取輸入/輸出 (I/O)。** 使用 `getInputAttributes` 和 `getOutputAttributes` 輔助函式 (helpers) 以實現自動 MIME 類型偵測：
+**務必為評估就緒的 Span 擷取輸入/輸出。** 使用 `getInputAttributes` 與 `getOutputAttributes` 協助工具來實現自動 MIME 類型偵測：
 
 ```typescript
 import {
@@ -108,7 +108,7 @@ const handleQuery = withSpan(
   {
     name: "query.handler",
     kind: "CHAIN",
-    // 使用輔助函式 - 自動 MIME 類型偵測
+    // 使用協助工具 - 自動 MIME 類型偵測
     processInput: (input) => getInputAttributes(input),
     processOutput: (result) => getOutputAttributes(result.text),
   }
@@ -117,30 +117,30 @@ const handleQuery = withSpan(
 await handleQuery("2+2 等於多少？");
 ```
 
-**擷取的內容：**
+**擷取到的內容：**
 
 ```json
 {
-  "input.value": "What is 2+2?",
+  "input.value": "2+2 等於多少？",
   "input.mime_type": "text/plain",
-  "output.value": "2+2 equals 4.",
+  "output.value": "2+2 等於 4。",
   "output.mime_type": "text/plain"
 }
 ```
 
-**輔助函式行為：**
-- 字串 → `text/plain`
-- 物件/陣列 → `application/json`（自動序列化）
+**協助工具行為：**
+- 字串 (Strings) → `text/plain`
+- 物件/陣列 (Objects/Arrays) → `application/json`（自動序列化）
 - `undefined`/`null` → 不設定屬性
 
 **為什麼這很重要：**
-- Phoenix 評估器需要 `input.value` 與 `output.value`
-- Phoenix UI 會顯眼地顯示 I/O 以便除錯
-- 支援匯出資料以用於微調資料集 (fine-tuning datasets)
+- Phoenix 評估者需要 `input.value` 與 `output.value`。
+- Phoenix UI 會在追蹤檢視中顯眼地顯示輸入/輸出，以便進行偵錯。
+- 實現匯出資料以建立微調資料集。
 
-### 自訂 I/O 處理 (Custom I/O Processing)
+### 自訂輸入/輸出處理 (Custom I/O Processing)
 
-在標準 I/O 屬性之外，新增自訂 Metadata：
+在標準輸入/輸出屬性旁設定自訂中介資料：
 
 ```typescript
 const processWithMetadata = withSpan(
@@ -165,8 +165,8 @@ const processWithMetadata = withSpan(
 );
 ```
 
-## 另請參閱
+## 參閱 (See Also)
 
-- **Span 屬性：** `span-chain.md`、`span-retriever.md`、`span-tool.md` 等。
-- **屬性輔助函式：** https://docs.arize.com/phoenix/tracing/manual-instrumentation-typescript#attribute-helpers
-- **自動檢測 (Auto-instrumentation)：** `instrumentation-auto-typescript.md` 用於框架整合
+- **Span 屬性：** `span-chain.md`, `span-retriever.md`, `span-tool.md` 等。
+- **屬性協助工具：** https://docs.arize.com/phoenix/tracing/manual-instrumentation-typescript#attribute-helpers
+- **自動檢測：** `instrumentation-auto-typescript.md`（用於框架整合）

@@ -1,16 +1,16 @@
-# Phoenix 追蹤：專案 (Projects) (TypeScript)
+# Phoenix 追蹤：專案 (TypeScript) (Phoenix Tracing: Projects (TypeScript))
 
-**使用專案 (Projects)（Phoenix 的最上層分組）按應用程式組織追蹤。**
+**使用專案 (Projects)（Phoenix 的頂層分組方式）來依應用程式組織追蹤。**
 
-## 總覽 (Overview)
+## 概觀 (Overview)
 
-專案 (Projects) 會將單一應用程式或實驗的追蹤進行分組。
+專案將單一應用程式或實驗的追蹤分組。
 
-**適用於：** 環境（開發/預發佈/生產）、A/B 測試、版本控制
+**用於：** 環境（開發/測試/生產）、A/B 測試、版本控制
 
 ## 設定 (Setup)
 
-### 環境變數 (建議使用) (Environment Variable)
+### 環境變數（建議做法） (Environment Variable (Recommended))
 
 ```bash
 export PHOENIX_PROJECT_NAME="my-app-prod"
@@ -22,7 +22,7 @@ import { register } from "@arizeai/phoenix-otel";
 register();  // 使用 "my-app-prod"
 ```
 
-### 程式碼
+### 程式碼 (Code)
 
 ```typescript
 import { register } from "@arizeai/phoenix-otel";
@@ -31,9 +31,9 @@ register({ projectName: "my-app-prod" });
 
 ## 使用案例 (Use Cases)
 
-**環境 (Environments)：**
+**環境：**
 ```typescript
-// 開發 (dev)、預發佈 (staging)、生產 (prod)
+// 開發、測試、生產
 register({ projectName: "my-app-dev" });
 register({ projectName: "my-app-staging" });
 register({ projectName: "my-app-prod" });

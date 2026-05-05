@@ -25,6 +25,7 @@
 
 | 名稱 | 說明 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |
+| [acreadiness-cockpit](../plugins/acreadiness-cockpit/README.md) | 從 Copilot 聊天視窗驅動 Microsoft AgentRC：評估 AI 就緒程度、建立 Copilot 指令（適用於 Monorepo 的扁平或帶有 applyTo glob 的巢狀結構），以及管理政策。在 reports/index.html 產出一個獨立的靜態 HTML 儀表板。 | 4 items | agentrc, ai-readiness, copilot-instructions, readiness-report, monorepo, policy, dashboard |
 | [ai-team-orchestration](../plugins/ai-team-orchestration/README.md) | 引導建立並執行一個具有具名角色（製作人、開發團隊、測試）的多代理 AI 開發團隊。包含衝刺規劃、具有不同代理聲音的腦力激盪提示、跨對話上下文生存以及平行團隊工作流。基於一個經過驗證的範本，該範本在 5 天內交付了一個包含 30 款遊戲且完全沒有人類編寫程式碼的應用程式。 | 4 items | ai-team, multi-agent, sprint-planning, brainstorm, project-management, orchestration, developer-workflow |
 | [arize-ax](../plugins/arize-ax/README.md) | Arize AX 平台技能，用於 LLM 可觀測性、評估與最佳化。包含追蹤匯出、儀表板化、資料集、實驗、評估器、AI 提供者整合、標註、提示工程最佳化，以及指向 Arize UI 的深度連結。 | 9 items | arize, llm, observability, tracing, evaluation, instrumentation, datasets, experiments, prompt-optimization |
 | [automate-this](../plugins/automate-this/README.md) | 錄製您執行手動程序的螢幕，將影片放在您的桌面，讓 Copilot CLI 逐影格進行分析，以建構可運作的自動化腳本。支援包含音訊逐字稿的旁白錄製。 | 1 items | automation, screen-recording, workflow, video-analysis, process-automation, scripting, productivity, copilot-cli |
@@ -32,6 +33,7 @@
 | [azure-cloud-development](../plugins/azure-cloud-development/README.md) | 全方位的 Azure 雲端開發工具，包含基礎架構即程式碼、無伺服器函式、架構模式，以及建構具延展性雲端應用程式的成本最佳化。 | 11 items | azure, cloud, infrastructure, bicep, terraform, serverless, architecture, devops |
 | [cast-imaging](../plugins/cast-imaging/README.md) | 使用 CAST Imaging 進行軟體分析、影響評估、結構品質諮詢與架構審查的專業代理程式完整集合。 | 3 items | cast-imaging, software-analysis, architecture, quality, impact-analysis, devops |
 | [clojure-interactive-programming](../plugins/clojure-interactive-programming/README.md) | REPL 優先的 Clojure 工作流程工具，具有 Clojure 指令、互動式程式設計對話模式及支援引導。 | 2 items | clojure, repl, interactive-programming |
+| [cms-development](../plugins/cms-development/README.md) | 用於 CMS 開發的技能，涵蓋佈景主題、外掛程式、管理員工具、媒體工作流程、Markdown 渲染以及靜態匯出管線。 | 4 items | cms, content-management-system, wordpress, shopify, drupal, theme, plugin, media, static-site |
 | [context-engineering](../plugins/context-engineering/README.md) | 透過更好的內容管理來最大化 GitHub Copilot 效能的工具與技術。包含結構化程式碼指南、用於規劃多檔案變更的代理程式，以及內容感知開發的提示詞。 | 4 items | context, productivity, refactoring, best-practices, architecture |
 | [context-matic](../plugins/context-matic/README.md) | 程式代理會對 API 產生幻覺。ContextMatic 提供經過整理與版本化的 API 與 SDK 文件。當你請代理「整合付款 API」時，它可能會胡亂猜測——依賴過時的訓練資料與不符合實際 SDK 的通用模式。ContextMatic 的解決方式是在代理需要的精確時刻，提供確定性、具版本意識且符合 SDK 的原生上下文。 | 2 items | api-context, api-integration, mcp, sdk, apimatic, third-party-apis, sdks |
 | [copilot-sdk](../plugins/copilot-sdk/README.md) | 跨多種程式語言使用 GitHub Copilot SDK 建構應用程式。包含 C#、Go、Node.js/TypeScript 以及 Python 的詳盡指令，協助您建立 AI 驅動的應用程式。 | 1 items | copilot-sdk, sdk, csharp, go, nodejs, typescript, python, ai, github-copilot |

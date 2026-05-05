@@ -1,10 +1,10 @@
-# 實驗：產生合成測試資料 (TypeScript) (Generating Synthetic Test Data)
+# 實驗：產生合成測試資料 (TypeScript) (Experiments: Generating Synthetic Test Data (TypeScript))
 
-為評估建立多樣化且具針對性的測試資料。
+建立多元且具針對性的測試資料以進行評估。
 
 ## 基於維度的方法 (Dimension-Based Approach)
 
-定義變化軸 (axes of variation)，然後產生組合：
+定義變化的軸向，然後產生組合：
 
 ```typescript
 const dimensions = {
@@ -14,10 +14,10 @@ const dimensions = {
 };
 ```
 
-## 兩步驟產生 (Two-Step Generation)
+## 兩步產生法 (Two-Step Generation)
 
-1. **產生元組 (Generate tuples)** (維度值的組合)
-2. **轉換為自然語言查詢 (Convert to natural queries)** (每個元組進行一次單獨的 LLM 呼叫)
+1. **產生元組 (tuples)**（維度值的組合）
+2. **轉換為自然查詢**（每個元組進行一次個別的 LLM 呼叫）
 
 ```typescript
 import { generateText } from "ai";
@@ -30,36 +30,36 @@ const tuples: Tuple[] = [
   ["shipping", "neutral", "simple"],
 ];
 
-// 步驟 2：轉換為自然語言查詢
+// 步驟 2：轉換為自然查詢
 async function tupleToQuery(t: Tuple): Promise<string> {
   const { text } = await generateText({
     model: openai("gpt-4o"),
-    prompt: `Generate a realistic customer message:
-    Issue: ${t[0]}, Mood: ${${t[1]}}, Complexity: ${${t[2]}}
+    prompt: `請產生一則寫實的客戶訊息：
+    問題類型：${t[0]}, 情緒：${t[1]}, 複雜度：${t[2]}
     
-    Write naturally, include typos if appropriate. Don't be formulaic.`,
+    撰寫時請力求自然，若合適可包含錯別字。不要流於公式化。`,
   });
   return text;
 }
 ```
 
-## 針對失敗模式 (Target Failure Modes)
+## 目標失敗模式 (Target Failure Modes)
 
-維度應針對錯誤分析 (error analysis) 中發現的已知失敗：
+維度應針對錯誤分析中發現的已知失敗：
 
 ```typescript
 // 來自錯誤分析的發現
 const dimensions = {
-  timezone: ["EST", "PST", "UTC", "ambiguous"], // 已知失敗
-  dateFormat: ["ISO", "US", "EU", "relative"], // 已知失敗
+  timezone: ["EST", "PST", "UTC", "ambiguous"], // 已知失敗點
+  dateFormat: ["ISO", "US", "EU", "relative"], // 已知失敗點
 };
 ```
 
 ## 品質控制 (Quality Control)
 
-- **驗證 (Validate)**：檢查預留位置文字 (placeholder text)、最小長度
-- **去重 (Deduplicate)**：使用嵌入 (embeddings) 移除近乎重複的查詢
-- **平衡 (Balance)**：確保涵蓋各個維度值
+- **驗證**：檢查是否存在預留位置文字、最小長度。
+- **去重**：使用嵌入 (embeddings) 移除近乎重複的查詢。
+- **平衡性**：確保涵蓋各個維度值。
 
 ```typescript
 function validateQuery(query: string): boolean {
@@ -69,18 +69,18 @@ function validateQuery(query: string): boolean {
 }
 ```
 
-## 何時使用
+## 何時使用 (When to Use)
 
 | 使用合成資料 | 使用真實資料 |
 | ------------- | ------------- |
-| 生產資料有限 | 追蹤 (traces) 充足 |
-| 測試邊緣案例 (edge cases) | 驗證實際行為 |
-| 推出前的評估 | 推出後的監控 |
+| 生產環境資料有限 | 具備充足的追蹤 (traces) |
+| 測試邊緣案例 | 驗證實際行為 |
+| 發佈前評估 | 發佈後監控 |
 
 ## 樣本大小 (Sample Sizes)
 
-| 目的 | 大小 |
+| 用途 | 大小 |
 | ------- | ---- |
-| 初始探索 | 50-100 |
+| 初步探索 | 50-100 |
 | 全面評估 | 100-500 |
 | 每個維度 | 每個組合 10-20 個 |

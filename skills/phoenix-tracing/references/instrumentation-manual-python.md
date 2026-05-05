@@ -1,6 +1,6 @@
-# 手動檢測 (Manual Instrumentation) (Python)
+# 手動檢測 (Python) (Manual Instrumentation (Python))
 
-使用裝飾器 (decorators) 或上下文管理器 (context managers) 新增自訂 spans，以實現細粒度的追蹤控制。
+使用裝飾器 (decorators) 或上下文管理員 (context managers) 新增自訂 Span，以實現細粒度的追蹤控制。
 
 ## 設定 (Setup)
 
@@ -16,21 +16,21 @@ tracer = tracer_provider.get_tracer(__name__)
 
 ## 快速參考 (Quick Reference)
 
-| Span 種類 | 裝飾器 | 使用案例 |
+| Span 種類 | 裝飾器 | 使用情境 |
 |-----------|-----------|----------|
-| CHAIN | `@tracer.chain` | 協排 (Orchestration)、工作流程、管線 (pipelines) |
+| CHAIN | `@tracer.chain` | 編排、工作流程、管線 |
 | RETRIEVER | `@tracer.retriever` | 向量搜尋、文件擷取 |
 | TOOL | `@tracer.tool` | 外部 API 呼叫、函式執行 |
 | AGENT | `@tracer.agent` | 多步驟推理、規劃 |
-| LLM | `@tracer.llm` | LLM API 呼叫（僅限手動） |
-| EMBEDDING | `@tracer.embedding` | 嵌入 (Embedding) 產生 |
-| RERANKER | `@tracer.reranker` | 文件重排 |
-| GUARDRAIL | `@tracer.guardrail` | 安全檢查、內容審查 |
+| LLM | `@tracer.llm` | LLM API 呼叫（僅手動） |
+| EMBEDDING | `@tracer.embedding` | 嵌入向量產生 |
+| RERANKER | `@tracer.reranker` | 文件重新排序 |
+| GUARDRAIL | `@tracer.guardrail` | 安全檢查、內容審核 |
 | EVALUATOR | `@tracer.evaluator` | LLM 評估、品質檢查 |
 
-## 裝飾器方式 (建議使用) (Decorator Approach)
+## 裝飾器方法（推薦） (Decorator Approach (Recommended))
 
-**適用於：** 完整函式檢測、自動 I/O 擷取
+**適用於：** 完整函式的檢測、自動輸入/輸出擷取
 
 ```python
 @tracer.chain
@@ -50,7 +50,7 @@ def get_weather(city: str) -> str:
     return response.json()["weather"]
 ```
 
-**自訂 span 名稱：**
+**自訂 Span 名稱：**
 
 ```python
 @tracer.chain(name="rag-pipeline-v2")
@@ -58,7 +58,7 @@ def my_workflow(query: str) -> str:
     return process(query)
 ```
 
-## 上下文管理器方式 (Context Manager Approach)
+## 上下文管理員方法 (Context Manager Approach)
 
 **適用於：** 部分函式檢測、自訂屬性、動態控制
 
@@ -91,13 +91,13 @@ def retrieve_with_metadata(query: str):
 
 ## 擷取輸入/輸出 (Capturing Input/Output)
 
-**請務必為可用於評估的 spans 擷取輸入/輸出 (I/O)。**
+**務必為評估就緒的 Span 擷取輸入/輸出。**
 
-### 自動 I/O 擷取 (裝飾器)
+### 自動輸入/輸出擷取（裝飾器） (Automatic I/O Capture (Decorators))
 
-裝飾器會自動擷取輸入引數與回傳值：
+裝飾器會自動擷取輸入引數與傳回值：
 
-```python  theme={null}
+```python
 @tracer.chain
 def handle_query(user_input: str) -> str:
     result = agent.generate(user_input)
@@ -109,11 +109,11 @@ def handle_query(user_input: str) -> str:
 # - input.mime_type / output.mime_type: 自動偵測
 ```
 
-### 手動 I/O 擷取 (上下文管理器)
+### 手動輸入/輸出擷取（上下文管理員） (Manual I/O Capture (Context Manager))
 
-使用 `set_input()` 和 `set_output()` 進行簡單的 I/O 擷取：
+使用 `set_input()` 與 `set_output()` 進行簡單的輸入/輸出擷取：
 
-```python  theme={null}
+```python
 from opentelemetry.trace import Status, StatusCode
 
 def handle_query(user_input: str) -> str:
@@ -131,36 +131,36 @@ def handle_query(user_input: str) -> str:
         return result.text
 ```
 
-**擷取的內容：**
+**擷取到的內容：**
 
 ```json
 {
-  "input.value": "What is 2+2?",
+  "input.value": "2+2 等於多少？",
   "input.mime_type": "text/plain",
-  "output.value": "2+2 equals 4.",
+  "output.value": "2+2 等於 4。",
   "output.mime_type": "text/plain"
 }
 ```
 
 **為什麼這很重要：**
-- Phoenix 評估器需要 `input.value` 與 `output.value`
-- Phoenix UI 會顯眼地顯示 I/O 以便除錯
-- 支援匯出資料以用於微調資料集 (fine-tuning datasets)
+- Phoenix 評估者需要 `input.value` 與 `output.value`。
+- Phoenix UI 會在追蹤檢視中顯眼地顯示輸入/輸出，以便進行偵錯。
+- 實現匯出資料以建立微調資料集。
 
-### 包含額外 Metadata 的自訂 I/O
+### 帶有額外中介資料的自訂輸入/輸出 (Custom I/O with Additional Metadata)
 
-在 I/O 之外，使用 `set_attribute()` 設定自訂屬性：
+使用 `set_attribute()` 在輸入/輸出旁設定自訂屬性：
 
-```python  theme={null}
+```python
 def process_query(query: str):
     with tracer.start_as_current_span(
         "query.process",
         openinference_span_kind="chain"
     ) as span:
-        # 標準 I/O
+        # 標準輸入
         span.set_input(query)
 
-        # 自訂 Metadata
+        # 自訂中介資料
         span.set_attribute("input.length", len(query))
 
         result = llm.generate(query)
@@ -168,15 +168,15 @@ def process_query(query: str):
         # 標準輸出
         span.set_output(result.text)
 
-        # 自訂 Metadata
+        # 自訂中介資料
         span.set_attribute("output.tokens", result.usage.total_tokens)
         span.set_status(Status(StatusCode.OK))
 
         return result
 ```
 
-## 另請參閱
+## 參閱 (See Also)
 
-- **Span 屬性：** `span-chain.md`、`span-retriever.md`、`span-tool.md`、`span-llm.md`、`span-agent.md`、`span-embedding.md`、`span-reranker.md`、`span-guardrail.md`、`span-evaluator.md`
-- **自動檢測 (Auto-instrumentation)：** `instrumentation-auto-python.md` 用於框架整合
+- **Span 屬性：** `span-chain.md`, `span-retriever.md`, `span-tool.md`, `span-llm.md`, `span-agent.md`, `span-embedding.md`, `span-reranker.md`, `span-guardrail.md`, `span-evaluator.md`
+- **自動檢測：** `instrumentation-auto-python.md`（用於框架整合）
 - **API 文件：** https://docs.arize.com/phoenix/tracing/manual-instrumentation

@@ -1,8 +1,8 @@
-# Phoenix 追蹤：自訂 Metadata (TypeScript)
+# Phoenix 追蹤：自訂中介資料 (TypeScript) (Phoenix Tracing: Custom Metadata (TypeScript))
 
-將自訂屬性加入至 spans 以實現更豐富的可觀測性 (observability)。
+為 Span 新增自訂屬性，以獲得更豐富的可觀測性。
 
-## 使用上下文 (Context) (會傳遞至所有子 spans)
+## 使用上下文（傳播至所有子 Span） (Using Context (Propagates to All Child Spans))
 
 ```typescript
 import { context } from "@arizeai/phoenix-otel";
@@ -15,14 +15,14 @@ context.with(
     environment: "production",
   }),
   async () => {
-    // 在此區塊中建立的所有 spans 都將具有：
+    // 此區塊內建立的所有 Span 都將具有：
     // "metadata" = '{"experiment_id": "exp_123", ...}'
     await myApp.run(query);
   }
 );
 ```
 
-## 在單一 Span 上
+## 在單一 Span 上設定 (On a Single Span)
 
 ```typescript
 import { traceChain } from "@arizeai/openinference-core";

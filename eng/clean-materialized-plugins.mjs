@@ -47,6 +47,14 @@ export function restoreManifestFromMaterializedFiles(pluginPath) {
 
   let changed = false;
   for (const [field, spec] of Object.entries(MATERIALIZED_SPECS)) {
+    if (Array.isArray(plugin[field])) {
+      const sortedEntries = sortPluginEntries(plugin[field]);
+      if (!arraysEqual(plugin[field], sortedEntries)) {
+        plugin[field] = sortedEntries;
+        changed = true;
+      }
+    }
+
     const materializedPath = path.join(pluginPath, spec.path);
     if (!fs.existsSync(materializedPath) || !fs.statSync(materializedPath).isDirectory()) {
       continue;
@@ -166,6 +174,15 @@ function arraysEqual(left, right) {
 }
 
 /**
+ * 使用 localeCompare 對外掛條目排序，並回傳新的排序後陣列。
+ * @param {string[]} entries - 要排序的外掛條目字串陣列。
+ * @returns {string[]} 回傳一個新的排序後陣列。
+ */
+function sortPluginEntries(entries) {
+  return [...entries].sort((left, right) => left.localeCompare(right));
+}
+
+/**
  * 轉換為 POSIX 相容路徑
  * @param {string} filePath - 檔案路徑
  * @returns {string} - POSIX 路徑
@@ -206,7 +223,7 @@ function main() {
   } else {
     console.log(`✅ 從外掛移除 ${total} 個已實體化的檔案。`);
     if (manifestsUpdated > 0) {
-      console.log(`✅ 更新了 ${manifestsUpdated} 個外掛的清單，加入資料夾尾斜線。`);
+      console.log(`✅ 已更新 ${manifestsUpdated} 個外掛清單，以還原並標準化規格條目。`);
     }
   }
 }

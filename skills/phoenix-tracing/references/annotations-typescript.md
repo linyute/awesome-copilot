@@ -1,20 +1,20 @@
-# TypeScript SDK 標記模式 (Annotation Patterns)
+# TypeScript SDK 標核模式 (TypeScript SDK Annotation Patterns)
 
-使用 TypeScript 用戶端將回饋加入至 spans、追蹤 (traces)、文件和階段 (sessions)。
+使用 TypeScript 用戶端為 Span, Trace, 文件與工作階段新增回饋。
 
 ## 用戶端設定 (Client Setup)
 
 ```typescript
-import { createClient } from "phoenix-client";
-const client = createClient();  // 預設：http://localhost:6006
+import { createClient } from "@arizeai/phoenix-client";
+const client = createClient();  // 預設值：http://localhost:6006
 ```
 
-## Span 標記 (Span Annotations)
+## Span 標核 (Span Annotations)
 
-針對個別 span 加入回饋：
+為個別的 Span 新增回饋：
 
 ```typescript
-import { addSpanAnnotation } from "phoenix-client";
+import { addSpanAnnotation } from "@arizeai/phoenix-client/spans";
 
 await addSpanAnnotation({
   client,
@@ -31,18 +31,36 @@ await addSpanAnnotation({
 });
 ```
 
-## 文件標記 (Document Annotations)
+## Span 筆記 (Span Notes)
 
-針對 RETRIEVER span 中的個別文件進行評分：
+筆記是針對自由格式文字的一種特殊標核類型 — 適用於開放式編碼 (open coding)，審核者可以在任何準則存在前，在 Span 上留下定性觀察。稍後，這些筆記可以被彙總並提煉為結構化標籤或分數。
+
+筆記是 **僅限附加 (append-only)** 的：每次呼叫都會自動產生一個 UUIDv4 識別碼，因此多個筆記會自然地在同一個 Span 上累積。結構化標核是由 `(name, spanId, identifier)` 識別的 — 您可以透過提供不同的識別碼（例如每位審核者一個）在同一個 Span 上設定多個同名的標核；寫入相同的 `(name, spanId, identifier)` 則會覆寫現有條目。
 
 ```typescript
-import { addDocumentAnnotation } from "phoenix-client";
+import { addSpanNote } from "@arizeai/phoenix-client/spans";
+
+await addSpanNote({
+  client,
+  spanNote: {
+    spanId: "abc123",
+    note: "此 Span 顯示非預期行為，需要審核"
+  }
+});
+```
+
+## 文件標核 (Document Annotations)
+
+為 RETRIEVER Span 中的個別文件評分：
+
+```typescript
+import { addDocumentAnnotation } from "@arizeai/phoenix-client/spans";
 
 await addDocumentAnnotation({
   client,
   documentAnnotation: {
     spanId: "retriever_span",
-    documentPosition: 0,  // 從 0 開始的索引
+    documentPosition: 0,  // 0 基索引
     name: "relevance",
     annotatorKind: "LLM",
     label: "relevant",
@@ -51,12 +69,12 @@ await addDocumentAnnotation({
 });
 ```
 
-## 追蹤標記 (Trace Annotations)
+## Trace 標核 (Trace Annotations)
 
-針對整個追蹤的回饋：
+對整個 Trace 的回饋：
 
 ```typescript
-import { addTraceAnnotation } from "phoenix-client";
+import { addTraceAnnotation } from "@arizeai/phoenix-client/traces";
 
 await addTraceAnnotation({
   client,
@@ -70,12 +88,28 @@ await addTraceAnnotation({
 });
 ```
 
-## 階段標記 (Session Annotations)
+## Trace 筆記 (Trace Notes)
 
-針對多輪對話的回饋：
+整個 Trace 的筆記（單一 Trace 允許有多個筆記）：
 
 ```typescript
-import { addSessionAnnotation } from "phoenix-client";
+import { addTraceNote } from "@arizeai/phoenix-client/traces";
+
+await addTraceNote({
+  client,
+  traceNote: {
+    traceId: "abc123def456",
+    note: "需要追蹤 — 非預期的工具呼叫順序"
+  }
+});
+```
+
+## 工作階段標核 (Session Annotations)
+
+對多輪對話的回饋：
+
+```typescript
+import { addSessionAnnotation } from "@arizeai/phoenix-client/sessions";
 
 await addSessionAnnotation({
   client,
@@ -92,11 +126,13 @@ await addSessionAnnotation({
 ## RAG 管線範例 (RAG Pipeline Example)
 
 ```typescript
-import { createClient, logDocumentAnnotations, addSpanAnnotation, addTraceAnnotation } from "phoenix-client";
+import { createClient } from "@arizeai/phoenix-client";
+import { logDocumentAnnotations, addSpanAnnotation } from "@arizeai/phoenix-client/spans";
+import { addTraceAnnotation } from "@arizeai/phoenix-client/traces";
 
 const client = createClient();
 
-// 文件相關性 (批次)
+// 文件相關性（批次）
 await logDocumentAnnotations({
   client,
   documentAnnotations: [
@@ -119,7 +155,7 @@ await addSpanAnnotation({
   }
 });
 
-// 整體追蹤品質
+// 整體 Trace 品質
 await addTraceAnnotation({
   client,
   traceAnnotation: {
@@ -132,6 +168,6 @@ await addTraceAnnotation({
 });
 ```
 
-## API 參考
+## API 參考 (API Reference)
 
 - [TypeScript Client API](https://arize-ai.github.io/phoenix/)
