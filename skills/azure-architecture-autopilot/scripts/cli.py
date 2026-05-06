@@ -137,7 +137,15 @@ def _normalize_services(services):
         if isinstance(svc.get("details"), str):
             svc["details"] = [svc["details"]]
         if isinstance(svc.get("private"), str):
-            svc["private"] = bool(svc["private"])
+            val = svc["private"].lower()
+            if val in ("true", "1", "yes", "on"):
+                svc["private"] = True
+            elif val in ("false", "0", "no", "off"):
+                svc["private"] = False
+            else:
+                # 記錄無效布林值的警告
+                print(f"警告：'private' 欄位的布林值 '{svc['private']}' 無效，已預設為 False。", file=sys.stderr)
+                svc["private"] = False
     return services
 
 
