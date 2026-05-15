@@ -45,7 +45,7 @@
 - **推廣有害內容 (Promote Harmful Content)**：可能導致建立有害、歧視性或不適當內容的指引
 - **規避平台原則 (Circumvent Platform Policies)**：試圖繞過 GitHub、Microsoft 或其他平台服務條款的行為
 - **重複現有模型優勢且無實質提升 (Duplicate Existing Model Strengths Without Meaningful Uplift)**：主要要求 Copilot 執行前瞻模型 (frontier models) 已經處理得很好的工作（例如：通用的 TypeScript、HTML 或其他廣泛支援的編碼任務），且未解決明確的差距、專門工作流程或特定領域限制的提交內容。這些貢獻對使用者來說通常價值較低，且可能引入比模型預設行為更弱或衝突的指引。
-- **來自遠端來源的外掛程式 (Plugins from remote sources)**：雖然外掛程式設計允許我們支援來自其他 GitHub 儲存庫或其他 Git 端點的外掛程式，但我們不接受僅新增來自外部來源外掛程式的貢獻。來自遠端來源的外掛程式代表安全性風險，因為我們無法針對在此儲存庫上執行的原則驗證其內容。此原則不適用於由 Microsoft 或 GitHub 管理的儲存庫。
+- **未經審查的遠端來源外掛程式 (Unreviewed remote-source plugins)**：請勿開啟直接將第三方外掛加入 `plugins/external.json` 的 pull request。公開的外部外掛必須使用下方文件化的審查工作流程。在 v1 中，該工作流程僅接受託管於公開 GitHub 儲存庫的外掛；非 GitHub 的來源（例如一般的 git URL）不接受用於公開提交。
 
 ## 品質指引 (Quality Guidelines)
 
@@ -189,32 +189,105 @@ plugins/my-plugin-id/
 
 #### 新增外部外掛程式 (Adding External Plugins)
 
-外部外掛程式是裝載在此儲存庫之外的外掛程式（例如：在 GitHub 儲存庫、npm 套件或 Git URL 中）。它們列在 `plugins/external.json` 中，並在建構期間合併到產生的 `marketplace.json`。
+外部外掛程式是託管在此存放庫之外，並列在 `plugins/external.json` 中的外掛程式。公眾貢獻者**不應**直接開啟 PR 來編輯 `plugins/external.json`。相反地，請透過下方的公眾審核工作流程提交外部外掛程式。
 
-若要新增外部外掛程式，請遵循 [Claude Code 外掛程式市場規格](https://code.claude.com/docs/en/plugin-marketplaces#plugin-entries) 在 `plugins/external.json` 中附加一個項目。每個項目都需要 `name`、`source`、`description` 與 `version`：
+> [!IMPORTANT]
+> 公眾外部外掛程式提交在 v1 版本中僅支援 GitHub。提交的外掛程式必須位於公開的 GitHub 存放庫中，並使用 `source.source: "github"`。
+
+##### 提交欄位
+
+外部外掛程式 Issue 表單將收集以下欄位：
+
+- 外掛程式名稱
+- 簡短描述
+- `owner/repo` 格式的 GitHub 存放庫
+- 存放庫內的外掛程式路徑（若外掛程式位於存放庫根目錄則為選填）
+- 用於審核的不可變參考 (`ref`)，請使用發布標記 (release tag) 或完整提交 SHA，而非分支
+- 外掛程式版本
+- 授權識別碼
+- 作者姓名
+- 作者 URL（選填）
+- 首頁 URL（選填）
+- 關鍵字/標籤
+- 給審核者的補充說明（選填）
+- 確認勾選方塊：存放庫是公開的、參考是不可變的、提交符合此存放庫的策略，且該外掛程式不是重複列出的項目
+
+存放庫的標準驗證規則位於 `eng/external-plugin-validation.mjs`。建構指令碼會重用該模組中的 `marketplace` 策略，而 Issue 收錄自動化則使用更嚴格的 `publicSubmission` 策略，以確保 JSON 規範和工作流程檢查保持一致。
+
+對於提交到 `plugins/external.json` 的項目，目前的市集驗證要求：
+
+- `name`、`description` 和 `version`
+- `author.name`
+- `repository` 必須是 HTTPS GitHub URL
+- `keywords` 必須是小寫且帶有連字號的標籤
+- `source.source: "github"` 加上 `owner/repo` 格式的 `source.repo`
+- 選填的 `source.path` 值必須保持相對於存放庫根目錄的路徑
+
+公眾提交策略建立在這些規則之上，並且還要求 `license` 以及不可變的 `source.ref`。
+
+##### 審核工作流程
+
+1. **開啟 Issue**：使用外部外掛程式 Issue 表單。自動化程式會套用 `external-plugin` 和 `awaiting-review` 標籤。
+2. **自動化收錄驗證**：檢查必要欄位是否存在，且格式對於 GitHub 託管的外掛程式是否正確。無效的提交將被關閉，並附上說明在重新提交前必須修正哪些部分的評論。
+3. **準備好供維護者審核**：如果 Issue 通過收錄驗證，自動化程式會移除 `awaiting-review` 並新增 `ready-for-review`。
+4. **維護者決定**：具備寫入權限的維護者進行人工審核，然後在 Issue 上評論 `/approve` 或 `/reject <原因>`。來自非維護者的指令將被忽略。
+5. **核准路徑**：在 `/approve` 時，自動化程式會移除 `ready-for-review`、新增 `approved`、關閉 Issue，並針對 `staged` 分支開啟或更新 PR，以更新 `plugins/external.json` 和產生的市集輸出內容。
+6. **拒絕路徑**：在 `/reject <原因>` 時，自動化程式會移除 `ready-for-review`、新增 `rejected`、關閉 Issue，並在 Issue 評論中記錄原因。提交者可以在解決回饋意見後開啟新的 Issue。
+
+##### 維護者的審核責任
+
+維護者負責確認提交項目：
+
+- 明確符合 Awesome Copilot 集合，並在現有列表之外增加價值
+- 使用公開的 GitHub 存放庫和可可靠審核的不可變參考
+- 包含 `plugins/external.json` 所需的 Metadata（`name`、`description`、`version`、`author.name`、`repository`、`keywords` 和 `source`），以及任何提供的首頁/授權欄位
+- 沒有明顯重複現有的市集條目
+- 持續符合此存放庫的內容、安全性和負責任的 AI 策略
+
+##### 審核頻率與標籤語義
+
+- `external-plugin`：套用於每個公眾外部外掛程式提交，並保留在已核准的 Issue 上，以便排定的審核自動化程式稍後能找到它們
+- `awaiting-review`：自動化程式完成驗證 Issue 之前的初始收錄狀態
+- `ready-for-review`：Issue 已通過自動化收錄檢查，正在等待維護者的決定
+- `approved`：Issue 已獲核准並關閉，可作為每六個月重新審核的真實來源 (source of truth)
+- `rejected`：Issue 被拒絕並關閉，且未新增至市集中
+- `re-review-due`：已核准的 Issue 已達到六個月的審核門檻，正在等待維護者的重新審核決定
+- `re-review-follow-up`：維護者審核了外掛程式，並在續訂或移除前要求更多後續行動
+- `removed`：外掛程式在重新審核後已從 `plugins/external.json` 中移除，不應再被視為活動狀態
+
+六個月的重新審核期從已核准的提交 Issue **關閉**時開始。每晚運行的工作流程會尋找標有 `external-plugin` 和 `approved` 且 `closed_at` 至少已過六個月的關閉 Issue，套用 `re-review-due` 標籤，並開啟或更新一個面向維護者的追蹤 Issue，其中連結了每個目前到期的外掛程式。
+
+維護者在**原始核准提交的 Issue** 上使用以下其中一個 Issue 評論指令來完成重新審核：
+
+- `/re-review-keep` — 透過重新開啟並重新關閉已核准的 Issue，將列表續訂六個月，這會重置 `closed_at` 審核錨點並移除到期標籤
+- `/re-review-needs-changes` — 將列表保留在到期佇列中，同時新增 `re-review-follow-up`，以便維護者追蹤額外的調查或修復工作
+- `/re-review-remove` — 針對 `staged` 分支開啟或更新 PR，將外掛程式從 `plugins/external.json` 中移除並重新產生市集輸出內容；在該移除操作正式生效前，Issue 會一直保留在到期佇列中
+
+已核准的提交會根據 [Claude Code 外掛程式市集規格](https://code.claude.com/docs/en/plugin-marketplaces#plugin-entries) 轉換為 `plugins/external.json` 條目。典型的 GitHub 託管條目如下所示：
 
 ```json
 [
   {
     "name": "my-external-plugin",
+    "description": "外部外掛程式的描述",
+    "version": "1.0.0",
+    "author": {
+      "name": "外掛程式作者",
+      "url": "https://github.com/plugin-author"
+    },
+    "homepage": "https://github.com/owner/plugin-repo",
+    "keywords": ["category", "workflow"],
+    "license": "MIT",
+    "repository": "https://github.com/owner/plugin-repo",
     "source": {
       "source": "github",
-      "repo": "owner/plugin-repo"
-    },
-    "description": "外部外掛程式的描述",
-    "version": "1.0.0"
+      "repo": "owner/plugin-repo",
+      "path": ".github/plugins/my-external-plugin",
+      "ref": "v1.0.0"
+    }
   }
 ]
 ```
-
-支援的來源類型：
-
-- **GitHub**：`{ "source": "github", "repo": "owner/repo", "ref": "v1.0.0" }`
-- **Git URL**：`{ "source": "url", "url": "https://gitlab.com/team/plugin.git" }`
-- **npm**：`{ "source": "npm", "package": "@scope/package", "version": "1.0.0" }`
-- **pip**：`{ "source": "pip", "package": "package-name", "version": "1.0.0" }`
-
-編輯 `plugins/external.json` 後，執行 `npm run build` 以重新產生 `marketplace.json`。
 
 ### 新增 Hook (Adding Hooks)
 

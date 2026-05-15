@@ -3,6 +3,7 @@
 import fs from "fs";
 import path from "path";
 import { ROOT_FOLDER } from "./constants.mjs";
+import { readExternalPlugins } from "./external-plugin-validation.mjs";
 
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
 
@@ -10,34 +11,34 @@ const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
 function validateName(name, folderName) {
   const errors = [];
   if (!name || typeof name !== "string") {
-    errors.push("name 是必填欄位且必須為字串");
+    errors.push("name 是必填項，且必須是字串");
     return errors;
   }
   if (name.length < 1 || name.length > 50) {
-    errors.push("name 的長度必須介於 1 到 50 個字元之間");
+    errors.push("name 長度必須介於 1 到 50 個字元之間");
   }
   if (!/^[a-z0-9-]+$/.test(name)) {
-    errors.push("name 必須僅包含小寫字母、數字與連字號");
+    errors.push("name 只能包含小寫字母、數字和連字號");
   }
   if (name !== folderName) {
-    errors.push(`name「${name}」必須與資料夾名稱「${folderName}」相符`);
+    errors.push(`名稱 "${name}" 必須與資料夾名稱 "${folderName}" 一致`);
   }
   return errors;
 }
 
 function validateDescription(description) {
   if (!description || typeof description !== "string") {
-    return "description 是必填欄位且必須為字串";
+    return "description 是必填項，且必須是字串";
   }
   if (description.length < 1 || description.length > 500) {
-    return "description 的長度必須介於 1 到 500 個字元之間";
+    return "description 長度必須介於 1 到 500 個字元之間";
   }
   return null;
 }
 
 function validateVersion(version) {
   if (!version || typeof version !== "string") {
-    return "version 是必填欄位且必須為字串";
+    return "version 是必填項，且必須是字串";
   }
   return null;
 }
@@ -45,20 +46,20 @@ function validateVersion(version) {
 function validateKeywords(keywords) {
   if (keywords === undefined) return null;
   if (!Array.isArray(keywords)) {
-    return "keywords 必須是陣列";
+    return "keywords 必須是一個陣列";
   }
   if (keywords.length > 10) {
-    return "最多僅允許 10 個關鍵字";
+    return "最多允許 10 個關鍵字";
   }
   for (const keyword of keywords) {
     if (typeof keyword !== "string") {
-      return "所有關鍵字必須為字串";
+      return "所有關鍵字都必須是字串";
     }
     if (!/^[a-z0-9-]+$/.test(keyword)) {
-      return `關鍵字「${keyword}」必須僅包含小寫字母、數字與連字號`;
+      return `關鍵字 "${keyword}" 只能包含小寫字母、數字和連字號`;
     }
     if (keyword.length < 1 || keyword.length > 30) {
-      return `關鍵字「${keyword}」的長度必須介於 1 到 30 個字元之間`;
+      return `關鍵字 "${keyword}" 長度必須介於 1 到 30 個字元之間`;
     }
   }
   return null;
@@ -87,16 +88,16 @@ function validateSpecPaths(plugin) {
     const arr = plugin[field];
     if (arr === undefined) continue;
     if (!Array.isArray(arr)) {
-      errors.push(`${field} 必須是陣列`);
+      errors.push(`${field} 必須是一個陣列`);
       continue;
     }
-      if (!arraysEqual(arr, sortPluginEntries(arr))) {
-      errors.push(`${field} 必須按字母順序排序`);
+    if (!arraysEqual(arr, sortPluginEntries(arr))) {
+      errors.push(`${field} 必須依字母順序排序`);
     }
     for (let i = 0; i < arr.length; i++) {
       const p = arr[i];
       if (typeof p !== "string") {
-        errors.push(`${field}[${i}] 必須為字串`);
+        errors.push(`${field}[${i}] 必須是一個字串`);
         continue;
       }
       if (!p.startsWith("./")) {
@@ -111,18 +112,18 @@ function validateSpecPaths(plugin) {
         errors.push(`${field}[${i}] 必須以 "${spec.suffix}" 結尾`);
         continue;
       }
-      // 驗證存放區根目錄中是否存在原始程式檔案
+      // 驗證存放庫根目錄中是否存在原始檔案
       const basename = p.slice(spec.prefix.length, p.length - spec.suffix.length);
       if (field === "skills") {
         const skillDir = path.join(ROOT_FOLDER, spec.repoDir, basename);
         const skillFile = path.join(skillDir, spec.repoFile);
         if (!fs.existsSync(skillFile)) {
-          errors.push(`${field}[${i}] 找不到原始程式：${spec.repoDir}/${basename}/SKILL.md`);
+          errors.push(`${field}[${i}] 找不到原始檔案: ${spec.repoDir}/${basename}/SKILL.md`);
         }
       } else {
         const srcFile = path.join(ROOT_FOLDER, spec.repoDir, basename + spec.repoSuffix);
         if (!fs.existsSync(srcFile)) {
-          errors.push(`${field}[${i}] 找不到原始程式：${spec.repoDir}/${basename}${spec.repoSuffix}`);
+          errors.push(`${field}[${i}] 找不到原始檔案: ${spec.repoDir}/${basename}${spec.repoSuffix}`);
         }
       }
     }
@@ -134,17 +135,17 @@ function validatePlugin(folderName) {
   const pluginDir = path.join(PLUGINS_DIR, folderName);
   const errors = [];
 
-  // 規則 1：必須具備 .github/plugin/plugin.json
+  // 規則 1: 必須擁有 .github/plugin/plugin.json
   const pluginJsonPath = path.join(pluginDir, ".github/plugin", "plugin.json");
   if (!fs.existsSync(pluginJsonPath)) {
-    errors.push("缺少必要檔案：.github/plugin/plugin.json");
+    errors.push("缺少必要檔案: .github/plugin/plugin.json");
     return errors;
   }
 
-  // 規則 2：必須具備 README.md
+  // 規則 2: 必須擁有 README.md
   const readmePath = path.join(pluginDir, "README.md");
   if (!fs.existsSync(readmePath)) {
-    errors.push("缺少必要檔案：README.md");
+    errors.push("缺少必要檔案: README.md");
   }
 
   // 解析 plugin.json
@@ -153,11 +154,11 @@ function validatePlugin(folderName) {
     const raw = fs.readFileSync(pluginJsonPath, "utf-8");
     plugin = JSON.parse(raw);
   } catch (err) {
-    errors.push(`解析 plugin.json 失敗：${err.message}`);
+    errors.push(`解析 plugin.json 失敗: ${err.message}`);
     return errors;
   }
 
-  // 規則 3 與 4：名稱、說明、版本
+  // 規則 3 和 4: name, description, version
   const nameErrors = validateName(plugin.name, folderName);
   errors.push(...nameErrors);
 
@@ -167,21 +168,21 @@ function validatePlugin(folderName) {
   const versionError = validateVersion(plugin.version);
   if (versionError) errors.push(versionError);
 
-  // 規則 5：關鍵字 (keywords，或為了向後相容的標籤 tags)
+  // 規則 5: keywords (或為了回溯相容性的 tags)
   const keywordsError = validateKeywords(plugin.keywords ?? plugin.tags);
   if (keywordsError) errors.push(keywordsError);
 
-  // 規則 6：代理程式 (Agents)、命令 (Commands)、技能 (Skills) 的路徑
+  // 規則 6: agents, commands, skills 路徑
   const specErrors = validateSpecPaths(plugin);
   errors.push(...specErrors);
 
   return errors;
 }
 
-// 驗證外掛程式的主功能
+// 主要驗證函式
 function validatePlugins() {
   if (!fs.existsSync(PLUGINS_DIR)) {
-    console.log("未找到外掛程式目錄 - 已跳過驗證");
+    console.log("找不到 plugins 目錄 - 跳過驗證");
     return true;
   }
 
@@ -191,7 +192,7 @@ function validatePlugins() {
     .map((d) => d.name);
 
   if (pluginDirs.length === 0) {
-    console.log("未找到外掛程式目錄 - 已跳過驗證");
+    console.log("找不到外掛程式目錄 - 跳過驗證");
     return true;
   }
 
@@ -206,24 +207,40 @@ function validatePlugins() {
     const errors = validatePlugin(dir);
 
     if (errors.length > 0) {
-      console.error(`❌ ${dir}：`);
+      console.error(`❌ ${dir}:`);
       errors.forEach((e) => console.error(`   - ${e}`));
       hasErrors = true;
     } else {
-      console.log(`✅ ${dir} 是有效的`);
+      console.log(`✅ ${dir} 有效`);
     }
 
-    // 規則 10：重複名稱
+    // 規則 10: 重複名稱
     if (seenNames.has(dir)) {
-      console.error(`❌ 重複的外掛程式名稱「${dir}」`);
+      console.error(`❌ 重複的外掛程式名稱 "${dir}"`);
       hasErrors = true;
     } else {
       seenNames.add(dir);
     }
   }
 
+  console.log("\n正在驗證外部外掛程式目錄 (catalog)...");
+  const { plugins: externalPlugins, errors: externalErrors, warnings: externalWarnings } = readExternalPlugins({
+    localPluginNames: pluginDirs,
+    policy: "marketplace",
+  });
+
+  externalWarnings.forEach((warning) => console.warn(`⚠️  ${warning}`));
+
+  if (externalErrors.length > 0) {
+    console.error("❌ external.json:");
+    externalErrors.forEach((error) => console.error(`   - ${error}`));
+    hasErrors = true;
+  } else {
+    console.log(`✅ external.json 有效 (${externalPlugins.length} 個外部外掛程式)`);
+  }
+
   if (!hasErrors) {
-    console.log(`\n✅ 所有 ${pluginDirs.length} 個外掛程式皆有效`);
+    console.log(`\n✅ 所有 ${pluginDirs.length} 個外掛程式及外部目錄均有效`);
   }
 
   return !hasErrors;
@@ -238,6 +255,6 @@ try {
   }
   console.log("\n🎉 外掛程式驗證通過");
 } catch (error) {
-  console.error(`驗證期間發生錯誤：${error.message}`);
+  console.error(`驗證期間發生錯誤: ${error.message}`);
   process.exit(1);
 }

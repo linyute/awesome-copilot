@@ -162,10 +162,15 @@ npm run skill:create -- --name <skill-name>
 
 **針對外部外掛程式：**
 
-1. 編輯 `plugins/external.json`，新增一個包含 `name`、`source`、`description` 與 `version` 的條目
-2. `source` 欄位應為一個物件，指定 GitHub 倉庫、git URL、npm 套件或 pip 套件（請參閱 [CONTRIBUTING.md](CONTRIBUTING.md#adding-external-plugins)）
-3. 執行 `npm run build` 以重新產生 `marketplace.json`
-4. 驗證該外部外掛程式是否出現在 `.github/plugin/marketplace.json` 中
+1. 不要直接開啟修改 `plugins/external.json` 的 PR 來提交公開第三方外掛
+2. 公開的外部外掛提交請使用 [CONTRIBUTING.md](CONTRIBUTING.md#adding-external-plugins) 中記載的外部外掛議題工作流程
+3. 在 v1 中，只接受託管於 GitHub 的外掛作為公開提交，需使用公開的 repository 並帶有不可變的 `ref`
+4. `eng/external-plugin-validation.mjs` 中的共用驗證器為外部外掛資料規則的權威來源；請重用它，不要在腳本或工作流程中重複檢查
+5. 提交議題的流程為 `external-plugin` + `awaiting-review` -> `ready-for-review` -> `approved` 或 `rejected`
+6. 維護者透過在議題中留言 `/approve` 或 `/reject <reason>` 做出決定；被核准的議題會被關閉，並用作六個月重新審查的依據
+7. 核准的自動化程序會在 `staged` 分支建立或更新 PR、更新 `plugins/external.json`，並重新產生市集輸出
+8. 每夜的重新審查自動化會找到已關閉且被標記為 `external-plugin` + `approved` 的議題，且至少六個月，套用 `re-review-due`，並為維護者開啟或更新追蹤議題
+9. 維護者在原始被核准的提交議題上完成重新審查，使用 `/re-review-keep`、`/re-review-needs-changes` 或 `/re-review-remove`；`keep` 會重置議題的 `closed_at`，`remove` 則會對 `staged` 開啟 PR
 
 ### 測試指引
 
