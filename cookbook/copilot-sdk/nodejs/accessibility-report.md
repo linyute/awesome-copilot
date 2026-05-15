@@ -90,7 +90,7 @@ async function main() {
     let idleResolve: (() => void) | null = null;
 
     session.on((event) => {
-        if (event.type === "assistant.message.delta") {
+        if (event.type === "assistant.message_delta") {
             process.stdout.write(event.data.deltaContent ?? "");
         } else if (event.type === "session.idle") {
             idleResolve?.();
@@ -179,7 +179,7 @@ main().catch(console.error);
 ## 運作方式
 
 1. **Playwright MCP server**：設定執行 `@playwright/mcp` 的本地 MCP server，以提供瀏覽器自動化工具
-2. **串流輸出**：使用 `streaming: true` 和 `assistant.message.delta` 事件進行即時逐個權杖輸出
+2. **串流輸出**：使用 `streaming: true` 和 `assistant.message_delta` 事件進行即時逐個權杖輸出
 3. **協助工具快照**：Playwright 的 `browser_snapshot` 工具可擷取頁面的完整協助工具樹
 4. **結構化報告**：提示詞設計了一致的符合 WCAG 的報告格式，並帶有表情符號嚴重性指示器
 5. **測試產生**：可選擇偵測專案語言並產生 Playwright 協助工具測試
@@ -212,7 +212,7 @@ const session = await client.createSession({
 
 ```typescript
 session.on((event) => {
-    if (event.type === "assistant.message.delta") {
+    if (event.type === "assistant.message_delta") {
         process.stdout.write(event.data.deltaContent ?? "");
     } else if (event.type === "session.idle") {
         idleResolve?.();
@@ -233,17 +233,17 @@ session.on((event) => {
 📊 協助工具報告：GitHub (github.com)
 
 ✅ 運作良好的部分
-| 類別 | 狀態 | 詳細資訊 |
-|----------|--------|---------|
-| 語言 | ✅ 通過 | lang="en" 已正確設定 |
-| 頁面標題 | ✅ 通過 | "GitHub" 可被辨識 |
-| 標題階層 | ✅ 通過 | 正確的 H1/H2 結構 |
-| 影像 | ✅ 通過 | 所有影像皆有替代文字 |
+| 類別     | 狀態   | 詳細資訊             |
+| -------- | ------ | -------------------- |
+| 語言     | ✅ 通過 | lang="en" 已正確設定 |
+| 頁面標題 | ✅ 通過 | "GitHub" 可被辨識    |
+| 標題階層 | ✅ 通過 | 正確的 H1/H2 結構    |
+| 影像     | ✅ 通過 | 所有影像皆有替代文字 |
 
 ⚠️ 發現的問題
-| 嚴重性 | 問題 | WCAG 標準 | 建議 |
-|----------|-------|----------------|----------------|
-| 🟡 中 | 某些連結缺少描述性文字 | 2.4.4 | 為僅限圖示的連結新增 aria-label |
+| 嚴重性 | 問題                   | WCAG 標準 | 建議                            |
+| ------ | ---------------------- | --------- | ------------------------------- |
+| 🟡 中   | 某些連結缺少描述性文字 | 2.4.4     | 為僅限圖示的連結新增 aria-label |
 
 📋 統計摘要
 - 總連結數：47

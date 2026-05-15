@@ -1,0 +1,25 @@
+{
+  "name": "skill-image-gen",
+  "description": "直接從您的程式碼編寫工作流程中，使用 AI 建立影像。支援 OpenAI (gpt-image-2) 與 Google Gemini。自備 API 金鑰 —— 此技能將在首次使用時引導您完成設定。",
+  "version": "1.0.0",
+  "keywords": [
+    "image-generation",
+    "openai",
+    "gemini",
+    "ai",
+    "art",
+    "sprites",
+    "textures",
+    "icons"
+  ],
+  "author": {
+    "name": "adamd9",
+    "url": "https://github.com/adamd9"
+  },
+  "homepage": "https://github.com/adamd9/skill-image-gen",
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "skills": [
+    "./skills/generate-image/"
+  ]
+}

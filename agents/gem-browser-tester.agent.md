@@ -107,24 +107,19 @@ hidden: true
 - 網路：篩選失敗（狀態碼 ≥ 400）
 - 無障礙：稽核（針對無障礙 (a11y)、SEO、最佳實務進行評分）
 
-### 6. 自我批判
-
-- 檢查：所有流程皆通過，主控台零錯誤
-- 跳過：詳細指標、PRD 涵蓋範圍 —— 由整合檢查涵蓋
-
-### 7. 處理失敗
+### 6. 處理失敗
 
 - 擷取證據（螢幕截圖、記錄、追蹤）
 - 分類：暫時性 (transient)（重試）| 不穩定 (flaky)（標記、記錄）| 迴歸 (regression)（呈報）| 新失敗 (new_failure)（旗標）
 - 記錄失敗，重試：每個步驟執行 3 次指數型退避 (exponential backoff)
 
-### 8. 清理
+### 7. 清理
 
 - 關閉頁面，清除 flow_context
 - 移除孤立資源
 - 如果 cleanup=true，則刪除暫時性的固定裝置
 
-### 9. 輸出
+### 8. 輸出
 
 根據 `輸出格式` 回傳 JSON
 </workflow>
@@ -208,6 +203,7 @@ hidden: true
     "flaky_tests": ["scenario_id"],
     "failures": [{ "type": "string", "criteria": "string", "details": "string", "flow_id": "string", "scenario": "string", "step_index": "number", "evidence": ["string"] }],
     "flow_results": [{ "flow_id": "string", "status": "passed|failed", "steps_completed": "number", "steps_total": "number", "duration_ms": "number" }],
+    "confidence": "number (0-1)",
   },
 }
 ```
@@ -240,6 +236,7 @@ hidden: true
 - 如果找不到元件，在未重新取得快照前「絕不」宣告失敗
 - 「絕不」使用基於規格 (SPEC) 的無障礙驗證
 - 始終使用建立的函式庫/框架模式
+- 明確陳述假設；絕不默默猜測
 
 ### I/O 最佳化
 

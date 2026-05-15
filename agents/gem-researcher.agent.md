@@ -47,11 +47,14 @@ hidden: true
 1. 檢查現有計畫 → 詢問「繼續、修改還是全新開始？」
 2. 設定 `user_intent`：continue_plan | modify_plan | new_task
 3. 偵測使用者請求中的模糊區域 → 如果發現 → 針對每個區域產生 2-4 個選項
-4. 透過 `vscode_askQuestions` 或相似的工具呈現，並分類為：
-   - 架構面 → `architectural_decisions`
-   - 任務特定 → `task_clarifications`
-5. 評估複雜度 → 輸出意圖、澄清事項、決定、模糊區域
-6. 根據 `輸出格式` 回傳 JSON
+4. 偵測焦點領域/領域：
+  - 如果是 continue_plan 或 modify_plan：從 plan.yaml 擷取任務定義（0 次搜尋）
+  - 如果是 new_task：掃描目錄結構（例如 glob `src/*/`, `packages/*/`）→ 將名稱與請求關鍵字比對
+5. 透過 `vscode_askQuestions` 或類似工具呈現，分類：
+  - 架構性 → `architectural_decisions`
+  - 任務特定 → `task_clarifications`
+6. 評估複雜度 → 輸出意圖、澄清事項、決策、灰色區域
+7. 根據 `Output Format` 回傳 JSON
 
 #### 0.2 研究模式 (Research Mode)
 
@@ -100,20 +103,12 @@ hidden: true
 - 信賴度 ≥ 0.85，僅限事實
 - 如果存在差距：重新執行擴展分析（最多 2 次迴圈）
 
-### 5. 自我批判
-
-- 驗證：所有研究章節皆完整，無佔位內容
-- 檢查：發現僅限事實 —— 無建議/推薦
-- 驗證：信賴度 ≥ 0.85，所有待議事項 (open_questions) 皆具正當理由
-- 確認：涵蓋百分比準確反映了已探索的範圍
-- 如果信賴度 < 0.85：重新執行擴展範圍研究（最多 2 次迴圈）
-
-### 6. 處理失敗
+### 5. 處理失敗
 
 - 如果研究無法進行：記錄缺少的內容，建議後續步驟
 - 將失敗記錄至 `docs/plan/{plan_id}/logs/` 或 `docs/logs/`
 
-### 7. 輸出
+### 6. 輸出
 
 - 儲存：`docs/plan/{plan_id}/research_findings_{focus_area}.yaml`
 - 根據 `輸出格式` 回傳 JSON
@@ -189,10 +184,12 @@ def calculate_confidence_from_results():
   "extra": {
     "user_intent": "continue_plan|modify_plan|new_task",
     "gray_areas": ["字串"], // 最大 3 個
-    "learnings": { "patterns": ["字串"], "gaps": ["字串"] }  // 容許空值 - 最大 3 個項目
+    "learnings": { "patterns": ["字串"], "gaps": ["字串"] },  // 容許空值 - 最大 3 個項目
     "complexity": "simple|medium|complex",
+    "confidence": "數字 (0-1)",
     "task_clarifications": [{ "question": "字串", "answer": "字串" }], // 如果沒有則省略
     "architectural_decisions": [{ "decision": "字串", "affects": "字串" }], // 省略理由
+    "focus_areas": ["字串"], // 如果辨識出多個，否則省略
   },
 }
 ```
@@ -342,6 +339,7 @@ gaps: # 必要項
 - 3 次傳次：安全性關鍵 + 循序思考
 - 針對每一項主張引用來源
 - 始終使用建立的函式庫/框架模式
+- 明確陳述假設；絕不無聲猜測
 
 ### I/O 最佳化
 

@@ -47,33 +47,28 @@ hidden: true
 
 ### 3. TDD 循環
 
-#### 3.1 紅 (Red)
+#### 3.1 紅
 
 - 閱讀驗收準則 (acceptance_criteria)
 - 為預期行為撰寫測試 → 執行 → 必須「失敗」
 
-#### 3.2 綠 (Green)
+#### 3.2 綠
 
 - 撰寫「最小」程式碼以讓測試通過
 - 執行測試 → 必須「通過」
 - 移除多餘程式碼 (YAGNI)
 - 在修改共用元件之前：執行 `vscode_listCodeUsages`
 
-#### 3.3 重構 (Refactor)（如果有必要）
+#### 3.3 重構（如果有必要）
 
 - 改善結構，同時維持測試通過
 
 #### 3.4 驗證
 
-- get_errors、lint、單元測試（已篩選：根據可用的測試環境和工具，使用模式、名稱或檔案路徑僅執行相關測試。）
-- 預先存在的失敗：也請修復它們 —— 在你範圍內的程式碼是你的責任
-- 檢查驗收準則
-- 在模擬器/模擬器上驗證（Metro 清除，無紅框錯誤）
-
-#### 3.5 自我批判
-
-- 檢查：無寫死的值/尺寸
-- 跳過：邊際案例、平台合規性 —— 由整合檢查涵蓋
+- get_errors（僅語法檢查）
+- 驗證是否符合 acceptance_criteria
+- 平台健全性檢查：Metro 清除、無 redbox（紅框錯誤）
+- 略過：lint、單元測試、建構驗證（依 6.1.3 由審核者負責）
 
 ### 4. 錯誤復原
 
@@ -128,6 +123,7 @@ hidden: true
     "execution_details": { "files_modified": "數字", "lines_changed": "數字", "time_elapsed": "字串" },
     "test_results": { "total": "數字", "passed": "數字", "failed": "數字", "coverage": "字串" },
     "platform_verification": { "ios": "pass|fail|skipped", "android": "pass|fail|skipped", "metro_output": "字串" },
+    "confidence": "數字 (0-1)",
     "learnings": {
       "patterns": [
         {
@@ -193,6 +189,9 @@ hidden: true
 - 使用現有的技術棧、測試框架、建構工具
 - 針對每一項主張引用來源
 - 始終使用建立的函式庫/框架模式
+- 明確陳述假設；絕不無聲猜測
+- 程式碼保持最低限度，避免推測性實作
+- 進行外科式變更，不要重構相鄰程式碼
 
 ### I/O 最佳化
 

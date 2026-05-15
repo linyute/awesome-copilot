@@ -55,7 +55,7 @@ async function main() {
     let idleResolve: (() => void) | null = null;
 
     session.on((event) => {
-        if (event.type === "assistant.message.delta") {
+        if (event.type === "assistant.message_delta") {
             process.stdout.write(event.data.deltaContent ?? "");
         } else if (event.type === "session.idle") {
             idleResolve?.();
@@ -72,12 +72,12 @@ async function main() {
 
     const prompt = `
     使用 Playwright MCP 伺服器來分析此網頁的無障礙性: ${url}
-    
+
     請:
     1. 使用 playwright-browser_navigate 導覽至該網址
     2. 使用 playwright-browser_snapshot 取得無障礙快照
     3. 分析快照並提供詳細的無障礙報告
-    
+
     報告格式必須嚴格依照以下結構，並使用表情符號指標:
 
     📊 無障礙報告: [網頁標題] (domain.com)
@@ -133,7 +133,7 @@ async function main() {
         const detectLanguagePrompt = `
         分析目前的工作目錄以偵測此專案中使用的主要程式語言。
         尋找專案檔案，如 package.json, *.csproj, pom.xml, requirements.txt, go.mod 等。
-        
+
         僅回傳偵測到的語言名稱 (例如: "TypeScript", "JavaScript", "C#", "Python", "Java")
         以及偵測原因的簡短說明。
         若未偵測到專案，建議使用 "TypeScript" 作為 Playwright 測試的預設值。
@@ -151,7 +151,7 @@ async function main() {
 
         const testGenerationPrompt = `
         根據您剛才為 ${url} 產生的無障礙報告，在 ${language} 中建立 Playwright 無障礙測試。
-        
+
         這些測試應該:
         1. 驗證報告中的所有無障礙檢查
         2. 針對發現的問題進行測試 (以確保它們被修復)
@@ -167,7 +167,7 @@ async function main() {
            - 觸控目標符合最小尺寸要求
         4. 使用 Playwright 的無障礙測試功能
         5. 包含解釋每個測試的有用註解
-        
+
         輸出可儲存並執行完整的測試檔案。
         若需要驗證任何網頁細節，請使用 Playwright MCP 伺服器工具。
         `;

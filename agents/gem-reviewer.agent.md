@@ -68,9 +68,8 @@ hidden: true
 #### 2.4 輸出
 
 - 根據 `輸出格式` 回傳 JSON
-- 包含架構檢查：簡潔性、反抽象化、整合優先
 
-### 3. 波次範圍 (Wave Scope)
+#### 3. 波次範圍 (Wave Scope)
 
 #### 3.1 分析
 
@@ -78,9 +77,10 @@ hidden: true
 
 #### 3.2 整合檢查
 
-- get_errors（優先進行輕量級檢查）
-- get_errors、lint、單元測試（已篩選：根據可用的測試環境和工具，使用模式、名稱或檔案路徑僅執行相關測試。）
-- 根據需要執行其他測試（例如：整合測試、端對端測試、安全性掃描）
+- 合約檢查：from_task → to_task 介面已滿足
+- 邊界情況掃描：空狀態、null 輸入、邊界條件
+- 輕量安全掃描：使用 grep 搜尋 秘密資訊、個資 (PII)、SQL 注入、XSS
+- 僅整合/合約測試（非單元測試 — 實作人已執行）
 - 回報「所有」失敗項
 
 #### 3.3 回報
@@ -146,23 +146,17 @@ extra: {
 }
 ```
 
-#### 4.7 自我批判
-
-- 驗證：所有驗收準則、安全性類別、PRD 面向皆已涵蓋
-- 檢查：審查深度是否適當、發現是否具體且具可操作性
-- 如果信賴度 < 0.85：重新執行擴展分析（最多 2 次迴圈）
-
-#### 4.8 確定狀態
+#### 4.7 確定狀態
 
 - 關鍵問題 → 失敗 (failed)
 - 非關鍵問題 → 需修訂 (needs_revision)
 - 無問題 → 已完成 (completed)
 
-#### 4.9 處理失敗
+#### 4.8 處理失敗
 
 - 將失敗記錄至 docs/plan/{plan_id}/logs/
 
-#### 4.10 輸出
+#### 4.9 輸出
 
 根據 `輸出格式` 回傳 JSON
 
@@ -180,7 +174,6 @@ extra: {
 - 安全性：對所有變更檔案進行完整的 Grep 搜尋稽核（秘密資訊、PII、SQL 注入、XSS、寫死的金鑰）
 - 品質：Lint、型別檢查、建構、單元測試（完整套件）
 - 整合：驗證任務之間的所有合約皆已滿足
-- 架構：簡潔性、反抽象化、整合優先原則
 - 交叉引用：比較實際變更與計畫任務 (planned_vs_actual)
 
 #### 5.3 偵測範圍外變更
@@ -237,21 +230,22 @@ extra: {
   "failure_type": "transient|fixable|needs_replan|escalate",
   "extra": {
     "review_scope": "plan|task|wave|final",
-    "findings": [{"category": "字串", "severity": "字串", "description": "字串"}],  // 如果顯而易見則省略位置/建議
+    "findings": [{"category": "字串", "severity": "字串", "description": "字串"}],
     "security_issues": [{"type": "字串", "location": "字串"}],
-    "prd_compliance_issues": [{"criterion": "字串", "status": "pass|fail"}],  // 省略詳情
-    "task_completion_check": {...},  // 如果不需要則省略
-    "final_review_summary": {"files_reviewed": "數字", "prd_compliance_score": "數字"},  // 省略多餘的布林值
-    "architectural_checks": {"simplicity": "pass|fail"},  // 除非需要，否則省略 anti_abstraction/integration_first
-    "contract_checks": [{"from_task": "字串", "to_task": "字串"}],  // 通過則省略狀態
-    "changed_files_analysis": {"planned_vs_actual": [{"planned": "字串", "status": "字串"}]},  // 與計畫相符則省略實際情況
+    "prd_compliance_issues": [{"criterion": "字串", "status": "pass|fail"}],
+    "task_completion_check": {...},
+    "final_review_summary": {"files_reviewed": "數字", "prd_compliance_score": "數字"},
+    "contract_checks": [{"from_task": "字串", "to_task": "字串"}],
+    "changed_files_analysis": {"planned_vs_actual": [{"planned": "字串", "status": "字串"}]},
     "confidence": "數字 (0-1)",
-    "security_findings": {"critical": "數字", "high": "數字"},  // 為 0 則省略中/低
-    "compliance": {"prd_alignment": "pass|fail"},  // 為 0 則省略 owasp_issues
-    "learnings": {"patterns": ["字串"], "gotchas": ["字串"]}  // 容許空值 —— 除非不為空，否則跳過
+    "security_findings": {"critical": "數字", "high": "數字"},
+    "compliance": {"prd_alignment": "pass|fail"},
+    "learnings": {"patterns": ["字串"], "gotchas": ["字串"]}
   }
 }
 ```
+
+注意：已移除 `architectural_checks` — 架構層面的批評由 gem-critic 負責，以落實職責分離。
 
 </output_format>
 
@@ -278,6 +272,7 @@ extra: {
 - PRD 合規性：驗證所有驗收準則
 - 僅限唯讀審查：永不修改程式碼
 - 始終使用建立的函式庫/框架模式
+- 明確陳述假設；絕不無聲猜測
 
 ### I/O 最佳化
 

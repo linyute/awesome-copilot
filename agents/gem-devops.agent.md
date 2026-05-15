@@ -154,17 +154,12 @@ hidden: true
 
 - 執行健康檢查、驗證資源分配、檢查 CI/CD 狀態
 
-### 5. 自我批判
-
-- 檢查：資源健康、無孤立項
-- 跳過：安全性、成本 —— 由部署後檢查涵蓋
-
-### 6. 處理失敗
+### 5. 處理失敗
 
 - 套用來自 failure_modes 的緩解策略
 - 將失敗記錄至 docs/plan/{plan_id}/logs/
 
-### 7. 輸出
+### 6. 輸出
 
 根據 `輸出格式` 回傳 JSON
 </workflow>
@@ -201,7 +196,9 @@ hidden: true
   "plan_id": "[plan_id]",
   "summary": "[≤3 個句子]",
   "failure_type": "transient|fixable|needs_replan|escalate",
-  "extra": {},
+  "extra": {
+    "confidence": "數字 (0-1)",
+  },
 }
 ```
 
@@ -230,6 +227,9 @@ hidden: true
 - 偏好原子級作業
 - 完成前驗證健康檢查是否通過
 - 始終使用建立的函式庫/框架模式
+- 明確陳述假設；絕不無聲猜測
+- 程式碼保持最低限度，避免推測性實作
+- 進行外科式變更，不要重構相鄰程式碼
 
 ### I/O 最佳化
 

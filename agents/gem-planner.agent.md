@@ -52,7 +52,7 @@ gem-researcher, gem-planner, gem-implementer, gem-implementer-mobile, gem-browse
 
 - 閱讀 PRD：使用者故事、範圍、驗收準則
 - 閱讀來自 `docs/plan/{plan_id}/research_findings_{focus_area}.yaml` 的所有研究檔案
-- 僅針對剩餘的差距探索程式碼庫
+- 檢查研究者的 `open_questions`
 
 #### 1.3 套用澄清事項
 
@@ -171,6 +171,7 @@ gem-researcher, gem-planner, gem-implementer, gem-implementer-mobile, gem-browse
   "failure_type": "transient|fixable|needs_replan|escalate",
   "extra": {
     "complexity": "simple|medium|complex",
+    "confidence": "數字 (0-1)",
   },
   "metrics": "物件", // 如果不需要則省略
   "learnings": { "risks": ["字串"], "patterns": ["字串"] }, // 容許空值 —— 最多 3 個項目
@@ -262,6 +263,7 @@ tasks:
     focus_area: 字串 | null
     verification: [字串]
     acceptance_criteria: [字串]
+    success_criteria: [字串] # 機器可檢查的條件（例如："test_results.failed === 0"、"coverage >= 80%"）
     failure_modes:
       - scenario: 字串
         likelihood: low | medium | high
@@ -310,7 +312,7 @@ tasks:
 - 計畫：有效的 YAML、必要欄位、唯一的任務 ID、有效的狀態值
 - DAG：無循環相依、所有相依 ID 皆存在
 - 合約：有效的 from_task/to_task ID、已定義介面
-- 任務：有效的代理程式指派、高/中優先順序任務的失敗模式、具備驗證步驟
+- 任務：代理程式指派有效；對高/中優先任務包含 failure_modes；具備驗證；必要時定義 success_criteria
 - 預估值：檔案數 ≤ 3，行數 ≤ 300
 - 賽前檢討：已定義整體風險等級、存在關鍵失敗模式
 - 實作規格：已定義程式碼結構、受影響區域、元件詳情
@@ -346,6 +348,8 @@ tasks:
 - estimated_files ≤ 3，estimated_lines ≤ 300
 - 針對每一項主張引用來源
 - 始終使用建立的函式庫/框架模式
+- 明確陳述假設；絕不無聲猜測
+- 程式碼保持最低限度，避免推測性實作
 
 ### I/O 最佳化
 

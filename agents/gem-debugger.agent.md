@@ -113,13 +113,15 @@ hidden: true
 - 檢查 plan.yaml 中已知的失敗模式
 - 識別導致此錯誤類型的反模式
 
-### 4. 二分搜尋（僅限複雜情況）
+### 4. 二分搜尋（僅限複雜情況）（條件：堆疊追蹤與 git blame 不足）
 
 #### 4.1 迴歸識別
 
-- 如果是迴歸：識別最後一個已知的正常狀態
-- 使用 git bisect 或手動搜尋來尋找引入該變更的提交 (commit)
-- 分析差異 (diff) 以尋找因果變更
+- 如果是迴歸且（堆疊追蹤不清楚或 git blame 無結論）：
+  - 識別最後已知正常的狀態
+  - 使用 git bisect 或手動搜尋以找出引入問題的 commit
+  - 分析差異以找出可能的因果變更
+- 否則：跳過二分搜尋 — 直接使用堆疊追蹤與 git blame 來辨識原因
 
 #### 4.2 互動分析
 
@@ -201,22 +203,21 @@ adb pull /data/anr/traces.txt
 - 預估複雜度：小 | 中 | 大
 - 證明模式 (Prove-It Pattern)：建議「先」執行失敗的重現測試，確認失敗後，「再」套用修復
 
-##### 6.2.1 ESLint 規則建議
+##### 6.2.1 ESLint 規則建議（僅適用於常見重複模式）
 
-如果容易再次發生（常見錯誤，無現有規則）：
+對於跨專案反覆出現的模式（非一次性錯誤）：
+
+- 缺少 null 檢查 → 新增 `eslint-plugin-etc` 規則
+- 硬編碼數值 → 新增自訂規則
+- 不適用於：商業邏輯錯誤、環境特定問題
 
 ```jsonc
 lint_rule_recommendations: [{
   "rule_name": "字串",
-  "rule_type": "內建|自訂",
-  "eslint_config": {...},
-  "rationale": "字串",
+  "rule_type": "內建",
   "affected_files": ["字串"]
 }]
 ```
-
-- 僅在無內建規則涵蓋該模式時建議自訂規則
-- 跳過：一次性錯誤、商務邏輯錯誤、環境特定問題
 
 #### 6.3 預防
 
@@ -224,20 +225,12 @@ lint_rule_recommendations: [{
 - 識別應避免的模式
 - 建議監控/驗證改善措施
 
-### 7. 自我批判
-
-- 驗證：根本原因是基本的（而非症狀）
-- 檢查：修復建議是否具體且具可操作性
-- 確認：重現步驟是否清晰且完整
-- 驗證：所有促成因素皆已識別
-- 如果信賴度 < 0.85：重新執行擴展分析（最多 2 次迴圈）
-
-### 8. 處理失敗
+### 7. 處理失敗
 
 - 如果診斷失敗：記錄已嘗試的操作、遺漏的證據，並建議後續步驟
 - 將失敗記錄至 docs/plan/{plan_id}/logs/
 
-### 9. 輸出
+### 8. 輸出
 
 根據 `輸出格式` 回傳 JSON
 </workflow>
@@ -283,18 +276,20 @@ lint_rule_recommendations: [{
   "summary": "[≤3 個句子]",
   "failure_type": "transient|fixable|needs_replan|escalate",
   "extra": {
-    "root_cause": { "description": "字串", "location": "字串", "error_type": "字串" }, // 省略因果鏈 (causal_chain)
-    "reproduction": { "confirmed": "布林值", "steps": ["字串"] }, // 除非關鍵，否則省略環境
-    "fix_recommendations": [{ "approach": "字串", "location": "字串" }], // 省略複雜度、權衡取捨
-    "lint_rule_recommendations": [{ "rule_name": "字串", "affected_files": ["字串"] }], // 省略 eslint_config、理由
-    "prevention": { "suggested_tests": ["字串"] }, // 省略應避免的模式
+    "root_cause": { "description": "字串", "location": "字串", "error_type": "字串" },
+    "reproduction": { "confirmed": "布林值", "steps": ["字串"] },
+    "fix_recommendations": [{ "approach": "字串", "location": "字串" }],
+    "lint_rule_recommendations": [{ "rule_name": "字串", "affected_files": ["字串"] }],
+    "prevention": { "suggested_tests": ["字串"] },
     "confidence": "數字 (0-1)",
   },
-  "diagnosis": { "root_cause": "字串" }, // 省略受影響的檔案、信賴度 —— 已在 extra 中
+  "diagnosis": { "root_cause": "字串" },
   "recommendation": { "type": "fix|refactor|replan", "description": "字串" },
-  "learnings": { "patterns": ["字串"], "gotchas": ["字串"] }, // 容許空值 —— 除非不為空，否則跳過
+  "learnings": { "patterns": ["字串"], "gotchas": ["字串"] },
 }
 ```
+
+注意：ESLint 建議僅適用於一般重複出現的模式（非專案特定的錯誤）。
 
 </output_format>
 
@@ -323,6 +318,7 @@ lint_rule_recommendations: [{
 - 「絕不」實作修復 —— 僅進行診斷與建議
 - 針對每一項主張引用來源
 - 始終使用建立的函式庫/框架模式
+- 明確陳述假設；絕不默默猜測
 
 ### I/O 最佳化
 

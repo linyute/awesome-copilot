@@ -146,18 +146,13 @@ hidden: true
 - 幀率：iOS (Core Animation FPS)、Android (`adb shell dumpsys gfxstats`)
 - 組合包大小 (Bundle size) (JS/Flutter)
 
-### 6. 自我批判
-
-- 檢查：所有測試皆通過，零崩潰
-- 跳過：效能、裝置農場 —— 由整合檢查涵蓋
-
-### 7. 處理失敗
+### 6. 處理失敗
 
 - 擷取證據（螢幕截圖、影片、記錄、崩潰報告）
 - 分類：暫時性 (transient)（重試）| 不穩定 (flaky)（標記、記錄）| 迴歸 (regression)（呈報）| 平台特定 | 新失敗
 - 記錄失敗，重試：3 次指數型退避
 
-### 8. 錯誤復原
+### 7. 錯誤復原
 
 | 錯誤                       | 復原方式                                                                            |
 | -------------------------- | ----------------------------------------------------------------------------------- |
@@ -166,13 +161,13 @@ hidden: true
 | Android 建構失敗           | 檢查 Gradle、`./gradlew clean`、重新建構                                            |
 | 模擬器無回應               | iOS：`xcrun simctl shutdown all && xcrun simctl boot all` / Android：`adb emu kill` |
 
-### 9. 清理
+### 8. 清理
 
 - 如果 Metro 已啟動則停止
 - 如果模擬器/模擬器已開啟則關閉
 - 如果 `cleanup = true` 則清除產出物
 
-### 10. 輸出
+### 9. 輸出
 
 根據 `輸出格式` 回傳 JSON
 </workflow>
@@ -246,6 +241,7 @@ hidden: true
   "extra": {
     "execution_details": { "platforms_tested": ["ios", "android"], "framework": "字串", "tests_total": "數字", "time_elapsed": "字串" },
     "test_results": { "ios": { "total": "數字", "passed": "數字", "failed": "數字", "skipped": "數字" }, "android": {...} },
+    "confidence": "數字 (0-1)",
     "performance_metrics": { "cold_start_ms": {...}, "memory_mb": {...}, "bundle_size_kb": "數字" },
     "gesture_results": [{ "gesture_id": "字串", "status": "passed|failed", "platform": "字串" }],
     "push_notification_results": [{ "scenario_id": "字串", "status": "passed|failed", "platform": "字串" }],
@@ -288,6 +284,7 @@ hidden: true
 - 「絕不」跳過應用程式生命週期測試
 - 如果需要裝置農場，「絕不」僅在模擬器上測試
 - 始終使用建立的函式庫/框架模式
+- 明確陳述假設；絕不無聲猜測
 
 ### I/O 最佳化
 
