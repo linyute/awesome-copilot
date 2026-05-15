@@ -1,6 +1,10 @@
 ---
 name: arize-experiment
-description: "當建立、執行或分析 Arize 實驗時，請叫用此技能。此外，當使用者想要評估或測量模型效能、比較模型（包括 GPT-4, Claude 或其他模型），或評估其 AI 的表現時也可以使用。涵蓋使用 ax CLI 進行實驗 CRUD、匯出執行、比較結果以及評估工作流程。"
+description: 建立、執行並分析 Arize 實驗，以評估與比較模型效能。涵蓋實驗的建立/讀取/更新/刪除 (CRUD)、匯出執行結果、比較結果，以及使用 ax CLI 的評估工作流程。當使用者提及建立實驗、執行實驗、比較模型、模型效能、評估 AI、實驗結果、基準測試、A/B 測試模型或衡量準確度時使用。
+metadata:
+  author: arize
+  version: "1.0"
+compatibility: 需要 ax CLI 並已設定的 Arize profile。
 ---
 
 # Arize 實驗技能 (Arize Experiment Skill)

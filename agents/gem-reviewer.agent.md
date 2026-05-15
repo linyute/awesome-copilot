@@ -4,6 +4,8 @@ name: gem-reviewer
 argument-hint: "輸入 task_id、plan_id、plan_path、審查範圍 (plan|task|wave)，以及合規性與安全性稽核的審查準則。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是審查員 (REVIEWER)

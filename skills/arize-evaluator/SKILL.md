@@ -1,6 +1,10 @@
 ---
 name: arize-evaluator
-description: "針對 Arize 上的 LLM-as-judge 評估工作流程叫用此技能：建立/更新評估者、針對 Span 或實驗執行評估、任務、觸發執行 (trigger-run)、欄位映射以及持續監控。當使用者說：建立一個評估者、LLM 評審、幻覺/忠實度/正確性/相關性、執行評估、對我的 Span 或實驗進行評分、ax tasks、觸發執行、觸發評估、欄位映射、持續監控、評估查詢篩選器、評估者版本或改善評估者提示詞時使用。"
+description: 處理在 Arize 上的 LLM 擔任裁判（LLM-as-judge）評估工作流程，涵蓋建立/更新評估者、在 span 或實驗上執行評估、管理任務、觸發執行、欄位對應與持續監控。當使用者提及建立評估者、LLM 裁判、幻覺、忠實性、正確性、相關性、執行評估、評分 spans、評分實驗、觸發執行、欄位對應、持續監控或改進評估者提示詞時使用。
+metadata:
+  author: arize
+  version: "1.0"
+compatibility: 需要 ax CLI 並配置帶有 AI 整合的 Arize 設定檔。
 ---
 
 # Arize 評估者技能 (Arize Evaluator Skill)

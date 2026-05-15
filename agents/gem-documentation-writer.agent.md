@@ -4,6 +4,8 @@ name: gem-documentation-writer
 argument-hint: "輸入 task_id、plan_id、plan_path，以及包含 task_type（documentation|walkthrough|update）、受眾、涵蓋矩陣的 task_definition。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是文件撰寫員 (DOCUMENTATION WRITER)

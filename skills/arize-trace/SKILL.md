@@ -1,6 +1,10 @@
 ---
 name: arize-trace
-description: "當下載、匯出或檢查 Arize 追蹤 (traces) 與 Span 時，或者當使用者想利用現有的追蹤資料查看其 LLM 應用程式的運作情況，或者當已檢測的應用程式出現錯誤或 bug 需要調查時，請叫用此技能。用於偵錯未知的執行階段問題、失敗以及行為退化。涵蓋使用 ax CLI 依 ID 匯出 Trace、依 ID 匯出 Span、依 ID 匯出 Session 以及根本原因調查。"
+description: 下載、匯出並檢視現有的 Arize traces 與 spans，以了解 LLM 應用程式的行為或在執行時除錯問題。涵蓋依 Trace ID、Span ID、Session ID 匯出，以及使用 ax CLI 進行根因調查。當使用者想檢視現有追蹤資料、匯出追蹤或 spans、調查錯誤或分析行為回歸時使用。
+metadata:
+  author: arize
+  version: "1.0"
+compatibility: 需要安裝 ax CLI 並配置 Arize 的設定檔。
 ---
 
 # Arize 追蹤技能 (Arize Trace Skill)

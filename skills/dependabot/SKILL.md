@@ -1,11 +1,13 @@
 ---
 name: dependabot
 description: >-
-  設定與管理 GitHub Dependabot 的完整指南。當使用者詢問關於建立或優化 dependabot.yml 檔案、管理 Dependabot 提取要求 (PR)、
-  設定依賴項目更新策略、設定分組更新、Monorepo 模式、跨生態系統群組、
-  安全性更新設定、自動分群規則，
-  或任何與 Dependabot 相關的
-  GitHub 進階安全性 (GHAS) 供應鏈安全主題時，請使用此技能。
+  為配置與管理 GitHub Dependabot 的完整指南。當使用者詢問建立或優化 dependabot.yml 檔案、
+  管理 Dependabot 的拉取請求、配置相依性更新策略、設定分組更新、monorepo 模式、
+  多生態系統群組、安全性更新設定、自動分類規則，或任何與 Dependabot 有關的 GitHub
+  Advanced Security (GHAS) 供應鏈安全主題時，請使用此技能。對於透過 GitHub MCP Server
+  在 AI 程式碼代理中執行 pre-commit 相依性漏洞掃描，本技能會參考 Advanced Security 外掛
+  (`advanced-security@copilot-plugins`)。當代理需要在提交前掃描相依性以找出已知漏洞時，
+  請使用此技能。
 ---
 
 # Dependabot 設定與管理 (Dependabot Configuration & Management)
@@ -414,6 +416,34 @@ updates:
 
 **如何處理工作空間以外的依賴項目？**
 建立一個獨立的生態系統項目，並將其 `directory` 指向該位置。
+
+## 透過 AI 程式編碼代理進行提交前的相依性掃描
+
+要在 AI 編碼代理內於提交前掃描程式碼變更中是否新增有漏洞的相依性，GitHub MCP Server 的 `dependabot` 工具集可以將你新增的相依性與 GitHub Advisory Database 進行比對，並回傳結構化的結果，包含受影響的套件、風險等級和建議修正版本。為了更完整的提交後檢查，它也可以在本機執行 Dependabot CLI，來比較變更前後的相依性圖差異。
+
+安裝 **Advanced Security plugin**，該插件提供專門的相依性掃描工具以及 `/dependency-scanning` 的技能。
+
+**GitHub Copilot CLI (shell)：**
+```bash
+# 為 GitHub MCP Server 啟用 dependabot 工具集
+copilot --add-github-mcp-toolset dependabot
+```
+
+**GitHub Copilot CLI（在 `copilot` 內）：**
+```text
+> /plugin install advanced-security@copilot-plugins
+```
+
+**Visual Studio Code：**
+- 在你的 GitHub MCP Server 標頭加入 `"X-MCP-Toolsets": "dependabot"`，或在 Copilot Chat 的工具集選擇器中選取 **Dependabot**
+- 安裝 `advanced-security` 插件，然後在 Copilot Chat 使用 `/dependency-scanning`
+
+**範例提示：**
+> 幫我掃描我在此分支新增的相依性是否有已知漏洞，並在我提交前告訴我應升級到哪些版本。
+
+參見： [Advanced Security Plugin — Dependency Scanning Skill](https://github.com/github/copilot-plugins/blob/main/plugins/advanced-security/skills/dependency-scanning/SKILL.md)
+
+> 在 [Dependency scanning with GitHub MCP Server is in public preview](https://github.blog/changelog/2026-05-05-dependency-scanning-with-github-mcp-server-is-in-public-preview/)（2026 年 5 月）中宣佈
 
 ## 資源 (Resources)
 

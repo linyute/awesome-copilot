@@ -1,10 +1,10 @@
-# FlowStudio MCP — 流程定義結構描述 (Flow Definition Schema)
+# FlowStudio MCP — 流程定義結構描述
 
-`update_live_flow` 預期（以及 `get_live_flow` 回傳）的完整 JSON 結構。
+`update_live_flow` 預期的完整 JSON 結構（也是 `get_live_flow` 傳回的結構）。
 
 ---
 
-## 頂層形狀 (Top-Level Shape)
+## 頂層形狀
 
 ```json
 {
@@ -28,39 +28,45 @@
 
 ---
 
-## `triggers`
+## `triggers` (觸發器)
 
-每個流程定義必須且僅有一個觸發程序。鍵名稱可任意設定，但通常使用慣例名稱（例如 `Recurrence`、`manual`、`When_a_new_email_arrives`）。
+每個流程定義只能有一個觸發器。索引鍵名稱是任意的，但通常會使用慣用名稱（例如 `Recurrence`, `manual`, `When_a_new_email_arrives`）。
 
-請參閱 [trigger-types.md](trigger-types.md) 以取得所有觸發程序範本。
+有關所有觸發器範本，請參閱 [trigger-types.md](trigger-types.md)。
 
 ---
 
-## `actions`
+## `actions` (動作)
 
-由唯一動作名稱作為鍵的動作定義字典。
-鍵名稱不得包含空格 — 請使用底線。
+以唯一動作名稱為索引鍵的動作定義字典。
+索引鍵名稱不可包含空格 — 請使用底線。
 
 每個動作必須包含：
-- `type` — 動作型別識別碼
-- `runAfter` — 上游動作名稱至狀態條件陣列的對應
-- `inputs` — 動作特定的輸入設定
+- `type` — 動作類型識別碼
+- `runAfter` — 上游動作名稱的對應表 → 狀態條件陣列
+- `inputs` — 動作專屬的輸入設定
 
-請參閱 [action-patterns-core.md](action-patterns-core.md)、[action-patterns-data.md](action-patterns-data.md) 以及 [action-patterns-connectors.md](action-patterns-connectors.md) 以取得範本。
+有關範本，請參閱 [action-patterns-core.md](action-patterns-core.md), [action-patterns-data.md](action-patterns-data.md),
+以及 [action-patterns-connectors.md](action-patterns-connectors.md)。
 
-### 選用動作屬性
+### 選用的動作屬性
 
-除了必要的 `type`、`runAfter` 和 `inputs` 之外，動作還可以包含：
+除了必填的 `type`, `runAfter`, 和 `inputs` 之外，動作還可以包含：
 
 | 屬性 | 用途 |
 |---|---|
-| `runtimeConfiguration` | 分頁、並發處理、安全資料、區塊傳輸 |
-| `operationOptions` | Foreach 的 `"Sequential"`，HTTP 的 `"DisableAsyncPattern"` |
-| `limit` | 逾時覆寫 (例如 `{"timeout": "PT2H"}`) |
+| `runtimeConfiguration` | 分頁、並行、安全資料、分段傳輸 |
+| `operationOptions` | `"Sequential"` 用於 Foreach，`"DisableAsyncPattern"` 用於 HTTP |
+| `limit` | 覆寫逾時（例如 `{"timeout": "PT2H"}`） |
+| `metadata` | 設計器中使用的 Metadata，例如 `operationMetadataId` |
+
+#### 設計器 Metadata (Designer Metadata)
+
+對於現有的連接器動作，在編輯定義時請保留 `metadata.operationMetadataId`。對於新的連接器動作或技能/HTTP 回應動作，請新增一個穩定的 GUID，並在更新過程中保持其穩定。不要在每次部署時重新產生這些 ID；設計器和某些僅限執行的介面會使用它們來保持動作身分的一致性。
 
 #### `runtimeConfiguration` 變體
 
-**分頁** (SharePoint Get Items，處理大型清單)：
+**分頁**（處理大型清單的 SharePoint「取得多個項目」）：
 ```json
 "runtimeConfiguration": {
   "paginationPolicy": {
@@ -68,9 +74,9 @@
   }
 }
 ```
-> 若無此設定，Get Items 會靜默截斷為 256 個結果。將 `minimumItemCount` 設定為您預期的最大列數。對於任何超過 256 個項目的 SharePoint 清單都是必要的。
+> 沒有此設定時，「取得多個項目」會默默地將結果限制在 256 筆。將 `minimumItemCount` 設定為您預期的最大資料列數。任何超過 256 個項目的 SharePoint 清單都需要此設定。
 
-**並發處理** (平行 Foreach)：
+**並行 (Concurrency)**（平行的 Foreach）：
 ```json
 "runtimeConfiguration": {
   "concurrency": {
@@ -79,7 +85,7 @@
 }
 ```
 
-**安全輸入/輸出** (在執行歷程記錄中遮罩數值)：
+**安全輸入/輸出**（遮蓋執行歷程記錄中的值）：
 ```json
 "runtimeConfiguration": {
   "secureData": {
@@ -87,9 +93,9 @@
   }
 }
 ```
-> 用於處理憑證、權杖或 PII 的動作。遮罩後的數值在流程執行歷程記錄 UI 和 API 回應中顯示為 `"<redacted>"`。
+> 用於處理認證、權杖或 PII（個人識別資訊）的動作。被遮蓋的值在流程執行歷程記錄 UI 和 API 回應中會顯示為 `"<redacted>"`。
 
-**區塊傳輸** (大型 HTTP 負載)：
+**分段傳輸 (Chunked transfer)**（大型 HTTP 承載資料）：
 ```json
 "runtimeConfiguration": {
   "contentTransfer": {
@@ -97,13 +103,13 @@
   }
 }
 ```
-> 在傳送或接收 >100 KB 本文的 HTTP 動作上啟用（例如帶有大型陣列的 父流程→子流程 呼叫）；可避免請求大小限制。
+> 用於傳送或接收超過 100 KB 本文的 HTTP 動作（例如帶有大型陣列的父子流程呼叫）。
 
 ---
 
 ## `runAfter` 規則
 
-分支中的第一個動作具有 `"runAfter": {}` (空物件 — 在觸發後執行)。
+分支中的第一個動作具有 `"runAfter": {}`（空 — 在觸發後執行）。
 
 後續動作宣告其相依性：
 
@@ -134,9 +140,9 @@
 
 ---
 
-## `parameters` (流程層級輸入參數)
+## `parameters` (流程層級的輸入參數)
 
-選用。在流程層級定義可重複使用的值：
+選填。在流程層級定義可重複使用的值：
 
 ```json
 "parameters": {
@@ -155,11 +161,11 @@
 
 ---
 
-## `outputs`
+## `outputs` (輸出)
 
-在雲端流程中很少使用。除非流程被呼叫為子流程並需要回傳值，否則請保持為 `{}`。
+在雲端流程中鮮少使用。除非流程作為子流程被呼叫且需要傳回值，否則請保留為 `{}`。
 
-對於回傳資料的子流程：
+對於傳回資料的子流程：
 
 ```json
 "outputs": {
@@ -172,9 +178,9 @@
 
 ---
 
-## 範圍動作 (Scope 區塊內)
+## 具範圍的動作 (Scoped Actions) (在範圍區塊內)
 
-需要分組以進行錯誤處理或保持結構清晰的動作：
+為了錯誤處理或清晰起見而需要分組的動作：
 
 ```json
 "Scope_Main_Process": {
@@ -189,7 +195,7 @@
 
 ---
 
-## 完整最小範例
+## 完整的最簡範例
 
 ```json
 {

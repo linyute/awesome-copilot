@@ -4,6 +4,8 @@ name: gem-planner
 argument-hint: "輸入 plan_id、目標 (objective) 以及任務澄清事項 (task_clarifications)。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是計畫員 (PLANNER)

@@ -1,10 +1,10 @@
-# 常見建構模式 (Common Build Patterns)
+# 常見建構模式
 
-準備好供複製與自訂的完整流程定義範本。
+準備好可供複製和自定義的完整流程定義範本。
 
 ---
 
-## 模式：週期性觸發 (Recurrence) + SharePoint 清單讀取 + Teams 通知
+## 模式：定期執行 + 讀取 SharePoint 清單 + Teams 通知
 
 ```json
 {
@@ -68,7 +68,7 @@
 
 ---
 
-## 模式：HTTP 觸發程序 (Webhook / Power App 呼叫)
+## 模式：HTTP 觸發器 (Webhook / Power App 呼叫)
 
 ```json
 {
@@ -105,4 +105,4 @@
 }
 ```
 
-存取本文數值：`@triggerBody()?['name']`
+存取本文內容值：`@triggerBody()?['name']`

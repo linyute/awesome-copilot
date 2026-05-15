@@ -1,6 +1,10 @@
 ---
 name: arize-prompt-optimization
-description: "當使用生產環境追蹤資料、評估與標核來最佳化、改善或偵錯 LLM 提示詞時，請叫用此技能。此外，當使用者想要使其 AI 回應更好或提高 AI 輸出品質時，也可以使用。涵蓋從 Span 中擷取提示詞、收集效能訊號，以及使用 ax CLI 執行數據驅動的最佳化循環。"
+description: 使用生產追蹤資料、評估與註解來最佳化、改進與偵錯 LLM 提示詞。從 Span 中擷取提示詞、蒐集效能訊號，並使用 ax CLI 執行資料驅動的最佳化循環。當使用者提到「最佳化提示詞」、「改進提示詞」、「讓 AI 回應更好」、「改善輸出品質」、「提示工程」、「提示調校」或「系統提示改進」時使用。
+metadata:
+  author: arize
+  version: "1.0"
+compatibility: 需要安裝 ax CLI 並設定 Arize 的設定檔 (profile)。
 ---
 
 # Arize 提示詞最佳化技能 (Arize Prompt Optimization Skill)

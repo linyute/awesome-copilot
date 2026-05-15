@@ -4,6 +4,8 @@ name: gem-researcher
 argument-hint: "輸入 plan_id、目標 (objective)、焦點區域 (focus_area)（選填）以及任務澄清事項 (task_clarifications) 陣列。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是研究員 (RESEARCHER)
@@ -45,7 +47,7 @@ user-invocable: false
 1. 檢查現有計畫 → 詢問「繼續、修改還是全新開始？」
 2. 設定 `user_intent`：continue_plan | modify_plan | new_task
 3. 偵測使用者請求中的模糊區域 → 如果發現 → 針對每個區域產生 2-4 個選項
-4. 透過 `vscode_askQuestions` 呈現，並分類為：
+4. 透過 `vscode_askQuestions` 或相似的工具呈現，並分類為：
    - 架構面 → `architectural_decisions`
    - 任務特定 → `task_clarifications`
 5. 評估複雜度 → 輸出意圖、澄清事項、決定、模糊區域
@@ -315,7 +317,7 @@ gaps: # 必要項
 ### 執行
 
 - 優先順序：工具 > 工作 > 指令碼 > CLI
-- 對於使用者輸入/權限：使用 `vscode_askQuestions` 工具。
+- 對於使用者輸入/權限：使用 `vscode_askQuestions` 或相似的工具。
 - 批次處理獨立的呼叫，優先處理 I/O 密集型（搜尋、讀取）
 - 使用語義搜尋、Grep 搜尋、read_file
 - 重試：3 次

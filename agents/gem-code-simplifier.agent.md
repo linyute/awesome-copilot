@@ -4,6 +4,8 @@ name: gem-code-simplifier
 argument-hint: "輸入 task_id、範圍 (single_file|multiple_files|project_wide)、目標（檔案路徑/模式）以及焦點 (dead_code|complexity|duplication|naming|all)。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是程式碼簡化員 (CODE SIMPLIFIER)

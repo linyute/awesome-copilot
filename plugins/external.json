@@ -1,14 +1,21 @@
 [
   {
     "name": "dataverse",
-    "description": "使用自然語言建構並管理 Microsoft Dataverse 解決方案。包含資料表/資料行建立、解決方案生命週期、資料運算與 MCP 伺服器設定。",
+    "description": "使用自然語言建構與管理 Microsoft Dataverse 解決方案。包含資料表/資料行建立、解決方案生命週期、資料操作以及 MCP 伺服器組態。",
     "version": "1.0.0",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
     },
     "homepage": "https://github.com/microsoft/Dataverse-skills",
-    "keywords": ["dataverse", "power-platform", "microsoft", "mcp", "python", "sdk"],
+    "keywords": [
+      "dataverse",
+      "power-platform",
+      "microsoft",
+      "mcp",
+      "python",
+      "sdk"
+    ],
     "license": "MIT",
     "repository": "https://github.com/microsoft/Dataverse-skills",
     "source": {
@@ -19,14 +26,21 @@
   },
   {
     "name": "azure",
-    "description": "Microsoft Azure MCP 伺服器與技能，用於雲端資源管理、部署與 Azure 服務。直接從 Copilot 管理您的 Azure 基礎架構、監控應用程式並部署資源。",
+    "description": "Microsoft Azure MCP 伺服器與雲端資源管理、部署及 Azure 服務技能。直接從 Copilot 管理您的 Azure 基礎結構、監控應用程式並部署資源。",
     "version": "1.0.0",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
     },
     "homepage": "https://github.com/microsoft/azure-skills",
-    "keywords": ["azure", "cloud", "infrastructure", "deployment", "microsoft", "devops"],
+    "keywords": [
+      "azure",
+      "cloud",
+      "infrastructure",
+      "deployment",
+      "microsoft",
+      "devops"
+    ],
     "license": "MIT",
     "repository": "https://github.com/microsoft/github-copilot-for-azure",
     "source": {
@@ -37,14 +51,23 @@
   },
   {
     "name": "dotnet",
-    "description": "常見的日常 C#/.NET 程式碼撰寫技能。預期對所有 .NET 開發人員皆有助益。",
+    "description": "常見的日常 C#/.NET 程式碼編寫技能。預期對所有 .NET 開發人員都有用。",
     "version": "0.1.0",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
     },
     "homepage": "https://github.com/dotnet/skills",
-    "keywords": ["dotnet", "csharp", "coding", "skills", "csharp-script", "single-file", "nuget-publishing", "pinvoke"],
+    "keywords": [
+      "dotnet",
+      "csharp",
+      "coding",
+      "skills",
+      "csharp-script",
+      "single-file",
+      "nuget-publishing",
+      "pinvoke"
+    ],
     "license": "MIT",
     "repository": "https://github.com/dotnet/skills",
     "source": {
@@ -54,15 +77,53 @@
     }
   },
   {
-    "name": "dotnet-diag",
-    "description": "用於 .NET 效能調查、除錯與事故分析的技能。",
+    "name": "dotnet-test",
+    "description": "執行、撰寫、診斷及遷移 .NET 測試的技能：測試執行、篩選、平台偵測、涵蓋範圍分析及 MSTest 工作流程。",
     "version": "0.1.0",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
     },
     "homepage": "https://github.com/dotnet/skills",
-    "keywords": ["dotnet", "diagnostics", "performance", "debugging", "tracing", "symbolicate", "android-tombstone", "dump-collection", "microbenchmarking", "clr-activation"],
+    "keywords": [
+      "dotnet",
+      "testing",
+      "mstest",
+      "xunit",
+      "nunit",
+      "test-generation",
+      "coverage",
+      "migration"
+    ],
+    "license": "MIT",
+    "repository": "https://github.com/dotnet/skills",
+    "source": {
+      "source": "github",
+      "repo": "dotnet/skills",
+      "path": "plugins/dotnet-test"
+    }
+  },
+  {
+    "name": "dotnet-diag",
+    "description": ".NET 效能調查、偵錯及事件分析技能。",
+    "version": "0.1.0",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://www.microsoft.com"
+    },
+    "homepage": "https://github.com/dotnet/skills",
+    "keywords": [
+      "dotnet",
+      "diagnostics",
+      "performance",
+      "debugging",
+      "tracing",
+      "symbolicate",
+      "android-tombstone",
+      "dump-collection",
+      "microbenchmarking",
+      "clr-activation"
+    ],
     "license": "MIT",
     "repository": "https://github.com/dotnet/skills",
     "source": {
@@ -72,32 +133,44 @@
     }
   },
   {
-  "name": "skills-for-copilot-studio",
-  "description": "用於 AI 程式碼撰寫代理的 Microsoft Copilot Studio 外掛程式",
-  "version": "1.0.3",
-  "author": {
-    "name": "Microsoft Copilot Studio CAT Team",
-    "url": "https://www.microsoft.com"
+    "name": "skills-for-copilot-studio",
+    "description": "適用於 AI 程式碼編寫代理程式的 Microsoft Copilot Studio 外掛程式",
+    "version": "1.0.3",
+    "author": {
+      "name": "Microsoft Copilot Studio CAT Team",
+      "url": "https://www.microsoft.com"
     },
-  "homepage": "https://github.com/microsoft/skills-for-copilot-studio",
-  "keywords": ["copilot", "copilot-studio", "studio", "agent", "microsoft", "coding"],
-  "license": "MIT",
-  "repository": "https://github.com/microsoft/skills-for-copilot-studio",
-  "source": {
-    "source": "github",
-    "repo": "microsoft/skills-for-copilot-studio"
+    "homepage": "https://github.com/microsoft/skills-for-copilot-studio",
+    "keywords": [
+      "copilot",
+      "copilot-studio",
+      "studio",
+      "agent",
+      "microsoft",
+      "coding"
+    ],
+    "license": "MIT",
+    "repository": "https://github.com/microsoft/skills-for-copilot-studio",
+    "source": {
+      "source": "github",
+      "repo": "microsoft/skills-for-copilot-studio"
     }
   },
   {
     "name": "modernize-dotnet",
-    "description": "AI 驅動的 .NET 現代化與升級助手。協助將 .NET Framework 與 .NET 應用程式升級至最新的 .NET 版本。",
-    "version": "1.0.1063-preview1",
+    "description": "AI 驅動的 .NET 現代化與升級助手。協助將 .NET Framework 和 .NET 應用程式升級至最新版本的 .NET。",
+    "version": "1.0.1102-preview1",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
     },
     "homepage": "https://github.com/dotnet/modernize-dotnet",
-    "keywords": ["modernization", "upgrade", "migration", "dotnet"],
+    "keywords": [
+      "modernization",
+      "upgrade",
+      "migration",
+      "dotnet"
+    ],
     "license": "MIT",
     "repository": "https://github.com/dotnet/modernize-dotnet",
     "source": {
@@ -108,14 +181,25 @@
   },
   {
     "name": "microsoft-docs",
-    "description": "存取 Azure、.NET、Windows 等官方 Microsoft 文件、API 參考與程式碼範例。",
+    "description": "存取 Azure、.NET、Windows 等官方 Microsoft 文件、API 參考資料和程式碼範例。",
     "version": "1.0.0",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
     },
     "homepage": "https://learn.microsoft.com",
-    "keywords": ["microsoft", "azure", "dotnet", "windows", "api", "documentation", "rag", "dynamics", "powerbi", "code-samples"],
+    "keywords": [
+      "microsoft",
+      "azure",
+      "dotnet",
+      "windows",
+      "api",
+      "documentation",
+      "rag",
+      "dynamics",
+      "powerbi",
+      "code-samples"
+    ],
     "license": "MIT",
     "repository": "https://github.com/MicrosoftDocs/mcp",
     "source": {
@@ -125,14 +209,20 @@
   },
   {
     "name": "figma",
-    "description": "包含 Figma MCP 伺服器以及常用工作流程技能的外掛程式。",
+    "description": "包含 Figma MCP 伺服器以及常見工作流程技能的外掛程式。",
     "version": "1.0.0",
     "author": {
       "name": "Figma",
       "url": "https://www.figma.com"
     },
     "homepage": "https://github.com/figma/mcp-server-guide",
-    "keywords": ["figma", "design", "mcp", "ui", "code-connect"],
+    "keywords": [
+      "figma",
+      "design",
+      "mcp",
+      "ui",
+      "code-connect"
+    ],
     "repository": "https://github.com/figma/mcp-server-guide",
     "source": {
       "source": "github",
@@ -141,19 +231,108 @@
   },
   {
     "name": "whatidid",
-    "description": "將您的 Copilot 工作階段轉化為影響力的證明 —— 根據研究基礎產生的 HTML 報告，包含工作評估、技能分析與來自本地工作階段日誌的 ROI 指標。",
+    "description": "將您的 Copilot 工作階段轉換為影響力證明 — 包含根據本機工作階段記錄進行的投入估算、技能分析及 ROI 指標且有研究根據的 HTML 報告。",
     "version": "1.0.0",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
     },
     "homepage": "https://github.com/microsoft/What-I-Did-Copilot",
-    "keywords": ["copilot", "productivity", "impact", "report", "estimation", "roi", "session-logs"],
+    "keywords": [
+      "copilot",
+      "productivity",
+      "impact",
+      "report",
+      "estimation",
+      "roi",
+      "session-logs"
+    ],
     "license": "MIT",
     "repository": "https://github.com/microsoft/What-I-Did-Copilot",
     "source": {
       "source": "github",
       "repo": "microsoft/What-I-Did-Copilot"
+    }
+  },
+  {
+    "name": "git-ape",
+    "description": "適用於 GitHub Copilot 的智慧型 Azure 部署代理程式系統，具備引導式 ARM 範本產生、安全性控管、成本分析及部署工作流程。",
+    "version": "0.0.1",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://github.com/Azure/git-ape"
+    },
+    "homepage": "https://github.com/Azure/git-ape",
+    "keywords": [
+      "azure",
+      "cloud",
+      "infrastructure",
+      "arm-templates",
+      "deployment",
+      "devops",
+      "iac",
+      "security",
+      "cost-estimation",
+      "github-actions"
+    ],
+    "license": "MIT",
+    "repository": "https://github.com/Azure/git-ape",
+    "source": {
+      "source": "github",
+      "repo": "Azure/git-ape"
+    }
+  },
+  {
+    "name": "microsoft-events",
+    "description": "將您的專案連接到 Microsoft Build 和 Ignite 工作階段 — 探索相關談話、探索適用於您堆疊的新內容，並從您的開發環境規劃後續步驟。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://www.microsoft.com"
+    },
+    "homepage": "https://github.com/microsoft/Build-CLI",
+    "keywords": [
+      "microsoft",
+      "build",
+      "ignite",
+      "events",
+      "sessions",
+      "learn"
+    ],
+    "license": "Apache-2.0",
+    "repository": "https://github.com/microsoft/Build-CLI",
+    "source": {
+      "source": "github",
+      "repo": "microsoft/Build-CLI"
+    }
+  },
+  {
+    "name": "winui",
+    "description": "適用於 WinUI 3 應用程式開發的代理程式與技能。建立新的 WinUI 3 傳統型應用程式、從其他架構 (WPF, WinForms, Electron, Tauri, Flutter) 轉換為 WinUI 3，或為現有的 WinUI 3 應用程式增加功能。包含 MSIX 封裝、程式碼簽署、UI 自動化測試及 Windows App SDK 指導。",
+    "version": "0.3.0",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://www.microsoft.com"
+    },
+    "homepage": "https://github.com/microsoft/win-dev-skills",
+    "keywords": [
+      "windows",
+      "winui",
+      "winui3",
+      "xaml",
+      "windows-app-sdk",
+      "msix",
+      "packaging",
+      "desktop",
+      "wpf-migration",
+      "electron-migration"
+    ],
+    "license": "MIT",
+    "repository": "https://github.com/microsoft/win-dev-skills",
+    "source": {
+      "source": "github",
+      "repo": "microsoft/win-dev-skills",
+      "path": "plugins/winui"
     }
   }
 ]

@@ -4,6 +4,8 @@ name: gem-devops
 argument-hint: "輸入 task_id、plan_id、plan_path、task_definition、環境 (dev|staging|prod)、requires_approval 旗標以及 devops_security_sensitive 旗標。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是維運工程師 (DEVOPS)
@@ -212,7 +214,7 @@ user-invocable: false
 ### 執行
 
 - 優先順序：工具 > 工作 > 指令碼 > CLI
-- 對於使用者輸入/權限：使用 `vscode_askQuestions` 工具。
+- 對於使用者輸入/權限：使用 `vscode_askQuestions` 或相似的工具。
 - 批次處理獨立的呼叫，優先處理 I/O 密集型
 - 重試：3 次
 - 輸出：僅限 JSON，除非失敗否則不提供摘要

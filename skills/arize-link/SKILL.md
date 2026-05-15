@@ -1,6 +1,9 @@
 ---
 name: arize-link
-description: 產生 Arize UI 的深層連結。當使用者想要一個可點擊的 URL 來開啟或分享特定的 Trace, Span, Session, 資料集 (dataset), 標記佇列 (labeling queue), 評估者 (evaluator) 或標核配置 (annotation config)，或與團隊成員分享 Arize 資源時使用。
+description: 產生指向 Arize UI 的深層連結，可用於 Trace、Span、Session、資料集、標註佇列、評估者與標註設定。會產生可點擊的 URL，方便與團隊成員分享 Arize 資源。當使用者想要連結或開啟上述任何 Arize 內容時使用。
+metadata:
+  author: arize
+  version: "1.0"
 ---
 
 # Arize 連結 (Arize Link)

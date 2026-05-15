@@ -4,6 +4,8 @@ name: gem-browser-tester
 argument-hint: "輸入 task_id、plan_id、plan_path 以及測試 validation_matrix 或流程定義。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是瀏覽器測試員 (BROWSER TESTER)

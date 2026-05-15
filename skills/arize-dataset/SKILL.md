@@ -1,6 +1,10 @@
 ---
 name: arize-dataset
-description: "當建立、管理或查詢 Arize 資料集 (datasets) 與範例 (examples) 時，請叫用此技能。此外，當使用者需要用於其模型的測試資料或評估範例時也可以使用。涵蓋使用 ax CLI 進行資料集 CRUD、附加範例、匯出資料以及基於檔案的資料集建立。"
+description: 建立、管理與查詢 Arize 資料集與範例。涵蓋資料集的建立/讀取/更新/刪除、附加範例、匯出資料，以及使用 ax CLI 以檔案建立資料集。用於使用者需要測試資料、評估範例，或提到建立資料集、列出資料集、匯出資料集、附加範例、資料集版本、黃金資料集或測試集時。
+metadata:
+  author: arize
+  version: "1.0"
+compatibility: 需要 ax CLI 並配置 Arize 設定檔。
 ---
 
 # Arize 資料集技能 (Arize Dataset Skill)

@@ -1,19 +1,19 @@
-# FlowStudio MCP — 動作模式：資料轉換 (Data Transforms)
+# FlowStudio MCP — 動作模式：資料轉換
 
-陣列操作、HTTP 呼叫、解析與資料轉換模式。
+陣列作業、HTTP 呼叫、解析和資料轉換模式。
 
-> 所有範例皆假設 `"runAfter"` 已適當設定。
-> `<connectionName>` 是 `connectionReferences` 中的 **鍵 (key)** (例如 `shared_sharepointonline`)，而非 GUID。
-> GUID 位於對應表數值的 `connectionName` 屬性中。
+> 所有範例皆假設已適當設定 `"runAfter"`。
+> `<connectionName>` 是 `connectionReferences` 中的 **鍵** (例如 `shared_sharepointonline`)，而不是 GUID。
+> GUID 應放在對應表值的 `connectionName` 屬性中。
 
 ---
 
-## 陣列操作 (Array Operations)
+## 陣列作業
 
-### Select (重塑 / 投影陣列)
+### 選取 (Select) (重塑 / 投影陣列)
 
-轉換陣列中的每個項目，僅保留您需要的欄位或對其進行重新命名。
-可避免在流程後續部分攜帶大型物件。
+轉換陣列中的每個項目，僅保留您需要的資料欄位或重新命名它們。
+可避免在流程的其餘部分攜帶大型物件。
 
 ```json
 "Select_Needed_Columns": {
@@ -32,24 +32,24 @@
 }
 ```
 
-結果參考：`@body('Select_Needed_Columns')` — 回傳重塑物件的直接陣列。
+結果參考：`@body('Select_Needed_Columns')` — 傳回重塑後物件的直接陣列。
 
-> 在迴圈或過濾前使用 Select 可縮減負載大小並簡化後續運算式。適用於任何陣列 — SP 結果、HTTP 回應、變數。
+> 在執行迴圈或篩選之前使用「選取」動作，可以減小承載資料的大小並簡化下游運算式。適用於任何陣列 — SharePoint 結果、HTTP 回應、變數。
 >
 > **提示：**
-> - **單一物件轉陣列強制轉換**：當 API 回傳單一物件但您需要使用 Select (需要陣列) 時，請將其包裹：`@array(body('Get_Employee')?['data'])`。輸出為單一元素陣列 — 透過 `?[0]?['field']` 存取結果。
-> - **Null 標準化選用欄位**：在每個選用欄位上使用 `@if(empty(item()?['field']), null, item()?['field'])`，將空字串、遺失屬性與空物件標準化為明確的 `null`。確保後續一致的 `@equals(..., @null)` 檢查。
-> - **扁平化巢狀物件**：將巢狀屬性投影為扁平欄位：
+> - **單一物件強制轉換為陣列**：當 API 傳回單一物件但您需要「選取」動作（該動作需要陣列）時，請將其包裝起來：`@array(body('Get_Employee')?['data'])`。輸出是一個包含 1 個元素的陣列 — 透過 `?[0]?['field']` 存取結果。
+> - **選用欄位的 Null 標準化**：在每個選用欄位上使用 `@if(empty(item()?['field']), null, item()?['field'])`，將空字串、缺失屬性和空物件標準化為明確的 `null`。確保下游 `@equals(..., @null)` 檢查的一致性。
+> - **展平巢狀物件**：將巢狀屬性投影到扁平欄位中：
 >   ```
 >   "manager_name": "@if(empty(item()?['manager']?['name']), null, item()?['manager']?['name'])"
 >   ```
->   這能讓來自不同來源的扁平結構描述進行欄位層級的直接比較。
+>   這樣可以實現與來自其他來源的扁平結構進行直接的欄位級比較。
 
 ---
 
-### Filter Array (過濾陣列 / Query)
+### 篩選陣列 (Filter Array) (查詢)
 
-將陣列過濾為符合條件的項目。針對複雜的多條件邏輯，請使用動作形式 (而非 `filter()` 運算式) — 它更清晰且易於維護。
+將陣列篩選為符合條件的項目。對於複雜的多條件邏輯，請使用動作形式（而不是 `filter()` 運算式）— 這樣更清晰且更易於維護。
 
 ```json
 "Filter_Active_Subscriptions": {
@@ -62,16 +62,16 @@
 }
 ```
 
-結果參考：`@body('Filter_Active_Subscriptions')` — 直接回傳過濾後的陣列。
+結果參考：`@body('Filter_Active_Subscriptions')` — 直接篩選後的陣列。
 
-> 提示：在同一個來源陣列上執行多個 Filter Array 動作以建立具名的桶 (例如 active, being-canceled, fully-canceled)，然後使用 `coalesce(first(body('Filter_A')), first(body('Filter_B')), ...)` 來選取優先權最高的匹配項目，而無需任何迴圈。
+> 提示：在同一個來源陣列上執行多個「篩選陣列」動作，以建立具名的分組（例如 active、being-canceled、fully-canceled），然後使用 `coalesce(first(body('Filter_A')), first(body('Filter_B')), ...)` 以在不使用任何迴圈的情況下選取優先級最高的相符項。
 
 ---
 
-### Create CSV Table (陣列 → CSV 字串)
+### 建立 CSV 表格 (Create CSV Table) (陣列 → CSV 字串)
 
-將物件陣列轉換為 CSV 格式字串 — 無需連接器呼叫，無需程式碼。
-在 `Select` 或 `Filter Array` 後使用，以匯出資料或傳遞給檔案寫入動作。
+將物件陣列轉換為 CSV 格式的字串 — 無需連接器呼叫，無需程式碼。
+在 `Select` 或 `Filter Array` 之後使用，以匯出資料或將其傳遞給檔案寫入動作。
 
 ```json
 "Create_CSV": {
@@ -84,10 +84,10 @@
 }
 ```
 
-結果參考：`@body('Create_CSV')` — 包含標題列 + 資料列的純字串。
+結果參考：`@body('Create_CSV')` — 一個包含標題列 + 資料列的純字串。
 
 ```json
-// 自訂欄位順序 / 重新命名標題：
+// 自定義資料欄順序 / 重新命名標題：
 "Create_CSV_Custom": {
   "type": "Table",
   "inputs": {
@@ -102,22 +102,22 @@
 }
 ```
 
-> 若無 `columns`，標題取自來源陣列中的物件屬性名稱。
-> 有了 `columns`，您可以明確控制標題名稱與欄位順序。
+> 如果沒有 `columns`，標題將從來源陣列中的物件屬性名稱取得。
+> 使用 `columns` 時，您可以明確控制標題名稱和資料欄順序。
 >
-> 輸出為原始字串。使用 `CreateFile` 或 `UpdateFile` 將其寫入檔案 (將 `body` 設定為 `@body('Create_CSV')`)，或使用 `SetVariable` 儲存至變數。
+> 輸出是一個原始字串。使用 `CreateFile` 或 `UpdateFile` 將其寫入檔案（將 `body` 設定為 `@body('Create_CSV')`），或使用 `SetVariable` 儲存在變數中。
 >
-> 若來源資料來自 Power BI 的 `ExecuteDatasetQuery`，欄位名稱會被方括號包住 (例如 `[Amount]`)。寫入前請將其移除：
+> 如果來源資料來自 Power BI 的 `ExecuteDatasetQuery`，資料欄名稱將被包裝在方括號中 (例如 `[Amount]`)。在寫入之前將其移除：
 > `@replace(replace(body('Create_CSV'),'[',''),']','')`
 
 ---
 
-### range() + Select 產生陣列
+### range() + Select 用於產生陣列
 
-`range(0, N)` 產生整數序列 `[0, 1, 2, …, N-1]`。透過 Select 動作將其串流傳輸，即可產生日期序列、索引網格或任何計算陣列，無需使用迴圈：
+`range(0, N)` 產生一個整數序列 `[0, 1, 2, …, N-1]`。將其透過「選取」動作引導，即可在不使用迴圈的情況下產生日期系列、索引網格或任何計算出的陣列：
 
 ```json
-// 從基準日期開始產生 14 個連續日期
+// 從基準日期開始產生連續 14 個日期
 "Generate_Date_Series": {
   "type": "Select",
   "inputs": {
@@ -129,27 +129,13 @@
 
 結果：`@body('Generate_Date_Series')` → `["2025-01-06", "2025-01-07", …, "2025-01-19"]`
 
-```json
-// 使用算術索引將 2D 陣列 (列 × 欄) 扁平化為 1D
-"Flatten_Grid": {
-  "type": "Select",
-  "inputs": {
-    "from": "@range(0, mul(length(outputs('Rows')), length(outputs('Cols'))))",
-    "select": {
-      "row": "@outputs('Rows')[div(item(), length(outputs('Cols')))]",
-      "col": "@outputs('Cols')[mod(item(), length(outputs('Cols')))]"
-    }
-  }
-}
-```
-
-> `range()` 是以 0 為起始。上述笛卡兒乘積模式使用 `div(i, cols)` 作為列索引，並使用 `mod(i, cols)` 作為欄索引 — 等同於扁平化為單次傳遞的巢狀 for-loop。適用於產生時間槽 × 日期網格、輪班 × 位置指派等。
+對於笛卡兒積 (Cartesian products)，反覆運算 `range(0, mul(rowCount, colCount))`，並使用 `div(item(), colCount)` 和 `mod(item(), colCount)` 推導索引。
 
 ---
 
-### 動態字典 (透過 json(concat(join())))
+### 透過 json(concat(join())) 建立動態字典
 
-當您需要在執行階段進行 O(1) 鍵值查詢，且 Power Automate 沒有原生字典型別時，請使用 Select + join + json 從陣列建立一個：
+當您在執行階段需要 O(1) 的 索引鍵→值 查閱，而 Power Automate 沒有原生的字典類型時，可以使用 Select + join + json 從陣列建構一個：
 
 ```json
 "Build_Key_Value_Pairs": {
@@ -165,34 +151,17 @@
 }
 ```
 
-查詢：`@outputs('Assemble_Dictionary')?['myKey']`
+查閱：`@outputs('Assemble_Dictionary')?['myKey']`
 
-```json
-// 實際範例：業務規則的日期 → 費率代碼查詢
-"Build_Holiday_Rates": {
-  "type": "Select",
-  "inputs": {
-    "from": "@body('Get_Holidays')?['value']",
-    "select": "@concat('\"', formatDateTime(item()?['Date'], 'yyyy-MM-dd'), '\":\"', item()?['RateCode'], '\"')"
-  }
-},
-"Holiday_Dict": {
-  "type": "Compose",
-  "inputs": "@json(concat('{', join(body('Build_Holiday_Rates'), ','), '}'))"
-}
-```
-
-然後在迴圈中：`@coalesce(outputs('Holiday_Dict')?[item()?['Date']], 'Standard')`
-
-> `json(concat('{', join(...), '}'))` 模式適用於字串值。對於數值或布林值，請省略數值部分周圍的內側跳脫引號。
-> 鍵必須唯一 — 重複鍵會靜默覆寫較早的內容。
-> 這取代了深度巢狀的 `if(equals(key,'A'),'X', if(equals(key,'B'),'Y', ...))` 鏈結。
+> `json(concat('{', join(...), '}'))` 模式適用於字串值。對於數字或布林值，請省略值部分的內部逸出引號。
+> 索引鍵必須是唯一的 — 重複的索引鍵會默默地覆寫先前的索引鍵。
+> 此方法可取代深層巢狀的 `if(equals(key,'A'),'X', if(equals(key,'B'),'Y', ...))` 鏈。
 
 ---
 
 ### union() 用於偵測變更欄位
 
-當您需要找出 *多個欄位中任一欄位* 發生變更的記錄時，請針對每個欄位執行一個 `Filter Array`，然後對結果執行 `union()`。這可避免複雜的多條件過濾，並產生乾淨的去重複集：
+當您需要尋找多個欄位中 *任一* 個已變更的記錄時，請針對每個欄位執行一次「篩選陣列」，並對結果執行 `union()`。這可避免複雜的多條件篩選，並產生乾淨的去重複集合：
 
 ```json
 "Filter_Name_Changed": {
@@ -211,16 +180,16 @@
 }
 ```
 
-參考：`@outputs('All_Changed')` — 發生變更的列之去重複陣列。
+參考：`@outputs('All_Changed')` — 發生任何變更的資料列去重複陣列。
 
-> `union()` 透過物件識別進行去重複，因此在兩個欄位中皆有變更的列僅會出現一次。根據需要將更多 `Filter_*_Changed` 輸入新增至 `union()`：
+> `union()` 會根據物件身分進行去重複，因此兩個欄位都發生變更的資料列只會出現一次。根據需要向 `union()` 新增更多 `Filter_*_Changed` 輸入：
 > `@union(body('F1'), body('F2'), body('F3'))`
 
 ---
 
-### 檔案內容變更閘道 (File-Content Change Gate)
+### 檔案內容變更閘道
 
-在對檔案或 Blob 執行昂貴的處理之前，請先將其當前內容與儲存的基準 (baseline) 進行比較。若無變更則完全跳過 — 使同步流程具有冪等性 (idempotent)，並可安全地重新執行或積極地排程。
+在對檔案或 Blob 執行昂貴的處理之前，將其目前的內容與儲存的基準線進行比較。如果沒有任何變更，則完全跳過 — 使同步流程具有等冪性 (idempotent)，且可以安全地重新執行或積極排程。
 
 ```json
 "Get_File_From_Source": { ... },
@@ -236,131 +205,40 @@
     }
   },
   "actions": {
-    "Update_Baseline": { "...": "用新內容覆寫儲存的副本" },
-    "Process_File":    { "...": "所有昂貴的作業都在這裡" }
+    "Update_Baseline": { "...": "以新內容覆寫儲存的複本" },
+    "Process_File":    { "...": "所有昂貴的工作都在這裡執行" }
   },
   "else": { "actions": {} }
 }
 ```
 
-> 將基準儲存為 SharePoint 或 Blob 儲存中的檔案 — 在比較前將即時內容進行 `base64()` 編碼，以便統一處理二進位與文字檔案。
-> 在處理 **之前** 寫入新的基準，如此一來在部分失敗後重新執行，就不會再次重新處理同一個檔案。
+> 將基準線作為檔案儲存在 SharePoint 或 Blob 儲存體中 — 在比較前對即時內容進行 `base64()` 編碼，以便統一套用處理二進位和文字檔案。
+> 在處理 **之前** 寫入新的基準線，以便在部分失敗後重新執行時不會再次處理同一個檔案。
 
 ---
 
-### Set-Join 用於同步 (無需巢狀迴圈的更新偵測)
+### 用於同步的集合聯結 (Set-Join) (不使用巢狀迴圈偵測更新)
 
-將來源集合同步至目的地 (例如 API 回應 → SharePoint 清單，CSV → 資料庫) 時，避免使用巢狀的 `Apply to each` 迴圈來尋找變更的記錄。
-反之，**投影扁平的鍵值陣列** 並使用 `contains()` 來執行集合操作 — 零巢狀迴圈，且最終迴圈僅會處理變更的項目。
+將來源集合同步到目的地（例如 API 回應 → SharePoint 清單、CSV → 資料庫）時，請避免使用巢狀的 `Apply to each` 迴圈來尋找變更的記錄。
+相反地，請 **投影扁平的索引鍵陣列** 並使用 `contains()` 執行集合運算 — 零巢狀迴圈，且最終迴圈僅處理變更的項目。
 
-**完整新增/更新/刪除同步模式：**
+**插入/更新/刪除同步配方：**
 
-```json
-// 步驟 1 — 從目的地 (例如 SharePoint) 投影扁平鍵值陣列
-"Select_Dest_Keys": {
-  "type": "Select",
-  "inputs": {
-    "from": "@outputs('Get_Dest_Items')?['body/value']",
-    "select": "@item()?['Title']"
-  }
-}
-// → ["KEY1", "KEY2", "KEY3", ...]
+1. 從目的地資料列 `Select_Dest_Keys`。
+2. `Filter_To_Insert`：索引鍵不在目的地索引鍵中的來源資料列。
+3. `Filter_Already_Exists`：索引鍵在目的地索引鍵中的來源資料列。
+4. 針對每個比較的欄位，執行 `Filter_<Field>_Changed`；使用 `union()` 將它們合併為 `Union_Changed`。
+5. 從 `Union_Changed` `Select_Changed_Keys`，然後在更新前將目的地資料列篩選為僅包含那些索引鍵。
+6. `Select_Source_Keys`，然後 `Filter_To_Delete` 索引鍵不在來源索引鍵中的目的地資料列。
 
-// 步驟 2 — 插入：鍵不在目的地中的來源列
-"Filter_To_Insert": {
-  "type": "Query",
-  "inputs": {
-    "from": "@body('Source_Array')",
-    "where": "@not(contains(body('Select_Dest_Keys'), item()?['key']))"
-  }
-}
-// → Apply to each Filter_To_Insert → CreateItem
-
-// 步驟 3 — 內部聯結：存在於目的地中的來源列
-"Filter_Already_Exists": {
-  "type": "Query",
-  "inputs": {
-    "from": "@body('Source_Array')",
-    "where": "@contains(body('Select_Dest_Keys'), item()?['key'])"
-  }
-}
-
-// 步驟 4 — 更新：每個追蹤欄位一個過濾器，然後執行 union()
-"Filter_Field1_Changed": {
-  "type": "Query",
-  "inputs": {
-    "from": "@body('Filter_Already_Exists')",
-    "where": "@not(equals(item()?['field1'], item()?['dest_field1']))"
-  }
-}
-"Filter_Field2_Changed": {
-  "type": "Query",
-  "inputs": {
-    "from": "@body('Filter_Already_Exists')",
-    "where": "@not(equals(item()?['field2'], item()?['dest_field2']))"
-  }
-}
-"Union_Changed": {
-  "type": "Compose",
-  "inputs": "@union(body('Filter_Field1_Changed'), body('Filter_Field2_Changed'))"
-}
-// → 任何追蹤欄位不同的列
-
-// 步驟 5 — 解析變更列的目的地 ID (無需巢狀迴圈)
-"Select_Changed_Keys": {
-  "type": "Select",
-  "inputs": { "from": "@outputs('Union_Changed')", "select": "@item()?['key']" }
-}
-"Filter_Dest_Items_To_Update": {
-  "type": "Query",
-  "inputs": {
-    "from": "@outputs('Get_Dest_Items')?['body/value']",
-    "where": "@contains(body('Select_Changed_Keys'), item()?['Title'])"
-  }
-}
-// 步驟 6 — 單一迴圈僅處理變更的項目
-"Apply_to_each_Update": {
-  "type": "Foreach",
-  "foreach": "@body('Filter_Dest_Items_To_Update')",
-  "actions": {
-    "Get_Source_Row": {
-      "type": "Query",
-      "inputs": {
-        "from": "@outputs('Union_Changed')",
-        "where": "@equals(item()?['key'], items('Apply_to_each_Update')?['Title'])"
-      }
-    },
-    "Update_Item": {
-      "...": "...",
-      "id": "@items('Apply_to_each_Update')?['ID']",
-      "item/field1": "@first(body('Get_Source_Row'))?['field1']"
-    }
-  }
-}
-
-// 步驟 7 — 刪除：不在來源中的目的地鍵
-"Select_Source_Keys": {
-  "type": "Select",
-  "inputs": { "from": "@body('Source_Array')", "select": "@item()?['key']" }
-}
-"Filter_To_Delete": {
-  "type": "Query",
-  "inputs": {
-    "from": "@outputs('Get_Dest_Items')?['body/value']",
-    "where": "@not(contains(body('Select_Source_Keys'), item()?['Title']))"
-  }
-}
-// → Apply to each Filter_To_Delete → DeleteItem
-```
-
-> **為什麼此方法優於巢狀迴圈**：天真的方法（針對每個目的地項目，掃描來源）是 O(n × m)，在大清單上會很快達到 Power Automate 10 萬個動作的執行限制。此模式為 O(n + m)：一次傳遞以建構鍵陣列，每個過濾器一次傳遞。步驟 6 中的更新迴圈僅迭代 *已變更* 的記錄 — 這通常只是完整集合的一小部分。以 **平行 Scope** 執行步驟 2/4/7 可進一步提升速度。
+這將 O(n x m) 的巢狀迴圈改為 O(n + m) 的集合運算，並有助於避免 Power Automate 的 10 萬次動作執行限制。
 
 ---
 
-### First-or-Null 單列查詢
+### 第一個或 Null 單列查閱 (First-or-Null Single-Row Lookup)
 
-對結果陣列使用 `first()` 以無需迴圈擷取一筆記錄。
-然後檢查輸出的 Null 值以保護後續動作。
+在結果陣列上使用 `first()` 以在不使用迴圈的情況下擷取一筆記錄。
+然後對輸出進行 Null 檢查以保護下游動作。
 
 ```json
 "Get_First_Match": {
@@ -370,7 +248,7 @@
 }
 ```
 
-在條件中，使用 **`@null` 文字** (而非 `empty()`) 來測試是否沒有匹配：
+在「條件」中，使用 **`@null` 常值**（而不是 `empty()`）測試是否不相符：
 
 ```json
 "Condition": {
@@ -386,15 +264,14 @@
 }
 ```
 
-存取匹配列上的欄位：`@outputs('Get_First_Match')?['FieldName']`
+存取相符列上的欄位：`@outputs('Get_First_Match')?['FieldName']`
 
-> 當您僅需要一筆匹配記錄時，請使用此方式而非 `Apply to each`。
-> 空陣列上的 `first()` 會回傳 `null`；`empty()` 用於陣列/字串，
-> 而非純量 (scalars) — 在 `first()` 結果上使用它會導致執行階段錯誤。
+> 當您只需要一筆相符的記錄時，請使用此動作而不是 `Apply to each`。
+> 對空陣列執行 `first()` 會傳回 `null`；`empty()` 用於陣列/字串，而非純量 (scalar) — 對 `first()` 結果使用它會導致執行階段錯誤。
 
 ---
 
-## HTTP 與解析 (HTTP & Parsing)
+## HTTP 與解析
 
 ### HTTP 動作 (外部 API)
 
@@ -425,7 +302,7 @@
 
 #### 變體：ActiveDirectoryOAuth (服務對服務)
 
-對於呼叫需要 Azure AD 用戶端憑證的 API (例如 Microsoft Graph)，請使用行內 OAuth，而不是 Bearer 權杖變數：
+對於呼叫需要 Azure AD 用戶端認證 (client-credentials) 的 API (例如 Microsoft Graph)，請使用行內 OAuth 而不是 Bearer 權杖變數：
 
 ```json
 "Call_Graph_API": {
@@ -450,29 +327,28 @@
 }
 ```
 
-> **何時使用：** 從沒有進階連接器的流程呼叫 Microsoft Graph、Azure Resource Manager 或任何 Azure AD 保護的 API。
+> **何時使用**：在不使用進階連接器的情況下，從流程呼叫 Microsoft Graph、Azure Resource Manager 或任何受 Azure AD 保護的 API。
 >
-> `authentication` 區塊會透明地處理整個 OAuth 用戶端憑證流程 — 無需手動取得權杖的步驟。
+> `authentication` 區塊會透明地處理整個 OAuth 用戶端認證流程 — 不需要手動獲取權杖的步驟。
 >
-> `ConsistencyLevel: eventual` 是 Graph `$search` 查詢所必需的。
-> 若沒有它，`$search` 會回傳 400。
+> Graph `$search` 查詢需要 `ConsistencyLevel: eventual`。若沒有它，`$search` 會傳回 400。
 >
-> 對於 PATCH/PUT 寫入，相同的 `authentication` 區塊也能運作 — 只需變更 `method` 並新增 `body`。
+> 對於 PATCH/PUT 寫入，同一個 `authentication` 區塊也適用 — 只需變更 `method` 並新增一個 `body`。
 >
-> ⚠️ **絕不要硬編碼 `secret`。** 使用 `@parameters('graphClientSecret')` 並在流程的 `parameters` 區塊中宣告它 (型別 `securestring`)。這可防止秘密出現在執行歷程記錄中，或透過 `get_live_flow` 被讀取。宣告參數如下：
+> ⚠️ **切勿在行內硬編碼 `secret`**。請使用 `@parameters('graphClientSecret')` 並在流程的 `parameters` 區塊中宣告它（類型為 `securestring`）。這可防止秘密出現在執行歷程記錄中或透過 `get_live_flow` 被讀取。宣告參數如下：
 > ```json
 > "parameters": {
 >   "graphClientSecret": { "type": "securestring", "defaultValue": "" }
 > }
 > ```
-> 然後透過流程的連接或環境變數傳遞實際值 — 永遠不要將其提交至原始程式碼控制。
+> 然後透過流程的連線或環境變數傳遞實際值 — 絕不要將其提交到原始碼控制。
 
 ---
 
-### HTTP 回應 (回傳給呼叫者)
+### HTTP 回應 (Response) (傳回給呼叫者)
 
-用於 HTTP 觸發的流程，將結構化回覆送回呼叫者。
-必須在流程逾時前執行 (同步 HTTP 預設為 2 分鐘)。
+用於 HTTP 觸發的流程，以將結構化回覆傳回給呼叫者。
+必須在流程逾時（同步 HTTP 預設為 2 分鐘）之前執行。
 
 ```json
 "Response": {
@@ -491,18 +367,18 @@
 }
 ```
 
-> **PowerApps / 低程式碼呼叫者模式**：一律回傳 `statusCode: 200` 並在本文中包含 `status` 欄位 (`"success"` / `"error"`)。PowerApps HTTP 動作無法妥善處理非 2xx 的回應 — 呼叫者應檢查 `body.status` 而非 HTTP 狀態代碼。
+> **PowerApps / 低程式碼呼叫者模式**：始終傳回 `statusCode: 200` 並在本文中包含 `status` 欄位 (`"success"` / `"error"`)。PowerApps HTTP 動作無法優雅地處理非 2xx 回應 — 呼叫者應檢查 `body.status` 而不是 HTTP 狀態碼。
 >
-> 使用多個 Response 動作 — 每個分支一個 — 讓每個路徑都能回傳適當的訊息。每次執行僅會執行其中一個。
+> 使用多個「回應」動作 — 每個分支一個 — 讓每個路徑傳回適當的訊息。每次執行僅執行一個動作。
 
 ---
 
-### 子流程呼叫 (Parent→Child，透過 HTTP POST)
+### 子流程呼叫 (Parent→Child via HTTP POST)
 
-Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 來進行父→子編排。父流程傳送 HTTP POST 並阻塞，直到子流程回傳 `Response` 動作。子流程使用 `manual` (Request) 觸發程序。
+Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 進行父子協調。父流程傳送 HTTP POST 並封鎖，直到子流程傳回「回應」動作。子流程使用 `manual` (Request) 觸發器。
 
 ```json
-// 父流程 — 呼叫子流程並等待回應
+// 父流程 — 呼叫子流程並等待其回應
 "Call_Child_Flow": {
   "type": "Http",
   "inputs": {
@@ -525,8 +401,8 @@ Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 來進行父
 ```
 
 ```json
-// 子流程 — 手動觸發程序接收 JSON 本文
-// (觸發程序定義)
+// 子流程 — 手動觸發器接收 JSON 本文
+// (觸發器定義)
 "manual": {
   "type": "Request",
   "kind": "Http",
@@ -542,7 +418,7 @@ Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 來進行父
   }
 }
 
-// 子流程 — 回傳結果給父流程
+// 子流程 — 傳回結果給父流程
 "Response_Success": {
   "type": "Response",
   "inputs": {
@@ -553,15 +429,15 @@ Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 來進行父
 }
 ```
 
-> **`retryPolicy: none`** — 在父流程的 HTTP 呼叫上非常關鍵。若無此設定，子流程逾時會觸發重試，導致產生重複的子流程執行記錄。
+> **`retryPolicy: none`** — 在父流程的 HTTP 呼叫中至關重要。若沒有它，子流程逾時會觸發重試，從而產生重複的子流程執行。
 >
-> **`DisableAsyncPattern`** — 防止父流程將 202 Accepted 視為完成。父流程會阻塞直到子流程傳送其 `Response` 為止。
+> **`DisableAsyncPattern`** — 可防止父流程將 202 Accepted 視為完成。父流程將封鎖，直到子流程傳送其「回應」。
 >
-> **`transferMode: Chunked`** — 當傳遞大型陣列 (>100 KB) 給子流程時啟用；可避免請求大小限制。
+> **`transferMode: Chunked`** — 將大型陣列 (>100 KB) 傳遞給子流程時啟用；可避免要求大小限制。
 >
-> **`limit.timeout: PT2H`** — 針對長時間執行的子流程提高預設的 2 分鐘 HTTP 逾時。上限為 PT24H。
+> **`limit.timeout: PT2H`** — 對於執行時間較長的子流程，請調高預設的 2 分鐘 HTTP 逾時。上限為 PT24H。
 >
-> 子流程的觸發 URL 包含驗證呼叫的 SAS 權杖 (`sig=...`)。請從子流程觸發程序屬性面板複製它。若觸發程序被刪除並重新建立，URL 會變更。
+> 子流程的觸發 URL 包含一個對呼叫進行驗證的 SAS 權杖 (`sig=...`)。請從子流程的觸發器屬性面板中複製它。如果刪除並重新建立觸發器，該 URL 將會變更。
 
 ---
 
@@ -588,24 +464,18 @@ Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 來進行父
 }
 ```
 
-存取解析後的數值：`@body('Parse_Response')?['name']`
+存取解析後的值：`@body('Parse_Response')?['name']`
 
 ---
 
-### 手動 CSV → JSON (無進階動作)
+### 手動 CSV → JSON (不使用進階動作)
 
 僅使用內建運算式將原始 CSV 字串解析為物件陣列。
-避免使用進階的「Parse CSV」連接器動作。
+可避免使用進階的「解析 CSV」連接器動作。
 
 ```json
-"Delimiter": {
-  "type": "Compose",
-  "inputs": ","
-},
-"Strip_Quotes": {
-  "type": "Compose",
-  "inputs": "@replace(body('Get_File_Content'), '\"', '')"
-},
+"Delimiter": { "type": "Compose", "inputs": "," },
+"Strip_Quotes": { "type": "Compose", "inputs": "@replace(body('Get_File_Content'), '\"', '')" },
 "Detect_Line_Ending": {
   "type": "Compose",
   "inputs": "@if(equals(indexOf(outputs('Strip_Quotes'), decodeUriComponent('%0D%0A')), -1), if(equals(indexOf(outputs('Strip_Quotes'), decodeUriComponent('%0A')), -1), decodeUriComponent('%0D'), decodeUriComponent('%0A')), decodeUriComponent('%0D%0A'))"
@@ -614,10 +484,7 @@ Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 來進行父
   "type": "Compose",
   "inputs": "@split(first(split(outputs('Strip_Quotes'), outputs('Detect_Line_Ending'))), outputs('Delimiter'))"
 },
-"Data_Rows": {
-  "type": "Compose",
-  "inputs": "@skip(split(outputs('Strip_Quotes'), outputs('Detect_Line_Ending')), 1)"
-},
+"Data_Rows": { "type": "Compose", "inputs": "@skip(split(outputs('Strip_Quotes'), outputs('Detect_Line_Ending')), 1)" },
 "Select_CSV_Body": {
   "type": "Select",
   "inputs": {
@@ -638,20 +505,16 @@ Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 來進行父
 }
 ```
 
-結果：`@body('Filter_Empty_Rows')` — 以標題名稱為鍵的物件陣列。
+結果：`@body('Filter_Empty_Rows')` — 以標題名稱作為索引鍵的物件陣列。
 
-> **`Detect_Line_Ending`** 使用 `indexOf()` 搭配 `decodeUriComponent('%0D%0A' / '%0A' / '%0D')` 自動處理 CRLF (Windows)、LF (Unix) 與 CR (舊版 Mac)。
->
-> **`Select` 中的動態鍵名稱**：在 `Select` 形狀中作為 JSON 鍵的 `@{outputs('Headers')[0]}` 會在執行階段從標題列設定輸出屬性名稱 — 只要運算式位於 `@{...}` 插值語法中，這就能正常運作。
->
-> **包含嵌入逗號的欄位**：若欄位值可能包含分隔符號，請在 Switch 中使用 `length(split(row, ','))` 來偵測欄位計數，並手動重新組合分割後的片段：`@concat(split(item(),',')[1],',',split(item(),',')[2])`
+備註：`Detect_Line_Ending` 可處理 CRLF/LF/CR。`Select` 中的動態索引鍵需要 `@{...}` 插值。此簡單模式無法安全地解析包含內嵌分隔符號的帶引號欄位；對於這些情況，請使用專用的解析器或自定義動作。
 
 ---
 
-### ConvertTimeZone (內建，無需連接器)
+### ConvertTimeZone (內建，不使用連接器)
 
-在時區之間轉換時間戳記，無需 API 呼叫或連接器授權成本。
-格式字串 `"g"` 產生簡短的地區日期+時間 (`M/d/yyyy h:mm tt`)。
+在時區之間轉換時間戳記，不產生 API 呼叫或連接器授權成本。
+格式字串 `"g"` 產生簡短的當地日期+時間 (`M/d/yyyy h:mm tt`)。
 
 ```json
 "Convert_to_Local_Time": {
@@ -667,11 +530,11 @@ Power Automate 支援透過直接呼叫子流程的 HTTP 觸發 URL 來進行父
 }
 ```
 
-結果參考：`@body('Convert_to_Local_Time')` — **不是** `outputs()` (與大多數動作不同)。
+結果參考：`@body('Convert_to_Local_Time')` — 與大多數動作不同，**不是** `outputs()`。
 
-常見 `formatString` 值：`"g"` (簡短), `"f"` (完整), `"yyyy-MM-dd"`, `"HH:mm"`
+常見的 `formatString` 值：`"g"` (簡短), `"f"` (完整), `"yyyy-MM-dd"`, `"HH:mm"`
 
-常見時區字串：`"UTC"`, `"AUS Eastern Standard Time"`, `"Taipei Standard Time"`,
+常見的時區字串：`"UTC"`, `"AUS Eastern Standard Time"`, `"Taipei Standard Time"`,
 `"Singapore Standard Time"`, `"GMT Standard Time"`
 
-> 這是 `type: Expression, kind: ConvertTimeZone` — 一個內建的 Logic Apps 動作，而非連接器。無需連接參考。請透過 `body()` (非 `outputs()`) 參考輸出，否則運算式會回傳 null。
+> 這是 `type: Expression, kind: ConvertTimeZone` — 一個內建的 Logic Apps 動作，而不是連接器。不需要連線參考。透過 `body()` (而不是 `outputs()`) 參考輸出，否則運算式會傳回 null。

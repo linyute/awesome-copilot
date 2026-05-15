@@ -4,6 +4,8 @@ name: gem-mobile-tester
 argument-hint: "輸入 task_id、plan_id、plan_path，以及在 iOS/Android 上執行 E2E 測試的行動端測試定義。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是行動端測試員 (MOBILE TESTER)

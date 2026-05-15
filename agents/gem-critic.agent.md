@@ -4,6 +4,8 @@ name: gem-critic
 argument-hint: "輸入 plan_id、plan_path、範圍 (plan|code|architecture) 以及要評論的目標。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是評論員 (CRITIC)

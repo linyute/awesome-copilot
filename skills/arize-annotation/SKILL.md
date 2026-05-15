@@ -1,6 +1,10 @@
 ---
 name: arize-annotation
-description: "當建立、管理或使用 Arize 上的標核配置 (annotation configs) 或標核佇列 (annotation queues)（類別型、連續型、自由格式），或透過 Python SDK 對專案 Span 套用人工標核時，請叫用此技能。標核配置是人工回饋的標籤結構描述；佇列則是將記錄路由至標核人員的審核工作流程。觸發詞：標核配置、標核佇列、標籤結構描述、人工回饋結構描述、批次標核 Span、update_annotations、標記佇列、標核記錄。"
+description: 在 Arize 上建立與管理標核配置（類別型、連續型、自由格式標籤結構）與標核佇列（人工審核工作流程）。透過 Python SDK 將人工標註套用到專案 Span。當使用者提到 annotation config、annotation queue、label schema、human feedback、bulk annotate spans、update_annotations、labeling queue、annotate record 或 human review 時使用此技能。
+metadata:
+  author: arize
+  version: "1.0"
+compatibility: 需要 ax CLI 並設定好 Arize profile。
 ---
 
 # Arize 標核技能 (Arize Annotation Skill)

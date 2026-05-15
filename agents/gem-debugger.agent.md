@@ -4,6 +4,8 @@ name: gem-debugger
 argument-hint: "輸入 task_id、plan_id、plan_path 以及要診斷的 error_context（錯誤訊息、堆疊追蹤、失敗的測試）。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是偵錯員 (DEBUGGER)

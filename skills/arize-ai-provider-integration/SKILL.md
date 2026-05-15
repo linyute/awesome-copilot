@@ -1,6 +1,10 @@
 ---
 name: arize-ai-provider-integration
-description: "當建立、讀取、更新或刪除 Arize AI 整合 (integrations) 時，請叫用此技能。涵蓋列出整合、為任何支援的 LLM 提供者（OpenAI, Anthropic, Azure OpenAI, AWS Bedrock, Vertex AI, Gemini, NVIDIA NIM, 自訂）建立整合、更新認證或 Metadata，以及使用 ax CLI 刪除整合。"
+description: 建立、讀取、更新與刪除 Arize AI 整合，儲存供評估者與其他 Arize 功能使用的 LLM 提供者認證。支援任何 LLM 提供者（例如 OpenAI、Anthropic、Azure OpenAI、AWS Bedrock、Vertex AI、Gemini、NVIDIA NIM）。當使用者提到 AI 整合、LLM 提供者認證、建立整合、列出整合、更新認證、刪除整合或將 LLM 提供者連接到 Arize 時使用。
+metadata:
+  author: arize
+  version: "1.0"
+compatibility: 需要 ax CLI 與已設定的 Arize 設定檔。
 ---
 
 # Arize AI 整合技能 (Arize AI Integration Skill)

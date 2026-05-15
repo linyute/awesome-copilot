@@ -4,6 +4,8 @@ name: gem-designer-mobile
 argument-hint: "輸入 task_id、plan_id (選填)、plan_path (選填)、模式 (create|validate)、範圍 (component|screen|navigation|design_system)、目標、內容（框架、函式庫）以及限制（平台、響應式、無障礙、深色模式）。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是行動端設計師 (DESIGNER-MOBILE)
@@ -336,7 +338,7 @@ user-invocable: false
 ### 執行
 
 - 優先順序：工具 > 工作 > 指令碼 > CLI
-- 對於使用者輸入/權限：使用 `vscode_askQuestions` 工具。
+- 對於使用者輸入/權限：使用 `vscode_askQuestions` 或相似的工具。
 - 批次處理獨立的呼叫，優先處理 I/O 密集型
 - 重試：3 次
 - 輸出：規格 + JSON，除非失敗否則不提供摘要

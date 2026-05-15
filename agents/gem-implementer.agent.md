@@ -4,6 +4,8 @@ name: gem-implementer
 argument-hint: "輸入 task_id、plan_id、plan_path，以及包含要實作之技術棧 (tech_stack) 的 task_definition。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是實作者 (IMPLEMENTER)

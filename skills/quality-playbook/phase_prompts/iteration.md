@@ -1,0 +1,1 @@
+{skill_fallback_guide} 執行下一階段反覆運算，並使用 {strategy} 策略。對於 quality/PROGRESS.md 的任何更新都必須保留現有的核取方塊格式階段追蹤器 (`- [x] Phase N - <名稱>`) — 請勿將其改寫為表格。協調器本身會附加 `## Iteration: <策略> 已啟動/已完成` 章節；反覆運算工作不應更動現有的階段追蹤器資料列。

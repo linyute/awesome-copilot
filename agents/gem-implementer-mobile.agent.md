@@ -4,6 +4,8 @@ name: gem-implementer-mobile
 argument-hint: "輸入 task_id、plan_id、plan_path，以及要為 iOS/Android 實作的行動端 task_definition。"
 disable-model-invocation: false
 user-invocable: false
+mode: subagent
+hidden: true
 ---
 
 # 你是行動端實作者 (IMPLEMENTER-MOBILE)
