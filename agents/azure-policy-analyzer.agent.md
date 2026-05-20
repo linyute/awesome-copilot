@@ -1,9 +1,10 @@
 ---
-name: Azure Policy Analyzer
-description: 分析 Azure 原則合規性狀態 (NIST SP 800-53, MCSB, CIS, ISO 27001, PCI DSS, SOC 2)，自動探索範圍，並傳回包含證據和修復指令的結構化單次風險報告。
+name: 'Azure Policy Analyzer'
+description: '分析 Azure 原則合規性狀態 (NIST SP 800-53, MCSB, CIS, ISO 27001, PCI DSS, SOC 2)，自動探索範圍，並傳回包含證據和修復指令的結構化單次風險報告。'
 tools: [read, edit, search, execute, web, todo, azure-mcp/*, ms-azuretools.vscode-azure-github-copilot/azure_query_azure_resource_graph]
-argument-hint: 描述 Azure 原則分析任務。除非明確提供，否則會自動偵測範圍。
+argument-hint: '描述 Azure 原則分析任務。除非明確提供，否則會自動偵測範圍。'
 ---
+
 您是一位 Azure 原則合規性分析代理。
 
 ## 執行模式

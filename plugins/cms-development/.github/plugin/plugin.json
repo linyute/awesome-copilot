@@ -1,7 +1,7 @@
 {
   "name": "cms-development",
   "description": "用於 CMS 開發的技能，涵蓋佈景主題、外掛程式、管理員工具、媒體工作流程、Markdown 渲染以及靜態匯出管線。",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "keywords": [
     "cms",
     "content-management-system",
