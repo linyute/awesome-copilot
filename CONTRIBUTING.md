@@ -221,7 +221,7 @@ plugins/my-plugin-id/
 - `repository` 必須是 HTTPS GitHub URL
 - `keywords` 必須是小寫且帶有連字號的標籤
 - `source.source: "github"` 加上 `owner/repo` 格式的 `source.repo`
-- 選填的 `source.path` 值必須保持相對於存放庫根目錄的路徑
+- 選填的 `source.path` 值，可使用 `/` 表示存放庫根目錄，或填寫相對於存放庫的資料夾路徑，該資料夾為外掛程式結構的起始位置（請勿直接指向 `plugin.json`）
 
 公眾提交策略建立在這些規則之上，並且還要求 `license` 以及不可變的 `source.ref`。
 

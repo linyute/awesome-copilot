@@ -23,6 +23,12 @@ export const EXTERNAL_PLUGIN_POLICIES = Object.freeze({
   }),
 });
 
+const EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS = Object.freeze([
+  "plugin.json",
+  ".github/plugin/plugin.json",
+  ".plugin/plugin.json",
+]);
+
 function resolvePolicy(policy) {
   if (!policy) {
     return EXTERNAL_PLUGIN_POLICIES.marketplace;
@@ -203,9 +209,17 @@ function validateHomepage(homepage, prefix, errors) {
   validateHttpsUrl(homepage, "homepage", prefix, errors);
 }
 
+function formatExpectedPluginRootMessage() {
+  return EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS.map((manifestPath) => `"${manifestPath}"`).join(", ");
+}
+
 function validateRelativePath(pathValue, prefix, errors) {
   if (!isNonEmptyString(pathValue)) {
     errors.push(`${prefix}: 提供時，"source.path" 必須是非空字串`);
+    return;
+  }
+
+  if (pathValue === "/") {
     return;
   }
 
@@ -218,6 +232,16 @@ function validateRelativePath(pathValue, prefix, errors) {
 
   if (pathValue.includes("\\")) {
     errors.push(`${prefix}: "source.path" 必須使用正斜線 (forward slashes)`);
+  }
+
+  if (normalized === ".") {
+    errors.push(`${prefix}: "source.path" 必須為 "/"（代表存放庫根目錄）或是相對於存放庫根的外掛根目錄`);
+  }
+
+  if (path.posix.basename(normalized) === "plugin.json") {
+    errors.push(
+      `${prefix}: "source.path" 必須指向外掛根目錄，而不是 manifest 檔案；相對於 "source.path"，預期為 ${formatExpectedPluginRootMessage()} 中的其中一項`
+    );
   }
 }
 
