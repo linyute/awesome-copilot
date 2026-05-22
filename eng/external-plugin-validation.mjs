@@ -11,7 +11,7 @@ export const EXTERNAL_PLUGIN_POLICIES = Object.freeze({
     requireRepository: true,
     requireKeywords: true,
     requireLicense: false,
-    requireImmutableRef: false,
+    requireImmutableLocator: false,
   }),
   publicSubmission: Object.freeze({
     allowedSourceTypes: ["github"],
@@ -19,7 +19,7 @@ export const EXTERNAL_PLUGIN_POLICIES = Object.freeze({
     requireRepository: true,
     requireKeywords: true,
     requireLicense: true,
-    requireImmutableRef: true,
+    requireImmutableLocator: true,
   }),
 });
 
@@ -37,7 +37,7 @@ function resolvePolicy(policy) {
   if (typeof policy === "string") {
     const resolved = EXTERNAL_PLUGIN_POLICIES[policy];
     if (!resolved) {
-      throw new Error(`未知的外部外掛程式驗證策略 "${policy}"`);
+      throw new Error(`未知的外部外掛驗證政策 "${policy}"`);
     }
 
     return resolved;
@@ -60,7 +60,7 @@ function validatePluginName(name, prefix, errors) {
   }
 
   if (name.length > 50) {
-    errors.push(`${prefix}: "name" 必須在 50 個字元以內`);
+    errors.push(`${prefix}: "name" 長度不能超過 50 個字元`);
   }
 
   if (!/^[a-z0-9-]+$/.test(name)) {
@@ -75,7 +75,7 @@ function validateDescription(description, prefix, errors) {
   }
 
   if (description.length > 500) {
-    errors.push(`${prefix}: "description" 必須在 500 個字元以內`);
+    errors.push(`${prefix}: "description" 長度不能超過 500 個字元`);
   }
 }
 
@@ -86,7 +86,7 @@ function validateVersion(version, prefix, errors) {
   }
 
   if (version.length > 100) {
-    errors.push(`${prefix}: "version" 必須在 100 個字元以內`);
+    errors.push(`${prefix}: "version" 長度不能超過 100 個字元`);
   }
 }
 
@@ -119,7 +119,7 @@ function validateKeywords(keywords, prefix, errors, warnings, required) {
     }
 
     if (keyword.length > 30) {
-      errors.push(`${prefix}: "keywords[${i}]" 必須在 30 個字元以內`);
+      errors.push(`${prefix}: "keywords[${i}]" 長度不能超過 30 個字元`);
     }
   }
 
@@ -127,7 +127,7 @@ function validateKeywords(keywords, prefix, errors, warnings, required) {
     if (required) {
       errors.push(`${prefix}: "keywords" 必須包含至少一個項目`);
     } else {
-      warnings.push(`${prefix}: "keywords" 為空；建議至少提供一個關鍵字以利搜尋`);
+      warnings.push(`${prefix}: "keywords" 為空；建議至少提供一個關鍵字以便搜尋`);
     }
   }
 }
@@ -215,7 +215,7 @@ function formatExpectedPluginRootMessage() {
 
 function validateRelativePath(pathValue, prefix, errors) {
   if (!isNonEmptyString(pathValue)) {
-    errors.push(`${prefix}: 提供時，"source.path" 必須是非空字串`);
+    errors.push(`${prefix}: 提供時 "source.path" 必須是非空字串`);
     return;
   }
 
@@ -227,45 +227,60 @@ function validateRelativePath(pathValue, prefix, errors) {
   const segments = pathValue.split("/");
 
   if (pathValue.startsWith("/") || pathValue.startsWith("../") || normalized !== pathValue || segments.includes("..")) {
-    errors.push(`${prefix}: "source.path" 必須是存放庫內安全的相對路徑`);
+    errors.push(`${prefix}: "source.path" 必須是儲存庫內的安全相對路徑`);
   }
 
   if (pathValue.includes("\\")) {
-    errors.push(`${prefix}: "source.path" 必須使用正斜線 (forward slashes)`);
+    errors.push(`${prefix}: "source.path" 必須使用正斜線 (/)`);
   }
 
   if (normalized === ".") {
-    errors.push(`${prefix}: "source.path" 必須為 "/"（代表存放庫根目錄）或是相對於存放庫根的外掛根目錄`);
+    errors.push(`${prefix}: "source.path" 對於儲存庫根目錄必須為 "/"，或是相對於儲存庫根目錄的外掛根目錄`);
   }
 
   if (path.posix.basename(normalized) === "plugin.json") {
     errors.push(
-      `${prefix}: "source.path" 必須指向外掛根目錄，而不是 manifest 檔案；相對於 "source.path"，預期為 ${formatExpectedPluginRootMessage()} 中的其中一項`
+      `${prefix}: "source.path" 必須指向外掛根目錄，而不是資訊清單檔案；相對於 "source.path"，預期為 ${formatExpectedPluginRootMessage()} 之一`
     );
   }
 }
 
 function validateImmutableRef(ref, prefix, errors) {
   if (!isNonEmptyString(ref)) {
-    errors.push(`${prefix}: 提供時，"source.ref" 必須是非空字串`);
+    errors.push(`${prefix}: 提供時 "source.ref" 必須是非空字串`);
     return;
   }
 
   if (ref.startsWith("refs/heads/")) {
-    errors.push(`${prefix}: "source.ref" 必須是標記 (tag) 或提交 SHA，而不是分支參考`);
+    errors.push(`${prefix}: "source.ref" 必須是標籤 (tag) 或提交 SHA，不能是分支引用`);
     return;
   }
 
   if (["main", "master", "develop", "development", "dev", "trunk"].includes(ref)) {
-    errors.push(`${prefix}: "source.ref" 必須是標記 (tag) 或提交 SHA，而不是分支名稱`);
+    errors.push(`${prefix}: "source.ref" 必須是標籤或提交 SHA，不能是分支名稱`);
   }
 
   if (ref.startsWith("refs/") && !ref.startsWith("refs/tags/")) {
-    errors.push(`${prefix}: "source.ref" 必須是標記參考或提交 SHA`);
+    errors.push(`${prefix}: "source.ref" 必須是標籤引用或提交 SHA`);
+  }
+
+  if (/^[0-9a-f]+$/i.test(ref) && ref.length !== 40) {
+    errors.push(`${prefix}: 引用提交時，"source.ref" 必須是完整的 40 字元提交 SHA`);
   }
 }
 
-function validateGitHubSource(source, prefix, errors, requireImmutableRef) {
+function validateCommitSha(sha, prefix, errors) {
+  if (!isNonEmptyString(sha)) {
+    errors.push(`${prefix}: 提供時 "source.sha" 必須是非空字串`);
+    return;
+  }
+
+  if (!/^[0-9a-f]{40}$/i.test(sha)) {
+    errors.push(`${prefix}: "source.sha" 必須是完整的 40 字元提交 SHA`);
+  }
+}
+
+function validateGitHubSource(source, prefix, errors, requireImmutableLocator) {
   if (!source || typeof source !== "object" || Array.isArray(source)) {
     errors.push(`${prefix}: "source" 必須是一個物件`);
     return;
@@ -287,8 +302,14 @@ function validateGitHubSource(source, prefix, errors, requireImmutableRef) {
 
   if (source.ref !== undefined) {
     validateImmutableRef(source.ref, prefix, errors);
-  } else if (requireImmutableRef) {
-    errors.push(`${prefix}: 公開外部外掛程式提交必須提供 "source.ref"`);
+  }
+
+  if (source.sha !== undefined) {
+    validateCommitSha(source.sha, prefix, errors);
+  }
+
+  if (requireImmutableLocator && source.ref === undefined && source.sha === undefined) {
+    errors.push(`${prefix}: 公開外部外掛提交必須提供 "source.ref" 或 "source.sha" 之一`);
   }
 }
 
@@ -315,17 +336,17 @@ export function validateExternalPlugin(plugin, index, options = {}) {
   validateKeywords(plugin.keywords ?? plugin.tags, prefix, errors, warnings, policy.requireKeywords);
 
   if (plugin.tags !== undefined && plugin.keywords === undefined) {
-    warnings.push(`${prefix}: 建議優先使用 "keywords" 而非舊有的 "tags"`);
+    warnings.push(`${prefix}: 建議使用 "keywords" 而非舊版的 "tags"`);
   }
 
   if (!plugin.source) {
     errors.push(`${prefix}: "source" 是必填項`);
   } else if (typeof plugin.source === "string") {
-    errors.push(`${prefix}: "source" 必須是一個物件 (外部外掛程式不允許使用本地檔案路徑)`);
+    errors.push(`${prefix}: "source" 必須是一個物件（外部外掛不允許使用本地檔案路徑）`);
   } else if (!policy.allowedSourceTypes.includes(plugin.source.source)) {
-    errors.push(`${prefix}: "source.source" 必須是以下之一: ${policy.allowedSourceTypes.join(", ")}`);
+    errors.push(`${prefix}: "source.source" 必須是以下之一：${policy.allowedSourceTypes.join(", ")}`);
   } else if (plugin.source.source === "github") {
-    validateGitHubSource(plugin.source, prefix, errors, policy.requireImmutableRef);
+    validateGitHubSource(plugin.source, prefix, errors, policy.requireImmutableLocator);
   }
 
   return { errors, warnings };
@@ -359,14 +380,14 @@ export function validateExternalPlugins(plugins, options = {}) {
     const normalizedName = plugin.name.toLowerCase();
     const duplicateIndex = seenExternalNames.get(normalizedName);
     if (duplicateIndex !== undefined) {
-      errors.push(`external.json[${index}]: 重複的外掛程式名稱 "${plugin.name}" 已被 external.json[${duplicateIndex}] 使用`);
+      errors.push(`external.json[${index}]: 外掛名稱 "${plugin.name}" 重複，已被 external.json[${duplicateIndex}] 使用`);
     } else {
       seenExternalNames.set(normalizedName, index);
     }
 
     const localDuplicate = localNames.get(normalizedName);
     if (localDuplicate) {
-      errors.push(`external.json[${index}]: 外掛程式名稱 "${plugin.name}" 與本地外掛程式 "${localDuplicate}" 衝突`);
+      errors.push(`external.json[${index}]: 外掛名稱 "${plugin.name}" 與本地外掛 "${localDuplicate}" 衝突`);
     }
   });
 
@@ -391,7 +412,7 @@ export function readExternalPlugins(options = {}) {
   } catch (error) {
     return {
       plugins: [],
-      errors: [`讀取 ${path.basename(filePath)} 時發生錯誤: ${error.message}`],
+      errors: [`讀取 ${path.basename(filePath)} 時發生錯誤：${error.message}`],
       warnings: [],
     };
   }

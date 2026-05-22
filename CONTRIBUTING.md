@@ -202,7 +202,8 @@ plugins/my-plugin-id/
 - 簡短描述
 - `owner/repo` 格式的 GitHub 存放庫
 - 存放庫內的外掛程式路徑（若外掛程式位於存放庫根目錄則為選填）
-- 用於審核的不可變參考 (`ref`)，請使用發布標記 (release tag) 或完整提交 SHA，而非分支
+- 供審查的參考（`ref`）：請使用 release 標籤或 tag 參考，而非分支
+- 供審查的 Commit SHA（`sha`）：請使用完整 40 字元的 commit SHA
 - 外掛程式版本
 - 授權識別碼
 - 作者姓名
@@ -223,23 +224,24 @@ plugins/my-plugin-id/
 - `source.source: "github"` 加上 `owner/repo` 格式的 `source.repo`
 - 選填的 `source.path` 值，可使用 `/` 表示存放庫根目錄，或填寫相對於存放庫的資料夾路徑，該資料夾為外掛程式結構的起始位置（請勿直接指向 `plugin.json`）
 
-公眾提交策略建立在這些規則之上，並且還要求 `license` 以及不可變的 `source.ref`。
+公開提交政策在這些規則的基礎上，還要求包含 `license`，並至少提供一個不可變的來源定位器：`source.ref`、`source.sha`，或兩者皆有。
 
 ##### 審核工作流程
 
 1. **開啟 Issue**：使用外部外掛程式 Issue 表單。自動化程式會套用 `external-plugin` 和 `awaiting-review` 標籤。
 2. **自動化收錄驗證**：檢查必要欄位是否存在，且格式對於 GitHub 託管的外掛程式是否正確。無效的提交將被關閉，並附上說明在重新提交前必須修正哪些部分的評論。
 3. **準備好供維護者審核**：如果 Issue 通過收錄驗證，自動化程式會移除 `awaiting-review` 並新增 `ready-for-review`。
-4. **維護者決定**：具備寫入權限的維護者進行人工審核，然後在 Issue 上評論 `/approve` 或 `/reject <原因>`。來自非維護者的指令將被忽略。
-5. **核准路徑**：在 `/approve` 時，自動化程式會移除 `ready-for-review`、新增 `approved`、關閉 Issue，並針對 `staged` 分支開啟或更新 PR，以更新 `plugins/external.json` 和產生的市集輸出內容。
-6. **拒絕路徑**：在 `/reject <原因>` 時，自動化程式會移除 `ready-for-review`、新增 `rejected`、關閉 Issue，並在 Issue 評論中記錄原因。提交者可以在解決回饋意見後開啟新的 Issue。
+4. **重新執行收錄**：在更新 Issue 內容後，Issue 作者或維護者可以留言 `/rerun-intake`，以按需重新執行自動收錄。開啟的 Issue 在編輯後仍會自動重新觸發收錄，但已關閉且被拒絕的 Issue 需要使用 `/rerun-intake`。
+5. **維護者決定**：具有寫入權限的維護者會執行人工審核，然後在 Issue 上留言 `/approve` 或 `/reject <reason>`。非維護者的指令將被忽略。
+6. **核准流程**：於收到 `/approve` 時，自動化會移除 `ready-for-review`、新增 `approved` 標籤、關閉 Issue，並開啟或更新針對 `staged` 的 PR，此 PR 會更新 `plugins/external.json` 以及產生的市集輸出。
+7. **拒絕流程**：於收到 `/reject <reason>` 時，自動化會移除 `ready-for-review`、新增 `rejected` 標籤、關閉 Issue，並在評論中記錄拒絕原因。修正回饋後，請更新同一個 Issue 並使用 `/rerun-intake` 重新排入收錄佇列。
 
 ##### 維護者的審核責任
 
 維護者負責確認提交項目：
 
 - 明確符合 Awesome Copilot 集合，並在現有列表之外增加價值
-- 使用公開的 GitHub 存放庫和可可靠審核的不可變參考
+- 使用公開的 GitHub 儲存庫，並提供可供可靠審查的不可變 ref 和/或 SHA
 - 包含 `plugins/external.json` 所需的 Metadata（`name`、`description`、`version`、`author.name`、`repository`、`keywords` 和 `source`），以及任何提供的首頁/授權欄位
 - 沒有明顯重複現有的市集條目
 - 持續符合此存放庫的內容、安全性和負責任的 AI 策略
@@ -283,7 +285,8 @@ plugins/my-plugin-id/
       "source": "github",
       "repo": "owner/plugin-repo",
       "path": ".github/plugins/my-external-plugin",
-      "ref": "v1.0.0"
+      "ref": "v1.0.0",
+      "sha": "0123456789abcdef0123456789abcdef01234567"
     }
   }
 ]

@@ -6,30 +6,48 @@ import { fileURLToPath } from "url";
 import { ROOT_FOLDER } from "./constants.mjs";
 import { readExternalPlugins, validateExternalPlugin } from "./external-plugin-validation.mjs";
 
-const ISSUE_FORM_MARKER = "<!-- external-plugin-submission -->";
+export const ISSUE_FORM_MARKER = "<!-- external-plugin-submission -->";
+export const EXTERNAL_PLUGIN_INTAKE_COMMENT_MARKER = "<!-- external-plugin-intake -->";
+export const RERUN_INTAKE_COMMAND = "/rerun-intake";
+const RERUN_INTAKE_COMMAND_PATTERN = new RegExp(
+  `^\\s*${RERUN_INTAKE_COMMAND.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
+  "m",
+);
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
 
+// 每一項都是一組等效的核取清單項目文字（包含新版與舊版別名）。
+// 提交通過的條件是已勾選項目包含每一組中的至少一個文字。
 const REQUIRED_CHECKLIST_ITEMS = [
-  "此外掛程式位於公開的 GitHub 存放庫中。",
-  "我提供的 ref 是不可變的發布標記或完整的 40 字元提交 SHA，而不是分支。",
-  "此提交符合此存放庫的貢獻、安全性和負責任的 AI 策略。",
-  "此外掛程式尚未列在 Awesome Copilot 市集中。",
+  new Set(["The plugin lives in a public GitHub repository."]),
+  new Set([
+    "The ref and/or sha I provided is immutable (release tag and/or full 40-character commit SHA), not a branch.",
+    // 原始 Issue 範本中使用的舊版文字
+    "The ref I provided is an immutable release tag or full 40-character commit SHA, not a branch.",
+  ]),
+  new Set(["This submission follows this repository's contribution, security, and responsible AI policies."]),
+  new Set(["This plugin is not already listed in the Awesome Copilot marketplace."]),
 ];
 
 const FIELD_TITLES = Object.freeze({
-  pluginName: "外掛程式名稱",
-  shortDescription: "簡短描述",
-  githubRepository: "GitHub 存放庫",
-  pluginPath: "存放庫內的外掛程式路徑",
-  immutableRef: "待審核的不可變參考 (Immutable ref)",
-  version: "版本",
-  license: "授權識別碼",
-  authorName: "作者姓名",
-  authorUrl: "作者 URL",
-  homepageUrl: "首頁 URL",
-  keywords: "關鍵字",
-  additionalNotes: "給審核者的補充說明",
-  submissionChecklist: "提交檢查清單",
+  pluginName: "Plugin name",
+  shortDescription: "Short description",
+  githubRepository: "GitHub repository",
+  pluginPath: "Plugin path inside the repository",
+  immutableRef: "Ref to review",
+  immutableSha: "Commit SHA to review",
+  version: "Version",
+  license: "License identifier",
+  authorName: "Author name",
+  authorUrl: "Author URL",
+  homepageUrl: "Homepage URL",
+  keywords: "Keywords",
+  additionalNotes: "Additional notes for reviewers",
+  submissionChecklist: "Submission checklist",
+});
+
+// 在 ref/sha 拆分前，原始 Issue 範本中使用的舊版欄位標題
+const LEGACY_FIELD_TITLES = Object.freeze({
+  immutableRef: "Immutable ref to review",
 });
 
 function normalizeMultilineText(value) {
@@ -115,7 +133,7 @@ function readLocalPluginNames() {
 }
 
 function toSubmissionError(message) {
-  return message.replace(/^external\.json\[0\]:\s*/, "提交: ");
+  return message.replace(/^external\.json\[0\]:\s*/, "submission: ");
 }
 
 async function fetchGitHubJson(apiPath, token) {
@@ -150,25 +168,34 @@ function encodeRepoPath(repo) {
   return `${encodeURIComponent(owner ?? "")}/${encodeURIComponent(name ?? "")}`;
 }
 
-async function validateRemoteRepository(repo, ref, errors, warnings, token) {
+async function validateRemoteRepository(repo, { ref, sha }, errors, warnings, token) {
   const encodedRepo = encodeRepoPath(repo);
   const repositoryResponse = await fetchGitHubJson(`/repos/${encodedRepo}`, token);
 
   if (!repositoryResponse.ok) {
     if (repositoryResponse.status === 404) {
-      errors.push(`提交: 找不到 GitHub 存放庫 "${repo}"`);
+      errors.push(`submission: 找不到 GitHub 儲存庫 "${repo}"`);
     } else {
-      errors.push(`提交: 無法檢查 GitHub 存放庫 "${repo}" (HTTP ${repositoryResponse.status})`);
+      errors.push(`submission: 無法檢查 GitHub 儲存庫 "${repo}" (HTTP ${repositoryResponse.status})`);
     }
     return;
   }
 
   if (repositoryResponse.data?.private) {
-    errors.push(`提交: GitHub 存放庫 "${repo}" 必須是公開的`);
+    errors.push(`submission: GitHub 儲存庫 "${repo}" 必須是公開的`);
   }
 
   if (repositoryResponse.data?.archived) {
-    warnings.push(`提交: GitHub 存放庫 "${repo}" 已封存`);
+    warnings.push(`submission: GitHub 儲存庫 "${repo}" 已封存`);
+  }
+
+  if (sha) {
+    if (/^[0-9a-f]{40}$/i.test(sha)) {
+      const commitResponse = await fetchGitHubJson(`/repos/${encodedRepo}/commits/${encodeURIComponent(sha)}`, token);
+      if (!commitResponse.ok) {
+        errors.push(`submission: 在 GitHub 儲存庫 "${repo}" 中找不到提交 "${sha}"`);
+      }
+    }
   }
 
   if (!ref) {
@@ -178,8 +205,16 @@ async function validateRemoteRepository(repo, ref, errors, warnings, token) {
   if (/^[0-9a-f]{40}$/i.test(ref)) {
     const commitResponse = await fetchGitHubJson(`/repos/${encodedRepo}/commits/${encodeURIComponent(ref)}`, token);
     if (!commitResponse.ok) {
-      errors.push(`提交: 在 GitHub 存放庫 "${repo}" 中找不到提交 "${ref}"`);
+      errors.push(`submission: 在 GitHub 儲存庫 "${repo}" 中找不到提交 "${ref}"`);
     }
+    return;
+  }
+
+  if (ref.startsWith("refs/heads/") || ["main", "master", "develop", "development", "dev", "trunk"].includes(ref)) {
+    return;
+  }
+
+  if (ref.startsWith("refs/") && !ref.startsWith("refs/tags/")) {
     return;
   }
 
@@ -191,12 +226,12 @@ async function validateRemoteRepository(repo, ref, errors, warnings, token) {
   }
 
   if (/^[0-9a-f]+$/i.test(ref) && ref.length !== 40) {
-    errors.push('提交: "待審核的不可變參考" 中的提交 SHA 必須使用完整的 40 字元 SHA');
+    errors.push('submission: "Ref to review" 中的提交 SHA 必須使用完整的 40 字元 SHA，或者提交到 "Commit SHA to review"');
     return;
   }
 
   if (!tagResponse.ok) {
-    errors.push(`提交: 在 GitHub 存放庫 "${repo}" 中找不到標記 "${ref}"`);
+    errors.push(`submission: 在 GitHub 儲存庫 "${repo}" 中找不到標籤 "${ref}"`);
   }
 }
 
@@ -207,7 +242,7 @@ export function parseExternalPluginIssueBody(body) {
   function requiredField(title) {
     const value = stripNoResponse(sections.get(title));
     if (!value) {
-      errors.push(`提交: "${title}" 是必填項`);
+      errors.push(`submission: "${title}" 是必填項`);
     }
     return value;
   }
@@ -215,7 +250,11 @@ export function parseExternalPluginIssueBody(body) {
   const pluginName = requiredField(FIELD_TITLES.pluginName);
   const shortDescription = requiredField(FIELD_TITLES.shortDescription);
   const repoInput = normalizeGitHubRepo(requiredField(FIELD_TITLES.githubRepository));
-  const immutableRef = requiredField(FIELD_TITLES.immutableRef);
+  // 支援目前的欄位標題以及 ref/sha 拆分前使用的舊版標題
+  const immutableRef = stripNoResponse(
+    sections.get(FIELD_TITLES.immutableRef) ?? sections.get(LEGACY_FIELD_TITLES.immutableRef),
+  );
+  const immutableSha = stripNoResponse(sections.get(FIELD_TITLES.immutableSha));
   const version = requiredField(FIELD_TITLES.version);
   const license = requiredField(FIELD_TITLES.license);
   const authorName = requiredField(FIELD_TITLES.authorName);
@@ -227,9 +266,22 @@ export function parseExternalPluginIssueBody(body) {
   const additionalNotes = stripNoResponse(sections.get(FIELD_TITLES.additionalNotes));
   const checkedItems = parseChecklist(sections.get(FIELD_TITLES.submissionChecklist));
 
-  for (const item of REQUIRED_CHECKLIST_ITEMS) {
-    if (!checkedItems.has(item)) {
-      errors.push(`提交: 檢查清單項目必須勾選: "${item}"`);
+  if (!immutableRef && !immutableSha) {
+    errors.push(`submission: "${FIELD_TITLES.immutableRef}" 或 "${FIELD_TITLES.immutableSha}" 其中之一是必填項`);
+  }
+
+  for (const equivalents of REQUIRED_CHECKLIST_ITEMS) {
+    let isChecked = false;
+    for (const text of equivalents) {
+      if (checkedItems.has(text)) {
+        isChecked = true;
+        break;
+      }
+    }
+    if (!isChecked) {
+      // 使用每個等效 Set 中的規範（第一個）文字進行回報
+      const [canonical] = equivalents;
+      errors.push(`submission: 必須勾選核取清單項目："${canonical}"`);
     }
   }
 
@@ -250,6 +302,7 @@ export function parseExternalPluginIssueBody(body) {
       repo: repoInput,
       ...(pluginPath ? { path: pluginPath } : {}),
       ...(immutableRef ? { ref: immutableRef } : {}),
+      ...(immutableSha ? { sha: immutableSha } : {}),
     },
   };
 
@@ -259,6 +312,10 @@ export function parseExternalPluginIssueBody(body) {
     plugin,
     additionalNotes,
   };
+}
+
+export function parseRerunIntakeCommand(body) {
+  return RERUN_INTAKE_COMMAND_PATTERN.test(String(body ?? ""));
 }
 
 export async function evaluateExternalPluginIssue({ issue, token } = {}) {
@@ -283,20 +340,20 @@ export async function evaluateExternalPluginIssue({ issue, token } = {}) {
       (name) => String(name).toLowerCase() === String(parsed.plugin.name).toLowerCase(),
     );
     if (matchingName) {
-      errors.push(`提交: 外掛程式名稱 "${parsed.plugin.name}" 與現有的外掛程式 "${matchingName}" 衝突`);
+      errors.push(`submission: 外掛名稱 "${parsed.plugin.name}" 與現有的外掛 "${matchingName}" 衝突`);
     }
   }
 
-  if (parsed.plugin?.source?.repo && parsed.plugin?.source?.ref) {
-    await validateRemoteRepository(parsed.plugin.source.repo, parsed.plugin.source.ref, errors, warnings, token);
+  if (parsed.plugin?.source?.repo && (parsed.plugin?.source?.ref || parsed.plugin?.source?.sha)) {
+    await validateRemoteRepository(parsed.plugin.source.repo, parsed.plugin.source, errors, warnings, token);
   }
 
   const dedupedErrors = [...new Set(errors)];
   const dedupedWarnings = [...new Set(warnings)];
   const valid = dedupedErrors.length === 0;
-  const marker = "<!-- external-plugin-intake -->";
+  const marker = EXTERNAL_PLUGIN_INTAKE_COMMENT_MARKER;
   const normalizedKeywords = parsed.plugin?.keywords?.length ? parsed.plugin.keywords.join(", ") : "_未提供_";
-  const notes = parsed.additionalNotes ?? "_未提供額外的說明。_";
+  const notes = parsed.additionalNotes ?? "_未提供額外附註。_";
   const payload = parsed.plugin
     ? [
         "```json",
@@ -308,20 +365,21 @@ export async function evaluateExternalPluginIssue({ issue, token } = {}) {
   const commentBody = valid
     ? [
         marker,
-        "## ✅ 外部外掛程式收錄通過",
+        "## ✅ 外部外掛受理通過",
         "",
-        `此提交已通過自動化收錄驗證，準備好供維護者審核。`,
+        `此提交已通過自動受理驗證，準備好由維護者進行審核。`,
         "",
-        `- **外掛程式:** ${parsed.plugin.name}`,
-        `- **存放庫:** ${parsed.plugin.repository}`,
-        `- **參考 (Ref):** ${parsed.plugin.source.ref}`,
-        `- **關鍵字:** ${normalizedKeywords}`,
+        `- **外掛：** ${parsed.plugin.name}`,
+        `- **儲存庫：** ${parsed.plugin.repository}`,
+        parsed.plugin.source.ref ? `- **Ref：** ${parsed.plugin.source.ref}` : undefined,
+        parsed.plugin.source.sha ? `- **SHA：** ${parsed.plugin.source.sha}` : undefined,
+        `- **關鍵字：** ${normalizedKeywords}`,
         "",
-        "### 標準 external.json 內容",
+        "### 規範 external.json 內容",
         "",
         payload,
         "",
-        "### 審核者說明",
+        "### 審核者附註",
         "",
         notes,
         dedupedWarnings.length > 0
@@ -330,12 +388,12 @@ export async function evaluateExternalPluginIssue({ issue, token } = {}) {
       ].filter(Boolean).join("\n")
     : [
         marker,
-        "## ❌ 外部外掛程式收錄失敗",
+        "## ❌ 外部外掛受理失敗",
         "",
-        "此提交未通過自動化收錄驗證，因此該 Issue 已關閉。",
-        "請更新 Issue 表單，然後重新開啟 Issue 以再次執行收錄驗證。",
+        "此提交未通過自動受理驗證，因此該 Issue 已被關閉。",
+        `請編輯 Issue 表單以解決下列修復事項，然後由 Issue 作者或維護者留言 \`${RERUN_INTAKE_COMMAND}\` 以重新執行此已關閉提交的受理流程。`,
         "",
-        "### 需要修正的項目",
+        "### 必要的修復事項",
         "",
         ...dedupedErrors.map((error) => `- ${error}`),
         dedupedWarnings.length > 0
@@ -359,7 +417,7 @@ const isCli = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve
 if (isCli) {
   const eventPath = process.argv[2];
   if (!eventPath) {
-    console.error("用法: node ./eng/external-plugin-intake.mjs <github-event.json>");
+    console.error("用法：node ./eng/external-plugin-intake.mjs <github-event.json>");
     process.exit(1);
   }
 
