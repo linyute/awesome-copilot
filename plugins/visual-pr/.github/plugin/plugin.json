@@ -1,0 +1,24 @@
+{
+  "name": "visual-pr",
+  "description": "在提取請求 (PR) 說明中捕獲、標註並嵌入螢幕截圖與動畫 GIF 演示。包含基於 Playwright 的 UI 擷取、PIL 圖像標註、GitHub 與 Azure DevOps 的 PR 嵌入工作流程，以及可變時間的螢幕錄影。",
+  "version": "1.0.0",
+  "keywords": [
+    "screenshots",
+    "pull-request",
+    "before-after",
+    "annotations",
+    "playwright",
+    "gif",
+    "screen-recording",
+    "visual"
+  ],
+  "author": { "name": "Awesome Copilot Community" },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "skills": [
+    "./skills/image-annotations/",
+    "./skills/pr-screenshots/",
+    "./skills/screen-recording/",
+    "./skills/ui-screenshots/"
+  ]
+}

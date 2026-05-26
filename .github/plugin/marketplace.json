@@ -359,7 +359,7 @@
       "name": "gem-team",
       "source": "gem-team",
       "description": "用於規格驅動開發和自動化驗證的自我學習多代理協調治具。",
-      "version": "1.24.0"
+      "version": "1.42.0"
     },
     {
       "name": "git-ape",
@@ -753,7 +753,7 @@
       "source": {
         "source": "github",
         "repo": "SonarSource/sonarqube-agent-plugins",
-        "ref": "b1492121b8591fba7dc477392ae0ea6be924fb31"
+        "ref": "v2.0.0"
       }
     },
     {
@@ -790,6 +790,12 @@
       "name": "typespec-m365-copilot",
       "source": "typespec-m365-copilot",
       "description": "使用 TypeSpec 以建構 Microsoft 365 Copilot 擴充性的宣告式代理和 API 外掛程式之提示詞、指令和資源的完整集合。",
+      "version": "1.0.0"
+    },
+    {
+      "name": "visual-pr",
+      "source": "visual-pr",
+      "description": "在拉取請求說明中擷取、註解並嵌入截圖與動態 GIF 示範。功能包括基於 Playwright 的 UI 擷取、使用 PIL 的影像註解、供 GitHub 與 Azure DevOps 使用的 PR 嵌入工作流程，以及可變時序的螢幕錄製。",
       "version": "1.0.0"
     },
     {

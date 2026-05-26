@@ -1,7 +1,7 @@
 {
   "name": "gem-team",
-  "version": "1.24.0",
-  "description": "用於規格驅動開發與自動驗證的自學習多代理程式協調框架。",
+  "version": "1.42.0",
+  "description": "用於規格導向開發與自動化驗證的自我學習多代理編排框架。",
   "author": {
     "name": "mubaidr",
     "email": "mubaidr@gmail.com",
