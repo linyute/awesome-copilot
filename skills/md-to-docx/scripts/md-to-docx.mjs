@@ -93,8 +93,9 @@ const tableBorders = {
 // --- 工具：解碼 HTML 實體 ---
 function decodeEntities(str) {
   return str
-    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&");
 }
 
 // --- 將行內 Token 轉換為 TextRun[] ---

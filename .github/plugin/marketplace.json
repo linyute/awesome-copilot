@@ -753,7 +753,7 @@
       "source": {
         "source": "github",
         "repo": "SonarSource/sonarqube-agent-plugins",
-        "ref": "v2.0.0"
+        "ref": "2.0.0"
       }
     },
     {
@@ -791,6 +791,36 @@
       "source": "typespec-m365-copilot",
       "description": "使用 TypeSpec 以建構 Microsoft 365 Copilot 擴充性的宣告式代理和 API 外掛程式之提示詞、指令和資源的完整集合。",
       "version": "1.0.0"
+    },
+    {
+      "name": "vercel-plugin",
+      "description": "建立與部署網頁應用與代理。完整的 Vercel 生態系統外掛 — 關係型知識圖譜、針對各大產品的技能、專門化代理，以及 Vercel 慣例。將任何 AI 代理轉變為 Vercel 專家。",
+      "version": "0.43.0",
+      "author": {
+        "name": "Vercel",
+        "url": "https://github.com/vercel"
+      },
+      "repository": "https://github.com/vercel/vercel-plugin",
+      "homepage": "https://vercel.com/docs/agent-resources/vercel-plugin",
+      "license": "Apache-2.0",
+      "keywords": [
+        "vercel",
+        "nextjs",
+        "ai-sdk",
+        "turborepo",
+        "turbopack",
+        "workflow",
+        "deployment",
+        "edge-functions",
+        "serverless",
+        "ai-gateway"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "vercel/vercel-plugin",
+        "path": "/",
+        "sha": "6e51924cb249e2941de005d59f1ac6f768477b98"
+      }
     },
     {
       "name": "visual-pr",
