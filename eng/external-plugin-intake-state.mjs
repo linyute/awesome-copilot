@@ -1,15 +1,19 @@
 export const EXTERNAL_PLUGIN_INTAKE_LABELS = Object.freeze({
   "external-plugin": {
     color: "FEF2C0",
-    description: "公開外部外掛提交",
+    description: "公開的外部外掛提交",
   },
   "awaiting-review": {
     color: "FBCA04",
-    description: "提交正在等待自動受理驗證",
+    description: "提交正在等待自動化引入驗證",
   },
   "ready-for-review": {
     color: "0E8A16",
-    description: "提交已通過受理驗證，準備好由維護者進行審核",
+    description: "提交已通過引入驗證，準備好供維護者審核",
+  },
+  "requires-submitter-fixes": {
+    color: "D93F0B",
+    description: "提交包含品質門禁發現的問題，提交者必須在維護者審核前修復",
   },
   approved: {
     color: "1D76DB",
@@ -17,7 +21,7 @@ export const EXTERNAL_PLUGIN_INTAKE_LABELS = Object.freeze({
   },
   rejected: {
     color: "B60205",
-    description: "提交已被拒絕或未通過受理驗證",
+    description: "提交已被拒絕或未通過引入驗證",
   },
 });
 
@@ -25,6 +29,7 @@ const EXTERNAL_PLUGIN_INTAKE_SYNC_LABELS = Object.freeze([
   "external-plugin",
   "awaiting-review",
   "ready-for-review",
+  "requires-submitter-fixes",
   "rejected",
 ]);
 
@@ -138,9 +143,14 @@ export async function applyExternalPluginIntakeEvaluation({
   issueNumber,
   evaluation,
 }) {
-  const desiredLabels = evaluation.valid
-    ? new Set(["external-plugin", "ready-for-review"])
-    : new Set(["external-plugin", "rejected"]);
+  const state = evaluation.intakeState ?? (evaluation.valid ? "ready-for-review" : "rejected");
+  const desiredLabelsByState = {
+    "ready-for-review": new Set(["external-plugin", "ready-for-review"]),
+    "requires-submitter-fixes": new Set(["external-plugin", "requires-submitter-fixes"]),
+    "awaiting-review": new Set(["external-plugin", "awaiting-review"]),
+    rejected: new Set(["external-plugin", "rejected"]),
+  };
+  const desiredLabels = desiredLabelsByState[state] ?? desiredLabelsByState.rejected;
 
   await syncExternalPluginIntakeLabels({
     github,

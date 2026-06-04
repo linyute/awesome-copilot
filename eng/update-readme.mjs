@@ -186,8 +186,8 @@ function extractTitle(filePath) {
           filePath.includes(".prompt.md")
             ? ".prompt.md"
             : filePath.includes(".agent.md")
-            ? ".agent.md"
-            : ".instructions.md"
+              ? ".agent.md"
+              : ".instructions.md"
         );
         return basename
           .replace(/[-_]/g, " ")
@@ -312,7 +312,7 @@ function generateInstructionsSection(instructionsDir) {
   });
 
   // 按標題字母順序排序
-  instructionEntries.sort((a, b) => a.title.localeCompare(b.title));
+  instructionEntries.sort((a, b) => a.title.localeCompare(b.title, "en"));
 
   console.log(`找到 ${instructionEntries.length} 個指引檔案`);
 
@@ -636,11 +636,9 @@ function generateSkillsSection(skillsDir) {
         ? skill.assets.map((a) => `\`${a}\``).join("<br />")
         : "無";
 
-    content += `| [${
-      skill.name
-    }](${link})<br />\`gh skills install github/awesome-copilot ${
-      skill.folder
-    }\` | ${formatTableCell(skill.description)} | ${assetsList} |\n`;
+    content += `| [${skill.name
+      }](${link})<br />\`gh skills install github/awesome-copilot ${skill.folder
+      }\` | ${formatTableCell(skill.description)} | ${assetsList} |\n`;
   }
 
   return `${TEMPLATES.skillsSection}\n${TEMPLATES.skillsUsage}\n\n${content}`;
@@ -682,7 +680,7 @@ function generateUnifiedModeSection(cfg) {
     return { file, filePath, title: extractTitle(filePath) };
   });
 
-  entries.sort((a, b) => a.title.localeCompare(b.title));
+  entries.sort((a, b) => a.title.localeCompare(b.title, "en"));
   console.log(
     `整合模式產生器：副檔名為 ${extension} 的檔案共有 ${entries.length} 個`
   );

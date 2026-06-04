@@ -121,6 +121,7 @@ Invoke-Pester -TagFilter 'Unit' -ExcludeTagFilter 'Slow'
 - **`-Skip`**：可用於 `Describe`、`Context`、`It` 跳過測試
 - **條件式：** 用 `-Skip:$condition` 動態跳過
 - **執行時跳過：** 測試執行中用 `Set-ItResult -Skipped`（setup/teardown 仍執行）
+- **結束測試區塊**: `Set-ItResult -Skipped`/`-Inconclusive` 會內部拋出異常以結束 `It` 區塊，因此後續的程式碼不會執行；此時不應添加尾隨的 `return`。
 
 ```powershell
 It '僅在 Windows 執行' -Skip:(-not $IsWindows) { }

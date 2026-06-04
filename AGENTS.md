@@ -166,12 +166,13 @@ npm run skill:create -- --name <skill-name>
 2. 公開的外部外掛程式提交請使用 [CONTRIBUTING.md](CONTRIBUTING.md#adding-external-plugins) 所記載的外部外掛程式 issue 工作流程
 3. 在 v1 中，僅接受託管於 GitHub 的外掛程式以供公開提交，需使用公開儲存庫並提供不可變的 `ref`、`sha` 或兩者之一
 4. `eng/external-plugin-validation.mjs` 中的共用驗證器為外部外掛程式資料規則的權威來源；請重用它，而非在腳本或工作流程中重複檢查
-5. 提交 issue 的流程為 `external-plugin` + `awaiting-review` -> `ready-for-review` -> `approved` 或 `rejected`
-6. 在編輯 issue 之後，issue 作者或維護者可以留言 `/rerun-intake` 以在不開新提交 issue 的情況下重新執行自動 intake
-7. 維護者以 `/approve` 或 `/reject <reason>` 的 issue 留言來決定；被核准的 issue 會被關閉，並作為六個月複審的基準
-8. 核准的自動化會在 `staged` 建立或更新 PR、更新 `plugins/external.json`，並重新產生市集輸出
-9. 每晚的複審自動化會找出已關閉且帶有 `external-plugin` + `approved` 標籤且至少六個月的 issue，套用 `re-review-due`，並為維護者開啟或更新追蹤 issue
-10. 維護者在原始被核准的提交 issue 上完成複審，使用 `/re-review-keep`、`/re-review-needs-changes` 或 `/re-review-remove`；`keep` 會重設 issue 的 `closed_at`，`remove` 則會開啟一個針對 `staged` 的 PR
+5. 提交的 Issue 會根據自動化品質閘道 (automated quality gates) 經歷 `external-plugin` + `awaiting-review`，然後進入 `ready-for-review` 或 `requires-submitter-fixes`。
+6. Issue 編輯後，Issue 作者或維護者可以留言 `/rerun-intake` 來重新執行自動化採納 (intake) 和品質閘道，而無需開啟新的提交 Issue。
+7. 維護者可以使用 `/mark-ready-for-review [可選原因]` 明確覆蓋品質閘道阻擋，這會將 Issue 移動到 `ready-for-review`。
+8. 一旦 Issue 處於 `ready-for-review`，維護者將透過 `/approve` 或 `/reject <原因>` Issue 留言做出決定；已核准的 Issue 會被關閉，並用作六個月後重新審查的錨點。
+9. 核准自動化會建立或更新針對 `staged` 分支的 PR，更新 `plugins/external.json`，並重新產生 Marketplace 輸出。
+10. 每晚重新審查自動化會尋找至少六個月大且處於 `external-plugin` + `approved` 狀態的關閉 Issue，應用 `re-review-due` 標籤，並為維護者開啟或更新追蹤 Issue。
+11. 維護者使用 `/re-review-keep`、`/re-review-needs-changes` 或 `/re-review-remove` 完成對原始核准提交 Issue 的重新審查；`keep` 會重設 Issue 的 `closed_at`，而 `remove` 會針對 `staged` 開啟一個 PR。
 
 ### 測試指引
 

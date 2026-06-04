@@ -226,15 +226,20 @@ plugins/my-plugin-id/
 
 公開提交政策在這些規則的基礎上，還要求包含 `license`，並至少提供一個不可變的來源定位器：`source.ref`、`source.sha`，或兩者皆有。
 
-##### 審核工作流程
+##### 審查工作流程
 
-1. **開啟 Issue**：使用外部外掛程式 Issue 表單。自動化程式會套用 `external-plugin` 和 `awaiting-review` 標籤。
-2. **自動化收錄驗證**：檢查必要欄位是否存在，且格式對於 GitHub 託管的外掛程式是否正確。無效的提交將被關閉，並附上說明在重新提交前必須修正哪些部分的評論。
-3. **準備好供維護者審核**：如果 Issue 通過收錄驗證，自動化程式會移除 `awaiting-review` 並新增 `ready-for-review`。
-4. **重新執行收錄**：在更新 Issue 內容後，Issue 作者或維護者可以留言 `/rerun-intake`，以按需重新執行自動收錄。開啟的 Issue 在編輯後仍會自動重新觸發收錄，但已關閉且被拒絕的 Issue 需要使用 `/rerun-intake`。
-5. **維護者決定**：具有寫入權限的維護者會執行人工審核，然後在 Issue 上留言 `/approve` 或 `/reject <reason>`。非維護者的指令將被忽略。
-6. **核准流程**：於收到 `/approve` 時，自動化會移除 `ready-for-review`、新增 `approved` 標籤、關閉 Issue，並開啟或更新針對 `staged` 的 PR，此 PR 會更新 `plugins/external.json` 以及產生的市集輸出。
-7. **拒絕流程**：於收到 `/reject <reason>` 時，自動化會移除 `ready-for-review`、新增 `rejected` 標籤、關閉 Issue，並在評論中記錄拒絕原因。修正回饋後，請更新同一個 Issue 並使用 `/rerun-intake` 重新排入收錄佇列。
+1. **開啟 Issue**：使用外部插件 Issue 表單。自動化會套用 `external-plugin` 和 `awaiting-review` 標籤。
+2. **自動化採納驗證**：檢查 GitHub 託管插件所需的欄位是否存在且格式正確。無效的提交會被關閉，並附上一則說明在重新提交前必須修正什麼的留言。
+3. **自動化品質閘道**：在元資料驗證後執行：
+   - 針對提交的插件路徑/ref/sha 執行 `skill-validator check --plugin`
+   - 透過 Copilot CLI 針對從提交生成的臨時 Marketplace 條目執行安裝冒煙測試 (smoke test)
+4. **準備維護者審查**：如果元資料驗證和品質閘道通過，自動化會移除 `awaiting-review` 並新增 `ready-for-review`。
+5. **提交者修復阻擋**：如果元資料有效但品質閘道失敗，自動化會套用 `requires-submitter-fixes`，而不是進入人工審查。
+6. **請求另一次採納檢查**：在更新 Issue 本文或原始插件後，Issue 作者或維護者可以留言 `/rerun-intake` 以按需重新執行自動化採納和品質閘道。開啟的 Issue 在編輯時仍會自動重新觸發採納，但已關閉的拒絕 Issue 需要 `/rerun-intake`。
+7. **維護者覆蓋路徑**：具有寫入權限的維護者可以留言 `/mark-ready-for-review [可選原因]` 明確將 `requires-submitter-fixes` Issue 移動到 `ready-for-review`。
+8. **維護者決定**：一旦進入 `ready-for-review`，具有寫入權限的維護者會進行人工審查，然後在 Issue 上留言 `/approve` 或 `/reject <原因>`。來自非維護者的指令會被忽略。
+9. **核准路徑**：在 `/approve` 時，自動化會移除 `ready-for-review`，新增 `approved`，關閉 Issue，並開啟或更新針對 `staged` 分支的 PR，該 PR 會更新 `plugins/external.json` 和生成的 Marketplace 輸出。
+10. **拒絕路徑**：在 `/reject <原因>` 時，自動化會移除 `ready-for-review`，新增 `rejected`，關閉 Issue，並在 Issue 留言中記錄原因。在處理回饋後，更新同一個 Issue 並使用 `/rerun-intake` 重新排隊採納。
 
 ##### 維護者的審核責任
 
@@ -251,6 +256,7 @@ plugins/my-plugin-id/
 - `external-plugin`：套用於每個公眾外部外掛程式提交，並保留在已核准的 Issue 上，以便排定的審核自動化程式稍後能找到它們
 - `awaiting-review`：自動化程式完成驗證 Issue 之前的初始收錄狀態
 - `ready-for-review`：Issue 已通過自動化收錄檢查，正在等待維護者的決定
+- `requires-submitter-fixes`：元資料驗證通過但自動化品質閘道失敗；在人工審查前需要提交者進行更新。
 - `approved`：Issue 已獲核准並關閉，可作為每六個月重新審核的真實來源 (source of truth)
 - `rejected`：Issue 被拒絕並關閉，且未新增至市集中
 - `re-review-due`：已核准的 Issue 已達到六個月的審核門檻，正在等待維護者的重新審核決定

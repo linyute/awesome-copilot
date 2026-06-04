@@ -474,7 +474,7 @@
     {
       "name": "modernize-dotnet",
       "description": "AI 驅動的 .NET 現代化和升級小幫手。協助將 .NET Framework 和 .NET 應用程式升級至最新版本的 .NET。",
-      "version": "1.0.1133-preview1",
+      "version": "1.0.1146-preview1",
       "author": {
         "name": "Microsoft",
         "url": "https://www.microsoft.com"
@@ -603,7 +603,7 @@
       "source": {
         "source": "github",
         "repo": "Avyayalaya/pm-skills-arsenal",
-        "ref": "refs/tags/v2.1.0"
+        "ref": "v2.1.0"
       }
     },
     {

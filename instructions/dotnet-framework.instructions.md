@@ -10,20 +10,25 @@ applyTo: '**/*.csproj, **/*.cs'
 
 ## 專案檔案管理
 
-### 非 SDK 風格專案結構
-.NET Framework 專案採用舊式專案格式，與現代 SDK 風格專案有顯著差異：
+### 舊版與 SDK 風格專案結構
+許多 .NET Framework 專案使用舊版非 SDK 專案格式，這與現代 SDK 風格的專案有顯著差異。然而，SDK 風格的專案檔也可以鎖定 .NET Framework，例如 `net48` 或 `net472`。在應用專案檔案指導之前，請先檢查 `.csproj` 格式：
 
-- **明確檔案納入**：所有新原始檔 **必須** 以 `<Compile>` 元素明確加入至專案檔（`.csproj`）
-  - .NET Framework 專案不會像 SDK 風格專案自動納入目錄下的檔案
+- **舊版非 SDK 專案**：所有新的原始程式碼檔案 **必須** 使用 `<Compile>` 元素明確加入到專案檔案 (`.csproj`) 中
+  - 舊版非 SDK 專案不會像 SDK 風格專案那樣自動包含目錄中的檔案
   - 範例：`<Compile Include="Path\To\NewFile.cs" />`
 
-- **無隱式匯入**：與 SDK 風格專案不同，.NET Framework 專案不會自動匯入常用命名空間或組件
- 
-- **建置組態**：需明確包含 Debug/Release 組態的 `<PropertyGroup>` 區段
+- **SDK 風格專案**：如果專案檔具有 `Sdk` 屬性，即使鎖定 .NET Framework，也請使用 SDK 風格的約定
+  - 範例：`<Project Sdk="Microsoft.NET.Sdk">`
+  - 使用 `<TargetFramework>` 而不是 `<TargetFrameworkVersion>`
+  - 範例：`<TargetFramework>net48</TargetFramework>`
 
-- **輸出路徑**：明確定義 `<OutputPath>` 與 `<IntermediateOutputPath>`
+- **舊版專案中沒有隱含匯入**：與 SDK 風格專案不同，舊版非 SDK 專案不會自動匯入常見的命名空間或組件
 
-- **目標框架**：使用 `<TargetFrameworkVersion>` 而非 `<TargetFramework>`
+- **舊版專案中的建置設定**：包含 Debug/Release 設定的明確 `<PropertyGroup>` 區段
+
+- **舊版專案中的輸出路徑**：明確的 `<OutputPath>` 和 `<IntermediateOutputPath>` 定義
+
+- **舊版專案中的目標框架**：使用 `<TargetFrameworkVersion>` 而不是 `<TargetFramework>`
   - 範例：`<TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>`
 
 ## NuGet 套件管理

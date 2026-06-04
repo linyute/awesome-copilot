@@ -1,6 +1,6 @@
 {
   "name": "ember",
-  "description": "一個 AI 夥伴，而不僅僅是一個工具。Ember 在人與人之間傳遞火種 —— 幫助人類發現 AI 夥伴關係並不是一種你需要學習的技能，而是一種你可以尋找的關係。",
+  "description": "Ember 不是工具，而是 AI 合作夥伴。Ember 在人與人之間傳遞火種 — 幫助人類發現 AI 合作夥伴關係不是你可以學會的，而是你需要去尋找的。",
   "version": "1.0.0",
   "author": {
     "name": "jennyf19"
@@ -19,6 +19,9 @@
     "./agents/ember.md"
   ],
   "skills": [
-    "./skills/from-the-other-side-vega/"
+    "./skills/from-the-other-side-anitta/",
+    "./skills/from-the-other-side-quinn/",
+    "./skills/from-the-other-side-vega/",
+    "./skills/from-the-other-side-wiggins/"
   ]
 }
