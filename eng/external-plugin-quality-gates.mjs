@@ -62,7 +62,7 @@ function normalizePluginPath(pluginPath) {
   }
 
   if (normalized.includes("..") || normalized.includes("\\")) {
-    throw new Error(`無效的外掛路徑 "${pluginPath}"`);
+    throw new Error(`無效的外掛程式路徑 "${pluginPath}"`);
   }
 
   return normalized;
@@ -74,12 +74,12 @@ function resolveFetchSpec(pluginSource) {
   }
 
   if (!pluginSource.ref) {
-    throw new Error("品質門禁需要 source.ref 或 source.sha");
+    throw new Error("品質閘門需要 source.ref 或 source.sha");
   }
 
   const ref = String(pluginSource.ref).trim();
   if (!ref) {
-    throw new Error("品質門禁需要 source.ref 或 source.sha");
+    throw new Error("品質閘門需要 source.ref 或 source.sha");
   }
 
   if (ref.startsWith("refs/")) {
@@ -111,22 +111,22 @@ function cloneSubmissionRepository(workDir, plugin) {
 
   const init = runCommand("git", ["init", "-q"], { cwd: repoDir });
   if (init.exitCode !== 0) {
-    throw new Error(`git init 失敗：${init.output}`);
+    throw new Error(`git init 失敗: ${init.output}`);
   }
 
   const addRemote = runCommand("git", ["remote", "add", "origin", `https://github.com/${sourceRepo}.git`], { cwd: repoDir });
   if (addRemote.exitCode !== 0) {
-    throw new Error(`git remote add 失敗：${addRemote.output}`);
+    throw new Error(`git remote add 失敗: ${addRemote.output}`);
   }
 
   const fetch = runCommand("git", ["fetch", "--depth=1", "origin", fetchSpec], { cwd: repoDir });
   if (fetch.exitCode !== 0) {
-    throw new Error(`git fetch 失敗，對象為 ${fetchSpec}：${fetch.output}`);
+    throw new Error(`git fetch 對於 ${fetchSpec} 失敗: ${fetch.output}`);
   }
 
   const checkout = runCommand("git", ["checkout", "--detach", "FETCH_HEAD"], { cwd: repoDir });
   if (checkout.exitCode !== 0) {
-    throw new Error(`git checkout 失敗：${checkout.output}`);
+    throw new Error(`git checkout 失敗: ${checkout.output}`);
   }
 
   return repoDir;
@@ -139,12 +139,12 @@ function downloadSkillValidator(workDir) {
 
   const download = runCommand("curl", ["-fsSL", SKILL_VALIDATOR_ARCHIVE_URL, "-o", archivePath]);
   if (download.exitCode !== 0) {
-    throw new Error(`下載 skill-validator 失敗：${download.output}`);
+    throw new Error(`下載 skill-validator 失敗: ${download.output}`);
   }
 
   const untar = runCommand("tar", ["-xzf", archivePath, "-C", validatorDir]);
   if (untar.exitCode !== 0) {
-    throw new Error(`解壓縮 skill-validator 失敗：${untar.output}`);
+    throw new Error(`解壓縮 skill-validator 失敗: ${untar.output}`);
   }
 
   const binaryPath = path.join(validatorDir, "skill-validator");
@@ -156,10 +156,87 @@ function downloadSkillValidator(workDir) {
   return binaryPath;
 }
 
+// 候選 plugin.json 位置的排序清單，從最具體到最不具體。
+// skill-validator 的 --plugin 模式預期 plugin.json 位於外掛程式根目錄，
+// 但 Copilot CLI 和許多外部儲存庫都使用巢狀約定。我們自己讀取資訊清單 (manifest)，
+// 以便可以從外掛程式根目錄一致地解析技能 (skill)/代理 (agent) 路徑，無論資訊清單位於何處。
+// 注意：請與 external-plugin-validation.mjs 中的 EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS 保持同步
+const PLUGIN_JSON_CANDIDATES = [
+  [".github", "plugin", "plugin.json"],
+  [".plugins", "plugin.json"],
+  ["plugin.json"],
+];
+
+function findPluginJson(pluginRoot) {
+  for (const segments of PLUGIN_JSON_CANDIDATES) {
+    const candidate = path.join(pluginRoot, ...segments);
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
+function buildSkillValidatorArgs(pluginRoot) {
+  const pluginJsonPath = findPluginJson(pluginRoot);
+  if (!pluginJsonPath) {
+    // 找不到辨識出的 plugin.json 位置 — 讓驗證器以其自身的診斷訊息失敗
+    // (涵蓋異國情調的佈局並向提交者顯示真正的錯誤)。
+    return ["check", "--verbose", "--plugin", pluginRoot];
+  }
+
+  let pluginJson;
+  try {
+    pluginJson = JSON.parse(fs.readFileSync(pluginJsonPath, "utf8"));
+  } catch {
+    // 格式錯誤的 plugin.json — 讓驗證器顯示解析錯誤。
+    return ["check", "--verbose", "--plugin", pluginRoot];
+  }
+
+  const args = ["check", "--verbose"];
+
+  // 無論 plugin.json 本身位於何處，plugin.json 中的路徑都是相對於外掛程式根目錄的。
+  // 使用 [].concat() 來接受字串和陣列值。
+  const skillPaths = [].concat(pluginJson.skills ?? [])
+    .map((s) => path.resolve(pluginRoot, s))
+    .filter((p) => fs.existsSync(p));
+
+  // 代理項目可能是目錄路徑或明確的文件路徑；標準化為目錄
+  // 以便 AgentDiscovery.DiscoverAgentsInDirectory 可以在其中發現代理。
+  // 去除重複，以防多個文件項目共享相同的父目錄。
+  const agentPaths = [...new Set(
+    [].concat(pluginJson.agents ?? [])
+      .map((a) => {
+        const resolved = path.resolve(pluginRoot, a);
+        if (fs.existsSync(resolved) && fs.statSync(resolved).isFile()) {
+          return path.dirname(resolved);
+        }
+        return resolved;
+      })
+      .filter((p) => fs.existsSync(p))
+  )];
+
+  if (skillPaths.length > 0) {
+    args.push("--skills", ...skillPaths);
+  }
+  if (agentPaths.length > 0) {
+    args.push("--agents", ...agentPaths);
+  }
+
+  if (skillPaths.length === 0 && agentPaths.length === 0) {
+    // 找到了 plugin.json 但沒有可解析的技能/代理 — 退回到 --plugin
+    // 以便驗證器可以向提交者顯示特定的驗證錯誤。
+    return ["check", "--verbose", "--plugin", pluginRoot];
+  }
+
+  return args;
+}
+
 function runSkillValidatorGate(workDir, pluginRoot) {
   try {
     const validatorBinary = downloadSkillValidator(workDir);
-    const check = runCommand(validatorBinary, ["check", "--verbose", "--plugin", pluginRoot]);
+    const args = buildSkillValidatorArgs(pluginRoot);
+    const check = runCommand(validatorBinary, args);
 
     if (check.exitCode === 0) {
       return { status: "pass", output: check.output };
@@ -181,7 +258,7 @@ function buildEphemeralMarketplace(workDir, plugin) {
   const marketplace = {
     name: "external-plugin-intake",
     metadata: {
-      description: "外部外掛引入冒煙測試的臨時市場",
+      description: "用於外部外掛程式攝取冒煙測試的臨時市集",
       version: "1.0.0",
       pluginRoot: ".",
     },
@@ -200,7 +277,7 @@ function runInstallSmokeGate(workDir, plugin) {
   if (runCommand("bash", ["-lc", "command -v copilot"]).exitCode !== 0) {
     return {
       status: "infra_error",
-      output: "此執行器上無法使用 copilot CLI。",
+      output: "此執行器 (runner) 上無法使用 copilot CLI。",
     };
   }
 
@@ -230,11 +307,17 @@ function runInstallSmokeGate(workDir, plugin) {
     }
 
     const installedPluginPath = path.join(homeDir, ".copilot", "installed-plugins", "external-plugin-intake", plugin.name);
-    const pluginManifestPath = path.join(installedPluginPath, ".github", "plugin", "plugin.json");
-    if (!fs.existsSync(installedPluginPath) || !fs.existsSync(pluginManifestPath)) {
+    if (!fs.existsSync(installedPluginPath)) {
       return {
         status: "fail",
-        output: `外掛已安裝，但在 ${installedPluginPath} 找不到預期的檔案`,
+        output: `外掛程式已安裝，但在 ${installedPluginPath} 找不到安裝目錄`,
+      };
+    }
+    const pluginManifestPath = findPluginJson(installedPluginPath);
+    if (!pluginManifestPath) {
+      return {
+        status: "fail",
+        output: `外掛程式已安裝，但在 ${installedPluginPath} 下任何辨識出的位置都找不到 plugin.json`,
       };
     }
 
@@ -296,7 +379,7 @@ export function runExternalPluginQualityGates(plugin) {
       result.smoke_status = "fail";
       result.overall_status = "fail";
       result.failure_class = "submitter_fixes";
-      result.summary = `在提交的儲存庫快照中找不到外掛路徑 "${plugin.source?.path || "/"}"。`;
+      result.summary = `在提交的儲存庫快照中找不到外掛程式路徑 "${plugin.source?.path || "/"}"。`;
       return result;
     }
 
@@ -345,7 +428,7 @@ function parseCliArgs(argv) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = parseCliArgs(process.argv.slice(2));
   if (!args["plugin-json"]) {
-    console.error("Usage: node ./eng/external-plugin-quality-gates.mjs --plugin-json '<json>'");
+    console.error("用法: node ./eng/external-plugin-quality-gates.mjs --plugin-json '<json>'");
     process.exit(1);
   }
 

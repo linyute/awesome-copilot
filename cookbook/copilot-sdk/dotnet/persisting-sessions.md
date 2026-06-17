@@ -16,7 +16,7 @@
 ### 使用自定義 ID 建立工作階段
 
 ```csharp
-using GitHub.Copilot.SDK;
+using GitHub.Copilot;
 
 await using var client = new CopilotClient();
 await client.StartAsync();
@@ -74,15 +74,32 @@ await client.DeleteSessionAsync("user-123-conversation");
 
 ### 獲取工作階段歷程記錄
 
-擷取工作階段中的所有訊息：
+取得會話的所有事件：
 
 ```csharp
-var messages = await session.GetMessagesAsync();
-foreach (var msg in messages)
+using GitHub.Copilot; // UserMessageEvent、AssistantMessageEvent 等類型位於此命名空間
+
+var events = await session.GetEventsAsync();
+foreach (var evt in events)
 {
-    Console.WriteLine($"[{msg.Type}] {msg.Data.Content}");
+    switch (evt)
+    {
+        case UserMessageEvent user:
+            Console.WriteLine($"[user] {user.Data.Content}");
+            break;
+        case AssistantMessageEvent assistant:
+            Console.WriteLine($"[assistant] {assistant.Data.Content}");
+            break;
+        default:
+            // 工作階段也可能包含其他事件（工具呼叫、工具結果、系統事件）。
+            Console.WriteLine($"[{evt.GetType().Name}]");
+            break;
+    }
 }
 ```
+
+> 工作階段的事件串流可能包含超出使用者與助理訊息的其他類型
+>（例如工具呼叫、工具結果與系統事件）。請處理您關心的類型，並在預設情況下回退，以免有事件被靜默忽略。
 
 ## 最佳實踐
 

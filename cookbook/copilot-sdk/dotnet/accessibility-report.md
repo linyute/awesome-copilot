@@ -32,7 +32,7 @@ dotnet run recipe/accessibility-report.cs
 ```csharp
 #:package GitHub.Copilot.SDK@*
 
-using GitHub.Copilot.SDK;
+using GitHub.Copilot;
 
 // 建立並啟動用戶端
 await using var client = new CopilotClient();
@@ -65,10 +65,10 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
     Model = "claude-opus-4.6",
     Streaming = true,
     OnPermissionRequest = PermissionHandler.ApproveAll,
-    McpServers = new Dictionary<string, object>()
+    McpServers = new Dictionary<string, McpServerConfig>()
     {
         ["playwright"] =
-        new McpLocalServerConfig
+        new McpStdioServerConfig
         {
             Type = "local",
             Command = "npx",
@@ -111,18 +111,18 @@ var prompt = $"""
     📊 協助工具報告：[網頁標題] (domain.com)
 
     ✅ 運作良好的部分
-    | 類別 | 狀態 | 詳細資訊 |
-    |----------|--------|---------|
-    | 語言 | ✅ 通過 | lang="en-US" 設定正確 |
-    | 網頁標題 | ✅ 通過 | "[標題]" 具備描述性 |
+    | 類別     | 狀態   | 詳細資訊                   |
+    | -------- | ------ | -------------------------- |
+    | 語言     | ✅ 通過 | lang="en-US" 設定正確      |
+    | 網頁標題 | ✅ 通過 | "[標題]" 具備描述性        |
     | 標題階層 | ✅ 通過 | 單一 H1，正確的 H2/H3 結構 |
-    | 圖片 | ✅ 通過 | 所有 X 張圖片皆有替代文字 |
+    | 圖片     | ✅ 通過 | 所有 X 張圖片皆有替代文字  |
 
     ⚠️ 發現的問題
-    | 嚴重程度 | 問題 | WCAG 標準 | 建議 |
-    |----------|-------|----------------|----------------|
-    | 🔴 高 | 缺少 <main> 地標 | 1.3.1, 2.4.1 | 將主要內容封裝在 <main> 元件中 |
-    | 🟡 中 | 焦點外框已停用 | 2.4.7 | 確保存在可見的 :focus 樣式 |
+    | 嚴重程度 | 問題             | WCAG 標準    | 建議                           |
+    | -------- | ---------------- | ------------ | ------------------------------ |
+    | 🔴 高     | 缺少 <main> 地標 | 1.3.1, 2.4.1 | 將主要內容封裝在 <main> 元件中 |
+    | 🟡 中     | 焦點外框已停用   | 2.4.7        | 確保存在可見的 :focus 樣式     |
 
     📋 統計摘要
     - 連結總數：X
@@ -195,7 +195,7 @@ if (generateTests == "y" || generateTests == "yes")
 
 ## 運作方式
 
-1. **Playwright MCP 伺服器**：設定一個執行 `@playwright/mcp` 的本機 MCP 伺服器，以提供瀏覽器自動化工具
+1. **Playwright MCP server**：設定一個在本機執行的 stdio MCP 伺服器（`McpStdioServerConfig`，透過 `npx` 啟動），執行 `@playwright/mcp` 以提供瀏覽器自動化工具
 2. **串流輸出**：使用 `Streaming = true` 與 `AssistantMessageDeltaEvent` 進行即時的逐權杖（token-by-token）輸出
 3. **協助工具快照**：Playwright 的 `browser_snapshot` 工具可擷取網頁的完整協助工具樹
 4. **結構化報告**：提示詞設計了一種與 WCAG 對齊且一致的報告格式，並帶有表情符號嚴重程度指示器
@@ -205,13 +205,13 @@ if (generateTests == "y" || generateTests == "yes")
 
 ### MCP 伺服器設定
 
-此食譜設定了與工作階段一同執行的本機 MCP 伺服器：
+此食譜會設定一個在本機執行的 stdio MCP 伺服器（`McpStdioServerConfig`，透過 `npx` 啟動），與工作階段同時運行：
 
 ```csharp
 OnPermissionRequest = PermissionHandler.ApproveAll,
-McpServers = new Dictionary<string, object>()
+McpServers = new Dictionary<string, McpServerConfig>()
 {
-    ["playwright"] = new McpLocalServerConfig
+    ["playwright"] = new McpStdioServerConfig
     {
         Type = "local",
         Command = "npx",
@@ -255,17 +255,17 @@ session.On(evt =>
 📊 協助工具報告：GitHub (github.com)
 
 ✅ 運作良好的部分
-| 類別 | 狀態 | 詳細資訊 |
-|----------|--------|---------|
-| 語言 | ✅ 通過 | lang="en" 設定正確 |
-| 網頁標題 | ✅ 通過 | "GitHub" 可辨識 |
-| 標題階層 | ✅ 通過 | 正確的 H1/H2 結構 |
-| 圖片 | ✅ 通過 | 所有圖片皆有替代文字 |
+| 類別     | 狀態   | 詳細資訊             |
+| -------- | ------ | -------------------- |
+| 語言     | ✅ 通過 | lang="en" 設定正確   |
+| 網頁標題 | ✅ 通過 | "GitHub" 可辨識      |
+| 標題階層 | ✅ 通過 | 正確的 H1/H2 結構    |
+| 圖片     | ✅ 通過 | 所有圖片皆有替代文字 |
 
 ⚠️ 發現的問題
-| 嚴重程度 | 問題 | WCAG 標準 | 建議 |
-|----------|-------|----------------|----------------|
-| 🟡 中 | 某些連結缺少描述性文字 | 2.4.4 | 為僅含圖示的連結新增 aria-label |
+| 嚴重程度 | 問題                   | WCAG 標準 | 建議                            |
+| -------- | ---------------------- | --------- | ------------------------------- |
+| 🟡 中     | 某些連結缺少描述性文字 | 2.4.4     | 為僅含圖示的連結新增 aria-label |
 
 📋 統計摘要
 - 連結總數：47

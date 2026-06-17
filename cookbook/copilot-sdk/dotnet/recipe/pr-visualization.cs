@@ -2,11 +2,12 @@
 #:property PublishAot=false
 
 using System.Diagnostics;
-using GitHub.Copilot.SDK;
+// GitHub.Copilot.SDK 套件公開了 GitHub.Copilot 命名空間。
+using GitHub.Copilot;
 
-// ============================================================================ 
+// ============================================================================
 // Git 與 GitHub 偵測
-// ============================================================================ 
+// ============================================================================
 
 bool IsGitRepo()
 {
@@ -82,9 +83,9 @@ string PromptForRepo()
     return Console.ReadLine()?.Trim() ?? "";
 }
 
-// ============================================================================ 
+// ============================================================================
 // 主要應用程式
-// ============================================================================ 
+// ============================================================================
 
 Console.WriteLine("🔍 PR 建立時間圖表產生器\n");
 
@@ -126,7 +127,7 @@ var owner = parts[0];
 var repoName = parts[1];
 
 // 建立 Copilot 用戶端 - 不需要自訂工具！
-await using var client = new CopilotClient(new CopilotClientOptions { LogLevel = "error" });
+await using var client = new CopilotClient(new CopilotClientOptions { LogLevel = CopilotLogLevel.Error });
 await client.StartAsync();
 
 var session = await client.CreateSessionAsync(new SessionConfig

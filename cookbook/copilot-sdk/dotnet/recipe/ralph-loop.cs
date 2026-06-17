@@ -1,6 +1,7 @@
 #:package GitHub.Copilot.SDK@*
 
-using GitHub.Copilot.SDK;
+// GitHub.Copilot.SDK 套件公開了 GitHub.Copilot 命名空間。
+using GitHub.Copilot;
 
 // Ralph loop：具有每次反覆運算全新內容的自主 AI 任務迴圈。
 //

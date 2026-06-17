@@ -36,7 +36,7 @@ dotnet run -- --repo github/copilot-sdk
 
 ```csharp
 using System.Diagnostics;
-using GitHub.Copilot.SDK;
+using GitHub.Copilot;
 
 // ============================================================================ 
 // Git 與 GitHub 偵測
@@ -159,7 +159,7 @@ var owner = parts[0];
 var repoName = parts[1];
 
 // 建立 Copilot 用戶端 - 不需要自定義工具！
-await using var client = new CopilotClient(new CopilotClientOptions { LogLevel = "error" });
+await using var client = new CopilotClient(new CopilotClientOptions { LogLevel = CopilotLogLevel.Error });
 await client.StartAsync();
 
 var session = await client.CreateSessionAsync(new SessionConfig
@@ -249,10 +249,10 @@ while (true)
 
 ## 為何使用此方法？
 
-| 考量層面         | 自定義工具        | 內建 Copilot                      |
-| --------------- | ----------------- | --------------------------------- |
-| 程式碼複雜度     | 高                | **極小**                          |
-| 維護             | 您自行維護        | **Copilot 維護**                  |
-| 彈性             | 固定邏輯          | **AI 決定最佳方法**               |
-| 圖表類型         | 您所編寫的內容    | **Copilot 能產生的任何類型**      |
-| 資料分組         | 硬編碼的貯槽      | **智慧分組**                      |
+| 考量層面     | 自定義工具     | 內建 Copilot                 |
+| ------------ | -------------- | ---------------------------- |
+| 程式碼複雜度 | 高             | **極小**                     |
+| 維護         | 您自行維護     | **Copilot 維護**             |
+| 彈性         | 固定邏輯       | **AI 決定最佳方法**          |
+| 圖表類型     | 您所編寫的內容 | **Copilot 能產生的任何類型** |
+| 資料分組     | 硬編碼的貯槽   | **智慧分組**                 |

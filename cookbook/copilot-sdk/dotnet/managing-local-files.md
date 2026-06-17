@@ -16,7 +16,7 @@
 ## 範例程式碼
 
 ```csharp
-using GitHub.Copilot.SDK;
+using GitHub.Copilot;
 
 // 建立並啟動用戶端
 await using var client = new CopilotClient();

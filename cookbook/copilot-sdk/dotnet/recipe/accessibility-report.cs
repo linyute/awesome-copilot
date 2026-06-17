@@ -1,6 +1,7 @@
 #:package GitHub.Copilot.SDK@*
 
-using GitHub.Copilot.SDK;
+// GitHub.Copilot.SDK 套件公開了 GitHub.Copilot 命名空間。
+using GitHub.Copilot;
 
 // 建立並啟動用戶端
 await using var client = new CopilotClient();
@@ -33,10 +34,10 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
   Model = "claude-opus-4.6",
   Streaming = true,
   OnPermissionRequest = PermissionHandler.ApproveAll,
-  McpServers = new Dictionary<string, object>()
+  McpServers = new Dictionary<string, McpServerConfig>()
   {
     ["playwright"] =
-        new McpLocalServerConfig
+        new McpStdioServerConfig
         {
           Type = "local",
           Command = "npx",

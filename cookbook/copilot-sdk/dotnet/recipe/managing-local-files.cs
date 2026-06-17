@@ -1,7 +1,8 @@
 #:package GitHub.Copilot.SDK@*
 #:property PublishAot=false
 
-using GitHub.Copilot.SDK;
+// GitHub.Copilot.SDK 套件公開了 GitHub.Copilot 命名空間。
+using GitHub.Copilot;
 
 // 建立並啟動用戶端
 await using var client = new CopilotClient();

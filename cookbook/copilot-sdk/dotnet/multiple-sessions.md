@@ -15,7 +15,7 @@
 ## C #
 
 ```csharp
-using GitHub.Copilot.SDK;
+using GitHub.Copilot;
 
 await using var client = new CopilotClient();
 await client.StartAsync();

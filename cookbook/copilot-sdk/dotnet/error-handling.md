@@ -15,7 +15,7 @@
 ## 基本 try-catch
 
 ```csharp
-using GitHub.Copilot.SDK;
+using GitHub.Copilot;
 
 var client = new CopilotClient();
 
@@ -134,15 +134,20 @@ Console.CancelKeyPress += async (sender, e) =>
     e.Cancel = true;
     Console.WriteLine("正在關閉...");
 
-    var errors = await client.StopAsync();
-    if (errors.Count > 0)
+    try
     {
-        Console.WriteLine($"清理錯誤：{string.Join(", ", errors)}");
+        await client.StopAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"清理錯誤：{ex.Message}");
     }
 
     Environment.Exit(0);
 };
 ```
+
+> 在 1.0 版本中，若清理過程中發生錯誤，`StopAsync()` 會拋出異常，而非回傳清理錯誤清單。因此請用 try/catch 包起來記錄失敗訊息，避免導致關閉流程中斷。若正常停止耗時過久，可使用 `ForceStopAsync()`。
 
 ## 使用 await using 進行自動處置
 
@@ -163,7 +168,7 @@ var session = await client.CreateSessionAsync(new SessionConfig
 
 ## 最佳實踐
 
-從 Copilot SDK v0.1.28 起，權限處理為選用項目。如果工作階段可能需要工具、檔案或系統存取，請在建立時明確設定 `OnPermissionRequest`。
+權限處理是選擇性的。如果會話可能需要工具、檔案或系統存取，請在建立時明確設定 `OnPermissionRequest`。
 
 1. **務必進行清理**：使用 try-finally 或 `await using` 以確保呼叫 `StopAsync()`
 2. **處理連線錯誤**：CLI 可能未安裝或未執行

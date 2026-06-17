@@ -77,7 +77,7 @@ def create_arrow(
 ) -> list:
     """
     建立一個箭頭元素。
-    
+
     引數：
         from_x: 起始 X 座標
         from_y: 起始 Y 座標
@@ -86,12 +86,12 @@ def create_arrow(
         style: 線條樣式（實線、虛線、點線）
         color: 箭頭顏色
         label: 箭頭上的選擇性文字標籤
-    
+
     傳回：
         元素列表（箭頭和選擇性標籤）
     """
     elements = []
-    
+
     # 箭頭元素
     arrow = {
         "id": generate_unique_id(),
@@ -133,12 +133,12 @@ def create_arrow(
         "lastCommittedPoint": None
     }
     elements.append(arrow)
-    
+
     # 選擇性標籤
     if label:
         mid_x = (from_x + to_x) / 2 - (len(label) * 5)
         mid_y = (from_y + to_y) / 2 - 10
-        
+
         label_element = {
             "id": generate_unique_id(),
             "type": "text",
@@ -177,7 +177,7 @@ def create_arrow(
             "lineHeight": 1.25
         }
         elements.append(label_element)
-    
+
     return elements
 
 
@@ -193,7 +193,7 @@ def add_arrow_to_diagram(
 ) -> None:
     """
     將箭頭新增至 Excalidraw 圖表。
-    
+
     引數：
         diagram_path: Excalidraw 圖表檔案的路徑
         from_x: 起始 X 座標
@@ -206,33 +206,36 @@ def add_arrow_to_diagram(
     """
     print(f"正在建立箭頭，從 ({from_x}, {from_y}) 到 ({to_x}, {to_y})")
     arrow_elements = create_arrow(from_x, from_y, to_x, to_y, style, color, label)
-    
+
     if label:
         print(f"  帶有標籤：'{label}'")
-    
+
     # 載入圖表
     print(f"正在載入圖表：{diagram_path}")
     with open(diagram_path, 'r', encoding='utf-8') as f:
         diagram = json.load(f)
-    
+
     # 新增箭頭元素
     if 'elements' not in diagram:
         diagram['elements'] = []
-    
+
     original_count = len(diagram['elements'])
     diagram['elements'].extend(arrow_elements)
     print(f"  已新增 {len(arrow_elements)} 個元素（總計：{original_count} -> {len(diagram['elements'])}）")
-    
+
     # 儲存圖表
     print(f"正在儲存圖表")
     with open(diagram_path, 'w', encoding='utf-8') as f:
         json.dump(diagram, f, indent=2, ensure_ascii=False)
-    
+
     print(f"✓ 成功將箭頭新增至圖表中")
 
 
 def main():
     """主進入點。"""
+    if hasattr(sys.stdout, "reconfigure"):
+        # 確保在 Windows 主控台上輸出一致的 UTF-8 編碼。
+        sys.stdout.reconfigure(encoding="utf-8")
     if len(sys.argv) < 6:
         print("用法：python add-arrow.py <diagram_path> <from_x> <from_y> <to_x> <to_y> [選項]")
         print("
@@ -246,20 +249,20 @@ def main():
         print("  python add-arrow.py diagram.excalidraw 300 200 500 300")
         print("  python add-arrow.py diagram.excalidraw 300 200 500 300 --label 'HTTP'")
         sys.exit(1)
-    
+
     diagram_path = Path(sys.argv[1])
     from_x = float(sys.argv[2])
     from_y = float(sys.argv[3])
     to_x = float(sys.argv[4])
     to_y = float(sys.argv[5])
-    
+
     # 解析選擇性引數
     style = "solid"
     color = "#1e1e1e"
     label = None
     # 預設：使用編輯後綴以規避編輯器覆寫問題
     use_edit_suffix = True
-    
+
     i = 6
     while i < len(sys.argv):
         if sys.argv[i] == '--style':
@@ -295,12 +298,12 @@ def main():
         else:
             print(f"錯誤：未知選項：{sys.argv[i]}")
             sys.exit(1)
-    
+
     # 驗證輸入
     if not diagram_path.exists():
         print(f"錯誤：找不到圖表檔案：{diagram_path}")
         sys.exit(1)
-    
+
     try:
         work_path, final_path = prepare_edit_path(diagram_path, use_edit_suffix)
         add_arrow_to_diagram(work_path, from_x, from_y, to_x, to_y, style, color, label)

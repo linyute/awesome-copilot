@@ -21,7 +21,7 @@ export const EXTERNAL_PLUGIN_INTAKE_LABELS = Object.freeze({
   },
   rejected: {
     color: "B60205",
-    description: "提交已被拒絕或未通過引入驗證",
+    description: "提交已被維護者拒絕",
   },
 });
 
@@ -32,22 +32,6 @@ const EXTERNAL_PLUGIN_INTAKE_SYNC_LABELS = Object.freeze([
   "requires-submitter-fixes",
   "rejected",
 ]);
-
-async function ensureLabel({ github, owner, repo, name, config }) {
-  try {
-    await github.rest.issues.createLabel({
-      owner,
-      repo,
-      name,
-      color: config.color,
-      description: config.description,
-    });
-  } catch (error) {
-    if (error.status !== 422) {
-      throw error;
-    }
-  }
-}
 
 async function removeLabel({ github, owner, repo, issueNumber, name }) {
   try {
@@ -65,11 +49,6 @@ async function removeLabel({ github, owner, repo, issueNumber, name }) {
 }
 
 export async function syncExternalPluginIntakeLabels({ github, owner, repo, issueNumber, desiredLabels }) {
-  await Promise.all(
-    Object.entries(EXTERNAL_PLUGIN_INTAKE_LABELS).map(([name, config]) =>
-      ensureLabel({ github, owner, repo, name, config })
-    )
-  );
 
   const currentLabels = await github.paginate(github.rest.issues.listLabelsOnIssue, {
     owner,
@@ -143,7 +122,7 @@ export async function applyExternalPluginIntakeEvaluation({
   issueNumber,
   evaluation,
 }) {
-  const state = evaluation.intakeState ?? (evaluation.valid ? "ready-for-review" : "rejected");
+  const state = evaluation.intakeState ?? (evaluation.valid ? "ready-for-review" : "requires-submitter-fixes");
   const desiredLabelsByState = {
     "ready-for-review": new Set(["external-plugin", "ready-for-review"]),
     "requires-submitter-fixes": new Set(["external-plugin", "requires-submitter-fixes"]),

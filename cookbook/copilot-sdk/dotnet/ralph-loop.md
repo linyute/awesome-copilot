@@ -42,7 +42,7 @@
 最簡化的 Ralph loop —— SDK 等同於 `while :; do cat PROMPT.md | copilot ; done`：
 
 ```csharp
-using GitHub.Copilot.SDK;
+using GitHub.Copilot;
 
 var client = new CopilotClient();
 await client.StartAsync();
@@ -96,7 +96,7 @@ finally
 完整的 Ralph 模式，包含規劃和建構模式，符合 [Ralph Playbook](https://github.com/ClaytonFarr/ralph-playbook) 架構：
 
 ```csharp
-using GitHub.Copilot.SDK;
+using GitHub.Copilot;
 
 // 剖析引數：dotnet run [plan] [max_iterations]
 var mode = args.Contains("plan") ? "plan" : "build";

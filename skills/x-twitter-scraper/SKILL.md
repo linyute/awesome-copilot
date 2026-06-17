@@ -23,7 +23,7 @@ description: '使用 Xquik X API SDK、REST 端點、MCP 工具、已簽署的 W
 - REST API 文件：https://docs.xquik.com/api-reference/overview
 - SDK 索引：https://docs.xquik.com/sdks
 - OpenAPI 規格：https://xquik.com/openapi.json
-- MCP 伺服器文件：https://docs.xquik.com/mcp
+- MCP 伺服器文件：https://docs.xquik.com/mcp/overview
 - 技能儲存庫：https://github.com/Xquik-dev/x-twitter-scraper
 
 請勿虛構端點名稱、請求欄位、回應欄位、範圍、定價、限制或套件名稱。請先閱讀相關的 SDK README 和 API 參考頁面。

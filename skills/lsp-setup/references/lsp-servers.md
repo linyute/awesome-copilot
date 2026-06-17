@@ -12,8 +12,8 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|-------------------------------------------------------|
+| 作業系統 | 指令                                                   |
+| -------- | ------------------------------------------------------ |
 | 任何     | `npm install -g typescript typescript-language-server` |
 
 ### 設定片段
@@ -43,11 +43,11 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|-----------------------------------|
-| macOS   | `brew install jdtls`              |
-| Linux   | 在發行版套件庫中尋找 `jdtls` 或 `eclipse.jdt.ls`；或者從 https://download.eclipse.org/jdtls/milestones/ 下載 |
-| Windows | 從 https://download.eclipse.org/jdtls/milestones/ 下載並將 `bin/` 加入 `PATH` |
+| 作業系統 | 指令                                                                                                         |
+| -------- | ------------------------------------------------------------------------------------------------------------ |
+| macOS    | `brew install jdtls`                                                                                         |
+| Linux    | 在發行版套件庫中尋找 `jdtls` 或 `eclipse.jdt.ls`；或者從 https://download.eclipse.org/jdtls/milestones/ 下載 |
+| Windows  | 從 https://download.eclipse.org/jdtls/milestones/ 下載並將 `bin/` 加入 `PATH`                                |
 
 在安裝了 Homebrew 的 macOS 上，執行檔會安裝為 `$PATH` 中的 `jdtls`。
 
@@ -75,10 +75,10 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|----------------------------|
-| 任何     | `npm install -g pyright`   |
-| 任何     | `pip install pyright`      |
+| 作業系統 | 指令                     |
+| -------- | ------------------------ |
+| 任何     | `npm install -g pyright` |
+| 任何     | `pip install pyright`    |
 
 ### 設定片段
 
@@ -102,10 +102,10 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|--------------------------------------------|
+| 作業系統 | 指令                                         |
+| -------- | -------------------------------------------- |
 | 任何     | `go install golang.org/x/tools/gopls@latest` |
-| macOS   | `brew install gopls`                       |
+| macOS    | `brew install gopls`                         |
 
 ### 設定片段
 
@@ -129,12 +129,12 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|--------------------------------|
-| 任何     | `rustup component add rust-analyzer` |
-| macOS   | `brew install rust-analyzer`   |
-| Linux   | 發行版套件或 `rustup` |
-| Windows | `rustup component add rust-analyzer` 或從 GitHub releases 下載 |
+| 作業系統 | 指令                                                           |
+| -------- | -------------------------------------------------------------- |
+| 任何     | `rustup component add rust-analyzer`                           |
+| macOS    | `brew install rust-analyzer`                                   |
+| Linux    | 發行版套件或 `rustup`                                          |
+| Windows  | `rustup component add rust-analyzer` 或從 GitHub releases 下載 |
 
 ### 設定片段
 
@@ -158,11 +158,11 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|----------------------------------------|
-| macOS   | `brew install llvm`（包含 clangd）或 Xcode 命令列工具 |
-| Linux   | `apt install clangd` / `dnf install clang-tools-extra` |
-| Windows | 從 https://releases.llvm.org/ 下載 LLVM |
+| 作業系統 | 指令                                                   |
+| -------- | ------------------------------------------------------ |
+| macOS    | `brew install llvm`（包含 clangd）或 Xcode 命令列工具  |
+| Linux    | `apt install clangd` / `dnf install clang-tools-extra` |
+| Windows  | 從 https://releases.llvm.org/ 下載 LLVM                |
 
 ### 設定片段
 
@@ -192,8 +192,8 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|----------------------------------------------------------------|
+| 作業系統 | 指令                                          |
+| -------- | --------------------------------------------- |
 | 任何     | 需要安裝 [.NET SDK](https://dot.net/download) |
 
 ### 設定片段
@@ -218,9 +218,9 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|---------------------------|
-| 任何     | `gem install solargraph`  |
+| 作業系統 | 指令                     |
+| -------- | ------------------------ |
+| 任何     | `gem install solargraph` |
 
 ### 設定片段
 
@@ -246,9 +246,9 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|--------------------------------------------|
-| 任何     | `npm install -g intelephense`              |
+| 作業系統 | 指令                          |
+| -------- | ----------------------------- |
+| 任何     | `npm install -g intelephense` |
 
 ### 設定片段
 
@@ -272,10 +272,10 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|---------------------------------------------------|
-| macOS   | `brew install kotlin-language-server`             |
-| 任何     | 從 GitHub releases 下載並加入 `PATH` |
+| 作業系統 | 指令                                  |
+| -------- | ------------------------------------- |
+| macOS    | `brew install kotlin-language-server` |
+| 任何     | 從 GitHub releases 下載並加入 `PATH`  |
 
 ### 設定片段
 
@@ -300,10 +300,11 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|----------------------------------------------------------------|
-| macOS   | 隨 Xcode 包含；執行檔位於 `xcrun sourcekit-lsp` |
-| Linux   | 隨 Swift 工具鏈包含；從 https://swift.org 安裝 |
+| 作業系統 | 指令                                            |
+| -------- | ----------------------------------------------- |
+| macOS    | 隨 Xcode 包含；執行檔位於 `xcrun sourcekit-lsp` |
+| Linux    | 隨 Swift 工具鏈包含；從 https://swift.org 安裝  |
+| Windows  | 隨 Swift 工具鏈包含；從 https://swift.org 安裝  |
 
 ### 設定片段
 
@@ -329,11 +330,11 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|--------------------------------------|
-| macOS   | `brew install lua-language-server`   |
-| Linux   | 從 GitHub releases 下載 |
-| Windows | 從 GitHub releases 下載 |
+| 作業系統 | 指令                               |
+| -------- | ---------------------------------- |
+| macOS    | `brew install lua-language-server` |
+| Linux    | 從 GitHub releases 下載            |
+| Windows  | 從 GitHub releases 下載            |
 
 ### 設定片段
 
@@ -357,9 +358,9 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|----------------------------------------------|
-| 任何     | `npm install -g yaml-language-server`        |
+| 作業系統 | 指令                                  |
+| -------- | ------------------------------------- |
+| 任何     | `npm install -g yaml-language-server` |
 
 ### 設定片段
 
@@ -384,9 +385,9 @@
 
 ### 安裝
 
-| 作業系統 | 指令 |
-|---------|-----------------------------------------------|
-| 任何     | `npm install -g bash-language-server`         |
+| 作業系統 | 指令                                  |
+| -------- | ------------------------------------- |
+| 任何     | `npm install -g bash-language-server` |
 
 ### 設定片段
 

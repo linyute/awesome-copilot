@@ -229,17 +229,29 @@ plugins/my-plugin-id/
 ##### 審查工作流程
 
 1. **開啟 Issue**：使用外部插件 Issue 表單。自動化會套用 `external-plugin` 和 `awaiting-review` 標籤。
-2. **自動化採納驗證**：檢查 GitHub 託管插件所需的欄位是否存在且格式正確。無效的提交會被關閉，並附上一則說明在重新提交前必須修正什麼的留言。
+2. **自動化收錄驗證**：檢查必要欄位是否存在，並正確格式化以符合 GitHub 託管的外掛程式。無效的提交會被標記為 `requires-submitter-fixes`，並附上評論說明維護者審查前需要修正的內容。
 3. **自動化品質閘道**：在元資料驗證後執行：
    - 針對提交的插件路徑/ref/sha 執行 `skill-validator check --plugin`
    - 透過 Copilot CLI 針對從提交生成的臨時 Marketplace 條目執行安裝冒煙測試 (smoke test)
 4. **準備維護者審查**：如果元資料驗證和品質閘道通過，自動化會移除 `awaiting-review` 並新增 `ready-for-review`。
 5. **提交者修復阻擋**：如果元資料有效但品質閘道失敗，自動化會套用 `requires-submitter-fixes`，而不是進入人工審查。
-6. **請求另一次採納檢查**：在更新 Issue 本文或原始插件後，Issue 作者或維護者可以留言 `/rerun-intake` 以按需重新執行自動化採納和品質閘道。開啟的 Issue 在編輯時仍會自動重新觸發採納，但已關閉的拒絕 Issue 需要 `/rerun-intake`。
+6. **要求再次進行採納**：在更新 Issue 內容或原始外掛程式後，Issue 作者或維護者可以留言 `/rerun-intake` 以按需重新執行自動化採納和品質閘道。開啟的 Issue 會在編輯時自動重新觸發採納；已關閉的維護者拒絕 Issue 需要 `/rerun-intake`。當重新執行被接受時，自動化會以 👀 反應該指令留言，以顯示處理已開始。
 7. **維護者覆蓋路徑**：具有寫入權限的維護者可以留言 `/mark-ready-for-review [可選原因]` 明確將 `requires-submitter-fixes` Issue 移動到 `ready-for-review`。
 8. **維護者決定**：一旦進入 `ready-for-review`，具有寫入權限的維護者會進行人工審查，然後在 Issue 上留言 `/approve` 或 `/reject <原因>`。來自非維護者的指令會被忽略。
 9. **核准路徑**：在 `/approve` 時，自動化會移除 `ready-for-review`，新增 `approved`，關閉 Issue，並開啟或更新針對 `staged` 分支的 PR，該 PR 會更新 `plugins/external.json` 和生成的 Marketplace 輸出。
 10. **拒絕路徑**：在 `/reject <原因>` 時，自動化會移除 `ready-for-review`，新增 `rejected`，關閉 Issue，並在 Issue 留言中記錄原因。在處理回饋後，更新同一個 Issue 並使用 `/rerun-intake` 重新排隊採納。
+
+##### 透過 PR 更新列出的外部插件
+
+當拉取請求更新 `plugins/external.json` 時（例如，先前核准的列出版本更新），自動化會執行 PR 品質檢查，並將結果直接發布在 PR 上：
+
+1. **偵測變更的項目**：自動化會識別 PR 中新增/更新的外部插件項目。
+2. **執行品質閘道**：自動化會針對每個變更的插件來源 ref/SHA/path 執行安裝煙霧測試和 `skill-validator` 檢查。
+3. **張貼來源連結**：自動化會更新機器人留言，包含每個插件的結果和直接連結到各插件來源位置的 GitHub 樹狀結構連結。
+4. **同步 PR 上的工作流程狀態標籤**：
+   - 當所有檢查通過時，套用 `ready-for-review`
+   - 當品質檢查因插件問題而失敗時，套用 `requires-submitter-fixes`
+   - 當檢查因基礎設施/暫時性錯誤而無法完成時，套用 `awaiting-review`
 
 ##### 維護者的審核責任
 
@@ -256,7 +268,7 @@ plugins/my-plugin-id/
 - `external-plugin`：套用於每個公眾外部外掛程式提交，並保留在已核准的 Issue 上，以便排定的審核自動化程式稍後能找到它們
 - `awaiting-review`：自動化程式完成驗證 Issue 之前的初始收錄狀態
 - `ready-for-review`：Issue 已通過自動化收錄檢查，正在等待維護者的決定
-- `requires-submitter-fixes`：元資料驗證通過但自動化品質閘道失敗；在人工審查前需要提交者進行更新。
+- `requires-submitter-fixes`：自動化收錄程序發現元資料或品質閘道問題；需要提交者進行更新，然後才能進行人工審核
 - `approved`：Issue 已獲核准並關閉，可作為每六個月重新審核的真實來源 (source of truth)
 - `rejected`：Issue 被拒絕並關閉，且未新增至市集中
 - `re-review-due`：已核准的 Issue 已達到六個月的審核門檻，正在等待維護者的重新審核決定
