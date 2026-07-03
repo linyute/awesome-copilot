@@ -25,7 +25,8 @@ applyTo: '**/skills/**/SKILL.md'
 |----------|-------|----------------|
 | `.github/skills/<skill-name>/` | 專案/儲存庫 | 建議用於專案技能 |
 | `.claude/skills/<skill-name>/` | 專案/儲存庫 | 舊版，用於向後相容 |
-| `~/.github/skills/<skill-name>/` | 個人 (全域) | 建議用於個人技能 |
+| `~/.copilot/skills/<skill-name>/` | 個人 (全域) | 建議用於個人技能 |
+| `~/.agents/skills/<skill-name>/` | 個人 (全域) | 支援的其他個人技能目錄 |
 | `~/.claude/skills/<skill-name>/` | 個人 (全域) | 舊版，用於向後相容 |
 
 每個技能**必須**擁有自己的子目錄，並至少包含一個 `SKILL.md` 檔案。

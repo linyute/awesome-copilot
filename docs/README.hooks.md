@@ -32,6 +32,7 @@
 | 名稱 | 說明 | 事件 | 隨附資產 |
 | ---- | ----------- | ------ | -------------- |
 | [Dependency License Checker](../hooks/dependency-license-checker/README.md) | 在工作階段結束時掃描新增加的相依套件以確保授權合規性 (GPL, AGPL 等) | sessionEnd | `check-licenses.sh`<br />`hooks.json` |
+| [Fix Broken Links](../hooks/fix-broken-links/README.md) | 在每次 Copilot 工具使用後，檢查變更的網頁檔案中是否存在損壞的超連結和 SEO 錨點問題。 | postToolUse | `hooks.json`<br />`link-fix.ps1`<br />`link-fix.sh` |
 | [Governance Audit](../hooks/governance-audit/README.md) | 掃描 Copilot 代理程式提示以尋找威脅訊號並記錄治理事件 | sessionStart, sessionEnd, userPromptSubmitted | `audit-prompt.sh`<br />`audit-session-end.sh`<br />`audit-session-start.sh`<br />`hooks.json` |
 | [Secrets Scanner](../hooks/secrets-scanner/README.md) | 掃描 Copilot 編碼代理程式工作階段中修改的檔案，尋找洩漏的機密、認證資訊和敏感資料 | sessionEnd | `hooks.json`<br />`scan-secrets.sh` |
 | [Session Auto-Commit](../hooks/session-auto-commit/README.md) | 當 Copilot 程式編碼代理程式會話結束時自動提交並推送變更 | sessionEnd | `auto-commit.sh`<br />`hooks.json` |

@@ -961,6 +961,33 @@ class WebConfig {
 }
 ```
 
+### 移除結尾斜線 (Trailing Slash) URL 匹配
+
+`PathMatchConfigurer#setUseTrailingSlashMatch(true)` 在 Spring Framework 7 / Spring Boot 4 中已**移除**。
+目前沒有替代的配置選項 — `/foo` 和 `/foo/` 不再被視為相同的路由。
+
+**遷移：** 將 Spring Framework 的 `UrlHandlerFilter` 註冊為 `FilterRegistrationBean`，使其在安全鏈 (security chain) 之前執行。`wrapRequest()` 使其透明地轉發 (forward)（無重定向），從而端到端地保留舊行為：
+
+```java
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.web.filter.UrlHandlerFilter;
+
+@Configuration
+class WebConfig {
+
+    // 在 ForwardedHeaderFilter 之後，ServletRequestPathFilter 和安全過濾器之前。
+    private static final int BEFORE_SECURITY_FILTER_ORDER = -101;
+
+    @Bean
+    FilterRegistrationBean<UrlHandlerFilter> trailingSlashHandlerFilter() {
+        UrlHandlerFilter filter = UrlHandlerFilter.trailingSlashHandler("/**").wrapRequest().build();
+        FilterRegistrationBean<UrlHandlerFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setOrder(BEFORE_SECURITY_FILTER_ORDER);
+        return registration;
+    }
+}
+```
+
 ### Jersey 和 Jackson 3 不相容性
 
 **Jersey 4.0 限制：** Spring Boot 4.0 支援 Jersey 4.0，但其**尚不支援 Jackson 3**。

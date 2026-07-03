@@ -153,7 +153,7 @@ var session = await client.CreateSessionAsync(new SessionConfig
 });
 
 // 設定事件處理
-session.On(evt =>
+session.On<SessionEvent>(evt =>
 {
     switch (evt)
     {

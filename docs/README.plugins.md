@@ -22,6 +22,8 @@
 **在 VS Code 中尋找與安裝：**
 - 開啟 Extensions 搜尋視圖並輸入 \`@agentPlugins\` 以瀏覽可用外掛程式
 - 或開啟指令面板並執行 \`Chat: Plugins\`
+- 已發布的市場清單 (工具導向): `https://raw.githubusercontent.com/linyute/awesome-copilot/marketplace/.github/plugin/marketplace.json`
+- 原始外掛程式內容 (人工編寫): `https://github.com/linyute/awesome-copilot/tree/main/plugins`
 
 | 名稱 | 說明 | 項目 | 標籤 |
 | ---- | ----------- | ----- | ---- |

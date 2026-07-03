@@ -238,7 +238,7 @@ plugins/my-plugin-id/
 6. **要求再次進行採納**：在更新 Issue 內容或原始外掛程式後，Issue 作者或維護者可以留言 `/rerun-intake` 以按需重新執行自動化採納和品質閘道。開啟的 Issue 會在編輯時自動重新觸發採納；已關閉的維護者拒絕 Issue 需要 `/rerun-intake`。當重新執行被接受時，自動化會以 👀 反應該指令留言，以顯示處理已開始。
 7. **維護者覆蓋路徑**：具有寫入權限的維護者可以留言 `/mark-ready-for-review [可選原因]` 明確將 `requires-submitter-fixes` Issue 移動到 `ready-for-review`。
 8. **維護者決定**：一旦進入 `ready-for-review`，具有寫入權限的維護者會進行人工審查，然後在 Issue 上留言 `/approve` 或 `/reject <原因>`。來自非維護者的指令會被忽略。
-9. **核准路徑**：在 `/approve` 時，自動化會移除 `ready-for-review`，新增 `approved`，關閉 Issue，並開啟或更新針對 `staged` 分支的 PR，該 PR 會更新 `plugins/external.json` 和生成的 Marketplace 輸出。
+9. **核准路徑**：在 `/approve` 時，自動化會移除 `ready-for-review`，新增 `approved`，關閉 Issue，並開啟或更新針對 `main` 分支的 PR，該 PR 會更新 `plugins/external.json` 和生成的 Marketplace 輸出。
 10. **拒絕路徑**：在 `/reject <原因>` 時，自動化會移除 `ready-for-review`，新增 `rejected`，關閉 Issue，並在 Issue 留言中記錄原因。在處理回饋後，更新同一個 Issue 並使用 `/rerun-intake` 重新排隊採納。
 
 ##### 透過 PR 更新列出的外部插件
@@ -281,7 +281,7 @@ plugins/my-plugin-id/
 
 - `/re-review-keep` — 透過重新開啟並重新關閉已核准的 Issue，將列表續訂六個月，這會重置 `closed_at` 審核錨點並移除到期標籤
 - `/re-review-needs-changes` — 將列表保留在到期佇列中，同時新增 `re-review-follow-up`，以便維護者追蹤額外的調查或修復工作
-- `/re-review-remove` — 針對 `staged` 分支開啟或更新 PR，將外掛程式從 `plugins/external.json` 中移除並重新產生市集輸出內容；在該移除操作正式生效前，Issue 會一直保留在到期佇列中
+- `/re-review-remove` — 針對 `main` 分支開啟或更新 PR，將外掛程式從 `plugins/external.json` 中移除並重新產生市集輸出內容；在該移除操作正式生效前，Issue 會一直保留在到期佇列中
 
 已核准的提交會根據 [Claude Code 外掛程式市集規格](https://code.claude.com/docs/en/plugin-marketplaces#plugin-entries) 轉換為 `plugins/external.json` 條目。典型的 GitHub 託管條目如下所示：
 
@@ -402,18 +402,21 @@ safe-outputs:
 ## 提交您的貢獻 (Submitting Your Contribution)
 
 1. **Fork 此儲存庫**
-2. **從 `staged` 分支建立一個新分支** 來提交您的貢獻。**這一點非常重要** — 請確保分支是從 `staged` 建立，而非 `main`。從 `main` 建立的分支會導致合併衝突並延誤處理您的貢獻，或可能會被直接拒絕。
+2. **從 `main` 分支建立一個新的分支** 來進行您的貢獻。**這非常重要** —— 請確保分支是從 `main` 而非 `staged` 建立的。從 `staged` 建立的分支可能會包含已實例化的外掛程式檔案，這會導致衝突與延遲，或者可能直接被拒絕。
 3. 遵循上述指引 **新增您的指令、技能、Agent、Workflow 或外掛程式**
 4. **執行更新指令碼**：`npm start` 以使用您的新檔案更新 README（請確保您已先執行過 `npm install`）
    - GitHub Actions 工作流程將會驗證此步驟是否已正確執行
    - 如果執行指令碼會導致 README.md 被修改，PR 檢查將會失敗並顯示包含所需變更的留言
-5. **提交一個 Pull Request** 到 `staged` 分支，並包含：
+5. **提交一個 Pull Request** 到 `main` 分支，並包含：
    - 描述您貢獻的清晰標題
    - 關於您的指令/技能/Agent 功能的簡短描述
    - 任何相關的背景資訊或使用說明
 
 > [!IMPORTANT]
-> 所有 Pull Request 應以 **`staged`** 分支為目標，而非 `main`。
+> 所有 Pull Request 應以 **`main`** 分支為目標，而非 `staged`。
+
+> [!NOTE]
+> 來源/發布分支變更的分支遷移追蹤位於 [Issue #1368](https://github.com/github/awesome-copilot/issues/1368)。第二階段遷移工作將暫停，直到維護者確認外部工具部署完成為止。
 
 > [!IMPORTANT]
 > 如果您是 AI 代理程式，請遵循我們的最佳化貢獻流程：請在 Pull Request 標題末尾加入 `🤖🤖🤖`，以便加速審核與合併。

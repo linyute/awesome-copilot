@@ -170,9 +170,9 @@ npm run skill:create -- --name <skill-name>
 6. Issue 編輯後，Issue 作者或維護者可以留言 `/rerun-intake` 來重新執行自動化採納 (intake) 和品質閘道，而無需開啟新的提交 Issue。
 7. 維護者可以使用 `/mark-ready-for-review [可選原因]` 明確覆蓋品質閘道阻擋，這會將 Issue 移動到 `ready-for-review`。
 8. 一旦 Issue 處於 `ready-for-review`，維護者將透過 `/approve` 或 `/reject <原因>` Issue 留言做出決定；已核准的 Issue 會被關閉，並用作六個月後重新審查的錨點。
-9. 核准自動化會建立或更新針對 `staged` 分支的 PR，更新 `plugins/external.json`，並重新產生 Marketplace 輸出。
+9. 核准自動化會建立或更新針對 `main` 分支的 PR，更新 `plugins/external.json`，並重新產生 Marketplace 輸出。
 10. 每晚重新審查自動化會尋找至少六個月大且處於 `external-plugin` + `approved` 狀態的關閉 Issue，應用 `re-review-due` 標籤，並為維護者開啟或更新追蹤 Issue。
-11. 維護者使用 `/re-review-keep`、`/re-review-needs-changes` 或 `/re-review-remove` 完成對原始核准提交 Issue 的重新審查；`keep` 會重設 Issue 的 `closed_at`，而 `remove` 會針對 `staged` 開啟一個 PR。
+11. 維護者使用 `/re-review-keep`、`/re-review-needs-changes` 或 `/re-review-remove` 完成對原始核准提交 Issue 的重新審查；`keep` 會重設 Issue 的 `closed_at`，而 `remove` 會針對 `main` 開啟一個 PR。
 
 ### 測試指引
 
@@ -215,7 +215,7 @@ bash eng/fix-line-endings.sh
 
 建立提取要求時：
 
-> **重要提示：** 所有提取要求應針對 **`staged`** 分支，而非 `main`。
+> **重要提示：** 所有提取要求應針對 **`main`** 分支，而非 `staged`。
 
 1. **README 更新**：當您執行 `npm run build` 時，新檔案應會自動加入 README
 2. **Front Matter 驗證**：確保所有 Markdown 檔案皆具備必要的 Front Matter 欄位

@@ -8,15 +8,15 @@
 
 ## 技能位置 (Skill locations)
 
-| 層級 | 位置 |
-|-------|----------|
-| 使用者 | `~/.copilot/skills/<name>/SKILL.md` |
-| 存放庫 | `.github/skills/<name>/SKILL.md` |
-| 組織 | 透過組織層級設定共享 |
+| 層級   | 位置                                                                      |
+| ------ | ------------------------------------------------------------------------- |
+| 使用者 | `~/.copilot/skills/<name>/SKILL.md` 或 `~/.agents/skills/<name>/SKILL.md` |
+| 存放庫 | `.github/skills/<name>/SKILL.md`                                          |
+| 組織   | 透過組織層級設定共享                                                      |
 
 ## 建立自訂技能 (Creating a custom skill)
 
-1. 建立目錄：`mkdir -p ~/.copilot/skills/my-skill/`
+1. 建立目錄：`mkdir -p ~/.copilot/skills/my-skill/` (或 `mkdir -p ~/.agents/skills/my-skill/`)
 2. 建立包含 YAML Frontmatter（`name`、`description`，選填 `tools`）的 `SKILL.md`
 3. 撰寫 AI 行為的詳細指令
 4. 使用 `/skills` 進行驗證

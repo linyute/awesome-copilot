@@ -10,9 +10,10 @@ import {
   HOOKS_DIR,
   INSTRUCTIONS_DIR,
   PLUGINS_DIR,
-  repoBaseUrl,
+  publishedArtifactBaseUrl,
   ROOT_FOLDER,
   SKILLS_DIR,
+  sourceContentBaseUrl,
   TEMPLATES,
   vscodeInsidersInstallImage,
   vscodeInstallImage,
@@ -277,14 +278,16 @@ function formatTableCell(text) {
 /**
  * 建立勳章
  */
-function makeBadges(link, type) {
+function makeBadges(link, type, linkIntent = "source") {
   const aka = AKA_INSTALL_URLS[type] || AKA_INSTALL_URLS.instructions;
+  const rawBaseUrl =
+    linkIntent === "published" ? publishedArtifactBaseUrl : sourceContentBaseUrl;
 
   const vscodeUrl = `${aka}?url=${encodeURIComponent(
-    `vscode:chat-${type}/install?url=${repoBaseUrl}/${link}`
+    `vscode:chat-${type}/install?url=${rawBaseUrl}/${link}`
   )}`;
   const insidersUrl = `${aka}?url=${encodeURIComponent(
-    `vscode-insiders:chat-${type}/install?url=${repoBaseUrl}/${link}`
+    `vscode-insiders:chat-${type}/install?url=${rawBaseUrl}/${link}`
   )}`;
 
   return `[![在 VS Code 安裝](${vscodeInstallImage})](${vscodeUrl})<br />[![在 VS Code Insiders 安裝](${vscodeInsidersInstallImage})](${insidersUrl})`;
@@ -334,7 +337,7 @@ function generateInstructionsSection(instructionsDir) {
     const customDescription = extractDescription(filePath);
 
     // 建立安裝連結的勳章
-    const badges = makeBadges(link, "instructions");
+    const badges = makeBadges(link, "instructions", "source");
 
     if (customDescription && customDescription !== "null") {
       // 使用 Front Matter 中的說明描述，確保表格安全
@@ -696,7 +699,7 @@ function generateUnifiedModeSection(cfg) {
   for (const { file, filePath, title } of entries) {
     const link = encodeURI(`${linkPrefix}/${file}`);
     const description = extractDescription(filePath);
-    const badges = makeBadges(link, badgeType);
+    const badges = makeBadges(link, badgeType, "source");
     let mcpServerCell = "";
     if (includeMcpServers) {
       const servers = extractMcpServerConfigs(filePath);
@@ -802,7 +805,16 @@ function generatePluginsSection(pluginsDir) {
     pluginsContent += `| [${displayName}](${link}) | ${description} | ${itemCount} items | ${keywords} |\n`;
   }
 
-  return `${TEMPLATES.pluginsSection}\n${TEMPLATES.pluginsUsage}\n\n${pluginsContent}`;
+  const publishedManifestUrl = `${publishedArtifactBaseUrl}/.github/plugin/marketplace.json`;
+  const sourceTreeUrl =
+    "https://github.com/linyute/awesome-copilot/tree/main/plugins";
+  const pluginLinkGuidance = [
+    "",
+    `- 已發布的市場清單 (工具導向): \`${publishedManifestUrl}\``,
+    `- 原始外掛程式內容 (人工編寫): \`${sourceTreeUrl}\``,
+  ].join("\n");
+
+  return `${TEMPLATES.pluginsSection}\n${TEMPLATES.pluginsUsage}${pluginLinkGuidance}\n\n${pluginsContent}`;
 }
 
 /**

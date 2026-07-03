@@ -141,7 +141,7 @@ async function createPlugin() {
       version: "1.0.0",
       keywords,
       author: { name: "Awesome Copilot Community" },
-      repository: "https://github.com/github/awesome-copilot",
+      repository: "https://github.com/linyute/awesome-copilot",
       license: "MIT",
     };
 
