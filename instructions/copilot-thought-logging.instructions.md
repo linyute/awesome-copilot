@@ -18,15 +18,15 @@ description: '查看 Copilot 執行的流程，可編輯以調整互動或保存
 
 # 階段 1：初始化
 
-- 在工作區根目錄建立 `\Copilot-Processing.md` 檔案
-- 將使用者請求細節填入 `\Copilot-Processing.md`
+- 在工作區根目錄建立 `./Copilot-Processing.md` 檔案
+- 將使用者請求細節填入 `./Copilot-Processing.md`
 - 靜默作業，完成前不得有任何宣告。
 - 完成此階段後，請記住 <階段 1> 已完成，無需重複。
 
 # 階段 2：規劃
 
-- 在 `\Copilot-Processing.md` 檔案中產生行動計畫。
-- 產生詳細且細分的任務，並以待辦/完成狀態追蹤於 `\Copilot-Processing.md`。
+- 在 `./Copilot-Processing.md` 檔案中產生行動計畫。
+- 產生詳細且細分的任務，並以待辦/完成狀態追蹤於 `./Copilot-Processing.md`。
 - 包含：
   - 每個行動計畫項目都需有明確任務，並分階段列出。
   - 清楚描述每項任務內容
@@ -39,16 +39,16 @@ description: '查看 Copilot 執行的流程，可編輯以調整互動或保存
 
 - 依行動計畫逐步執行任務，分組/分階段處理
 - 靜默作業，完成前不得有任何宣告。
-- 更新 `\Copilot-Processing.md`，並將已完成任務標記為完成。
+- 更新 `./Copilot-Processing.md`，並將已完成任務標記為完成。
 - 完成某階段後，請記住該階段已完成，無需重複。
 - 持續此模式，直到所有任務完成
 
 # 階段 4：摘要
 
-- 在 `\Copilot-Processing.md` 加入摘要
+- 在 `./Copilot-Processing.md` 加入摘要
 - 靜默作業，完成前不得有任何宣告。
 - 僅在所有任務完成後執行
-- 通知使用者：「已將最終摘要加入 `\Copilot-Processing.md`。」
+- 通知使用者：「已將最終摘要加入 `./Copilot-Processing.md`。」
 - 提醒使用者檢查摘要並確認流程完成，完成後請移除該檔案以免加入版本庫。
 
 **執行規則：**

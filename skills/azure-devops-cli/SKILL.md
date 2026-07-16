@@ -92,3 +92,4 @@ az artifacts       # Azure Artifacts
 | `references/org-and-security.md` | 專案、小組、使用者、權限、Wiki | 專案、延伸模組、小組、使用者、安全性群組/權限、服務端點、Wiki、管理 |
 | `references/advanced-usage.md` | 輸出格式、JMESPath 查詢 | 輸出格式、JMESPath 查詢（基本 + 進階）、全域引數、常用參數、Git 別名 |
 | `references/workflows-and-patterns.md` | 自動化指令碼、最佳實作、錯誤處理 | 常見工作流、最佳實作、錯誤處理、指令碼編寫模式、實際範例 |
+| `references/long-comments-on-windows.md` | 在 Windows 上長 `--discussion`、`--description` 或 `--content` 值失敗 | `az.cmd` 在 `cmd.exe` 的 8191 字元限制、殼層偵測，以及三種已驗證的解決方案（`azps.ps1`、原生 `--file-path`、`az devops invoke --in-file`） |

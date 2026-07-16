@@ -60,6 +60,34 @@ description: '為新功能、重構現有程式碼或升級套件、設計、架
 - 所有識別碼前綴需依規定格式
 - 表格需包含所有必要欄位
 - 最終輸出不得有佔位文字
+- **識別碼必須唯一宣告。** 每個識別碼（`REQ-NNN`、`SEC-NNN`、`CON-NNN`、`GUD-NNN`、`PAT-NNN`、`GOAL-NNN`、`TASK-NNN`、`ALT-NNN`、`DEP-NNN`、`FILE-NNN`、`TEST-NNN`、`RISK-NNN`、`ASSUMPTION-NNN`）都必須**恰好宣告一次**。宣告是指識別碼引入一行的位置：TASK/GOAL 表格列的首欄位，或是項目列表中粗面前綴的行，例如 `- **REQ-001**: ...`。同一個識別碼之後可在計畫的其他地方出現任意次數作為**引用**（例如 `TASK` 內容中引用 `REQ`、一個 `TASK` 引用另一個 `TASK`、相依性章節指向已在上方宣告的 `DEP` 等）。引用是預期的行為，不視為衝突。
+
+## 識別碼唯一性檢查
+
+在最終確定計畫前執行以下檢查。檢查 (1) 和 (2) 針對宣告，必須回傳零行。檢查 (3) 是廣泛的資訊掃描：它也會顯示有效的引用，因此僅供參考，不作為檢查閘門。
+
+```bash
+# 將 PLAN_FILE 設為正在驗證的計畫檔案。
+PLAN_FILE="/plan/<purpose>-<component>-<version>.md"
+
+# 1) 表格列中重複的 TASK / GOAL 宣告。
+grep -oE '\| (TASK|GOAL)-[0-9]+ \|' "$PLAN_FILE" \
+  | sed -E 's/.*((TASK|GOAL)-[0-9]+).*/\1/' \
+  | sort | uniq -d
+
+# 2) 項目式規格行中重複的宣告識別碼。
+grep -oE '^- \*\*(REQ|SEC|CON|GUD|RISK|ASSUMPTION|TASK|GOAL|FILE|TEST|PAT|ALT|DEP)-[0-9]+\*\*:' "$PLAN_FILE" \
+  | sed -E 's/^- \*\*([A-Z]+-[0-9]+)\*\*:.*/\1/' \
+  | sort | uniq -d
+
+# 3) 廣泛的重複掃描（僅供診斷；可能包含有效的引用）。
+grep -oE '(REQ|SEC|CON|GUD|RISK|ASSUMPTION|TASK|GOAL|FILE|TEST|PAT|ALT|DEP)-[0-9]+' "$PLAN_FILE" \
+  | sort | uniq -d
+```
+
+前置條件：具備 `grep`、`sed`、`sort` 和 `uniq` 的 POSIX 相容 shell（`sh` / `bash`）。在沒有這些工具的 Windows 上，使用等效的平台原生命令並保留相同的宣告與引用邏輯。
+
+如果檢查 (1) 或 (2) 回傳任何行，請重新編號重複項以使每個識別碼恰好宣告一次，然後重新執行檢查直到兩者皆為空。
 
 ## 狀態
 

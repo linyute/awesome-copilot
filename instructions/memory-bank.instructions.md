@@ -1,7 +1,10 @@
 ---
-description: '使用 Memory Bank 理解專案並有效持續工作'
-applyTo: '**'
+description: '記憶體庫模式：在 memory-bank/ 資料夾下維護持續性的專案文件，讓 AI 能夠跨工作階段恢復上下文。'
+applyTo: 'memory-bank/**'
 ---
+
+> **選擇加入模式。** 此指令會在工作區根目錄建立並維護 `memory-bank/` 資料夾。僅在你希望跨 AI 工作階段擁有持續性的專案文件時啟用；否則輔助檔案會在不需要的儲存庫中累積。
+
 程式撰寫標準、領域知識與偏好，AI 必須遵循。
 
 # 記憶體庫
@@ -17,11 +20,11 @@ flowchart TD
     PB[projectbrief.md] --> PC[productContext.md]
     PB --> SP[systemPatterns.md]
     PB --> TC[techContext.md]
-    
+
     PC --> AC[activeContext.md]
     SP --> AC
     TC --> AC
-    
+
     AC --> P[progress.md]
     AC --> TF[tasks/ folder]
 ```
@@ -85,10 +88,10 @@ flowchart TD
 flowchart TD
     Start[開始] --> ReadFiles[讀取記憶體庫]
     ReadFiles --> CheckFiles{檔案齊全？}
-    
+
     CheckFiles -->|否| Plan[建立規劃]
     Plan --> Document[記錄於聊天]
-    
+
     CheckFiles -->|是| Verify[驗證情境]
     Verify --> Strategy[制定策略]
     Strategy --> Present[呈現方法]
@@ -111,7 +114,7 @@ flowchart TD
     NewFile --> Think[記錄思考過程]
     Think --> Plan[建立實作計畫]
     Plan --> Index[更新 _index.md]
-    
+
     Execute[執行任務] --> Update[新增進度紀錄]
     Update --> StatusChange[更新任務狀態]
     StatusChange --> IndexUpdate[更新 _index.md]
@@ -131,16 +134,16 @@ flowchart TD
 ```mermaid
 flowchart TD
     Start[更新流程]
-    
+
     subgraph Process
         P1[檢查所有檔案]
         P2[記錄目前狀態]
         P3[釐清下一步]
         P4[更新指引]
-        
+
         P1 --> P2 --> P3 --> P4
     end
-    
+
     Start --> Process
 ```
 
@@ -153,19 +156,19 @@ flowchart TD
 ```mermaid
 flowchart TD
     Start{發現新模式}
-    
+
     subgraph Learn [學習流程]
         D1[辨識模式]
         D2[與使用者確認]
         D3[記錄於指引]
     end
-    
+
     subgraph Apply [應用]
         A1[閱讀指引]
         A2[套用學習模式]
         A3[提升未來工作]
     end
-    
+
     Start --> Learn
     Learn --> Apply
 ```
@@ -218,8 +221,8 @@ flowchart TD
 ```markdown
 # [任務 ID] - [任務名稱]
 
-**狀態：** [待處理/進行中/已完成/已放棄]  
-**新增日期：** [新增日期]  
+**狀態：** [待處理/進行中/已完成/已放棄]
+**新增日期：** [新增日期]
 **更新日期：** [最後更新日期]
 
 ## 原始需求

@@ -57,9 +57,18 @@ function hasUnpinnedVersionIndicator(line) {
     return true;
   }
 
-  // 具有僅限寬鬆下限規範的 pyproject/requirements 樣式項目。
+  // 僅包含寬鬆下界規範的 Python 套件安裝指令。
   if (
-    /\b[A-Za-z0-9_.-]+\s*(>=|>|~=)\s*\d+(?:\.\d+){0,2}\b(?!\s*,\s*<)/.test(
+    /\b(?:pip|pip3|uv|uvx|poetry|pdm)\s+install\b[^\n#]*\b[a-z0-9][a-z0-9_.-]*(?:\[[A-Za-z0-9_,.-]+\])?\s*(>=|>|~=)\s*\d+(?:\.\d+){0,2}\b(?!\s*,\s*<)/i.test(
+      trimmed
+    )
+  ) {
+    return true;
+  }
+
+  // 僅包含相依性規範的 requirements/constraints 樣式條目。
+  if (
+    /^\s*(?:-\s*)?(?:["'])?[a-z0-9][a-z0-9_.-]*(?:\[[A-Za-z0-9_,.-]+\])?(?:["'])?\s*(>=|>|~=)\s*\d+(?:\.\d+){0,2}\b(?!\s*,\s*<)(?:\s*(?:#.*)?)?$/.test(
       trimmed
     )
   ) {

@@ -21,9 +21,9 @@ copilot plugin install oracle-to-postgres-migration-expert@awesome-copilot
 
 | 技能 | 說明 |
 |-------|-------------|
-| `reviewing-oracle-to-postgres-migration` | 透過將程式碼與已知的行為差異（空字串、refcursors、類型強制轉換、排序、時間戳記、並行交易等）進行交叉比對，識別 Oracle-to-PostgreSQL 遷移風險。 |
-| `creating-oracle-to-postgres-master-migration-plan` | 探索 .NET 解決方案中的所有專案，將各個專案分類為是否符合 Oracle-to-PostgreSQL 遷移資格，並產生一個持久化的主要遷移計畫。 |
-| `migrating-oracle-to-postgres-stored-procedures` | 將 Oracle PL/SQL 預存程序遷移至 PostgreSQL PL/pgSQL。翻譯 Oracle 特定的語法，保留方法簽署和類型錨定參數，並套用 `COLLATE "C"` 以實現與 Oracle 相容的文字排序。 |
+| `reviewing-oracle-to-postgres-migration` | 透過將程式碼與已知的行為差異（空字串、refcursor、型別強制轉換、排序/排序規則、UNION ALL 計畫風險、實體檢視重新整理行為、時間戳記、平行交易等）進行交叉參考，來識別 Oracle 到 PostgreSQL 遷移的風險。 |
+| `creating-oracle-to-postgres-master-migration-plan` | 發現 .NET 解決方案中的所有專案，對其 Oracle 到 PostgreSQL 遷移適格性進行分類，並產生持續性的主要遷移計畫。 |
+| `migrating-oracle-to-postgres-stored-procedures` | 將 Oracle PL/SQL 預存程序遷移至 PostgreSQL PL/pgSQL。翻譯 Oracle 特定語法，保留方法簽章和型別錨定參數，並套用明確的排序規則（僅在適當時使用 `"C"`，需要區域設定特定的排序規則時則使用相應的排序規則）。 |
 | `planning-oracle-to-postgres-migration-integration-testing` | 為 .NET 資料存取成品建立整合測試計畫，識別需要驗證涵蓋範圍的儲存庫、DAO 和服務層。 |
 | `scaffolding-oracle-to-postgres-migration-test-project` | 建立一個包含交易回復基底類別和種子資料管理器的 xUnit 整合測試專案腳手架，用於 Oracle-to-PostgreSQL 遷移驗證。 |
 | `creating-oracle-to-postgres-migration-integration-tests` | 產生與資料庫無關且具備確定性種子資料的 xUnit 整合測試，以驗證跨兩個資料庫系統的行為一致性。 |
@@ -35,7 +35,7 @@ copilot plugin install oracle-to-postgres-migration-expert@awesome-copilot
 
 專家代理在整個遷移旅程中對使用者進行教育：
 
-- **遷移概念 (Migration Concepts)**：解釋 Oracle→PostgreSQL 的差異（空字串與 NULL、NO_DATA_FOUND 異常、排序順序、TO_CHAR 轉換、類型強制轉換嚴格度、REF CURSOR 處理、並行交易、時間戳記/時區行為）
+- **Migration Concepts**: 說明 Oracle→PostgreSQL 的差異（空字串與 NULL、NO_DATA_FOUND 例外狀況、排序/排序規則行為、TO_CHAR 轉換、型別強制轉換嚴格性、REF CURSOR 處理、UNION ALL 計畫注意事項、實體檢視重新整理需求、平行交易、時間戳記/時區行為）
 - **陷阱參考 (Pitfall Reference)**：呈現遷移知識中的深入見解，讓使用者瞭解為何需要進行變更
 - **最佳實務 (Best Practices)**：針對最小化變更、保留邏輯以及確保結構不可變性 (schema immutability) 提供建議
 - **工作流程引導 (Workflow Guidance)**：呈現四個階段的遷移工作流程，作為使用者可以按照自己的進度遵循的指南
@@ -51,6 +51,8 @@ copilot plugin install oracle-to-postgres-migration-expert@awesome-copilot
 5. **總結 (Summarize)**：總結產出的內容並建議下一步
 
 不再有自動鏈接 (autonomous chaining) — 使用者控制進度與順序。
+
+對於會變更資料庫的操作，專家會提供腳本和明確的執行指示；由使用者來套用資料庫變更。
 
 ## 遷移工作流程 (Migration Workflow)
 

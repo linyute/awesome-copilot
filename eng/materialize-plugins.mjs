@@ -38,6 +38,10 @@ function resolveSource(relPath) {
     const skillName = relPath.replace(/^\.\/skills\//, "").replace(/\/$/, "");
     return path.join(ROOT_FOLDER, "skills", skillName);
   }
+  if (relPath.startsWith("./extensions/")) {
+    const extensionName = relPath.replace(/^\.\/extensions\//, "").replace(/\/$/, "");
+    return path.join(ROOT_FOLDER, "extensions", extensionName);
+  }
   return null;
 }
 
@@ -58,6 +62,7 @@ function materializePlugins() {
 
   let totalAgents = 0;
   let totalSkills = 0;
+  let totalExtensions = 0;
   let warnings = 0;
   let errors = 0;
 
@@ -121,6 +126,27 @@ function materializePlugins() {
       }
     }
 
+    // 處理來自 x-awesome-copilot.extensions 的擴充功能參考
+    const extensionRefs = Array.isArray(metadata?.["x-awesome-copilot"]?.extensions)
+      ? metadata["x-awesome-copilot"].extensions
+      : [];
+    for (const relPath of extensionRefs) {
+      const src = resolveSource(relPath);
+      if (!src) {
+        console.warn(`  ⚠ ${pluginName}：未知的擴充功能路徑格式：${relPath}`);
+        warnings++;
+        continue;
+      }
+      if (!fs.existsSync(src) || !fs.statSync(src).isDirectory()) {
+        console.warn(`  ⚠ ${pluginName}：找不到擴充功能原始目錄：${src}`);
+        warnings++;
+        continue;
+      }
+      const dest = path.join(pluginPath, relPath.replace(/^\.\//, "").replace(/\/$/, ""));
+      copyDirRecursive(src, dest);
+      totalExtensions++;
+    }
+
     // 重新寫入 plugin.json 以使用資料夾路徑而非個別檔案路徑。
     // 在暫存環境中，./agents/foo.md 等路徑指向個別原始檔案。
     // 在主分支上，實體化之後，我們只需要包含這些檔案的目錄。
@@ -141,6 +167,13 @@ function materializePlugins() {
       changed = true;
     }
 
+    if (Array.isArray(rewritten?.["x-awesome-copilot"]?.extensions) &&
+      rewritten["x-awesome-copilot"].extensions.length > 0) {
+      rewritten["x-awesome-copilot"].extensions =
+        rewritten["x-awesome-copilot"].extensions.map((p) => p.replace(/\/$/, ""));
+      changed = true;
+    }
+
     if (changed) {
       fs.writeFileSync(pluginJsonPath, JSON.stringify(rewritten, null, 2) + "\n", "utf8");
     }
@@ -148,13 +181,13 @@ function materializePlugins() {
     const counts = [];
     if (metadata.agents?.length) counts.push(`${metadata.agents.length} 個代理程式`);
     if (metadata.skills?.length) counts.push(`${metadata.skills.length} 個技能`);
+    if (extensionRefs.length) counts.push(`${extensionRefs.length} 個擴充功能`);
     if (counts.length) {
       console.log(`✓ ${pluginName}：${counts.join(", ")}`);
     }
   }
 
-  console.log(`
-完成。已複製 ${totalAgents} 個代理程式，${totalSkills} 個技能。`);
+  console.log(`\n完成。已複製 ${totalAgents} 個代理程式，${totalSkills} 個技能，${totalExtensions} 個擴充功能。`);
   if (warnings > 0) {
     console.log(`有 ${warnings} 個警告。`);
   }

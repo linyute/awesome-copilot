@@ -56,6 +56,10 @@ az boards work-item create \
   --type Bug \
   --discussion "初步調查已完成"
 
+# 在 Windows 上輸入長篇的 --discussion 內容時，請參閱 references/long-comments-on-windows.md。
+# 簡短說明：在 PowerShell 中使用 azps.ps1，或改用 'az devops invoke'
+# 搭配 --in-file 使用，當沒有原生的 --file-path 參數時。
+
 # 建立後在瀏覽器中開啟
 az boards work-item create --title "Bug" --type Bug --open
 ```
@@ -84,6 +88,14 @@ az boards work-item update \
 az boards work-item update \
   --id {work-item-id} \
   --discussion "進行中"
+
+# Windows 上的長註解：將內容讀入 PowerShell 變數，並呼叫
+# azps.ps1 而非 az.cmd，或改用 'az devops invoke' 搭配 --in-file。
+# 完整指引請參閱 references/long-comments-on-windows.md。
+#
+# PowerShell 範例：
+#   $body = Get-Content -Raw .\comment.md
+#   azps.ps1 boards work-item update --id 1234 --discussion $body
 
 # 使用自訂欄位更新
 az boards work-item update \

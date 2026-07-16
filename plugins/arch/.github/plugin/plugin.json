@@ -1,0 +1,20 @@
+{
+  "name": "arch",
+  "description": "架構與現代化工具套件：為本地複製的儲存庫產生附有引用來源的架構文件，並生成分階段的現代化計劃，在需要時自動執行文件模式。",
+  "version": "1.0.0",
+  "keywords": [
+    "architecture",
+    "modernization",
+    "documentation",
+    "migration",
+    "onboarding"
+  ],
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "skills": [
+    "./skills/doc-and-modernize/"
+  ]
+}

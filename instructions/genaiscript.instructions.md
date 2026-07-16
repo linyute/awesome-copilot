@@ -15,6 +15,6 @@ applyTo: '**/*.genai.*'
 
 - 你一律使用 ESM 模型為 Node.JS 產生 TypeScript 程式碼。
 - 你偏好使用 GenAIScript 的 'genaiscript.d.ts' API，而非 node.js。避免 node.js 的 import。
-- 你保持程式碼簡潔，避免例外處理或錯誤檢查。
+- 你保持程式碼簡潔，但在 I/O 和外部 API 邊界處處理錯誤；讓未預期的例外情況浮現給呼叫者，而不是將其吞沒。
 - 若有不確定之處，請加上 TODO 讓使用者檢查。
 - genaiscript.d.ts 的全域型別已載入全域環境，無需 import。

@@ -1,5 +1,5 @@
 ---
-name: AWS CloudWatch Investigation
+name: aws-cloudwatch-investigation
 description: '適用於 AWS CloudWatch 的可重複使用調查模式：Logs Insights 查詢範本、警示與部署關聯、縮小影響範圍決策樹，以及用於結構化事件分流的 PromQL 樣式指標查詢模式。'
 ---
 

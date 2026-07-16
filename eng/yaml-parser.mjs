@@ -1,6 +1,6 @@
 // 使用 vfile-matter 解析 Front Matter 的 YAML 解析器
 import fs from "fs";
-import yaml from "js-yaml";
+import * as yaml from "js-yaml";
 import path from "path";
 import { VFile } from "vfile";
 import { matter } from "vfile-matter";

@@ -6,7 +6,7 @@
 > [!TIP]
 > **在網站上探索完整集合 →** [awesome-copilot.github.com](https://awesome-copilot.github.com)
 >
-> 該網站提供對數百種資源的全文搜尋和篩選，此外還有用於 MCP 伺服器和開發人員工具的 [工具 (Tools)](https://awesome-copilot.github.com/tools) 區段，以及用於指南和教學的 [學習中心 (Learning Hub)](https://awesome-copilot.github.com/learning-hub)。
+> 該網站提供對數百種資源的全文搜尋和篩選，此外還有用於指南和教學的 [學習中心 (Learning Hub)](https://awesome-copilot.github.com/learning-hub)。
 >
 > **在 AI 代理程式中使用此集合？** 提供機器可讀的 [`llms.txt`](https://awesome-copilot.github.com/llms.txt)，其中包含所有代理程式、指示和技能的結構化列表。
 
@@ -22,13 +22,7 @@
 | 📋 [指示 (Instructions)](docs/README.instructions.md)           | 根據檔案模式自動套用的程式碼標準                 | [所有指示 →](https://awesome-copilot.github.com/instructions)  |
 | 🎯 [技能 (Skills)](docs/README.skills.md)                       | 包含指示和隨附資產的獨立資料夾                   | [所有技能 →](https://awesome-copilot.github.com/skills)        |
 | 🔌 [外掛程式 (Plugins)](docs/README.plugins.md)                 | 針對特定工作流程精選的代理程式和技能組合         | [所有外掛程式 →](https://awesome-copilot.github.com/plugins)   |
-| 🪝 [掛鉤 (Hooks)](docs/README.hooks.md)                         | 在 Copilot 代理程式工作階段期間觸發的自動化動作  | [所有掛鉤 →](https://awesome-copilot.github.com/hooks)         |
-| ⚡ [代理工作流程 (Agentic Workflows)](docs/README.workflows.md) | 以 Markdown 撰寫的 AI 驅動 GitHub Actions 自動化 | [所有工作流程 →](https://awesome-copilot.github.com/workflows) |
 | 🍳 [教戰手冊 (Cookbook)](cookbook/README.md)                    | 用於使用 Copilot API 的隨插即用食譜              | —                                                              |
-
-## 🛠️ 工具 (Tools)
-
-想知道如何使用 Awesome Copilot？請查看網站的 **[工具 (Tools) 區段](https://awesome-copilot.github.com/tools)**，了解 MCP 伺服器、編輯器整合以及其他開發人員工具，以充分利用此集合。
 
 ## 安裝外掛程式
 
@@ -539,6 +533,8 @@ copilot plugin install <plugin-name>@awesome-copilot
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lovyjain"><img src="https://avatars.githubusercontent.com/u/54174168?v=4" width="100px;" alt=""/><br /><sub><b>Lovy Jain</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kimtth"><img src="https://avatars.githubusercontent.com/u/13846660?v=4" width="100px;" alt=""/><br /><sub><b>kimtth</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AkashAi7"><img src="https://avatars.githubusercontent.com/u/46550108?v=4" width="100px;" alt=""/><br /><sub><b>Akash Dwivedi</b></sub></a></td>
     </tr>
   </tbody>
   <tfoot>

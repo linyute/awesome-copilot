@@ -423,12 +423,14 @@ export function parseMarkReadyForReviewCommand(body) {
 function normalizeQualityGateResult(rawResult) {
   const defaults = {
     overall_status: "not_run",
-    skill_validator_status: "not_run",
+    vally_lint_status: "not_run",
     smoke_status: "not_run",
+    version_match_status: "not_run",
     failure_class: "none",
     summary: "",
-    skill_validator_output: "",
+    vally_lint_output: "",
     smoke_output: "",
+    version_match_output: "",
   };
 
   if (!rawResult || typeof rawResult !== "object" || Array.isArray(rawResult)) {
@@ -442,8 +444,9 @@ function normalizeQualityGateResult(rawResult) {
 }
 
 function buildQualityGatesCommentSection(qualityResult) {
-  const skillState = qualityResult.skill_validator_status || "not_run";
+  const vallyState = qualityResult.vally_lint_status || "not_run";
   const smokeState = qualityResult.smoke_status || "not_run";
+  const versionMatchState = qualityResult.version_match_status || "not_run";
   const summaryText = String(qualityResult.summary || "").trim() || "_未提供品質閘門 (quality gate) 詳細資訊。_";
 
   const sections = [
@@ -451,21 +454,22 @@ function buildQualityGatesCommentSection(qualityResult) {
     "",
     "| 閘門 | 狀態 |",
     "|---|---|",
-    `| skill-validator | ${skillState} |`,
-    `| install smoke test | ${smokeState} |`,
+    `| vally lint | ${vallyState} |`,
+    `| 安裝冒煙測試 | ${smokeState} |`,
+    `| 版本匹配 | ${versionMatchState} |`,
     "",
     summaryText,
   ];
 
-  const skillOutput = String(qualityResult.skill_validator_output || "").trim();
-  if (skillOutput) {
+  const vallyOutput = String(qualityResult.vally_lint_output || "").trim();
+  if (vallyOutput) {
     sections.push(
       "",
       "<details>",
-      "<summary>skill-validator 輸出</summary>",
+      "<summary>vally lint 輸出</summary>",
       "",
       "```text",
-      skillOutput,
+      vallyOutput,
       "```",
       "",
       "</details>",
@@ -481,6 +485,21 @@ function buildQualityGatesCommentSection(qualityResult) {
       "",
       "```text",
       smokeOutput,
+      "```",
+      "",
+      "</details>",
+    );
+  }
+
+  const versionMatchOutput = String(qualityResult.version_match_output || "").trim();
+  if (versionMatchOutput) {
+    sections.push(
+      "",
+      "<details>",
+      "<summary>版本匹配 (version match) 輸出</summary>",
+      "",
+      "```text",
+      versionMatchOutput,
       "```",
       "",
       "</details>",

@@ -3,10 +3,11 @@
 import fs from "fs";
 import os from "os";
 import path from "path";
+import { Writable } from "stream";
 import { spawnSync } from "child_process";
+import { runLint, LintConsoleReporter } from "@microsoft/vally";
 
 const MAX_OUTPUT_LENGTH = 12000;
-const SKILL_VALIDATOR_ARCHIVE_URL = "https://github.com/dotnet/skills/releases/download/skill-validator-nightly/skill-validator-linux-x64.tar.gz";
 
 const INFRA_ERROR_PATTERNS = [
   /\b401\b/,
@@ -62,7 +63,7 @@ function normalizePluginPath(pluginPath) {
   }
 
   if (normalized.includes("..") || normalized.includes("\\")) {
-    throw new Error(`無效的外掛程式路徑 "${pluginPath}"`);
+    throw new Error(`無效的 plugin 路徑 "${pluginPath}"`);
   }
 
   return normalized;
@@ -74,12 +75,12 @@ function resolveFetchSpec(pluginSource) {
   }
 
   if (!pluginSource.ref) {
-    throw new Error("品質閘門需要 source.ref 或 source.sha");
+    throw new Error("品質檢查需要 source.ref 或 source.sha");
   }
 
   const ref = String(pluginSource.ref).trim();
   if (!ref) {
-    throw new Error("品質閘門需要 source.ref 或 source.sha");
+    throw new Error("品質檢查需要 source.ref 或 source.sha");
   }
 
   if (ref.startsWith("refs/")) {
@@ -121,7 +122,7 @@ function cloneSubmissionRepository(workDir, plugin) {
 
   const fetch = runCommand("git", ["fetch", "--depth=1", "origin", fetchSpec], { cwd: repoDir });
   if (fetch.exitCode !== 0) {
-    throw new Error(`git fetch 對於 ${fetchSpec} 失敗: ${fetch.output}`);
+    throw new Error(`git fetch 失敗 ${fetchSpec}: ${fetch.output}`);
   }
 
   const checkout = runCommand("git", ["checkout", "--detach", "FETCH_HEAD"], { cwd: repoDir });
@@ -129,43 +130,28 @@ function cloneSubmissionRepository(workDir, plugin) {
     throw new Error(`git checkout 失敗: ${checkout.output}`);
   }
 
-  return repoDir;
+  return {
+    repoDir,
+    fetchSpec,
+  };
 }
 
-function downloadSkillValidator(workDir) {
-  const validatorDir = path.join(workDir, "skill-validator");
-  ensureDirectory(validatorDir);
-  const archivePath = path.join(validatorDir, "skill-validator-linux-x64.tar.gz");
-
-  const download = runCommand("curl", ["-fsSL", SKILL_VALIDATOR_ARCHIVE_URL, "-o", archivePath]);
-  if (download.exitCode !== 0) {
-    throw new Error(`下載 skill-validator 失敗: ${download.output}`);
-  }
-
-  const untar = runCommand("tar", ["-xzf", archivePath, "-C", validatorDir]);
-  if (untar.exitCode !== 0) {
-    throw new Error(`解壓縮 skill-validator 失敗: ${untar.output}`);
-  }
-
-  const binaryPath = path.join(validatorDir, "skill-validator");
-  if (!fs.existsSync(binaryPath)) {
-    throw new Error("解壓縮後找不到 skill-validator 執行檔");
-  }
-
-  runCommand("chmod", ["+x", binaryPath]);
-  return binaryPath;
-}
-
-// 候選 plugin.json 位置的排序清單，從最具體到最不具體。
-// skill-validator 的 --plugin 模式預期 plugin.json 位於外掛程式根目錄，
-// 但 Copilot CLI 和許多外部儲存庫都使用巢狀約定。我們自己讀取資訊清單 (manifest)，
-// 以便可以從外掛程式根目錄一致地解析技能 (skill)/代理 (agent) 路徑，無論資訊清單位於何處。
-// 注意：請與 external-plugin-validation.mjs 中的 EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS 保持同步
+// 有序的候選位置清單，用於尋找 plugin.json，從最具體到最不具體。
+// Copilot CLI 與許多外部 repo 使用巢狀慣例。我們自行讀取清單，以便無論 manifest 位於何處，
+// 都能一致地從 plugin 根目錄解析技能路徑。
+// 注意：此處需與 external-plugin-validation.mjs 中的 EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS 保持同步
 const PLUGIN_JSON_CANDIDATES = [
   [".github", "plugin", "plugin.json"],
-  [".plugins", "plugin.json"],
+  [".plugin", "plugin.json"],
   ["plugin.json"],
 ];
+
+function toPosixPath(...segments) {
+  return segments
+    .filter((segment) => segment !== undefined && segment !== null && String(segment).length > 0)
+    .map((segment) => String(segment).replace(/\\/g, "/"))
+    .join("/");
+}
 
 function findPluginJson(pluginRoot) {
   for (const segments of PLUGIN_JSON_CANDIDATES) {
@@ -177,72 +163,64 @@ function findPluginJson(pluginRoot) {
   return null;
 }
 
-function buildSkillValidatorArgs(pluginRoot) {
+function buildVallyLintArgs(pluginRoot) {
   const pluginJsonPath = findPluginJson(pluginRoot);
   if (!pluginJsonPath) {
-    // 找不到辨識出的 plugin.json 位置 — 讓驗證器以其自身的診斷訊息失敗
-    // (涵蓋異國情調的佈局並向提交者顯示真正的錯誤)。
-    return ["check", "--verbose", "--plugin", pluginRoot];
+    // 找不到已識別的 plugin.json 位置 — 對整個 plugin root 執行 lint，讓 vally 向提交者顯示真實錯誤。
+    return [pluginRoot];
   }
 
   let pluginJson;
   try {
     pluginJson = JSON.parse(fs.readFileSync(pluginJsonPath, "utf8"));
   } catch {
-    // 格式錯誤的 plugin.json — 讓驗證器顯示解析錯誤。
-    return ["check", "--verbose", "--plugin", pluginRoot];
+    // plugin.json 格式錯誤 — 回退至對整個 root 執行 lint。
+    return [pluginRoot];
   }
 
-  const args = ["check", "--verbose"];
-
-  // 無論 plugin.json 本身位於何處，plugin.json 中的路徑都是相對於外掛程式根目錄的。
-  // 使用 [].concat() 來接受字串和陣列值。
+  // 從 plugin.json 收集 skill 目錄路徑
   const skillPaths = [].concat(pluginJson.skills ?? [])
     .map((s) => path.resolve(pluginRoot, s))
-    .filter((p) => fs.existsSync(p));
-
-  // 代理項目可能是目錄路徑或明確的文件路徑；標準化為目錄
-  // 以便 AgentDiscovery.DiscoverAgentsInDirectory 可以在其中發現代理。
-  // 去除重複，以防多個文件項目共享相同的父目錄。
-  const agentPaths = [...new Set(
-    [].concat(pluginJson.agents ?? [])
-      .map((a) => {
-        const resolved = path.resolve(pluginRoot, a);
-        if (fs.existsSync(resolved) && fs.statSync(resolved).isFile()) {
-          return path.dirname(resolved);
-        }
-        return resolved;
-      })
-      .filter((p) => fs.existsSync(p))
-  )];
+    .filter((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
 
   if (skillPaths.length > 0) {
-    args.push("--skills", ...skillPaths);
-  }
-  if (agentPaths.length > 0) {
-    args.push("--agents", ...agentPaths);
+    return skillPaths;
   }
 
-  if (skillPaths.length === 0 && agentPaths.length === 0) {
-    // 找到了 plugin.json 但沒有可解析的技能/代理 — 退回到 --plugin
-    // 以便驗證器可以向提交者顯示特定的驗證錯誤。
-    return ["check", "--verbose", "--plugin", pluginRoot];
-  }
-
-  return args;
+  // 找不到可解析的 skill 目錄 — 對整個 plugin root 執行 lint 以便 vally 向提交者顯示具體驗證錯誤。
+  return [pluginRoot];
 }
 
-function runSkillValidatorGate(workDir, pluginRoot) {
+async function runVallyLintGate(pluginRoot) {
   try {
-    const validatorBinary = downloadSkillValidator(workDir);
-    const args = buildSkillValidatorArgs(pluginRoot);
-    const check = runCommand(validatorBinary, args);
+    const targets = buildVallyLintArgs(pluginRoot);
 
-    if (check.exitCode === 0) {
-      return { status: "pass", output: check.output };
+    let combinedOutput = "";
+    let anyFailure = false;
+
+    for (const target of targets) {
+      const chunks = [];
+      const captureStream = new Writable({
+        write(chunk, _encoding, callback) {
+          chunks.push(chunk.toString());
+          callback();
+        },
+      });
+
+      const result = await runLint({ rootPath: target });
+      const reporter = new LintConsoleReporter({ verbose: true, stream: captureStream });
+      await reporter.report(result);
+
+      combinedOutput += chunks.join("") + "\n";
+      if (!result.passed) {
+        anyFailure = true;
+      }
     }
 
-    return { status: "fail", output: check.output };
+    return {
+      status: anyFailure ? "fail" : "pass",
+      output: truncateOutput(combinedOutput),
+    };
   } catch (error) {
     return {
       status: "infra_error",
@@ -277,7 +255,7 @@ function runInstallSmokeGate(workDir, plugin) {
   if (runCommand("bash", ["-lc", "command -v copilot"]).exitCode !== 0) {
     return {
       status: "infra_error",
-      output: "此執行器 (runner) 上無法使用 copilot CLI。",
+      output: "此執行環境無法使用 copilot CLI。",
     };
   }
 
@@ -310,20 +288,20 @@ function runInstallSmokeGate(workDir, plugin) {
     if (!fs.existsSync(installedPluginPath)) {
       return {
         status: "fail",
-        output: `外掛程式已安裝，但在 ${installedPluginPath} 找不到安裝目錄`,
+        output: `已安裝插件但找不到安裝目錄：${installedPluginPath}`,
       };
     }
     const pluginManifestPath = findPluginJson(installedPluginPath);
     if (!pluginManifestPath) {
       return {
         status: "fail",
-        output: `外掛程式已安裝，但在 ${installedPluginPath} 下任何辨識出的位置都找不到 plugin.json`,
+        output: `已安裝插件但在 ${installedPluginPath} 下未找到任何可識別的 plugin.json`,
       };
     }
 
     return {
       status: "pass",
-      output: `安裝冒煙測試成功。已驗證 ${pluginManifestPath}。`,
+      output: `安裝 smoke 測試成功。已驗證 ${pluginManifestPath}。`,
     };
   } catch (error) {
     return {
@@ -333,8 +311,160 @@ function runInstallSmokeGate(workDir, plugin) {
   }
 }
 
-function toOverallStatus(skillStatus, smokeStatus) {
-  const states = [skillStatus, smokeStatus];
+function isMissingPathAtLocator(output) {
+  const normalized = String(output ?? "").toLowerCase();
+  return (
+    normalized.includes("does not exist in") ||
+    normalized.includes("exists on disk, but not in") ||
+    (normalized.includes("path '") && normalized.includes("not in"))
+  );
+}
+
+function fetchLocatorIntoRepo(repoDir, locator) {
+  const result = runCommand("git", ["fetch", "--depth=1", "origin", locator], { cwd: repoDir });
+  if (result.exitCode === 0) {
+    return {
+      status: "pass",
+      output: "",
+    };
+  }
+
+  const status = classifySmokeFailure(result.output);
+  return {
+    status,
+    output: `git fetch 失敗，locator "${locator}": ${result.output}`,
+  };
+}
+
+function readPluginManifestAtLocator(repoDir, locator, normalizedPluginPath) {
+  const manifestCandidates = PLUGIN_JSON_CANDIDATES.map((segments) =>
+    toPosixPath(normalizedPluginPath, ...segments)
+  );
+
+  for (const manifestPath of manifestCandidates) {
+    const showResult = runCommand("git", ["show", `${locator}:${manifestPath}`], { cwd: repoDir });
+    if (showResult.exitCode === 0) {
+      const rawShow = spawnSync("git", ["show", `${locator}:${manifestPath}`], { cwd: repoDir, encoding: "utf8" });
+      const rawStdout = String(rawShow.stdout ?? "");
+
+      try {
+        return {
+          kind: "found",
+          manifestPath,
+          manifest: JSON.parse(rawStdout),
+        };
+      } catch (error) {
+        return {
+          kind: "invalid",
+          manifestPath,
+          message: `在 "${manifestPath}" 的 "${locator}" 中 JSON 無效: ${error.message}`,
+        };
+      }
+    }
+
+    if (isMissingPathAtLocator(showResult.output)) {
+      continue;
+    }
+
+    return {
+      kind: "infra_error",
+      message: `無法讀取 "${manifestPath}" 在 "${locator}": ${showResult.output}`,
+    };
+  }
+
+  return {
+    kind: "not_found",
+    message: `在 "${locator}" 找不到 plugin.json。預期位置為: ${manifestCandidates.join(", ")}`,
+  };
+}
+
+function runVersionMatchGate(repoDir, plugin, primaryFetchSpec) {
+  const expectedVersion = String(plugin?.version ?? "").trim();
+  const normalizedPluginPath = normalizePluginPath(plugin?.source?.path || "/");
+  const locators = [plugin?.source?.ref, plugin?.source?.sha]
+    .filter((value) => typeof value === "string" && value.trim().length > 0)
+    .map((value) => value.trim())
+    .filter((value, index, values) => values.indexOf(value) === index);
+
+  if (locators.length === 0) {
+    return {
+      status: "not_run",
+      output: "版本比對檢查已跳過，因為未提供 source.ref 或 source.sha。",
+    };
+  }
+
+  const messages = [];
+  let hasFailure = false;
+  let hasInfraError = false;
+
+  for (const locator of locators) {
+    if (locator !== primaryFetchSpec) {
+      const fetchResult = fetchLocatorIntoRepo(repoDir, locator);
+      if (fetchResult.status === "fail") {
+        hasFailure = true;
+        messages.push(`- ${locator}: ${fetchResult.output}`);
+        continue;
+      }
+
+      if (fetchResult.status === "infra_error") {
+        hasInfraError = true;
+        messages.push(`- ${locator}: ${fetchResult.output}`);
+        continue;
+      }
+    }
+
+    const manifestResult = readPluginManifestAtLocator(repoDir, locator, normalizedPluginPath);
+    if (manifestResult.kind === "not_found" || manifestResult.kind === "invalid") {
+      hasFailure = true;
+      messages.push(`- ${locator}: ${manifestResult.message}`);
+      continue;
+    }
+
+    if (manifestResult.kind === "infra_error") {
+      hasInfraError = true;
+      messages.push(`- ${locator}: ${manifestResult.message}`);
+      continue;
+    }
+
+    const actualVersion = String(manifestResult.manifest?.version ?? "").trim();
+    if (!actualVersion) {
+      hasFailure = true;
+      messages.push(`- ${locator}: "${manifestResult.manifestPath}" 缺少非空的 "version" 欄位。`);
+      continue;
+    }
+
+    if (actualVersion !== expectedVersion) {
+      hasFailure = true;
+      messages.push(
+        `- ${locator}: external.json 版本 "${expectedVersion}" 與 "${manifestResult.manifestPath}" 版本 "${actualVersion}" 不相符。`
+      );
+      continue;
+    }
+
+    messages.push(`- ${locator}: 在 "${manifestResult.manifestPath}" 中比對到版本 "${expectedVersion}"。`);
+  }
+
+  if (hasFailure) {
+    return {
+      status: "fail",
+      output: messages.join("\n"),
+    };
+  }
+
+  if (hasInfraError) {
+    return {
+      status: "infra_error",
+      output: messages.join("\n"),
+    };
+  }
+
+  return {
+    status: "pass",
+    output: messages.join("\n"),
+  };
+}
+
+function toOverallStatus(states) {
   if (states.includes("infra_error")) {
     return "infra_error";
   }
@@ -357,45 +487,54 @@ function toFailureClass(overallStatus) {
   return "none";
 }
 
-export function runExternalPluginQualityGates(plugin) {
+export async function runExternalPluginQualityGates(plugin) {
   const workDir = fs.mkdtempSync(path.join(os.tmpdir(), "external-plugin-quality-"));
   const result = {
     overall_status: "not_run",
-    skill_validator_status: "not_run",
+    vally_lint_status: "not_run",
     smoke_status: "not_run",
+    version_match_status: "not_run",
     failure_class: "none",
     summary: "",
-    skill_validator_output: "",
+    vally_lint_output: "",
     smoke_output: "",
+    version_match_output: "",
   };
 
   try {
-    const repoDir = cloneSubmissionRepository(workDir, plugin);
+    const { repoDir, fetchSpec } = cloneSubmissionRepository(workDir, plugin);
     const normalizedPluginPath = normalizePluginPath(plugin.source?.path || "/");
     const pluginRoot = normalizedPluginPath ? path.join(repoDir, normalizedPluginPath) : repoDir;
 
     if (!fs.existsSync(pluginRoot) || !fs.statSync(pluginRoot).isDirectory()) {
-      result.skill_validator_status = "fail";
+      result.vally_lint_status = "fail";
       result.smoke_status = "fail";
+      result.version_match_status = "fail";
       result.overall_status = "fail";
       result.failure_class = "submitter_fixes";
-      result.summary = `在提交的儲存庫快照中找不到外掛程式路徑 "${plugin.source?.path || "/"}"。`;
+      result.summary = `在提交的儲存庫快照中找不到 plugin 路徑 "${plugin.source?.path || "/"}"。`;
+      result.version_match_output = result.summary;
       return result;
     }
 
-    const skillResult = runSkillValidatorGate(workDir, pluginRoot);
-    result.skill_validator_status = skillResult.status;
-    result.skill_validator_output = skillResult.output;
+    const versionMatchResult = runVersionMatchGate(repoDir, plugin, fetchSpec);
+    result.version_match_status = versionMatchResult.status;
+    result.version_match_output = versionMatchResult.output;
+
+    const vallyResult = await runVallyLintGate(pluginRoot);
+    result.vally_lint_status = vallyResult.status;
+    result.vally_lint_output = vallyResult.output;
 
     const smokeResult = runInstallSmokeGate(workDir, plugin);
     result.smoke_status = smokeResult.status;
     result.smoke_output = smokeResult.output;
 
-    result.overall_status = toOverallStatus(result.skill_validator_status, result.smoke_status);
+    result.overall_status = toOverallStatus([result.vally_lint_status, result.smoke_status, result.version_match_status]);
     result.failure_class = toFailureClass(result.overall_status);
     result.summary = [
-      `- skill-validator: ${result.skill_validator_status}`,
+      `- vally lint: ${result.vally_lint_status}`,
       `- install smoke test: ${result.smoke_status}`,
+      `- version match: ${result.version_match_status}`,
       `- overall: ${result.overall_status}`,
     ].join("\n");
 
@@ -404,7 +543,7 @@ export function runExternalPluginQualityGates(plugin) {
     result.overall_status = "infra_error";
     result.failure_class = "infra";
     result.summary = truncateOutput(error.message);
-    result.skill_validator_output = truncateOutput(error.stack || error.message);
+    result.vally_lint_output = truncateOutput(error.stack || error.message);
     return result;
   } finally {
     fs.rmSync(workDir, { recursive: true, force: true });
@@ -433,6 +572,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 
   const plugin = JSON.parse(args["plugin-json"]);
-  const result = runExternalPluginQualityGates(plugin);
+  const result = await runExternalPluginQualityGates(plugin);
   process.stdout.write(`${JSON.stringify(result)}\n`);
 }

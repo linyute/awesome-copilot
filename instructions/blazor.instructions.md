@@ -23,7 +23,7 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 - 有效運用 @bind 進行資料繫結。
 - 利用相依性注入（Dependency Injection）注入 Blazor 服務。
 - 元件與服務結構遵循職責分離原則。
-- 一律使用最新 C# 版本，目前如 C# 13 的 record 型別、模式比對、全域 using 等功能。
+- 一律使用最新 C# 版本，目前如 C# 14 的 record 型別、模式比對、全域 using 等功能。
 
 ## 錯誤處理與驗證
 
@@ -58,13 +58,13 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 - 與外部 API 或後端溝通請用 HttpClient 或其他適合服務。
 - API 呼叫請用 try-catch 處理錯誤，並在 UI 給予適當回饋。
 
-## Visual Studio 測試與除錯
+## 測試與除錯
 
-- 所有單元測試與整合測試皆於 Visual Studio Enterprise 進行。
-- Blazor 元件與服務測試可用 xUnit、NUnit 或 MSTest。
-- 模擬相依物件可用 Moq 或 NSubstitute。
-- 除錯 Blazor UI 問題可用瀏覽器開發者工具，後端與伺服器端問題用 Visual Studio 除錯工具。
-- 效能分析與最佳化請用 Visual Studio 診斷工具。
+- 所有單元測試與整合測試都應支援跨 IDE（Visual Studio、VS Code、JetBrains Rider）運行，使貢獻者不會因為付費授權（SKU）而受限。
+- 請使用 xUnit、NUnit 或 MSTest 測試 Blazor 元件與服務。
+- 測試期間請使用 Moq 或 NSubstitute 來模擬（mocking）依賴項。
+- 請使用瀏覽器開發者工具偵錯 Blazor UI 問題，並使用 IDE 的偵錯器處理後端與伺服器端的問題。
+- 進行效能分析與最佳化時，請使用 IDE 的診斷工具，或使用 `dotnet-trace` / `dotnet-counters` 進行跨平台分析。
 
 ## 資安與認證
 

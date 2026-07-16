@@ -9,6 +9,11 @@ Meta 提示詞可協助您探索並產生精選的 GitHub Copilot Agent、收藏
 copilot plugin install awesome-copilot@awesome-copilot
 ```
 
+## 必要條件
+
+- [Docker](https://www.docker.com/) 必須已安裝並位於您的 `PATH` 中。
+- 外掛程式會透過執行 `docker run ... ghcr.io/microsoft/mcp-dotnet-samples/awesome-copilot:latest` 來啟動其內建的 MCP 伺服器。
+
 ## 包含內容
 
 ### 命令 (斜線命令)
@@ -25,6 +30,10 @@ copilot plugin install awesome-copilot@awesome-copilot
 | Agent                           | 說明                                                                      |
 | ------------------------------- | ------------------------------------------------------------------------- |
 | `meta-agentic-project-scaffold` | Meta Agentic 專案建立協助工具，可協助使用者有效地建立並管理專案工作流程。 |
+
+### MCP 伺服器
+
+此外掛程式包含配置於 [`./.mcp.json`](./.mcp.json) 的 `awesome-copilot` MCP 伺服器。如果無法使用 Docker，MCP 啟動將會失敗。
 
 ## 來源
 
