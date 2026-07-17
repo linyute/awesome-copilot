@@ -54,6 +54,13 @@ const FIELD_TITLES = Object.freeze({
 const LEGACY_FIELD_TITLES = Object.freeze({
   immutableRef: "待審核的固定 Ref",
 });
+const EXTERNAL_CANVAS_KEYWORD = "canvas";
+const EXTERNAL_CANVAS_PREVIEW_PATH = "assets/preview.png";
+const EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS = Object.freeze([
+  ".github/plugin/plugin.json",
+  ".plugin/plugin.json",
+  "plugin.json",
+]);
 
 function normalizeMultilineText(value) {
   return String(value ?? "").replace(/\r\n/g, "\n");
@@ -114,6 +121,29 @@ function parseKeywords(value) {
     .filter(Boolean);
 
   return keywords.length > 0 ? keywords : undefined;
+}
+
+function hasCanvasKeyword(plugin) {
+  return (plugin?.keywords ?? []).some(
+    (keyword) => String(keyword).trim().toLowerCase() === EXTERNAL_CANVAS_KEYWORD,
+  );
+}
+
+function normalizeRepoRelativePath(value) {
+  const normalized = stripNoResponse(value);
+  if (!normalized || normalized === "/") {
+    return "";
+  }
+
+  return normalized.replace(/\\/g, "/").replace(/^\/+|\/+$/g, "");
+}
+
+function joinRepoPath(...segments) {
+  return segments
+    .map((segment) => String(segment ?? "").trim())
+    .filter(Boolean)
+    .join("/")
+    .replace(/\/+/g, "/");
 }
 
 function parseChecklist(value) {
@@ -231,6 +261,33 @@ async function fetchGitHubJson(apiPath, token) {
   }
 }
 
+function encodeRepoContentPath(value) {
+  return String(value)
+    .split("/")
+    .filter((segment) => segment.length > 0)
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+}
+
+async function fetchGitHubFile(repo, filePath, ref, token) {
+  const encodedRepo = encodeRepoPath(repo);
+  const encodedPath = encodeRepoContentPath(filePath);
+  return fetchGitHubJson(
+    `/repos/${encodedRepo}/contents/${encodedPath}?ref=${encodeURIComponent(ref)}`,
+    token,
+  );
+}
+
+function decodeGitHubFileContent(fileResponse) {
+  const encodedContent = fileResponse?.data?.content;
+  if (!encodedContent || typeof encodedContent !== "string") {
+    return null;
+  }
+
+  const normalized = encodedContent.replace(/\n/g, "");
+  return Buffer.from(normalized, "base64").toString("utf8");
+}
+
 function encodeRepoPath(repo) {
   const [owner, name] = String(repo).split("/");
   return `${encodeURIComponent(owner ?? "")}/${encodeURIComponent(name ?? "")}`;
@@ -248,7 +305,7 @@ async function validateRemoteRepository(repo, { ref, sha }, errors, warnings, to
   if (repositoryResponse.kind === "apiError") {
     const statusText = repositoryResponse.status ? `HTTP ${repositoryResponse.status}` : "網路錯誤";
     warnings.push(
-      `submission: 無法驗證 GitHub 儲存庫 "${repo}" (${statusText}${repositoryResponse.reason ? ` — ${repositoryResponse.reason}` : ""}); 維護者應重新執行攝取 (intake)`,
+      `submission: 無法驗證 GitHub 儲存庫 "${repo}" (${statusText}${repositoryResponse.reason ? ` — ${repositoryResponse.reason}` : ""}); 維護者應重新執行 intake`,
     );
     return;
   }
@@ -269,7 +326,7 @@ async function validateRemoteRepository(repo, { ref, sha }, errors, warnings, to
       } else if (commitResponse.kind === "apiError") {
         const statusText = commitResponse.status ? `HTTP ${commitResponse.status}` : "網路錯誤";
         warnings.push(
-          `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的 Commit "${sha}" (${statusText}${commitResponse.reason ? ` — ${commitResponse.reason}` : ""}); 維護者應重新執行攝取 (intake)`,
+          `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的 Commit "${sha}" (${statusText}${commitResponse.reason ? ` — ${commitResponse.reason}` : ""}); 維護者應重新執行 intake`,
         );
       }
     }
@@ -286,7 +343,7 @@ async function validateRemoteRepository(repo, { ref, sha }, errors, warnings, to
     } else if (commitResponse.kind === "apiError") {
       const statusText = commitResponse.status ? `HTTP ${commitResponse.status}` : "網路錯誤";
       warnings.push(
-        `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的 Commit "${ref}" (${statusText}${commitResponse.reason ? ` — ${commitResponse.reason}` : ""}); 維護者應重新執行攝取 (intake)`,
+        `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的 Commit "${ref}" (${statusText}${commitResponse.reason ? ` — ${commitResponse.reason}` : ""}); 維護者應重新執行 intake`,
       );
     }
     return;
@@ -317,7 +374,103 @@ async function validateRemoteRepository(repo, { ref, sha }, errors, warnings, to
   } else if (tagResponse.kind === "apiError") {
     const statusText = tagResponse.status ? `HTTP ${tagResponse.status}` : "網路錯誤";
     warnings.push(
-      `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的標籤 "${ref}" (${statusText}${tagResponse.reason ? ` — ${tagResponse.reason}` : ""}); 維護者應重新執行攝取 (intake)`,
+      `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的標籤 "${ref}" (${statusText}${tagResponse.reason ? ` — ${tagResponse.reason}` : ""}); 維護者應重新執行 intake`,
+    );
+  }
+}
+
+async function validateCanvasPluginMetadata(plugin, errors, warnings, token) {
+  const repo = plugin?.source?.repo;
+  const sha = plugin?.source?.sha;
+  const ref = plugin?.source?.ref;
+  const releaseLocator = sha || ref;
+  const releaseLocatorDescription = sha ? `commit "${sha}"` : `ref "${ref}"`;
+  const pluginRoot = normalizeRepoRelativePath(plugin?.source?.path);
+
+  if (!releaseLocator) {
+    errors.push('submission: 帶有"canvas"標籤的插件必須提供"Ref to review"和/或"Commit SHA to review"。');
+    return;
+  }
+
+  if (!repo) {
+    return;
+  }
+
+  let manifest = null;
+  let manifestPath = null;
+  let sawManifestApiError = false;
+
+  const manifestCandidates = EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS.map((relativePath) =>
+    joinRepoPath(pluginRoot, relativePath),
+  );
+
+  for (const candidatePath of manifestCandidates) {
+    const response = await fetchGitHubFile(repo, candidatePath, releaseLocator, token);
+    if (response.kind === "notFound") {
+      continue;
+    }
+
+    if (response.kind === "apiError") {
+      sawManifestApiError = true;
+      continue;
+    }
+
+    if (response.data?.type !== "file") {
+      continue;
+    }
+
+    const decoded = decodeGitHubFileContent(response);
+    if (!decoded) {
+      errors.push(`submission: 無法解碼插件清單 "${candidatePath}" at ${releaseLocatorDescription}`);
+      return;
+    }
+
+    try {
+      manifest = JSON.parse(decoded);
+      manifestPath = candidatePath;
+      break;
+    } catch (error) {
+      errors.push(
+        `submission: 插件清單 "${candidatePath}" 位於 ${releaseLocatorDescription} 處，不是有效的 JSON (${error.message})`,
+      );
+      return;
+    }
+  }
+
+  if (!manifest) {
+    if (sawManifestApiError) {
+      warnings.push(
+        `submission: 無法驗證 GitHub 倉庫 "${repo}" 中位於 ${releaseLocatorDescription} 的 canvas 插件清單；維護者應重新執行 intake 指令。`,
+      );
+      return;
+    }
+
+    const expectedPaths = manifestCandidates.map((candidatePath) => `"${candidatePath}"`).join(", ");
+    errors.push(
+      `submission: 帶有 "canvas" 標籤的插件必須在 ${releaseLocatorDescription} 中的 ${expectedPaths} 之一包含清單檔案`,
+    );
+    return;
+  }
+
+  if (manifest.logo !== EXTERNAL_CANVAS_PREVIEW_PATH) {
+    errors.push(
+      `submission: 帶有 "canvas" 標籤的插件必須在 ${releaseLocatorDescription} 中的 ${expectedPaths} 之一包含清單檔案。`,
+    );
+  }
+
+  const previewPath = joinRepoPath(pluginRoot, EXTERNAL_CANVAS_PREVIEW_PATH);
+  const previewResponse = await fetchGitHubFile(repo, previewPath, releaseLocator, token);
+  if (previewResponse.kind === "notFound") {
+    errors.push(
+      `submission: 帶有 "canvas "標籤的插件必須在 ${releaseLocatorDescription} 處包含 "${EXTERNAL_CANVAS_PREVIEW_PATH}"。`,
+    );
+  } else if (previewResponse.kind === "apiError") {
+    warnings.push(
+      `submission: 無法驗證 GitHub 倉庫 "${repo}" 中位於 ${releaseLocatorDescription} 的 "${EXTERNAL_CANVAS_PREVIEW_PATH}"；維護者應重新執行 intake`
+    );
+  } else if (previewResponse.data?.type !== "file") {
+    errors.push(
+      `submission: "${EXTERNAL_CANVAS_PREVIEW_PATH}" 必須是 ${releaseLocatorDescription} 中的一個文件`,
     );
   }
 }
@@ -606,6 +759,7 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
   const validationResult = validateExternalPlugin(parsed.plugin, 0, { policy: "publicSubmission" });
   errors.push(...validationResult.errors.map(toSubmissionError));
   warnings.push(...validationResult.warnings.map(toSubmissionError));
+  const isCanvasPlugin = hasCanvasKeyword(parsed.plugin);
 
   if (parsed.plugin?.name) {
     const matchingName = duplicateNames.find(
@@ -618,6 +772,10 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
 
   if (parsed.plugin?.source?.repo && (parsed.plugin?.source?.ref || parsed.plugin?.source?.sha)) {
     await validateRemoteRepository(parsed.plugin.source.repo, parsed.plugin.source, errors, warnings, token);
+  }
+
+  if (isCanvasPlugin) {
+    await validateCanvasPluginMetadata(parsed.plugin, errors, warnings, token);
   }
 
   const dedupedErrors = [...new Set(errors)];
@@ -687,6 +845,7 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
     errors: dedupedErrors,
     warnings: dedupedWarnings,
     plugin: parsed.plugin,
+    isCanvasPlugin,
     commentBody,
     commentMarker: marker,
   };

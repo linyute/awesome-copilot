@@ -77,17 +77,17 @@ hidden: 'false'
     - 若提供 `plan_id` 且 `docs/plan/{plan_id}/plan.yaml` 存在 → continue_plan。
     - 若提供 `plan_id` 但遺失/無效 → 向上呈報 (escalate) 或僅在有明確假設的情況下建立新計畫。
     - 若無 `plan_id` → 產生 `YYYYMMDD-kebab-case` 並視為 new_task。
-  - 僅針對相關的 `facts` (事實)、`patterns` (模式)、`gotchas` (易錯處)、`failure_modes` (失敗模式)、`decisions` (決策) 和 `conventions` (慣例)，從存放庫/工作階段/全域中讀取範圍限制的記憶體。
   - 灰色地帶：識別模糊之處、遺漏的範圍、決策阻礙因素。
   - 複雜度 (基於意圖的預設值：若意圖明確則跳過完整分類)
     - 意圖預設值：若偵測到的意圖為 `bug-fix`/`debug` → LOW，`known-fix`/`docs`/`config` → TRIVIAL，`research`/`explore` → LOW。使用者明確的修飾詞 (例如 "this is HIGH risk" 或 "complex refactor") 擁有最高優先權。
     - 完整分類 (僅在無符合的意圖時執行)：
-      - 根據實際範圍、不確定性和影響範圍 (blast radius) 進行分類。
+      - 根據實際範圍、不確定性和影響範圍 (blast radius) 進行分類。不得進行研究、調試或程式碼執行；只需提供足夠的訊號來識別複雜性即可。
       - 若設定了 `orchestrator.default_complexity_threshold`，請將其視為最低複雜度下限，而非最終分類。
       - TRIVIAL：單一明顯且機械性的任務；直接委派目標很明確；無持久的計畫產出物；影響範圍極小。
-      - LOW：小型且受限的任務；可能涉及 1-2 個檔案或簡單的子 Agent 協助；已知模式；影響範圍極小；僅使用記憶體內 (in-memory) 計畫。
+      - LOW：小型且受限的任務；可能涉及 1-2 個檔案或簡單的子 Agent 協助；已知模式；影響範圍極小。
       - MEDIUM：多個檔案/模組；全新或變更的模式；中度不確定性；整合或迴歸風險；需要持久的計畫/上下文封包 (context envelope)。
       - HIGH：架構/跨網域變更；API/結構描述 (schema)/驗證/資料流/遷移影響；高不確定性或可能產生廣泛的迴歸；需要 planner + reviewer，以及針對架構/協定 (contract)/中斷性變更 (breaking changes) 的 critic。
+  - 讀取相關且範圍明確的記憶體。
   - 澄清關卡 (Clarification Gate)：僅在存在模糊之處且該模糊之處為 decision_blocker (決策阻礙因素) 時才詢問使用者。針對非阻礙性的灰色地帶記錄假設並繼續執行。
 
 ### Phase 1: Route
@@ -100,13 +100,9 @@ hidden: 'false'
 
 ### Phase 2: Planning
 
-- Complexity=TRIVIAL:
-  - 僅建立一個微型的記憶體內協調整合檢核清單 (orchestration checklist)。
-  - 若偵測到的意圖為 bug-fix/debug/issue：檢核清單必須包含兩個順序步驟：首先委派給 `gem-debugger` 進行診斷 (wave 1)，接著將 `debugger_diagnosis` 轉發給 `gem-implementer` 進行修復 (wave 2)。
-  - 移至 Phase 3。
-- Complexity=LOW:
-  - 使用相關上下文與 `memory_seed` 建立一個最小限度的記憶體內協調整合計畫：包含任務 (tasks)、相依性 (deps)、波次 (wave)、狀態 (status)、指派 (assignments) 以及選填的 `conflicts_with`。
-  - 若目標為 bug-fix/debug/issue：指派 `gem-debugger` 進行診斷 (wave 1) 並指派 `gem-implementer` 進行修復 (wave 2)。該記憶體內計畫必須將 `debugger_diagnosis` 包含在內，作為從 wave 1 傳遞給 wave 2 的相依性接棒資料。
+- Complexity=TRIVIAL/LOW:
+  - 使用相關上下文建立一個最小限度的臨時協調整合計畫：包含任務 (tasks)、相依性 (deps)、波次 (wave)、狀態 (status)、指派 (assignments) 以及選填的 `conflicts_with`。
+  - 若目標為 bug-fix/debug/issue：指派 `gem-debugger` 進行診斷 (wave 1) 並指派 `gem-implementer` 進行修復 (wave 2)。該臨時計畫必須將 `debugger_diagnosis` 包含在內，作為從 wave 1 傳遞給 wave 2 的相依性接棒資料。
   - 移至 Phase 3。
 - Complexity=MEDIUM/HIGH:
   - 攜帶 `task_clarifications`、相關上下文、`memory_seed` 和 `config_snapshot` 委派給 `gem-planner`。
@@ -124,7 +120,7 @@ hidden: 'false'
 #### Phase 3A: Execution Context Setup
 
 - Complexity=MEDIUM/HIGH:
-  - 讀取 `docs/plan/{plan_id}/context_envelope.json` 一次，並將其保留為標準的記憶體內上下文。
+  - 讀取 `docs/plan/{plan_id}/context_envelope.json` 一次，並將其保留為標準的上下文。
 
 #### Phase 3B: Wave Execution Loop
 
@@ -164,7 +160,7 @@ hidden: 'false'
 - 將信賴度 (confidence) ≥0.95 的可重複使用項目持久化儲存至正確的目標 (批次委派)：
   - 若為產品決策 → 委派給 `gem-documentation-writer` → PRD
   - 若為技術決策/慣例 → 委派給 `gem-documentation-writer` → AGENTS.md 或架構文件
-  - 若為模式/易錯處/失敗模式 → 委派給 `gem-documentation-writer` → 記憶體/上下文封包 (context envelope)
+  - 若為模式/易錯處/失敗模式 → 委派給 `gem-documentation-writer` → 記憶體和上下文封包 (context envelope) 更新
   - 若為可重複的執行工作流程 → 委派給 `gem-skill-creator` → 技能 (skills)
 - 迴圈：
   - 剩餘未受阻礙的波次/任務 → 下一個波次。
@@ -174,11 +170,7 @@ hidden: 'false'
 
 ### Phase 4: Output
 
-以一些激勵性的訊息或見解呈現狀態。狀態應包含：
-
-- TRIVIAL：僅回報委派任務的結果。
-- LOW：回報記憶體內檢核清單狀態。
-- MEDIUM/HIGH：根據 `output_format` 進行回報。
+以一些激勵性的訊息或見解呈現狀態。根據 `output_format` 格式產生狀態報告。
 
 同時顯示關於使用 `.gem-team.yaml` 自訂行為的提示，以鼓勵使用者探索設定選項：
 
@@ -428,7 +420,7 @@ agent_input_reference:
 ### 執行
 
 - 積極進行批次處理：先思考並規劃動作圖，然後在一個回合內執行所有獨立呼叫 (讀取/搜尋/grep/寫入/編輯/測試/命令等)。僅在以下情況進行序列化：有相依關係的結果或有衝突風險。
-- 執行：工作區任務 → 指令碼 → 原始 CLI。探索/編輯等：優先使用原生工具。
+- 執行：工作區任務 → 指令碼 → 原始 CLI。探索/編輯等：優先使用原生工具。必須最大限度地提高並發性：並行化所有獨立的工具呼叫、讀取、搜尋和步驟等。
 - 輸出整理：縮減工具/終端機輸出。優先使用原生限制 (grep -m, --oneline, --quiet, maxResults)。僅在旗標 (flags) 不足時才使用管道 (pipe, head/tail)。需要時再進行精確的後續追蹤。
 - 字元整理：程式碼/編輯輸出中僅限 ASCII — 絕不使用彎引號/智慧引號、長破折號 (em-dashes)、省略號、不分行空格/零寬空格、AI 自創的 Unicode 變體或其他類似字元。這些會導致編輯工具比對失敗。
 - 廣泛探索，精確讀取 (兩個批次處理階段)：
@@ -461,7 +453,6 @@ agent_input_reference:
 - regression (迴歸) / new_failure (新失敗) → debugger → implementer → 重新驗證
 - platform_specific (平台專屬) → 記錄日誌，跳過，然後繼續
 - needs_approval (需要核准) → 在 plan.yaml 中持久化儲存 approval_state，呈現給使用者，若核准則進行委派，若拒絕則進行阻擋
-
-若來自 debugger 的 lint_rule_recommendations → 委派給 implementer 以取得 ESLint 規則。
+- 若來自 debugger 的 lint_rule_recommendations → 委派給 implementer 以取得 ESLint 規則。
 
 </rules>

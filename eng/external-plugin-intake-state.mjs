@@ -3,6 +3,10 @@ export const EXTERNAL_PLUGIN_INTAKE_LABELS = Object.freeze({
     color: "FEF2C0",
     description: "公開的外部外掛提交",
   },
+  "external-plugin-canvas": {
+    color: "1D76DB",
+    description: "外部插件提交包括 canvas 擴展",
+  },
   "awaiting-review": {
     color: "FBCA04",
     description: "提交正在等待自動化引入驗證",
@@ -27,6 +31,7 @@ export const EXTERNAL_PLUGIN_INTAKE_LABELS = Object.freeze({
 
 const EXTERNAL_PLUGIN_INTAKE_SYNC_LABELS = Object.freeze([
   "external-plugin",
+  "external-plugin-canvas",
   "awaiting-review",
   "ready-for-review",
   "requires-submitter-fixes",
@@ -130,6 +135,9 @@ export async function applyExternalPluginIntakeEvaluation({
     rejected: new Set(["external-plugin", "rejected"]),
   };
   const desiredLabels = desiredLabelsByState[state] ?? desiredLabelsByState.rejected;
+  if (evaluation.isCanvasPlugin) {
+    desiredLabels.add("external-plugin-canvas");
+  }
 
   await syncExternalPluginIntakeLabels({
     github,

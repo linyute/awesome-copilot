@@ -1,14 +1,10 @@
 {
-  "name": "gem-team",
-  "version": "1.80.0",
-  "description": "用於規格驅動開發與自動化驗證的自我學習多 agent 協調框架。具備更智慧的工具呼叫與更精簡的上下文內容。",
   "author": {
-    "name": "mubaidr",
     "email": "mubaidr@gmail.com",
+    "name": "mubaidr",
     "url": "https://github.com/mubaidr"
   },
-  "license": "Apache-2.0",
-  "repository": "https://github.com/mubaidr/gem-team",
+  "description": "用於規格驅動開發與自動化驗證的自我學習多 agent 協調框架。具備更智慧的工具呼叫與更精簡的上下文內容。",
   "homepage": "https://github.com/mubaidr/gem-team",
   "keywords": [
     "multi-agent",
@@ -21,5 +17,9 @@
     "code-review",
     "prd",
     "mobile"
-  ]
+  ],
+  "license": "Apache-2.0",
+  "name": "gem-team",
+  "repository": "https://github.com/mubaidr/gem-team",
+  "version": "1.84.0"
 }

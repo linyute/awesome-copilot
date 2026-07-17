@@ -337,6 +337,33 @@
     }
   },
   {
+    "name": "foundry-agent-canvas",
+    "description": "用於設計、配置、測試和部署 Microsoft Foundry 託管代理程式的互動式 Copilot 畫布。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://www.microsoft.com"
+    },
+    "repository": "https://github.com/microsoft/foundry-toolkit",
+    "homepage": "https://github.com/microsoft/foundry-toolkit",
+    "license": "MIT",
+    "keywords": [
+      "agent-builder",
+      "agent-inspector",
+      "azure-ai",
+      "foundry",
+      "hosted-agents",
+      "microsoft-foundry",
+      "canvas"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "microsoft/foundry-toolkit",
+      "path": "foundry-agent-canvas",
+      "sha": "0d311e56508ac200ebb86586adbee9c7b8b0601f"
+    }
+  },
+  {
     "name": "gh-skills-builder",
     "description": "儲存庫：https://github.com/arilivigni/gh-skills-builder\n此外掛程式適合想要建立 GitHub Skills 練習的人，這些練習是在 GitHub 內部自學 GitHub 的自主學習內容。\nhttps://learn.github.com/skills\n範例：\nhttps://github.com/skills/agent-orchestration-build-your-ai-dream-team\nhttps://github.com/skills/agentic-workflows-that-read-the-room",
     "version": "1.0.4",
@@ -575,7 +602,7 @@
   {
     "name": "sonarqube",
     "description": "SonarQube 是數百萬開發人員用來捕捉錯誤、漏洞和洩漏機密的 AI 程式碼品質與安全驗證平台。此外掛程式在程式開發循環中執行這些標準：7,500 多種不同的問題類型、機密掃描、代理式分析，以及跨 40 多種語言的品質閘門。",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "author": {
       "name": "Sonar",
       "url": "https://sonarsource.com/"
@@ -593,7 +620,7 @@
     "source": {
       "source": "github",
       "repo": "SonarSource/sonarqube-agent-plugins",
-      "ref": "2.2.0"
+      "ref": "2.3.0"
     }
   },
   {
