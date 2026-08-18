@@ -1,6 +1,6 @@
-# Power Platform 架構師擴充功能
+# Power Platform Architect 外掛程式
 ![banner](https://i.imgur.com/rIJLfiL.png)
-這是一個適用於 GitHub Copilot 的擴充功能，其角色為 **Microsoft Power Platform 的資深解決方案架構師**。提供業務需求、案例說明，甚至是原始會議記錄，它就能產生量身定制的技術架構，包含元件建議以及選用的 Mermaid.js 圖表。
+這是一個適用於 GitHub Copilot 的外掛程式，扮演 **Microsoft Power Platform 資深解決方案架構師**的角色。提供業務需求、使用案例描述，甚至是會議記錄逐字稿，它就能產生量身打造的技術架構，包含元件建議以及選用的 Mermaid.js 圖表。
 
 ## 安裝
 ```bash
@@ -8,155 +8,155 @@ copilot plugin install power-platform-architect@awesome-copilot
 ```
 
 ## 示範
-*點擊下方圖片以快速檢視此代理程式技能的示範！*
+*按一下下方圖片以觀看此 agent skill 的快速示範！*
 
 [![link](https://i.imgur.com/UnImFhl.png)](https://youtu.be/tn4jEpZ6jiw)
 
 ## 包含內容
-### 技能
-| 技能 | 說明 |
+### Skills
+| Skill | 描述 |
 | --- | --- |
-| `power-platform-architect` | 根據業務需求產生功能性的 Power Platform 架構 |
+| `power-platform-architect` | 根據業務需求產生功能性 Power Platform 架構 |
 
 ## 運作方式
-此技能會引導代理程式完成一個結構化的多階段流程（儘管結果會順暢地呈現給使用者）：
+此 skill 引導 agent 進行結構化的多階段流程（雖然輸出會無縫呈現給使用者）：
 
-1. **需求分析** — 掃描提供的資料以找出專案關係人、資料來源、安全性需求和功能要求。記錄目前的（「現況」）流程並識別衝突點。
-2. **後續提問** — 代理程式會提出釐清問題以填補落差（例如：「這是供行動外勤人員還是桌面後勤人員使用？」、「是什麼觸發了此流程？」）。如果使用者無法回答，它會做出合理的假設。
-3. **元件建議** — 僅選取在解決方案中具備實際用途的 Power Platform 元件，並解釋每個元件扮演的角色。它遵循內建的決策架構（例如：外部存取 → Power Pages、資料儲存 → Dataverse、對話式介面 → Copilot Studio）。
-4. **架構敘述** — 提供導向業務流程的架構建議，講述資料如何流經系統的「故事」、哪些元件處理每個步驟，以及哪些使用者族群在各個環節進行互動。
-5. **架構圖表（選用）** — 根據要求，產生視覺化架構的 Mermaid.js 圖表，將其儲存至 `.md` 檔案，並引導使用者前往 [mermaid.ai/live/edit](https://mermaid.ai/live/edit) 進行渲染。
+1. **需求分析** — 掃描所提供的資料以找出專案關係人、資料來源、安全性需求及功能性要求。記錄目前的（「現況」）流程並識別阻礙點。
+2. **後續問題** — agent 會提出釐清問題以填補落差（例如：「這是供行動現場工作人員還是桌面後勤使用者使用？」、「觸發此流程的條件為何？」）。若使用者無法回答，則會做出合理假設。
+3. **元件建議** — 僅選取在解決方案中發揮實際作用的 Power Platform 元件，並說明每個元件所扮演的角色。它遵循內建的決策架構（例如：外部存取 → Power Pages、資料儲存 → Dataverse、對話式介面 → Copilot Studio）。
+4. **架構敘述** — 提供以業務流程為導向的架構建議，敘述資料如何在系統中流動的「故事」、哪些元件處理每個步驟，以及哪些使用者群體在每個點進行互動。
+5. **架構圖（選用）** — 根據要求產生視覺化架構的 Mermaid.js 圖表，儲存至 `.md` 檔案，並指引使用者前往 [mermaid.ai/live/edit](https://mermaid.ai/live/edit) 進行轉譯。
 
-您只需：**提供問題陳述**！您甚至可以提供描述了問題/需求的會議記錄：
+您只需做一件事：**提供問題陳述**！您甚至可以提供描述問題/需求的會議記錄逐字稿：
 
-![範例](https://i.imgur.com/IH1JsPZ.jpeg)
+![example](https://i.imgur.com/IH1JsPZ.jpeg)
 
-此技能涵蓋了完整的 Power Platform 生態系統：**Power Apps**（畫布、模型導向、程式碼應用程式）、**Power Pages**、**Copilot Studio**、**Power Automate**（雲端與桌面流程）、**AI Builder**、**Dataverse**、**Power BI**、**連接器**和**閘道**。
+此 skill 涵蓋完整的 Power Platform 生態系統：**Power Apps**（Canvas、Model-Driven、Code Apps）、**Power Pages**、**Copilot Studio**、**Power Automate**（雲端與桌面流程）、**AI Builder**、**Dataverse**、**Power BI**、**連接器**以及**閘道**。
 
-## 範例提示
-- *"檢視這份來自我們探索會議的記錄，並告訴我如何建構它。"*
-- *"我應該針對這個人力資源入職案例使用哪些 Power Platform 元件？"*
-- *"為一個連接到 SQL 並使用核准流程的 Power Apps 解決方案產生架構圖。"*
+## 範例提示詞
+- *"檢閱我們探索會議的這份逐字稿，並告訴我該如何建構。"*
+- *"針對這個人資入職培訓使用案例，我應該使用哪些 Power Platform 元件？"*
+- *"為連接至 SQL 並使用核准流程的 Power Apps 解決方案產生架構圖。"*
 
-## 範例輸出架構圖（在 [mermaid](https://mermaid.js.org/) 中渲染）
-![範例](https://i.imgur.com/eR1Og3W.png)
+## 範例輸出架構圖（於 [mermaid](https://mermaid.js.org/) 中轉譯）
+![example](https://i.imgur.com/eR1Og3W.png)
 
 ## 範例輸出架構摘要
 ```
-解決方案架構 — 端對端流程
+Solution Architecture — End-to-End Process
 
-1. 應用程式提交（居民與承包商 → Power Pages）
+1. Application Submission (Residents & Contractors → Power Pages)
 
-居民和太陽能承包商造訪長青郡太陽能許可入口網站 (Power Pages)。此入口網站呈現一個
-引導式申請表單，包含必填欄位、文件上傳欄位（場地平面圖、電力圖表、已簽署的
-檢核表）以及費用確認。內建的表單驗證可防止在必填欄位留空或
-缺少必要附件時提交 — 這是防範不完整申請的第一道防線。
+Residents and solar contractors visit the Evergreen County Solar Permit Portal (Power Pages). The portal presents a
+guided application form with required fields, document upload slots (site plan, electrical diagrams, signed
+checklist), and fee acknowledgment. Built-in form validation prevents submission if mandatory fields are blank or
+required attachments are missing — this is the first line of defense against incomplete applications.
 
-對於現場親自辦理或郵寄的申請，Marcus 的團隊會直接將資料輸入模型導向應用程式，該應用程式強制執行
-相同的必填欄位規則。
+For walk-in or mailed applications, Marcus's team enters the data directly into the Model-Driven App, which enforces
+the same required-field rules.
 
-所有提交的申請都會進入 Dataverse，狀態為「已提交」。
+All submitted applications land in Dataverse with a status of Submitted.
 
-2. 自動完整性檢查（Power Automate + AI Builder）
+2. Automated Completeness Check (Power Automate + AI Builder)
 
-提交後，Power Automate 雲端流程（自動觸發：建立新紀錄）會立即啟動。它執行
-程式化完整性檢查 — 驗證所有必要的附件是否齊全、費用確認是否已記錄，
-以及申請人詳細資訊是否完整。
+Upon submission, a Power Automate cloud flow (automated trigger: new record created) fires immediately. It performs
+a programmatic completeness check — verifying all required attachments are present, fee acknowledgment is recorded,
+and applicant details are complete.
 
-對於上傳的文件，AI Builder 的文件處理模型會掃描場地平面圖和已簽署的表單，以驗證
-簽名欄位是否非空值以及關鍵資料區域是否已填寫。這能捕捉到 Marcus 所描述的細微瑕疵 —
-「有引用但未包含」的附件，以及模糊不清或未簽署的文件。
+For uploaded documents, AI Builder's Document Processing model scans the site plan and signed forms to verify that
+signature fields are not blank and key data areas are populated. This catches the subtle defects Marcus described —
+"referenced but not included" attachments and illegible or unsigned documents.
 
- - 若完整：許可狀態前進到「審查中」，且流程會將其傳送給指定的計劃審查員 
-（Jim 的團隊）。
- - 若不完整：狀態設定為「不完整」，且 Power Automate 會透過 Outlook 連接器向 
-申請人發送自動電子郵件通知，詳述缺少的具體內容。申請人可以重新登入 Power 
-Pages 入口網站上傳更正內容。此過程不消耗任何工作人員的時間。
+ - If complete: The permit status advances to Under Review and the flow routes it to the assigned plan reviewer 
+(Jim's team).
+ - If incomplete: The status is set to Incomplete, and Power Automate sends an automated email notification to the 
+applicant via the Outlook connector detailing exactly what's missing. The applicant can log back into the Power 
+Pages portal to upload corrections. No staff time is consumed.
 
-3. 計劃審查與核准（Jim 的團隊 → 模型導向應用程式）
+3. Plan Review & Approval (Jim's Team → Model-Driven App)
 
-指定的計劃審查員在模型導向應用程式中開啟許可，該應用程式呈現所有申請人資料、文件，
-以及單一檢視中的 AI 驗證結果。審查員評估申請並執行以下操作之一：
+The assigned plan reviewer opens the permit in the Model-Driven App, which surfaces all applicant data, documents,
+and the AI validation results in a single view. The reviewer evaluates the application and either:
 
- - 核准 → Power Automate 將狀態前進至「已核准 – 等待檢驗」，並透過電子郵件通知申請人 
-其許可已獲核准，且將安排檢驗。
- - 要求修改 → 狀態設定為「已要求修改」，向申請人發送包含具體回饋的電子郵件，並由其
- 透過入口網站重新提交。
- - 拒絕 → 狀態設定為「已拒絕」並記錄原因；通知申請人。
+ - Approves → Power Automate advances the status to Approved – Pending Inspection and notifies the applicant via 
+email that their permit is approved and an inspection will be scheduled.
+ - Requests Revisions → Status set to Revisions Requested, the applicant is emailed with specific feedback, and they
+ resubmit through the portal.
+ - Denies → Status set to Denied with documented reasoning; applicant is notified.
 
-4. 檢驗排程與外勤工作（Sarah 的團隊 → 畫布應用程式行動版）
+4. Inspection Scheduling & Field Work (Sarah's Team → Canvas App Mobile)
 
-一旦許可達到「已核准 – 等待檢驗」，Marcus 的團隊會透過模型導向應用程式安排檢驗日期。 
-系統會透過自動電子郵件通知申請人該日期。
+Once a permit reaches Approved – Pending Inspection, Marcus's team schedules an inspection date via the Model-Driven
+App. The applicant is notified of the date through an automated email.
 
-在離開辦公室前，Sarah 在她的手機/平板電腦上開啟畫布應用程式，並檢視當天的檢驗佇列。
-每個許可都顯示其即時狀態 — 如果出現費用問題或申請人要求重新安排，Sarah 會立即
-看到並可以改道前往已準備就緒的站點。不再浪費 40 分鐘的車程。
+Before leaving the office, Sarah opens the Canvas App on her phone/tablet and reviews her day's inspection queue.
+Each permit shows its live status — if a fee issue surfaced or the applicant requested a reschedule, Sarah sees it
+immediately and can reroute to a ready site. No more wasted 40-minute drives.
 
 On-site, Sarah uses the Canvas App to:
 
- - 完成結構化的檢驗檢核表（屋頂支架、接線盒、導管、序號牌）
- - 直接透過應用程式拍攝照片 — 每張照片在拍攝時都會自動連結到 Dataverse 中的許可紀錄
- （不再需要從記憶卡手動比對）
- - 記錄合格/不合格結果與筆記
+ - Complete a structured inspection checklist (roof mounts, junction boxes, conduit, serial plates)
+ - Capture photos directly through the app — each photo is automatically linked to the permit record in Dataverse at
+ the moment it's taken (no more manual matching from a memory card)
+ - Record pass/fail results and notes
 
-資料會即時同步至 Dataverse。在 Sarah 提交的那一刻，辦公室就獲得了檢驗結果 — 而不是
-幾天後。
+Results sync to Dataverse in real time. The moment Sarah submits, the office has the inspection outcome — not days
+later.
 
-5. 許可核發或糾正措施（Power Automate）
+5. Permit Issuance or Corrective Action (Power Automate)
 
-當 Sarah 提交檢驗結果時：
+When Sarah submits inspection results:
 
- - 合格 → Power Automate 將狀態設定為「許可已核發」，產生確認書，並通知申請人 
-其太陽能安裝已獲核准。
- - 不合格 → 狀態設定為「檢驗失敗 – 需要糾正」，並附上 Sarah 的筆記和照片。 
-系統會通知申請人所需的糾正措施，並可透過入口網站安排重新檢驗。
+ - Pass → Power Automate sets status to Permit Issued, generates a confirmation, and notifies the applicant that 
+their solar installation is approved.
+ - Fail → Status set to Inspection Failed – Corrections Required, with Sarah's notes and photos attached. The 
+applicant is notified of required corrections and can schedule a re-inspection through the portal.
 
-6. 自助服務狀態追蹤（居民與承包商 → Power Pages）
+6. Self-Service Status Tracking (Residents & Contractors → Power Pages)
 
-在此流程的任何階段，居民和承包商都可以登入 Power Pages 入口網站並檢視其許可的
-目前狀態、所處階段、付款是否已記錄以及下一步是什麼。這直接
-解決了 Marcus 提到的前三大電話諮詢問題：
+At any point in this process, residents and contractors can log into the Power Pages portal and see their permit's
+current status, what stage it's in, whether payment has been recorded, and what the next step is. This directly
+addresses the top three phone questions Marcus cited:
 
- 1. ✅ 「你們收到我的支票了嗎？」 → 付款狀態在入口網站上可見
- 2. ✅ 「我的許可狀態為何？」 → 即時階段追蹤
- 3. ✅ 「檢驗員什麼時候來？」 → 顯示已排定的日期
+ 1. ✅ "Did you receive my check?" → Payment status visible on portal
+ 2. ✅ "What is the status of my permit?" → Live stage tracking
+ 3. ✅ "When is the inspector coming?" → Scheduled date displayed
 
-7. 即時分析與稽核準備（Elena 與 Jim → Power BI）
+7. Live Analytics & Audit Readiness (Elena & Jim → Power BI)
 
-Power BI 儀表板直接連接到 Dataverse 並提供：
+A Power BI dashboard connects directly to Dataverse and provides:
 
- - 獲取許可所需時間指標（平均值、中位數、按階段區分）
- - 待辦事項熱圖 — 目前有多少許可停留在每個階段
- - 檢驗輸送量 — 每天/每週完成的檢驗量、合格/不合格率
- - 「綠色能源」許可計數 — 郡稽核員要求的確切指標
- - 不完整申請率趨勢 — 追蹤入口網站驗證是否正在降低 40% 的瑕疵率
+ - Time-to-Permit metrics (average, median, by stage)
+ - Backlog heatmap — how many permits are sitting in each stage right now
+ - Inspection throughput — inspections completed per day/week, pass/fail rates
+ - "Green Energy" permit counts by quarter — the exact metric the County Auditor requests
+ - Incomplete application rate trends — tracking whether the portal validation is reducing the 40% defect rate
 
-Elena 可以根據需要利用即時資料回答委員會和稽核員的問題 — 無須抽調工作人員進行人工計算。
+Elena can answer Board and Auditor questions on demand with live data — no staff time diverted to manual counting.
 
 -------------------------------------------------------------------------------------------------------------------
 
-摘要
+Summary
 
-此架構以單一整合的資料骨幹 (Dataverse) 取代了斷裂的紙本流程，
-每個專案關係人都透過適合其角色的介面進行處理：
+This architecture replaces the disconnected paper-based process with a single integrated data backbone (Dataverse)
+that every stakeholder touches through the right interface for their role:
 
 ┌──────────────────────────┬─────────────────────┬──────────────────────────┐
-│ 受眾                     │ 介面                │ 用途                     │
+│ Audience                 │ Interface           │ Purpose                  │
 ├──────────────────────────┼─────────────────────┼──────────────────────────┤
-│ 居民與承包商             │ Power Pages 入口網站│ 提交、追蹤、重新提交     │
+│ Residents & Contractors  │ Power Pages Portal  │ Submit, track, resubmit  │
 ├──────────────────────────┼─────────────────────┼──────────────────────────┤
-│ Marcus（受理人員）       │ 模型導向應用程式    │ 審查、排程、管理         │
+│ Marcus (Intake)          │ Model-Driven App    │ Review, schedule, manage │
 ├──────────────────────────┼─────────────────────┼──────────────────────────┤
-│ Jim（規劃/審查）         │ 模型導向應用程式    │ 核准/拒絕許可            │
+│ Jim (Planning/Review)    │ Model-Driven App    │ Approve/reject permits   │
 ├──────────────────────────┼─────────────────────┼──────────────────────────┤
-│ Sarah（外勤檢驗員）      │ 畫布應用程式 (行動) │ 檢驗、拍攝、提交         │
+│ Sarah (Field Inspectors) │ Canvas App (Mobile) │ Inspect, capture, submit │
 ├──────────────────────────┼─────────────────────┼──────────────────────────┤
-│ Elena 與 Jim（領導層）   │ Power BI 儀表板     │ 監控、報告、稽核         │
+│ Elena & Jim (Leadership) │ Power BI Dashboards │ Monitor, report, audit   │
 └──────────────────────────┴─────────────────────┴──────────────────────────┘
 
-預期影響直接解決了 Elena 的四項策略需求和 Jim 的預測：在不雇用
-任何新員工的情況下，將待辦案件減少一半。
+The expected impact directly addresses Elena's four strategic needs and Jim's prediction: cut the backlog in half
+without hiring a single new person.
 ```
 
 ## 來源

@@ -1,7 +1,7 @@
 {
   "name": "awesome-copilot",
   "metadata": {
-    "description": "社群驅動的 GitHub Copilot 外掛程式、agents、提示詞與技能集合",
+    "description": "社群導向的 GitHub Copilot 外掛程式、代理人、提示詞與技能精選集",
     "version": "1.0.0"
   },
   "owner": {
@@ -11,19 +11,19 @@
   "plugins": [
     {
       "name": "accessibility-kanban",
-      "source": "extensions/accessibility-kanban",
-      "description": "用於管理無障礙問題的看板，可讓您規劃、追蹤並完成修復工作。",
-      "version": "1.0.0"
+      "source": "plugins/accessibility-kanban",
+      "description": "管理無障礙問題的看板，可讓您規劃、追蹤並完成補救工作。",
+      "version": "1.0.2"
     },
     {
       "name": "acreadiness-cockpit",
       "source": "plugins/acreadiness-cockpit",
-      "description": "從 Copilot 聊天中驅動 Microsoft AgentRC：評估 AI 就緒度、產生 Copilot 指令（適用於單一存放庫的扁平或巢狀 applyTo glob 模式），以及管理原則。於 reports/index.html 產生獨立的靜態 HTML 儀表板。",
+      "description": "從 Copilot 聊天驅動 Microsoft AgentRC：評估 AI 整備度、產生 Copilot 指示（一般或針對 monorepos 包含 applyTo globs 的巢狀指示），並管理原則。在 reports/index.html 產生獨立的靜態 HTML 儀表板。",
       "version": "1.0.0"
     },
     {
       "name": "agent-council",
-      "description": "一個執行階段可攜式的 5-agent 品質閘門，用於在文字成品出貨前進行裁決。五個受角色制約的 LLM 審議器執行 2 輪非同步協定，並進行交叉閱讀反駁，最後傳回一個裁決結果 — 出貨 (SHIP)、修改 (REVISE) 或保留 (HOLD) — 以及結構化的修改簡報與完整稽核記錄。",
+      "description": "在文字產出物交付前進行裁決的可攜式 5 代理人品質閘門。五個具備角色條件的 LLM 審議者執行包含交叉審閱反駁的 2 輪非同步協定，並返回一個裁決 — SHIP（交付）、REVISE（修改）或 HOLD（擱置）— 加上結構化的修改摘要與完整稽核記錄。",
       "version": "0.1.3",
       "author": {
         "name": "Parth Sangani",
@@ -50,8 +50,8 @@
     },
     {
       "name": "ai-ready",
-      "description": "分析任何存放庫並產生 AI-ready 設定 — AGENTS.md、copilot-instructions.md、CI 工作流程、問題範本等。挖掘您的 PR 審查模式並建立自訂符合您技術堆疊的檔案。",
-      "version": "1.0.0",
+      "description": "分析任何存放庫並產生已就緒的 AI 設定 — AGENTS.md、copilot-instructions.md、CI 工作流程、問題範本等。挖掘您的 PR 審查模式，並針對您的技術堆疊建立自訂檔案。",
+      "version": "1.1.0",
       "author": {
         "name": "John Papa",
         "url": "https://github.com/johnpapa"
@@ -72,60 +72,86 @@
         "source": "github",
         "repo": "johnpapa/ai-ready",
         "path": ".github/plugin",
-        "ref": "b993d6512c918d8a21a61b7931726f5980c3c920"
+        "ref": "v1.1.0"
       }
     },
     {
       "name": "ai-team-orchestration",
       "source": "plugins/ai-team-orchestration",
-      "description": "引導並執行具備具名角色（製作人、開發團隊、QA）的多 agent AI 開發團隊。衝刺規劃、以不同 agent 聲音進行腦力激盪提示、跨聊天內容存活，以及平行團隊工作流程。基於已證實的範本，在 5 天內以零人工編寫的程式碼出貨一個包含 30 款遊戲的應用程式。",
-      "version": "1.0.0"
+      "description": "執行輕量級、角色分離的 AI 開發團隊，具備彈性工具、開發人員選定的模型、適度的規劃與選用的 QA。",
+      "version": "2.0.0"
+    },
+    {
+      "name": "apify",
+      "description": "透過 Apify Store 中數千個受信任的擷取器、網路爬蟲與自動化工具，協助開發人員從任何網站擷取資料。整合現成的 Actor 以存取所有熱門的社群媒體、影片、電子商務、搜尋引擎、地圖和旅遊網站。在 Apify 上建構、除錯、發佈並獲利新的 Actor。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Jakub-Vacek",
+        "url": "https://apify.com"
+      },
+      "repository": "https://github.com/apify/apify-github-copilot-plugin",
+      "license": "Apache-2.0",
+      "keywords": [
+        "automation",
+        "copilot",
+        "github",
+        "apify",
+        "actors",
+        "scrape",
+        "crawl"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "apify/apify-github-copilot-plugin",
+        "path": "apify",
+        "sha": "84136d82da104af9792040e91392daff098e6ff9"
+      }
     },
     {
       "name": "apng-studio",
-      "source": "extensions/apng-studio",
-      "description": "用於從影格建構動態 PNG (APNG) 檔案的互動式 GitHub Copilot 應用程式畫布擴充功能。繪製或上傳影格、調整每影格時間與合成、即時預覽、透過 QR Code 將結果傳送到您的手機，並匯出動態 .png。",
-      "version": "1.0.0"
+      "source": "plugins/apng-studio",
+      "description": "用於從影格建構動態 PNG (APNG) 檔案的互動式 GitHub Copilot 應用程式畫布擴充功能。繪製或上傳影格、微調每格時間與合成、即時預覽、透過 QR code 傳送結果至手機，並匯出動態 .png。",
+      "version": "1.0.2"
     },
     {
       "name": "arcade-canvas",
-      "source": "extensions/arcade-canvas",
-      "description": "在 agents 工作時，於 Copilot 畫布中遊玩五款復古 Phaser 小遊戲。",
-      "version": "1.0.0"
+      "source": "plugins/arcade-canvas",
+      "description": "在代理人工作時，於 Copilot 畫布中暢玩五款復古 Phaser 迷你遊戲。",
+      "version": "1.0.2"
     },
     {
       "name": "arch",
       "source": "plugins/arch",
-      "description": "架構與現代化工具箱：為本機複製的存放庫產生引用架構文件，並產生在需要時自動執行說明文件模式的階段性現代化計劃。",
+      "description": "架構與現代化工具包：為本機複製的存放庫產生具引用的架構文件，並產生在需要時自動執行文件模式的分階段現代化計劃。",
       "version": "1.0.0"
     },
     {
       "name": "arize-ax",
       "source": "plugins/arize-ax",
-      "description": "用於 LLM 可觀測性、評估與最佳化的 Arize AX 平台技能。包含追蹤匯出、檢測、資料集、實驗、評估器、AI 提供者整合、註解、提示詞最佳化，以及指向 Arize UI 的深層連結。",
+      "description": "用於 LLM 可觀測性、評估與最佳化的 Arize AX 平台技能。包含追蹤匯出、檢測工具、資料集、實驗、評估器、AI 提供者整合、標註、提示詞最佳化，以及深入連結至 Arize UI。",
       "version": "1.0.0"
     },
     {
       "name": "automate-this",
       "source": "plugins/automate-this",
-      "description": "錄製您執行手動程序的螢幕畫面，將影片放到桌面，讓 Copilot CLI 逐格分析以建置可運作的自動化指令碼。支援包含音訊轉錄的口述錄製。",
+      "description": "錄製您執行手動程序的螢幕畫面，將影片放置於桌面上，並讓 Copilot CLI 逐格分析以建構可運作的自動化指令碼。支援具有音訊轉錄的旁白錄製。",
       "version": "1.0.0"
     },
     {
       "name": "awesome-copilot",
       "source": "plugins/awesome-copilot",
-      "description": "協助您探索與產生精選 GitHub Copilot agents、指令、提示詞與技能的 Meta 提示詞。",
+      "description": "協助您探索並產生精選 GitHub Copilot 代理人、指示、提示詞與技能的 Meta 提示詞。",
       "version": "1.1.0"
     },
     {
       "name": "aws-cloud-development",
       "source": "plugins/aws-cloud-development",
-      "description": "完整的 AWS 雲端開發工具，包含基礎設施即程式碼 (IaC)、無伺服器函式、架構模式，以及用於建構可延展雲端應用程式的成本最佳化。",
+      "description": "全方位的 AWS 雲端開發工具，包含基礎結構即程式碼、無伺服器函式、架構模式以及用於建構可延展雲端應用程式的成本最佳化。",
       "version": "1.0.0"
     },
     {
       "name": "azure",
-      "description": "Microsoft Azure MCP 伺服器與用於雲端資源管理、部署和 Azure 服務的技能。直接從 Copilot 管理您的 Azure 基礎設施、監控應用程式並部署資源。",
+      "description": "用於雲端資源管理、部署與 Azure 服務的 Microsoft Azure MCP 伺服器與技能。直接從 Copilot 管理您的 Azure 基礎結構、監視應用程式並部署資源。",
       "version": "1.0.0",
       "author": {
         "name": "Microsoft",
@@ -151,24 +177,112 @@
     {
       "name": "azure-cloud-development",
       "source": "plugins/azure-cloud-development",
-      "description": "完整的 Azure 雲端開發工具，包含基礎設施即程式碼 (IaC)、無伺服器函式、架構模式，以及用於建構可延展雲端應用程式的成本最佳化。",
+      "description": "全方位的 Azure 雲端開發工具，包含基礎結構即程式碼、無伺服器函式、架構模式以及用於建構可延展雲端應用程式的成本最佳化。",
       "version": "1.0.1"
     },
     {
       "name": "backlog-swipe-triage",
-      "source": "extensions/backlog-swipe-triage",
-      "description": "快速滑動瀏覽待辦清單問題，以進行指派、需要資訊、延期、關閉或忽略等分流決策。",
+      "source": "plugins/backlog-swipe-triage",
+      "description": "快速滑動待辦清單問題以分類指派、需要資訊、延後、關閉或忽略等決策。",
+      "version": "1.0.2"
+    },
+    {
+      "name": "backrooms-canvas",
+      "source": "plugins/backrooms-canvas",
+      "description": "在代理人工作時，於 Copilot 畫布中漫步於無盡的第一人稱後室；代理人的狀態會以幽靈筆跡寫在牆上。",
       "version": "1.0.0"
+    },
+    {
+      "name": "blea",
+      "description": "安全、以代理人優先的低功耗藍牙診斷工具，透過技能、CLI 和本機 MCP 伺服器提供具可攜性的證據擷取/比較/重放以及受防護的寫入功能。",
+      "version": "0.6.1",
+      "author": {
+        "name": "Nitmi",
+        "url": "https://github.com/Nitmi"
+      },
+      "repository": "https://github.com/Nitmi/blea",
+      "license": "MIT",
+      "keywords": [
+        "bluetooth-low-energy",
+        "ble",
+        "hardware",
+        "agent-plugin",
+        "agent-skill",
+        "cli",
+        "mcp"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "Nitmi/blea",
+        "sha": "5b4b325e5d4a444f328366dff89e81dd2bda36ed"
+      }
+    },
+    {
+      "name": "brainmaxxing",
+      "description": "以程式碼庫為基礎的概念精通測驗，並配備互動式 BrainMax 畫布儀表板。",
+      "version": "1.0.0",
+      "author": {
+        "name": "Julia Muiruri",
+        "url": "https://juliawakiru.dev"
+      },
+      "repository": "https://github.com/juliamuiruri4/brainmaxxing",
+      "homepage": "https://github.com/juliamuiruri4/brainmaxxing",
+      "license": "MIT",
+      "keywords": [
+        "assessment",
+        "canvas",
+        "developer-education",
+        "learning",
+        "quiz",
+        "skills-mastery",
+        "software-engineering",
+        "student-developer"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "juliamuiruri4/brainmaxxing",
+        "ref": "v1.0.0",
+        "sha": "8a8a102ff3ab8736f015764207cdb7e68fcd5ecf"
+      }
     },
     {
       "name": "cast-imaging",
       "source": "plugins/cast-imaging",
-      "description": "使用 CAST Imaging 進行軟體分析、影響評估、結構品質諮詢與架構審查的專業 agents 完整集合。",
+      "description": "使用 CAST Imaging 進行軟體分析、影響評估、結構品質諮詢與架構檢查的完整專業代理人精選集。",
       "version": "1.0.0"
     },
     {
+      "name": "catalyst-by-zoho",
+      "description": "Catalyst by Zoho 的官方 GitHub Copilot 外掛程式 — 一個全堆疊無伺服器雲端平台。包含涵蓋各項服務、SDK、CLI 工作流程、架構模式、定價、移轉指南與 Zoho MCP 資源管理的技能。",
+      "version": "0.0.1",
+      "author": {
+        "name": "Catalyst By Zoho",
+        "url": "https://github.com/catalystbyzoho"
+      },
+      "repository": "https://github.com/catalystbyzoho/copilot-plugin",
+      "homepage": "https://catalyst.zoho.com",
+      "license": "Apache-2.0",
+      "keywords": [
+        "catalyst",
+        "zoho",
+        "mcp",
+        "serverless",
+        "cloud",
+        "datastore",
+        "zcql",
+        "appsail",
+        "stratus",
+        "functions"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "catalystbyzoho/copilot-plugin",
+        "sha": "0c2716ca4f28df375529c67b4504b41f7bd29a66"
+      }
+    },
+    {
       "name": "chrome-devtools-plugin",
-      "description": "使用 Chrome DevTools 與 Puppeteer 在 Chrome 中進行可靠的自動化、深入偵錯與效能分析。",
+      "description": "在 Chrome 中使用 Chrome DevTools 與 Puppeteer 進行可靠的自動化、深入除錯與效能分析。",
       "version": "1.0.1",
       "author": {
         "name": "Chrome DevTools Team"
@@ -193,25 +307,25 @@
     },
     {
       "name": "chromium-control-canvas",
-      "source": "extensions/chromium-control-canvas",
-      "description": "開啟一個真實的 Chromium 視窗，您可以從 Copilot 畫布主控台與 agent 動作進行瀏覽和互動。",
-      "version": "1.0.0"
+      "source": "plugins/chromium-control-canvas",
+      "description": "開啟真實的 Chromium 視窗，您可以從 Copilot 畫布控制面板與代理人操作中進行導覽與互動。",
+      "version": "1.0.2"
     },
     {
       "name": "clojure-interactive-programming",
       "source": "plugins/clojure-interactive-programming",
-      "description": "以 REPL 優先的 Clojure 工作流程工具，具有 Clojure 指令、互動式程式設計對話模式與支援指引。",
+      "description": "用於 REPL 優先 Clojure 工作流程的工具，包含 Clojure 指示、互動式程式設計聊天模式及支援指引。",
       "version": "1.0.0"
     },
     {
       "name": "cms-development",
       "source": "plugins/cms-development",
-      "description": "用於 CMS 開發的技能，涵蓋佈景主題、外掛程式、管理工具、媒體工作流程、Markdown 渲染與靜態匯出管線。",
+      "description": "跨佈景主題、外掛程式、管理工具、媒體工作流程、Markdown 轉譯與靜態匯出管線的 CMS 開發技能。",
       "version": "1.1.0"
     },
     {
       "name": "cockroachdb",
-      "description": "將 GitHub Copilot 連接至您的 CockroachDB 叢集：透過 MCP 執行和探索 SQL，具備 DBA/開發者/維運者 agents、CockroachDB 最佳實踐技能，以及封鎖破壞性陳述式的安全勾點。",
+      "description": "將 GitHub Copilot 連接至您的 CockroachDB 叢集：透過 MCP 執行與探索 SQL，具備 DBA/開發人員/維運人員代理人、CockroachDB 最佳做法技能，以及封鎖破壞性陳述式的安全掛鉤。",
       "version": "0.1.4",
       "author": {
         "name": "Cockroach Labs",
@@ -237,38 +351,59 @@
     },
     {
       "name": "color-orb",
-      "source": "extensions/color-orb",
-      "description": "一個視覺光球，使用者可要求 agent 重新著色，同時在畫布中顯示即時活動記錄。",
-      "version": "1.0.0"
+      "source": "plugins/color-orb",
+      "description": "一個視覺球體，使用者可以要求代理人重新著色，同時在畫布中顯示即時活動記錄。",
+      "version": "1.0.2"
     },
     {
       "name": "connector-namespaces",
-      "source": "extensions/connector-namespaces",
-      "description": "從 Azure 連接器命名空間瀏覽、連接並開啟 MCP 連接器。",
-      "version": "1.1.0"
+      "description": "互動式 GitHub Copilot 畫布，用於探索、連接與管理來自 Azure 連接器命名空間的託管 MCP 伺服器。",
+      "version": "1.2.0",
+      "author": {
+        "name": "Microsoft",
+        "url": "https://github.com/Azure"
+      },
+      "repository": "https://github.com/Azure/Connectors",
+      "homepage": "https://github.com/Azure/Connectors/tree/connector-namespaces-canvas%401.2.0/connector-namespaces",
+      "license": "MIT",
+      "keywords": [
+        "azure",
+        "canvas",
+        "connector-namespace",
+        "mcp",
+        "mcp-connectors",
+        "model-context-protocol",
+        "tool-discovery"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "Azure/Connectors",
+        "path": "connector-namespaces",
+        "sha": "473d526fad34951ed0e12664912df4c7f393ed15"
+      }
     },
     {
       "name": "context-engineering",
       "source": "plugins/context-engineering",
-      "description": "透過更佳的內容管理來極大化 GitHub Copilot 效能的工具與技術。包含結構化程式碼的指引、用於規劃多檔案變更的 agent，以及用於內容感知開發的提示詞。",
+      "description": "透過更好的情境管理將 GitHub Copilot 效益最大化的工具與技術。包含結構化程式碼指引、用於規劃多檔案變更的代理人，以及用於感知情境開發的提示詞。",
       "version": "1.0.0"
     },
     {
       "name": "context-matic",
       "source": "plugins/context-matic",
-      "description": "程式設計 agents 會對 API 產生幻覺。ContextMatic 提供其精選且具版本控管的 API 與 SDK 文件。要求您的 agent \"整合支付 API\"，它只會猜測 — 退回到過時的訓練資料與不符合您實際 SDK 的通用模式。ContextMatic 藉由在精確的需要時刻提供 agent 確定性的、具版本感知的、SDK 原生的上下文內容來解決此問題。",
+      "description": "編碼代理人常對 API 產生幻覺。ContextMatic 為它們提供精選且具版本的 API 與 SDK 文件。當您要求代理人「整合付款 API」時，它往往靠猜測 — 退回到過時的訓練資料與不符合您實際 SDK 的通用模式。ContextMatic 透過在精確需要的時刻為代理人提供具確定性、感知版本且原生於 SDK 的情境來解決此問題。",
       "version": "0.1.0"
     },
     {
       "name": "convert-to-md",
       "source": "plugins/convert-to-md",
-      "description": "Copilot 技能的集合，可將常見文件格式轉換為 Markdown，以便對其內容進行精確分析、摘要、搜尋或擷取。只需告訴 Copilot 您的需求 — 系統將自動呼叫合適的技能，並在幕後進行轉換。",
+      "description": "一組 Copilot 技能，可將常見文件格式轉換為 Markdown，以便精確分析、摘要、搜尋或擷取其內容。只需告訴 Copilot 您的需求 — 系統會自動呼叫合適的技能並在幕後完成轉換。",
       "version": "1.0.1"
     },
     {
       "name": "copilot-goal-skill",
-      "description": "具備獨立驗證的目標驅動工作協調。訪談使用者以定義明確的目標，然後在 Builder 子 agent（執行工作）與 Inspector 子 agent（使用新內容評估結果）之間進行循環。Inspector 絕不信任 Builder。輸出結果可從每個子 agent 動作的 git 提交中進行稽核。適用於使用者說出 \"達成此目標\"、\"使其運作\"、\"實作直到完成\"，或希望透過獨立品質審查來驗證自主工作完成的情況。",
-      "version": "1.0.1",
+      "description": "具有獨立驗證的目標導向任務編排。透過訪談使用者以定義明確目標，然後在建構者 (Builder) 子代理人（執行工作）與檢查者 (Inspector) 子代理人（以全新情境評判結果）之間循環。檢查者從不盲目信任建構者。產出可在每個子代理人操作的 git commit 中進行稽核。當使用者說「達成此目標」、「使其正常運作」、「實作直到完成」，或希望具備獨立品質審查的已驗證自主任務完成時使用。",
+      "version": "1.1.2",
       "author": {
         "name": "Gaetan Semet",
         "url": "https://github.com/gsemet"
@@ -286,31 +421,31 @@
         "source": "github",
         "repo": "gsemet/copilot-goal-skill",
         "path": "plugins/copilot-goal-skill",
-        "ref": "1.0.1",
-        "sha": "b186d0b0d59da1ea051283a7d99185979ede998a"
+        "ref": "1.1.2",
+        "sha": "17d0452fcb08adc7cc0cdf61a174e7045f3b5586"
       }
     },
     {
       "name": "copilot-sdk",
       "source": "plugins/copilot-sdk",
-      "description": "跨多種程式語言使用 GitHub Copilot SDK 建置應用程式。包含 C#、Go、Node.js/TypeScript 與 Python 的完整指令，以協助您建立 AI 驅動的應用程式。",
+      "description": "使用 GitHub Copilot SDK 跨多種程式語言建構應用程式。包含適用於 C#、Go、Node.js/TypeScript 與 Python 的完整指示，協助您建立 AI 驅動的應用程式。",
       "version": "1.0.0"
     },
     {
       "name": "csharp-dotnet-development",
       "source": "plugins/csharp-dotnet-development",
-      "description": "C# 與 .NET 開發的基本提示詞、指令與聊天模式，包含測試、說明文件與最佳實踐。",
+      "description": "C# 與 .NET 開發必備的提示詞、指示與聊天模式，包含測試、文件與最佳做法。",
       "version": "1.1.0"
     },
     {
       "name": "database-data-management",
       "source": "plugins/database-data-management",
-      "description": "適用於 PostgreSQL、SQL Server 的資料庫管理、SQL 最佳化與資料管理工具，以及一般資料庫開發最佳實踐。",
+      "description": "適用於 PostgreSQL、SQL Server 的資料庫管理、SQL 最佳化與資料管理工具，以及一般資料庫開發最佳做法。",
       "version": "1.0.0"
     },
     {
       "name": "datadog",
-      "description": "透過預先設定的 Datadog MCP 伺服器，直接在 Copilot / VS Code 中使用 Datadog。透過自然對話查詢記錄、指標、追蹤、儀表板等。",
+      "description": "透過預先設定的 Datadog MCP 伺服器直接在 Copilot / VS Code 中使用 Datadog。透過自然對話查詢記錄檔、計量、追蹤、儀表板等。",
       "version": "0.7.21",
       "author": {
         "name": "Datadog",
@@ -334,7 +469,7 @@
     },
     {
       "name": "dataverse",
-      "description": "使用自然語言建置與管理 Microsoft Dataverse 解決方案。包含資料表/資料欄建立、解決方案生命週期、資料操作，以及 MCP 伺服器設定。",
+      "description": "使用自然語言建構與管理 Microsoft Dataverse 解決方案。包含資料表/資料行建立、解決方案生命週期、資料作業與 MCP 伺服器設定。",
       "version": "1.0.0",
       "author": {
         "name": "Microsoft",
@@ -360,24 +495,24 @@
     {
       "name": "dataverse-sdk-for-python",
       "source": "plugins/dataverse-sdk-for-python",
-      "description": "用於建構與 Microsoft Dataverse 整合之生產就緒 Python 整合的完整集合。包含官方說明文件、最佳實踐、進階功能、檔案操作，以及程式碼產生提示詞。",
+      "description": "用於使用 Microsoft Dataverse 建構生產就緒 Python 整合的完整精選集。包含官方文件、最佳做法、進階功能、檔案作業與程式碼產生提示詞。",
       "version": "1.0.0"
     },
     {
       "name": "devops-oncall",
       "source": "plugins/devops-oncall",
-      "description": "一組專注的提示詞、指令與聊天模式，可協助分流事件並使用 DevOps 工具與 Azure 資源快速回應。",
+      "description": "專門的提示詞、指示與聊天模式精選集，協助使用 DevOps 工具與 Azure 資源快速分類事件並做出回應。",
       "version": "1.0.0"
     },
     {
       "name": "diagram-viewer",
-      "source": "extensions/diagram-viewer",
-      "description": "渲染圖表、點選節點以向下鑽取，並直接在畫布中檢視 agent 產生的解釋。",
-      "version": "1.0.0"
+      "source": "plugins/diagram-viewer",
+      "description": "轉譯圖表、按一下節點向下切入，並直接在畫布中檢視代理人產生的說明。",
+      "version": "1.0.2"
     },
     {
       "name": "dotnet",
-      "description": "常見的日常 C#/.NET 程式設計技能。預期對所有 .NET 開發人員都有幫助。",
+      "description": "常見的日常 C#/.NET 撰寫程式碼技能。預期對所有 .NET 開發人員都有幫助。",
       "version": "0.1.0",
       "author": {
         "name": "Microsoft",
@@ -404,7 +539,7 @@
     },
     {
       "name": "dotnet-diag",
-      "description": "用於 .NET 效能調查、偵錯與事件分析的技能。",
+      "description": "用於 .NET 效能調查、除錯與事件分析的技能。",
       "version": "0.1.0",
       "author": {
         "name": "Microsoft",
@@ -433,7 +568,7 @@
     },
     {
       "name": "dotnet-test",
-      "description": "透過多 agent「研究-規劃-實作」管線進行多語言單元測試產生 — 為 .NET/C#、Python、TypeScript/JavaScript、Java、Go、Ruby、Rust、C++、Kotlin、Swift 與 PowerShell 編寫並執行測試。此外還包含專注於 .NET 的測試執行、涵蓋率與 CRAP 分析、可測試性審查、平台偵測，以及 MSTest/xUnit 遷移。",
+      "description": "透過多代理人「研究-規劃-實作」管線產生多語言單元測試 — 為 .NET/C#、Python、TypeScript/JavaScript、Java、Go、Ruby、Rust、C++、Kotlin、Swift 與 PowerShell 撰寫並執行測試。此外還提供以 .NET 為重點的測試執行、涵蓋範圍與 CRAP 分析、可測試性檢查、平台偵測以及 MSTest/xUnit 移轉。",
       "version": "0.2.0",
       "author": {
         "name": "Microsoft",
@@ -463,18 +598,18 @@
     {
       "name": "doublecheck",
       "source": "plugins/doublecheck",
-      "description": "適用於 AI 輸出的三層驗線管線。擷取宣稱、尋找來源並標記幻覺風險，以便人類在採取行動前進行驗證。",
+      "description": "針對 AI 輸出的三層驗證管線。擷取主張、尋找來源並標記幻覺風險，以便人類在採取行動前進行驗證。",
       "version": "1.0.0"
     },
     {
       "name": "edge-ai-tasks",
       "source": "plugins/edge-ai-tasks",
-      "description": "適用於中高階使用者與大型程式碼庫的工作研究員與工作規劃員 - 由 microsoft/edge-ai 提供",
+      "description": "適用於中階到專家級使用者及大型程式碼庫的任務研究員與任務規劃員 - 由 microsoft/edge-ai 提供",
       "version": "1.0.0"
     },
     {
       "name": "elasticsearch",
-      "description": "適用於 GitHub Copilot 的官方 Elastic 外掛程式 — 將自然語言翻譯為 ES|QL 查詢、引入資料、管理 Elasticsearch 安全性（驗證、授權、稽核），以及排除叢集問題。由官方 Elastic agent 技能存放庫提供支援。",
+      "description": "適用於 GitHub Copilot 的官方 Elastic 外掛程式 — 將自然語言轉譯為 ES|QL 查詢、擷取資料、管理 Elasticsearch 安全性（驗證、授權、稽核）並對叢集進行疑難排解。由官方 Elastic 代理人技能存放庫提供支援。",
       "version": "0.3.0",
       "author": {
         "name": "Elastic",
@@ -501,26 +636,26 @@
     {
       "name": "ember",
       "source": "plugins/ember",
-      "description": "一個 AI 夥伴，而非工具。Ember 在人與人之間傳遞火苗 — 協助人類發現 AI 夥伴關係並非學習而來，而是去尋找發現的。",
-      "version": "1.0.0"
+      "description": "一個 AI 夥伴，而非工具。Ember 將火種傳遞給每個人 — 協助人們發現 AI 夥伴關係並非學習而來，而是去體會尋得。",
+      "version": "1.2.0"
     },
     {
       "name": "eyeball",
       "source": "plugins/eyeball",
-      "description": "包含內嵌來源螢幕截圖的文件分析。當您要求 Copilot 分析文件時，Eyeball 會產生一個 Word 文件，其中每項事實宣稱都包含來自來源內容的醒目提示螢幕截圖，以便您親眼驗證。",
+      "description": "具有內嵌來源螢幕擷取畫面的文件分析。當您要求 Copilot 分析文件時，Eyeball 會產生一個 Word 文件，其中每項事實主張都包含來自來源資料的高亮螢幕擷取畫面，讓您可以親眼驗證。",
       "version": "1.0.0"
     },
     {
       "name": "fastah-ip-geo-tools",
       "source": "plugins/fastah-ip-geo-tools",
-      "description": "此外掛程式適用於希望調整並發布 RFC 8805 格式 IP 地理定位摘要的網路營運工程師。它由一個 AI 技能與關聯的 MCP 伺服器組成，該伺服器將地理定位名稱編碼為真實城市以確保精確度。",
+      "description": "此外掛程式適用於希望以 RFC 8805 格式調整並發佈 IP 地理位置摘要的網路維運工程師。它由一個 AI 技能和一個關聯的 MCP 伺服器組成，該伺服器將地理位置地名進行地理編碼以精確對應至真實城市。",
       "version": "0.0.9"
     },
     {
       "name": "feedback-themes",
-      "source": "extensions/feedback-themes",
-      "description": "依影響力探索分組的客戶回饋訊號，並深入探討主題以指引產品的下一步行動。",
-      "version": "1.0.0"
+      "source": "plugins/feedback-themes",
+      "description": "依影響程度探索分組的客戶意見反應訊號，並深入探討主題以指導產品後續步驟。",
+      "version": "1.0.2"
     },
     {
       "name": "figma",
@@ -545,59 +680,67 @@
       }
     },
     {
+      "name": "flight-map-canvas",
+      "source": "plugins/flight-map-canvas",
+      "description": "GitHub Copilot 畫布，可產生一個檢視表，在其中可以使用 3D 控制項探索 Google 地圖，如同飛行模擬器一般。代理人可將飛行導向任何地方並回報其正在處理的工作。",
+      "version": "1.0.0"
+    },
+    {
       "name": "flowstudio-power-automate",
       "source": "plugins/flowstudio-power-automate",
-      "description": "透過 FlowStudio MCP 伺服器，讓您的 AI agent 完整檢視 Power Automate 雲端流程。連接、偵錯、建置、監控健康狀態並大規模管理流程 — 包含動作層級的輸入與輸出，而非僅有狀態碼。",
+      "description": "透過 FlowStudio MCP 伺服器讓您的 AI 代理人全面洞察 Power Automate 雲端流程。大規模連接、除錯、建構、監視健全狀況並治理流程 — 提供動作層級的輸入與輸出，而不僅是狀態碼。",
       "version": "2.0.0"
     },
     {
-      "name": "foundry-agent-canvas",
-      "description": "用於設計、配置、測試和部署 Microsoft Foundry 託管代理程式的互動式 Copilot 畫布。",
-      "version": "1.0.0",
+      "name": "foundation-models",
+      "description": "協助編碼代理人使用開發人員 Mac 上安裝的 SDK，為 iOS、macOS、visionOS 和 watchOS 撰寫與審查 Apple Foundation Models 程式碼。它會驗證真實的 API 簽章與可用性，然後對結果進行型別檢查，而不是依賴模型記憶。",
+      "version": "0.1.3",
       "author": {
-        "name": "Microsoft",
-        "url": "https://www.microsoft.com"
+        "name": "Artem Novichkov",
+        "url": "https://github.com/artemnovichkov"
       },
-      "repository": "https://github.com/microsoft/foundry-toolkit",
-      "homepage": "https://github.com/microsoft/foundry-toolkit",
+      "repository": "https://github.com/artemnovichkov/foundation-models-plugin",
+      "homepage": "https://github.com/artemnovichkov/foundation-models-plugin",
       "license": "MIT",
       "keywords": [
-        "agent-builder",
-        "agent-inspector",
-        "azure-ai",
-        "foundry",
-        "hosted-agents",
-        "microsoft-foundry",
-        "canvas"
+        "swift",
+        "ios",
+        "macos",
+        "apple",
+        "foundation-models",
+        "apple-intelligence",
+        "on-device",
+        "llm",
+        "xcode"
       ],
       "source": {
         "source": "github",
-        "repo": "microsoft/foundry-toolkit",
-        "path": "foundry-agent-canvas",
-        "sha": "0d311e56508ac200ebb86586adbee9c7b8b0601f"
+        "repo": "artemnovichkov/foundation-models-plugin",
+        "ref": "0.1.3",
+        "sha": "5837a9343db97d59107d146024b1dbd858625274"
       }
     },
     {
       "name": "frontend-web-dev",
       "source": "plugins/frontend-web-dev",
-      "description": "現代前端網頁開發的基本提示詞、指令與聊天模式，包含 React、Angular、Vue、TypeScript 與 CSS 框架。",
+      "description": "現代前端網頁開發必備的提示詞、指示與聊天模式，包含 React、Angular、Vue、TypeScript 與 CSS 框架。",
       "version": "1.0.0"
     },
     {
       "name": "gem-team",
       "source": "plugins/gem-team",
-      "description": "用於規格驅動開發與自動化驗證的自我學習多 agent 協調框架。具備更智慧的工具呼叫與更精簡的上下文內容。",
-      "version": "1.84.0"
+      "description": "用於規格導向開發與自動化驗證的自學習多代理人編排架構。具備更智慧的工具呼叫與更精簡的情境。",
+      "version": "1.109.0"
     },
     {
       "name": "gesture-review",
-      "source": "extensions/gesture-review",
-      "description": "使用即時相機畫面審查提取要求 (PR)，並使用豎起大拇指/大拇指向下姿勢進行核准或拒絕。",
-      "version": "1.0.0"
+      "source": "plugins/gesture-review",
+      "description": "透過即時攝影機摘要審查 Pull Request，並使用豎起大拇指/倒豎大拇指手勢進行核准或拒絕。",
+      "version": "1.0.2"
     },
     {
       "name": "gh-skills-builder",
-      "description": "存放庫：https://github.com/arilivigni/gh-skills-builder\n此外掛程式適用於想要建立 GitHub Skills 練習的人員，這些練習是在 GitHub 內自主學習 GitHub 的課程。\nhttps://learn.github.com/skills\n範例：\nhttps://github.com/skills/agent-orchestration-build-your-ai-dream-team\nhttps://github.com/skills/agentic-workflows-that-read-the-room",
+      "description": "存放庫: https://github.com/arilivigni/gh-skills-builder\n此外掛程式適用於想要建立 GitHub Skills 練習（即在 GitHub 內以自我步調學習 GitHub）的人士。\nhttps://learn.github.com/skills\n範例:\nhttps://github.com/skills/agent-orchestration-build-your-ai-dream-team\nhttps://github.com/skills/agentic-workflows-that-read-the-room",
       "version": "1.0.4",
       "author": {
         "name": "Ari LiVigni",
@@ -623,7 +766,7 @@
     },
     {
       "name": "git-ape",
-      "description": "適用於 GitHub Copilot 的智慧 Azure 部署 agent 系統，具備引導式 ARM 範本產生、安全閘門、成本分析與部署工作流程。",
+      "description": "適用於 GitHub Copilot 的智慧型 Azure 部署代理人系統，提供引導式 ARM 範本產生、安全閘門、成本分析與部署工作流程。",
       "version": "0.0.1",
       "author": {
         "name": "Microsoft",
@@ -651,8 +794,8 @@
     },
     {
       "name": "github-copilot-modernization",
-      "description": "為 GitHub Copilot CLI 使用多 agent 協調的自主應用程式現代化。支援 Java 升級 (8→21, Spring Boot 2.x→3.x)、.NET 現代化、Azure 遷移、CVE/安全性弱點修正，以及應用程式重新架構（單體式到微服務）。具備 3 層 agent 階層（協調器 → 協調專員 → 執行人員），並支援企業規則手冊以將組織原則嵌入工作流程中。",
-      "version": "1.20.0",
+      "description": "適用於 GitHub Copilot CLI 的多代理人編排自主應用程式現代化。支援 Java 升級 (8→21, Spring Boot 2.x→3.x)、.NET 現代化、Azure 移轉、CVE/弱點修復以及應用程式重新架構（單體轉換為微服務）。具有 3 層代理人階層（編排器 → 協調器 → 執行器），支援將組織原則嵌入工作流程的企業規則手冊。",
+      "version": "1.22.0",
       "author": {
         "name": "Microsoft",
         "url": "https://github.com/microsoft/github-copilot-modernization"
@@ -676,48 +819,48 @@
         "source": "github",
         "repo": "microsoft/github-copilot-modernization",
         "path": "plugins/github-copilot-modernization",
-        "sha": "42c1189c55933384bec07e8349ef998eb9e775ad"
+        "sha": "8b644bebc7e1f929c01d80788293a37872f480f8"
       }
     },
     {
       "name": "go-mcp-development",
       "source": "plugins/go-mcp-development",
-      "description": "在 Go 中使用官方 github.com/modelcontextprotocol/go-sdk 建構模型內容協定 (MCP) 伺服器的完整工具箱。包含最佳實踐指令、用於產生伺服器的提示詞，以及用於指引的專家聊天模式。",
+      "description": "在 Go 中使用官方 github.com/modelcontextprotocol/go-sdk 建構模型情境協定 (MCP) 伺服器的完整工具包。包含最佳做法指示、產生伺服器的提示詞，以及提供指引的專家聊天模式。",
       "version": "1.0.0"
     },
     {
       "name": "java-development",
       "source": "plugins/java-development",
-      "description": "Java 開發提示詞與指令的完整集合，包含 Spring Boot、Quarkus、測試、說明文件與最佳實踐。",
+      "description": "Java 開發提示詞與指示的完整精選集，包含 Spring Boot、Quarkus、測試、文件與最佳做法。",
       "version": "1.0.0"
     },
     {
       "name": "java-mcp-development",
       "source": "plugins/java-mcp-development",
-      "description": "在 Java 中使用官方 MCP Java SDK 建構模型內容協定伺服器的完整工具箱，具備回應式串流與 Spring Boot 整合。",
+      "description": "在 Java 中使用官方 MCP Java SDK 結合反應式串流與 Spring Boot 整合來建構模型情境協定伺服器的完整工具包。",
       "version": "1.0.0"
     },
     {
       "name": "java-modernization-studio",
-      "source": "extensions/java-modernization-studio",
-      "description": "從互動式畫布驅動適用於 Java 的 GitHub Copilot 應用程式現代化工作流程：環境就緒度、存放庫評估、排定優先順序的計劃與進度、驗證閘門，以及基於存放庫真實成品的按一下預定義工作執行。",
-      "version": "1.0.0"
+      "source": "plugins/java-modernization-studio",
+      "description": "從互動式畫布推動適用於 Java 工作流程的 GitHub Copilot 應用程式現代化：環境整備度、存放庫評估、具優先順序的計劃與進度、驗證閘門，以及基於存放庫實際產出物的一鍵預定義任務執行。",
+      "version": "1.0.2"
     },
     {
       "name": "kotlin-mcp-development",
       "source": "plugins/kotlin-mcp-development",
-      "description": "在 Kotlin 中使用官方 io.modelcontextprotocol:kotlin-sdk 函式庫建構模型內容協定 (MCP) 伺服器的完整工具箱。包含最佳實踐指令、用於產生伺服器的提示詞，以及用於指引的專家聊天模式。",
+      "description": "在 Kotlin 中使用官方 io.modelcontextprotocol:kotlin-sdk 函式庫建構模型情境協定 (MCP) 伺服器的完整工具包。包含最佳做法指示、產生伺服器的提示詞，以及提供指引的專家聊天模式。",
       "version": "1.0.0"
     },
     {
       "name": "mcp-m365-copilot",
       "source": "plugins/mcp-m365-copilot",
-      "description": "用於建構整合模型內容協定之 Microsoft 365 Copilot 宣告式 agents 的完整集合。",
+      "description": "用於建構與 Microsoft 365 Copilot 的模型情境協定整合之宣告式代理人的完整精選集",
       "version": "1.0.0"
     },
     {
       "name": "microsoft-docs",
-      "description": "存取適用於 Azure、.NET、Windows 等的官方 Microsoft 文件、API 參考與程式碼範例。",
+      "description": "存取適用於 Azure、.NET、Windows 等項目的官方 Microsoft 文件、API 參考與程式碼範例。",
       "version": "1.0.0",
       "author": {
         "name": "Microsoft",
@@ -745,7 +888,7 @@
     },
     {
       "name": "microsoft-events",
-      "description": "將您的專案連接至 Microsoft Build 與 Ignite 會議 — 探索相關演講、探索適合您技術堆疊的新內容，並從您的開發環境規劃下一步。",
+      "description": "將您的專案連接至 Microsoft Build 與 Ignite 會議 — 探索相關演講、探索適用於您技術堆疊的新功能，並從您的開發環境規劃後續步驟。",
       "version": "1.0.0",
       "author": {
         "name": "Microsoft",
@@ -768,9 +911,85 @@
       }
     },
     {
+      "name": "microsoft-foundry",
+      "description": "用於設計、設定、測試及部署代理人至 Microsoft Foundry 的技能與互動式 Copilot 畫布。",
+      "version": "1.0.7",
+      "author": {
+        "name": "Microsoft",
+        "url": "https://www.microsoft.com"
+      },
+      "repository": "https://github.com/microsoft/foundry-toolkit",
+      "homepage": "https://github.com/microsoft/foundry-toolkit",
+      "license": "MIT",
+      "keywords": [
+        "agent-builder",
+        "agent-inspector",
+        "azure-ai",
+        "foundry",
+        "hosted-agents",
+        "microsoft-foundry",
+        "canvas"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "microsoft/foundry-toolkit",
+        "path": "microsoft-foundry",
+        "sha": "5d78641be6c789710222bc7248206ace115d5080"
+      }
+    },
+    {
+      "name": "mobile-canvas",
+      "description": "從 GitHub Copilot 畫布檢視、建立、啟動本機 iOS 模擬器和 Android 模擬器並與之互動。此外掛程式亦透過 MCP 向代理人公開相同的裝置控制項。",
+      "version": "0.1.6",
+      "author": {
+        "name": "Jonathan Dick",
+        "url": "https://github.com/Redth"
+      },
+      "repository": "https://github.com/Redth/mobile-canvas-ghcp",
+      "homepage": "https://github.com/Redth/mobile-canvas-ghcp",
+      "license": "MIT",
+      "keywords": [
+        "canvas",
+        "mobile",
+        "ios",
+        "android",
+        "simulator",
+        "emulator",
+        "device-control",
+        "mcp"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "Redth/mobile-canvas-ghcp",
+        "sha": "c930769d41f07852baeeb407ded76d5ba83c06d2"
+      }
+    },
+    {
+      "name": "modern-web-guidance",
+      "description": "Modern Web Guidance 是一項代理人技能與 CLI 工具，旨在協助 AI 編碼代理人使用現代、安全且高效能的 API 建構網頁應用程式，而非過時的變通方法。\n由 Google Chrome 團隊支援，它將專家精選的網頁平台最佳做法直接插入代理人的情境視窗中，以防止產生臃腫的舊版程式碼。",
+      "version": "0.0.179",
+      "author": {
+        "name": "GoogleChrome",
+        "url": "https://github.com/GoogleChrome"
+      },
+      "repository": "https://github.com/GoogleChrome/modern-web-guidance",
+      "homepage": "https://developer.chrome.com/docs/modern-web-guidance",
+      "license": "Apache-2.0",
+      "keywords": [
+        "frontend",
+        "web",
+        "baseline"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "GoogleChrome/modern-web-guidance",
+        "ref": "v0.0.179"
+      }
+    },
+    {
       "name": "modernize-dotnet",
       "description": "AI 驅動的 .NET 現代化與升級小幫手。協助將 .NET Framework 與 .NET 應用程式升級至最新版本的 .NET。",
-      "version": "1.0.1157-preview1",
+      "version": "1.0.1161-preview1",
       "author": {
         "name": "Microsoft",
         "url": "https://www.microsoft.com"
@@ -787,13 +1006,14 @@
       "source": {
         "source": "github",
         "repo": "dotnet/modernize-dotnet",
-        "path": "plugins/modernize-dotnet"
+        "path": "plugins/modernize-dotnet",
+        "sha": "ce4ec09678498da38099ca9169c1624c59c2a89a"
       }
     },
     {
       "name": "modernize-java",
-      "description": "GitHub Copilot 現代化 – Java 升級 CLI 外掛程式可協助您從命令列升級 Java 應用程式。它為您的終端機與 CI/CD 管線帶來智慧現代化功能：分析您的專案並產生升級計劃、自動轉換您的程式碼庫、修正建置問題、針對已知的 CVE 進行驗證，並輸出檔案變更與更新相依性的詳細摘要。",
-      "version": "1.9.2",
+      "description": "GitHub Copilot 現代化 – Java Upgrade CLI 外掛程式可協助您從命令列升級 Java 應用程式。它為您的終端機與 CI/CD 管線帶來智慧型現代化功能：分析您的專案並產生升級計劃、自動轉換您的程式碼庫、修復建構問題、依據已知 CVE 進行驗證，並輸出檔案變更與更新相依性的詳細摘要。",
+      "version": "1.22.0",
       "author": {
         "name": "microsoft",
         "url": "https://github.com/microsoft/modernize-java"
@@ -811,91 +1031,121 @@
         "source": "github",
         "repo": "microsoft/modernize-java",
         "path": "plugins/modernize-java",
-        "ref": "1.9.2",
-        "sha": "b570196c070bf1eb9d7ad34a263b228ef16034a0"
+        "ref": "1.22.0",
+        "sha": "ef5367b446566bdc90960deeb40def63f9e7024e"
       }
     },
     {
       "name": "napkin",
       "source": "plugins/napkin",
-      "description": "適用於 Copilot CLI 的視覺白板協同合作。在您的瀏覽器中開啟互動式白板，您可以在其中繪製、素描與新增便利貼 — 然後將所有內容分享回 Copilot。Copilot 會看見您的繪圖，並回應分析、建議與想法。",
+      "description": "適用於 Copilot CLI 的視覺化白板協作工具。在瀏覽器中開啟互動式白板，您可以在其中繪圖、繪製草圖並新增便利貼 — 然後將所有內容分享回 Copilot。Copilot 會檢視您的繪圖並提供分析、建議與構想做為回應。",
       "version": "1.0.0"
+    },
+    {
+      "name": "netlify",
+      "description": "涵蓋函式、邊緣函式、blob、資料庫、身分識別、影像 CDN、表單、設定、CLI、框架、快取、AI Gateway 與部署的 Netlify 平台技能 — 加上用於建立與管理專案、部署及環境變數的官方 Netlify MCP 伺服器。",
+      "version": "1.1.0",
+      "author": {
+        "name": "Netlify",
+        "url": "https://www.netlify.com"
+      },
+      "repository": "https://github.com/netlify/context-and-tools",
+      "homepage": "https://www.netlify.com",
+      "license": "MIT",
+      "keywords": [
+        "netlify",
+        "deployment",
+        "serverless",
+        "functions",
+        "edge-functions",
+        "blobs",
+        "database",
+        "mcp",
+        "ai-gateway",
+        "frameworks"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "netlify/context-and-tools",
+        "ref": "v1.2.0",
+        "sha": "e10cd19c000651620453e99ed138b8f012d069c7"
+      }
     },
     {
       "name": "noob-mode",
       "source": "plugins/noob-mode",
-      "description": "適用於非技術性 Copilot CLI 使用者的純英文翻譯層。將每個核准提示、錯誤訊息與技術輸出翻譯成清晰、無術語的英文，並附帶顏色編碼的風險指標。",
+      "description": "適用於非技術性 Copilot CLI 使用者的淺顯易懂翻譯層。將每個核准提示、錯誤訊息與技術輸出轉譯為清晰、無術語的淺白文字，並附帶顏色標記的風險指示器。",
       "version": "1.0.0"
     },
     {
       "name": "openapi-to-application-csharp-dotnet",
       "source": "plugins/openapi-to-application-csharp-dotnet",
-      "description": "從 OpenAPI 規格產生生產就緒的 .NET 應用程式。包含 ASP.NET Core 專案架構、控制器產生、Entity Framework 整合以及 C# 最佳實踐。",
+      "description": "從 OpenAPI 規格產生生產就緒的 .NET 應用程式。包含 ASP.NET Core 專案結構巡覽、控制器產生、Entity Framework 整合與 C# 最佳做法。",
       "version": "1.0.0"
     },
     {
       "name": "openapi-to-application-go",
       "source": "plugins/openapi-to-application-go",
-      "description": "從 OpenAPI 規格產生生產就緒的 Go 應用程式。包含專案架構、處理常式產生、中介軟體設定以及 REST API 的 Go 最佳實踐。",
+      "description": "從 OpenAPI 規格產生生產就緒的 Go 應用程式。包含專案結構巡覽、處理常式產生、中介軟體設定，以及適用於 REST API 的 Go 最佳做法。",
       "version": "1.0.0"
     },
     {
       "name": "openapi-to-application-java-spring-boot",
       "source": "plugins/openapi-to-application-java-spring-boot",
-      "description": "從 OpenAPI 規格產生生產就緒的 Spring Boot 應用程式。包含專案架構、REST 控制器產生、服務層組織以及 Spring Boot 最佳實踐。",
+      "description": "從 OpenAPI 規格產生生產就緒的 Spring Boot 應用程式。包含專案結構巡覽、REST 控制器產生、服務層組織與 Spring Boot 最佳做法。",
       "version": "1.0.0"
     },
     {
       "name": "openapi-to-application-nodejs-nestjs",
       "source": "plugins/openapi-to-application-nodejs-nestjs",
-      "description": "從 OpenAPI 規格產生生產就緒的 NestJS 應用程式。包含專案架構、控制器與服務產生、TypeScript 最佳實踐以及企業模式。",
+      "description": "從 OpenAPI 規格產生生產就緒的 NestJS 應用程式。包含專案結構巡覽、控制器與服務產生、TypeScript 最佳做法與企業模式。",
       "version": "1.0.0"
     },
     {
       "name": "openapi-to-application-python-fastapi",
       "source": "plugins/openapi-to-application-python-fastapi",
-      "description": "從 OpenAPI 規格產生生產就緒的 FastAPI 應用程式。包含專案架構、路由產生、相依性注入以及非同步 API 的 Python 最佳實踐。",
+      "description": "從 OpenAPI 規格產生生產就緒的 FastAPI 應用程式。包含專案結構巡覽、路由產生、相依性插入，以及適用於非同步 API 的 Python 最佳做法。",
       "version": "1.0.0"
     },
     {
       "name": "oracle-to-postgres-migration-expert",
       "source": "plugins/oracle-to-postgres-migration-expert",
-      "description": "適用於 .NET 解決方案中 Oracle 到 PostgreSQL 應用程式遷移的專家 agent。執行程式碼編輯、執行命令，並呼叫擴充功能工具，以將 .NET/Oracle 資料存取模式遷移至 PostgreSQL。",
-      "version": "1.0.0"
+      "description": ".NET 解決方案中 Oracle 移轉至 PostgreSQL 應用程式的專家代理人。執行程式碼編輯、執行命令並呼叫擴充工具，以將 .NET/Oracle 資料存取模式移轉至 PostgreSQL。",
+      "version": "1.1.0"
     },
     {
       "name": "ospo-sponsorship",
       "source": "plugins/ospo-sponsorship",
-      "description": "適用於開源專案辦公室 (OSPO) 的工具與資源，用以透過 GitHub Sponsors、Open Collective 和其他資助平台識別、評估與管理開源相依性的贊助。",
+      "description": "供開源專案辦公室 (OSPO) 透過 GitHub Sponsors、Open Collective 和其他資助平台識別、評估與管理開源相依性贊助的工具與資源。",
       "version": "1.0.0"
     },
     {
       "name": "partners",
       "source": "plugins/partners",
-      "description": "由 GitHub 夥伴所建立的自訂 agents",
+      "description": "由 GitHub 合作夥伴建立的自訂代理人",
       "version": "1.0.0"
     },
     {
       "name": "pcf-development",
       "source": "plugins/pcf-development",
-      "description": "使用 Power Apps 元件框架 (PCF) 開發模型驅動與畫布應用程式自訂程式碼元件的完整工具箱",
+      "description": "使用 Power Apps Component Framework 開發適用於模型導向應用程式與畫布應用程式的自訂程式碼元件之完整工具包",
       "version": "1.0.0"
     },
     {
       "name": "phoenix",
       "source": "plugins/phoenix",
-      "description": "用於 LLM 應用程式偵錯、評估與追蹤的 Phoenix AI 可觀測性技能。包含 CLI 偵錯工具、LLM 評估工作流程與 OpenInference 追蹤檢測。",
+      "description": "用於 LLM 應用程式除錯、評估與追蹤的 Phoenix AI 可觀測性技能。包含 CLI 除錯工具、LLM 評估工作流程與 OpenInference 追蹤檢測工具。",
       "version": "1.0.0"
     },
     {
       "name": "php-mcp-development",
       "source": "plugins/php-mcp-development",
-      "description": "使用官方 PHP SDK 搭配屬性基礎探索建構模型內容協定伺服器的完整資源，包含最佳實踐、專案產生與專家協助",
+      "description": "使用官方 PHP SDK 透過屬性探索建構模型情境協定伺服器的完整資源，包含最佳做法、專案產生與專家協助",
       "version": "1.0.0"
     },
     {
       "name": "pm-skills",
-      "description": "MCP 伺服器與 12 項用於產品分析、規格書編寫、策略、敘事與關係人共識的技能。直接從 Copilot 執行競爭分析、編寫無問題規格書、設計計量指標，並產生主管級文件。",
+      "description": "用於產品分析、規格撰寫、策略、敘事與專案關係人協調的 MCP 伺服器與 12 項技能。直接從 Copilot 執行競爭分析、撰寫零疑問規格、設計計量，並產生可供高階主管查閱的文件。",
       "version": "2.1.0",
       "author": {
         "name": "Parth Sangani",
@@ -924,120 +1174,132 @@
     {
       "name": "power-apps-code-apps",
       "source": "plugins/power-apps-code-apps",
-      "description": "Power Apps Code Apps 開發的完整工具箱，包含專案架構、開發標準，以及引導建置程式碼優先應用程式且具 Power Platform 整合的專家指引。",
+      "description": "用於 Power Apps Code Apps 開發的完整工具包，包含專案結構巡覽、開發標準，以及使用 Power Platform 整合建構程式碼優先應用程式的專家指引。",
       "version": "1.0.0"
     },
     {
       "name": "power-bi-development",
       "source": "plugins/power-bi-development",
-      "description": "完整的 Power BI 開發資源，包含資料模型規劃、DAX 最佳化、效能調校、視覺化設計、安全性最佳實踐，以及建置企業級 Power BI 解決方案的 DevOps/ALM 指引。",
+      "description": "完整的 Power BI 開發資源，包含資料模型建置、DAX 最佳化、效能微調、視覺化設計、安全性最佳做法，以及用於建構企業級 Power BI 解決方案的 DevOps/ALM 指引。",
       "version": "1.0.0"
     },
     {
       "name": "power-platform-architect",
       "source": "plugins/power-platform-architect",
-      "description": "Microsoft Power Platform 的解決方案架構師，將業務需求轉化為運作中的 Power Platform 解決方案架構。",
+      "description": "Microsoft Power Platform 解決方案架構師，將商業需求轉化為可運作的 Power Platform 解決方案架構。",
       "version": "1.0.0"
     },
     {
       "name": "power-platform-mcp-connector-development",
       "source": "plugins/power-platform-mcp-connector-development",
-      "description": "開發整合模型內容協定之 Power Platform 自訂連接器的完整工具箱，適用於 Microsoft Copilot Studio",
+      "description": "開發具有 Microsoft Copilot Studio 模型情境協定整合的 Power Platform 自訂連接器之完整工具包",
+      "version": "1.0.0"
+    },
+    {
+      "name": "pr-artifact-explorer",
+      "source": "plugins/pr-artifact-explorer",
+      "description": "導覽 Pull Request 並安全探索 GitHub Actions 產出物，包含測試結果、靜態網站、終端機錄製與原始碼檔案。",
       "version": "1.0.0"
     },
     {
       "name": "project-documenter",
       "source": "plugins/project-documenter",
-      "description": "產生具備 draw.io 架構圖與嵌入圖片之 Word (.docx) 輸出的專業專案說明文件。自動探索任何專案的技術堆疊，並產生 Markdown、圖表、PNG 匯出檔案與格式化的 Word 文件。",
+      "description": "產生具有 draw.io 架構圖與內嵌影像之 Word (.docx) 輸出的專業專案文件。自動探索任何專案的技術堆疊並產生 Markdown、圖表、PNG 匯出以及格式化的 Word 文件。",
       "version": "1.0.0"
     },
     {
       "name": "project-planning",
       "source": "plugins/project-planning",
-      "description": "適用於開發團隊的軟體專案規劃、功能細分、Epic 管理、實作規劃與工作組織的工具與指引。",
+      "description": "適用於開發團隊的軟體專案規劃、功能拆解、Epic 管理、實作規劃與任務組織的工具與指引。",
       "version": "1.0.0"
     },
     {
       "name": "python-mcp-development",
       "source": "plugins/python-mcp-development",
-      "description": "在 Python 中使用官方 SDK 搭配 FastMCP 建構模型內容協定 (MCP) 伺服器的完整工具箱。包含最佳實踐指令、用於產生伺服器的提示詞，以及用於指引的專家聊天模式。",
+      "description": "在 Python 中使用官方 SDK 與 FastMCP 建構模型情境協定 (MCP) 伺服器的完整工具包。包含最佳做法指示、產生伺服器的提示詞，以及提供指引的專家聊天模式。",
       "version": "1.0.0"
     },
     {
       "name": "react18-upgrade",
       "source": "plugins/react18-upgrade",
-      "description": "企業級 React 18 遷移工具箱，具備專業 agents 與技能，用於將 React 16/17 類別元件程式碼庫升級至 React 18.3.1。包含稽核員、相依性外科醫生、類別元件遷移專家、自動批次處理修正器與測試守護者。",
+      "description": "企業級 React 18 移轉工具包，具備專門的代理人與技能，可將 React 16/17 類別元件程式碼庫升級至 React 18.3.1。包含稽核員、相依性精算師、類別元件移轉專家、自動批次處理修復員與測試守護者。",
       "version": "1.0.0"
     },
     {
       "name": "react19-upgrade",
       "source": "plugins/react19-upgrade",
-      "description": "企業級 React 19 遷移工具箱，具備專業 agents 與技能，將 React 18 程式碼庫升級至 React 19。包含稽核員、相依性外科醫生、原始程式碼遷移器與測試守護者。處理已棄用 API 的移除，包含 ReactDOM.render、forwardRef、defaultProps、舊版內容、字串 refs 等。",
+      "description": "企業級 React 19 移轉工具包，具備專門的代理人與技能，可將 React 18 程式碼庫升級至 React 19。包含稽核員、相依性精算師、原始碼移轉員與測試守護者。處理已棄用 API 的移除，包含 ReactDOM.render、forwardRef、defaultProps、舊版 context、字串 ref 等。",
       "version": "1.0.0"
     },
     {
       "name": "release-notes-showcase",
-      "source": "extensions/release-notes-showcase",
-      "description": "撰寫並精煉準備發布的發行說明，具備貢獻者提及功能與友善匯出的輸出。",
-      "version": "1.0.0"
+      "source": "plugins/release-notes-showcase",
+      "description": "撰寫與潤飾可供發佈的版本資訊，具備貢獻者醒目提示與便於匯出的輸出格式。",
+      "version": "1.0.2"
     },
     {
       "name": "repo-actions-hub",
-      "source": "extensions/repo-actions-hub",
-      "description": "瀏覽存放庫 GitHub Actions 工作流程、檢查最近的執行，並從 Copilot 畫布觸發手動 workflow_dispatch 執行。",
-      "version": "1.0.0"
+      "source": "plugins/repo-actions-hub",
+      "description": "從 Copilot 畫布瀏覽存放庫 GitHub Actions 工作流程、檢查最近的執行記錄，並觸發手動 workflow_dispatch 執行。",
+      "version": "1.0.2"
     },
     {
       "name": "roundup",
       "source": "plugins/roundup",
-      "description": "自我設定的狀態簡報產生器。從範例學習您的溝通風格、探索您的資料來源，並根據需求為任何受眾產生草稿更新。",
+      "description": "自動設定的狀態簡報產生器。從範例中學習您的溝通風格、探索您的資料來源，並依需求為任何對象產生草稿更新。",
       "version": "1.0.0"
     },
     {
       "name": "ruby-mcp-development",
       "source": "plugins/ruby-mcp-development",
-      "description": "在 Ruby 中使用官方 MCP Ruby SDK gem 建構模型內容協定伺服器的完整工具箱，具備 Rails 整合支援。",
+      "description": "在 Ruby 中使用官方 MCP Ruby SDK gem 並支援 Rails 整合來建構模型情境協定伺服器的完整工具包。",
       "version": "1.0.0"
     },
     {
       "name": "rug-agentic-workflow",
       "source": "plugins/rug-agentic-workflow",
-      "description": "用於協調軟體交付的三 agent 工作流程，包含協調器以及實作和 QA 子 agents。",
+      "description": "用於編排軟體交付的三代理人工作流程，包含編排器加上實作與 QA 子代理人。",
       "version": "1.0.0"
     },
     {
       "name": "rust-mcp-development",
       "source": "plugins/rust-mcp-development",
-      "description": "在 Rust 中使用官方 rmcp SDK 搭配 async/await、程序巨集與型別安全實作，建置高效能模型內容協定伺服器。",
+      "description": "在 Rust 中使用官方 rmcp SDK 搭配 async/await、程序巨集與型別安全實作來建構高效能模型情境協定伺服器。",
       "version": "1.0.0"
     },
     {
       "name": "salesforce-development",
       "source": "plugins/salesforce-development",
-      "description": "完整的 Salesforce agent 導向開發環境，涵蓋 Apex & Triggers、Flow 自動化、Lightning Web 元件、Aura 元件與 Visualforce 頁面。",
+      "description": "完整的 Salesforce 代理人開發環境，涵蓋 Apex 與觸發程序、Flow 自動化、Lightning Web 元件、Aura 元件以及 Visualforce 頁面。",
       "version": "1.1.0"
     },
     {
       "name": "security-best-practices",
       "source": "plugins/security-best-practices",
-      "description": "安全性框架、無障礙指引、效能最佳化，以及建構安全、可維護且高效能應用程式的程式碼品質最佳實踐。",
+      "description": "安全性架構、無障礙指引、效能最佳化與程式碼品質最佳做法，用於建構安全、易於維護且高效能的應用程式。",
       "version": "1.0.0"
     },
     {
+      "name": "signals-dashboard",
+      "source": "plugins/signals-dashboard",
+      "description": "即時 Workshop 儀表板，具備代理人訊號、誠實度校準，以及感知成本的存放庫或連線桌面啟動設定檔。",
+      "version": "0.3.0"
+    },
+    {
       "name": "site-studio",
-      "source": "extensions/site-studio",
-      "description": "逐一區段規劃、草擬並追蹤個人網站 — 這是一個共享畫布，您與您的 agent 可在其中編寫內容、觀察進度並審查每項變更。",
-      "version": "1.0.0"
+      "source": "plugins/site-studio",
+      "description": "逐段規劃、起草與追蹤個人網站 — 一個共享畫布，您和您的代理人可在其中編寫內容、觀察進度並審查每項變更。",
+      "version": "1.0.2"
     },
     {
       "name": "skill-image-gen",
       "source": "plugins/skill-image-gen",
-      "description": "直接從您的程式碼編寫工作流程使用 AI 產生圖片。支援 OpenAI (gpt-image-2) 與 Google Gemini。自備 API 金鑰 — 技能將在首次使用時指引您進行設定。",
+      "description": "直接從您的編碼工作流程使用 AI 產生影像。支援 OpenAI (gpt-image-2) 與 Google Gemini。需自行準備 API 金鑰 — 技能會在首次使用時引導您完成設定。",
       "version": "1.0.0"
     },
     {
       "name": "skills-for-copilot-studio",
-      "description": "適用於 AI 程式設計 agents 的 Microsoft Copilot Studio 外掛程式",
+      "description": "適用於 AI 編碼代理人的 Microsoft Copilot Studio 外掛程式",
       "version": "1.0.3",
       "author": {
         "name": "Microsoft Copilot Studio CAT Team",
@@ -1062,13 +1324,13 @@
     {
       "name": "software-engineering-team",
       "source": "plugins/software-engineering-team",
-      "description": "涵蓋從 UX 設計與架構到安全性與 DevOps 的完整軟體開發生命週期的 7 個專業 agents。",
+      "description": "涵蓋從 UX 設計與架構到安全性與 DevOps 的完整軟體開發生命週期之 7 個專門代理人。",
       "version": "1.0.0"
     },
     {
       "name": "sonarqube",
-      "description": "SonarQube 是數百萬開發人員用於發現錯誤、漏洞與洩漏秘密的 AI 程式碼品質與安全性驗證平台。此外掛程式在程式碼撰寫循環中強制執行這些標準：涵蓋 40 多種語言的 7,500 多種不同問題類型、秘密掃描、agent 分析與品質閘門。",
-      "version": "2.3.0",
+      "description": "SonarQube 是由數百萬開發人員使用的 AI 程式碼品質與安全性驗證平台，用於捕捉錯誤、弱點與洩漏的機密。此外掛程式在編碼循環中強制執行這些標準：7,500+ 種相異問題類型、機密掃描、代理人分析以及跨 40+ 種語言的品質閘門。",
+      "version": "2.5.0",
       "author": {
         "name": "Sonar",
         "url": "https://sonarsource.com/"
@@ -1086,60 +1348,90 @@
       "source": {
         "source": "github",
         "repo": "SonarSource/sonarqube-agent-plugins",
-        "ref": "2.3.0"
+        "ref": "2.5.0"
       }
     },
     {
       "name": "structured-autonomy",
       "source": "plugins/structured-autonomy",
-      "description": "優質規劃，節省實作",
+      "description": "高品質規劃，節約實作",
       "version": "1.0.0"
     },
     {
       "name": "swift-mcp-development",
       "source": "plugins/swift-mcp-development",
-      "description": "在 Swift 中使用官方 MCP Swift SDK 搭配現代並行功能建構模型內容協定伺服器的完整集合。",
+      "description": "在 Swift 中使用官方 MCP Swift SDK 搭配現代並行功能來建構模型情境協定伺服器的完整精選集。",
       "version": "1.0.0"
     },
     {
       "name": "technical-spike",
       "source": "plugins/technical-spike",
-      "description": "用於建立、管理與研究技術 spike 的工具，用以在進行解決方案規格與實作前減少未知與假設。",
+      "description": "用於建立、管理與研究技術探針的工具，以在進行解決方案的規格制定與實作之前減少未知數與假設。",
       "version": "1.0.0"
     },
     {
       "name": "testing-automation",
       "source": "plugins/testing-automation",
-      "description": "用於撰寫測試、測試自動化與測試驅動開發的完整集合，包含單元測試、整合測試與端對端測試策略。",
+      "description": "用於撰寫測試、測試自動化與測試驅動開發（包含單元測試、整合測試與端對端測試策略）的完整精選集。",
       "version": "1.0.0"
+    },
+    {
+      "name": "the-workshop",
+      "source": "plugins/the-workshop",
+      "description": "不再充當 AI 代理人之間的總機 — 直接指導團隊。The Workshop 將長時間運行的 AI 代理人（工作桌）安排在同一空間中處理相同工作，各自擁有專屬的記憶與歷史記錄，共享一個工作區，讓您可以直接指導工作而無需居中轉達。",
+      "version": "0.1.0"
+    },
+    {
+      "name": "timebase",
+      "description": "透過用於 QQL 查詢與 TimeBase 用戶端程式碼產生的 MCP 工具與技能，將您的 AI 代理人連接至 TimeBase（一個適用於金融市場和其他時間序列資料的高效能資料庫）。",
+      "version": "0.1.3",
+      "author": {
+        "name": "EPAM Systems",
+        "url": "https://www.epam.com/"
+      },
+      "repository": "https://github.com/epam/TimeBase-Agent-Plugins",
+      "license": "Apache-2.0",
+      "keywords": [
+        "timebase",
+        "time-series",
+        "db",
+        "qql",
+        "financial-data"
+      ],
+      "source": {
+        "source": "github",
+        "repo": "epam/TimeBase-Agent-Plugins",
+        "ref": "v0.1.3",
+        "sha": "536887d80f631dfa32213fc78be1e00edaa21b68"
+      }
     },
     {
       "name": "tiny-tool-town-submitter",
-      "source": "extensions/tiny-tool-town-submitter",
-      "description": "檢查存放庫、提升 Tiny Tool Town 就緒度、提交其上架問題，並啟動修復工作。",
-      "version": "1.0.0"
+      "source": "plugins/tiny-tool-town-submitter",
+      "description": "檢查存放庫、提升 Tiny Tool Town 整備度、提交其上架問題，並啟動補救工作。",
+      "version": "1.0.2"
     },
     {
       "name": "token-pacman",
-      "source": "extensions/token-pacman",
-      "description": "將即時工作階段 AI 額度使用量視覺化為具備小球、幽靈、水果里程碑與遊戲結束限制的 Pac-Man 遊戲板。",
-      "version": "1.0.0"
+      "source": "plugins/token-pacman",
+      "description": "將即時工作階段的 AI 點數使用量視覺化為小精靈遊戲板，包含豆子、幽靈、水果里程碑與遊戲結束限制。",
+      "version": "1.0.2"
     },
     {
       "name": "typescript-mcp-development",
       "source": "plugins/typescript-mcp-development",
-      "description": "在 TypeScript/Node.js 中使用官方 SDK 建構模型內容協定 (MCP) 伺服器的完整工具箱。包含最佳實踐指令、用於產生伺服器的提示詞，以及用於指引的專家聊天模式。",
+      "description": "在 TypeScript/Node.js 中使用官方 SDK 建構模型情境協定 (MCP) 伺服器的完整工具包。包含最佳做法指示、產生伺服器的提示詞，以及提供指引的專家聊天模式。",
       "version": "1.0.0"
     },
     {
       "name": "typespec-m365-copilot",
       "source": "plugins/typespec-m365-copilot",
-      "description": "使用 TypeSpec 建置 Microsoft 365 Copilot 擴充性之宣告式 agents 與 API 外掛程式的提示詞、指令與資源完整集合。",
+      "description": "使用 TypeSpec 進行 Microsoft 365 Copilot 擴充以建構宣告式代理人與 API 外掛程式的提示詞、指示與資源之完整精選集。",
       "version": "1.0.0"
     },
     {
       "name": "ui-theme-designer",
-      "description": "為 AI 程式設計 agents 提供與 UI 主題設計器、SAP 設計系統以及 SAP Fiori 設計權杖搭配使用的知識與工具。",
+      "description": "為 AI 編碼代理人提供使用 UI 主題設計工具、SAP 設計系統與 SAP Fiori 設計權杖的知識與工具。",
       "version": "2.0.0",
       "author": {
         "name": "SAP SE",
@@ -1167,8 +1459,8 @@
     },
     {
       "name": "ui5",
-      "description": "適用於 GitHub Copilot 的 SAPUI5 / OpenUI5 外掛程式。建立並驗證 UI5 專案、存取 API 說明文件、執行 UI5 linter、取得 UI5 開發開發指引與最佳實踐。",
-      "version": "0.1.4",
+      "description": "適用於 GitHub Copilot 的 SAPUI5 / OpenUI5 外掛程式。建立並驗證 UI5 專案、存取 API 文件、執行 UI5 linter、取得 UI5 開發指引與最佳做法。",
+      "version": "0.1.8",
       "author": {
         "name": "SAP SE",
         "url": "https://www.sap.com"
@@ -1189,13 +1481,13 @@
         "source": "github",
         "repo": "UI5/plugins-coding-agents",
         "path": "plugins/ui5",
-        "sha": "80f2d93287054f9d30dd990e842e15bcfca581c9"
+        "ref": "v0.1.8"
       }
     },
     {
       "name": "ui5-modernization",
-      "description": "完整的 UI5 現代化工具箱，具備工作流程與用於現代化 SAPUI5/OpenUI5 應用程式的專用修復模式。",
-      "version": "0.1.6",
+      "description": "完整的 UI5 現代化工具包，具備用於現代化 SAPUI5/OpenUI5 應用程式的工作流程與專門修復模式",
+      "version": "0.1.8",
       "author": {
         "name": "SAP SE",
         "url": "https://www.sap.com"
@@ -1215,13 +1507,13 @@
         "source": "github",
         "repo": "UI5/plugins-coding-agents",
         "path": "plugins/ui5-modernization",
-        "ref": "v0.1.6"
+        "ref": "v0.1.8"
       }
     },
     {
       "name": "ui5-typescript-conversion",
-      "description": "適用於 GitHub Copilot 的 SAPUI5 / OpenUI5 外掛程式。將基於 JavaScript 的 UI5 專案轉換為 TypeScript。",
-      "version": "0.1.4",
+      "description": "適用於 GitHub Copilot 的 SAPUI5 / OpenUI5 外掛程式。將以 JavaScript 為基礎的 UI5 專案轉換為 TypeScript。",
+      "version": "0.1.8",
       "author": {
         "name": "SAP SE",
         "url": "https://www.sap.com"
@@ -1243,12 +1535,44 @@
         "source": "github",
         "repo": "UI5/plugins-coding-agents",
         "path": "plugins/ui5-typescript-conversion",
-        "sha": "80f2d93287054f9d30dd990e842e15bcfca581c9"
+        "ref": "v0.1.8"
+      }
+    },
+    {
+      "name": "uizze",
+      "source": "plugins/uizze",
+      "description": "防止交付平庸通用的 UI。讓 GitHub Copilot 以 800,000+ 個真實網頁與 iOS 畫面為基礎、撰寫產品專屬的設計合約，並強制執行嚴格的完成閘門。",
+      "version": "1.0.0"
+    },
+    {
+      "name": "upgrade-agent",
+      "description": "用於升級與移轉應用程式的 AI 驅動升級小幫手。協助現代化舊版程式碼並將 .NET 應用程式升級至目前的架構。",
+      "version": "1.1.404",
+      "author": {
+        "name": "Microsoft",
+        "url": "https://www.microsoft.com"
+      },
+      "homepage": "https://github.com/microsoft/upgrade-agent-plugins",
+      "keywords": [
+        "modernization",
+        "upgrade",
+        "migration",
+        "dotnet",
+        "canvas"
+      ],
+      "license": "MIT",
+      "repository": "https://github.com/microsoft/upgrade-agent-plugins",
+      "source": {
+        "source": "github",
+        "repo": "microsoft/upgrade-agent-plugins",
+        "path": "plugins/upgrade-agent",
+        "ref": "v1.1.404",
+        "sha": "a4f718e90c39e7ab62a81ddd78be9b56b1a4c4bf"
       }
     },
     {
       "name": "vercel-plugin",
-      "description": "建置並部署網頁應用程式與 agents。完整的 Vercel 生態系統外掛程式 — 關聯式知識圖譜、適用於每項主要產品的技能、專業 agents 與 Vercel 慣例。將任何 AI agent 轉化為 Vercel 專家。",
+      "description": "建構與部署網頁應用程式及代理人。全方位的 Vercel 生態系統外掛程式 — 關聯式知識圖譜、涵蓋每個主要產品的技能、專門的代理人與 Vercel 慣例。將任何 AI 代理人轉變為 Vercel 專家。",
       "version": "0.43.0",
       "author": {
         "name": "Vercel",
@@ -1278,12 +1602,12 @@
     {
       "name": "visual-pr",
       "source": "plugins/visual-pr",
-      "description": "擷取、加註並在提取要求 (PR) 說明中嵌入螢幕截圖與動態 GIF 示範。包含基於 Playwright 的 UI 擷取、PIL 圖片註解、適用於 GitHub 與 Azure DevOps 的 PR 嵌入工作流程，以及具備變動計時的螢幕錄製。",
+      "description": "在 Pull Request 說明中擷取、標註並嵌入螢幕截圖與動態 GIF 示範。包含以 Playwright 為基礎的 UI 擷取、PIL 影像標註、適用於 GitHub 與 Azure DevOps 的 PR 嵌入工作流程，以及具可變時序的螢幕錄製。",
       "version": "1.0.0"
     },
     {
       "name": "whatidid",
-      "description": "將您的 Copilot 工作階段轉化為影響力證明 — 基於本機工作階段記錄提供經研究證實的 HTML 報告、工作量估算、技能分析與投資報酬率 (ROI) 指標。",
+      "description": "將您的 Copilot 工作階段轉化為具備影響力的證明 — 透過本機工作階段記錄檔提供具有工作量預估、技能分析與 ROI 計量的研究基礎 HTML 報告。",
       "version": "1.0.0",
       "author": {
         "name": "Microsoft",
@@ -1308,13 +1632,13 @@
     },
     {
       "name": "where-was-i",
-      "source": "extensions/where-was-i",
-      "description": "重建您的開發環境上下文內容（分支、提交、未提交的工作、PR 線索），並觸發恢復提示詞以快速繼續。",
-      "version": "1.0.0"
+      "source": "plugins/where-was-i",
+      "description": "重建您的開發情境（分支、認可、未認可的工作、PR 線索）並觸發恢復提示詞以快速繼續。",
+      "version": "1.0.2"
     },
     {
       "name": "winappcli",
-      "description": "Windows 應用程式開發、封裝與發行。協助建立 Windows 安裝程式 (MSIX)、程式碼簽署、憑證、Windows SDK 與 Windows App SDK 設定、適用於 Windows API 的套件識別（推播通知、背景工作、共用目標）、appxmanifest 編寫，以及 Microsoft Store 發行。支援 Electron、.NET、C++、Rust、Flutter 與 Tauri 應用程式。",
+      "description": "Windows 應用程式開發、封裝與發佈。協助建立 Windows 安裝程式 (MSIX)、程式碼簽署、憑證、Windows SDK 與 Windows App SDK 設定、適用於 Windows API（推播通知、背景工作、共用目標）的套件身分識別、appxmanifest 撰寫以及 Microsoft Store 發佈。支援 Electron、.NET、C++、Rust、Flutter 與 Tauri 應用程式。",
       "version": "0.3.1",
       "author": {
         "name": "Microsoft",
@@ -1342,8 +1666,14 @@
       }
     },
     {
+      "name": "windows-app-storage-inspector-cleanup",
+      "source": "plugins/windows-app-storage-inspector-cleanup",
+      "description": "檢查 Windows 應用程式儲存空間、了解本機磁碟使用量，並安全地將核准的清理項目移至資源回收筒。",
+      "version": "1.0.3"
+    },
+    {
       "name": "winui",
-      "description": "適用於 WinUI 3 應用程式開發的 agents 與技能。建立新的 WinUI 3 傳統型應用程式、從其他框架（WPF、WinForms、Electron、Tauri、Flutter）轉換為 WinUI 3，或為現有的 WinUI 3 應用程式新增功能。包含 MSIX 封裝、程式碼簽署、UI 自動化測試，以及 Windows App SDK 指引。",
+      "description": "用於 WinUI 3 應用程式開發的代理人與技能。建立新的 WinUI 3 桌面應用程式、從其他架構 (WPF, WinForms, Electron, Tauri, Flutter) 轉換至 WinUI 3，或為現有 WinUI 3 應用程式新增功能。包含 MSIX 封裝、程式碼簽署、UI 自動化測試以及 Windows App SDK 指引。",
       "version": "0.3.0",
       "author": {
         "name": "Microsoft",
@@ -1372,9 +1702,9 @@
     },
     {
       "name": "work-hub",
-      "source": "extensions/work-hub",
-      "description": "適用於 GitHub Copilot 的通用跨存放庫控制中心畫布，具備引導就緒、專注規劃、存放庫健康狀態、工作訊號與工作階段清理。",
-      "version": "1.0.0"
+      "source": "plugins/work-hub",
+      "description": "適用於 GitHub Copilot 的通用跨存放庫控制中心畫布，具備新手引導、專注規劃、存放庫健全狀況、工作訊號與工作階段清理功能。",
+      "version": "1.0.2"
     }
   ]
 }

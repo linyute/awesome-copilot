@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "openapi-to-application-nodejs-nestjs",
+  "description": "從 OpenAPI 規格產生可用於生產環境的 NestJS 應用程式。包含專案結構建置、控制器與服務產生、TypeScript 最佳做法以及企業級模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "openapi",
+    "code-generation",
+    "api",
+    "nodejs",
+    "typescript",
+    "nestjs"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/openapi-to-application.md"
+      ],
+      "skills": [
+        "./skills/openapi-to-application-code/"
+      ]
+    }
+  }
+}

@@ -1,28 +1,28 @@
-# RUG 代理式工作流程外掛程式 (RUG Agentic Workflow Plugin)
+# RUG Agentic Workflow 外掛程式
 
-用於協調軟體交付的三代理程式工作流程，包含一個調度員 (orchestrator) 以及實作與 QA 子代理程式 (subagent)。
+由協調器加上實作與品管 (QA) 子 agent 組成的三 agent 工作流程，用於協調軟體交付。
 
-## 安裝 (Installation)
+## 安裝
 
 ```bash
-# 使用 Copilot CLI
+# Using Copilot CLI
 copilot plugin install rug-agentic-workflow@awesome-copilot
 ```
 
-## 包含內容 (What's Included)
+## 包含內容
 
-### 代理程式 (Agents)
+### Agents
 
-| 代理程式 | 描述 |
+| Agent | 描述 |
 |-------|-------------|
-| `rug-orchestrator` | 純調度代理程式，負責拆解請求、將所有工作委派給子代理程式、驗證結果並重複執行直到完成。 |
-| `swe-subagent` | 用於實作任務的資深軟體工程師子代理程式：功能開發、除錯、重構與測試。 |
-| `qa-subagent` | 用於測試計畫、尋找錯誤、邊緣案例分析與實作驗證的細緻 QA 子代理程式。 |
+| `rug-orchestrator` | 純協調 agent，負責拆解請求、將所有工作委派給子 agent、驗證結果，並重複此流程直到完成。 |
+| `swe-subagent` | 資深軟體工程師子 agent，負責實作工作：功能開發、除錯、重構與測試。 |
+| `qa-subagent` | 嚴謹的品管 (QA) 子 agent，負責測試規劃、尋找錯誤、邊界案例分析與實作驗證。 |
 
-## 來源 (Source)
+## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛程式為 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
 
-## 授權 (License)
+## 授權
 
 MIT

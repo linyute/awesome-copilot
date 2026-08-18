@@ -1,0 +1,18 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ospo-sponsorship",
+  "description": "供開放原始碼計畫辦公室 (OSPO) 透過 GitHub Sponsors、Open Collective 和其他資助平台識別、評估與管理開放原始碼相依性贊助的工具與資源。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/sponsor-finder/"
+      ]
+    }
+  }
+}

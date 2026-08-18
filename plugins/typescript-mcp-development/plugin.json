@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "typescript-mcp-development",
+  "description": "在 TypeScript/Node.js 中使用官方 SDK 建構 Model Context Protocol (MCP) 伺服器的完整工具組。包含最佳做法指示、用於產生伺服器的提示，以及提供指引的專家聊天模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "typescript",
+    "mcp",
+    "model-context-protocol",
+    "nodejs",
+    "server-development"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/typescript-mcp-expert.md"
+      ],
+      "skills": [
+        "./skills/typescript-mcp-server-generator/"
+      ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "tiny-tool-town-submitter",
+  "description": "檢查存放庫、提升 Tiny Tool Town 整備度、提交其收錄 Issue，並啟動修復工作。",
+  "version": "1.0.2",
+  "author": {
+    "name": "James Montemagno",
+    "url": "https://github.com/jamesmontemagno"
+  },
+  "keywords": [
+    "github-issues",
+    "open-source",
+    "project-readiness",
+    "repository-analysis",
+    "submission-workflow",
+    "tiny-tool-town"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/tiny-tool-town-submitter"
+      ]
+    }
+  }
+}

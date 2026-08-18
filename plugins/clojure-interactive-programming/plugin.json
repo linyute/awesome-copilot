@@ -1,0 +1,26 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "clojure-interactive-programming",
+  "description": "適用於 REPL 優先 Clojure 工作流程的工具，具備 Clojure 指示、互動式程式設計聊天模式及支援指引。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "clojure",
+    "repl",
+    "interactive-programming"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/clojure-interactive-programming.md"
+      ],
+      "skills": [
+        "./skills/remember-interactive-programming/"
+      ]
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "azure-cloud-development",
+  "description": "全方位的 Azure 雲端開發工具，包含基礎設施即程式碼、無伺服器函式、架構模式以及用於建構具延展性雲端應用程式的成本最佳化。",
+  "version": "1.0.1",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "azure",
+    "cloud",
+    "infrastructure",
+    "bicep",
+    "terraform",
+    "serverless",
+    "architecture",
+    "devops"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/azure-logic-apps-expert.md",
+        "./agents/azure-principal-architect.md",
+        "./agents/azure-saas-architect.md",
+        "./agents/azure-verified-modules-bicep.md",
+        "./agents/azure-verified-modules-terraform.md",
+        "./agents/terraform-azure-implement.md",
+        "./agents/terraform-azure-planning.md"
+      ],
+      "skills": [
+        "./skills/az-cost-optimize/",
+        "./skills/azure-pricing/",
+        "./skills/azure-resource-health-diagnose/",
+        "./skills/import-infrastructure-as-code/"
+      ]
+    }
+  }
+}

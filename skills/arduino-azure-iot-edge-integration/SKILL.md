@@ -114,7 +114,7 @@ description: '設計並實作 Arduino 與 Azure IoT 中控中心 (Hub) 及 IoT E
 - `azure-resource-visualizer` 用於關係圖。
 - `appinsights-instrumentation` 用於應用程式和服務遙測模式。
 
-同時使用 `references/arduino-official-best-practices.md` 作為韌體和硬體建議的品質基準。
+也請使用 `references/arduino-official-best-practices.md` 作為韌體與硬體建議的品質基準，並在確定架構或實作指引之前，檢閱 `references/arduino-iot-checklist.md`。
 
 ## 必要輸出
 

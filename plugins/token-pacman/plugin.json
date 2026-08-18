@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "token-pacman",
+  "description": "將即時工作階段 AI 額度使用量視覺化為小精靈遊戲盤，包含小豆子、鬼魂、水果里程碑以及遊戲結束限制。",
+  "version": "1.0.2",
+  "author": {
+    "name": "James Montemagno",
+    "url": "https://github.com/jamesmontemagno"
+  },
+  "keywords": [
+    "ai-credits",
+    "copilot-canvas",
+    "interactive-canvas",
+    "pac-man",
+    "quota-tracking",
+    "session-usage"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/token-pacman"
+      ]
+    }
+  }
+}

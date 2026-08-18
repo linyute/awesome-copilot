@@ -41,10 +41,12 @@ description: '將指定資料夾的檔案索引／表格更新至指定的 markd
 
 ### 選項 2：詳細表格
 
+```markdown
 | 檔案                                   | 類型   | 描述 |
 | -------------------------------------- | ------ | ---- |
 | [filename.ext](path/to/filename.ext)   | 副檔名 | 描述 |
 | [filename2.ext](path/to/filename2.ext) | 副檔名 | 描述 |
+```
 
 ### 選項 3：分類區段
 

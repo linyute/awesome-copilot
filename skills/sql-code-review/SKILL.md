@@ -41,9 +41,9 @@ EXEC sp_executesql N'SELECT * FROM users WHERE id = @id', N'@id INT', @id = @use
 ### 查詢結構分析
 ```sql
 -- ❌ 不佳：低效查詢模式
-SELECT DISTINCT u.* 
+SELECT DISTINCT u.*
 FROM users u, orders o, products p
-WHERE u.id = o.user_id 
+WHERE u.id = o.user_id
 AND o.product_id = p.id
 AND YEAR(o.order_date) = 2024;
 
@@ -51,7 +51,7 @@ AND YEAR(o.order_date) = 2024;
 SELECT u.id, u.name, u.email
 FROM users u
 INNER JOIN orders o ON u.id = o.user_id
-WHERE o.order_date >= '2024-01-01' 
+WHERE o.order_date >= '2024-01-01'
 AND o.order_date < '2025-01-01';
 ```
 
@@ -70,7 +70,7 @@ AND o.order_date < '2025-01-01';
 ### 聚合與視窗函式
 ```sql
 -- ❌ 不佳：低效聚合
-SELECT user_id, 
+SELECT user_id,
        (SELECT COUNT(*) FROM orders o2 WHERE o2.user_id = o1.user_id) as order_count
 FROM orders o1
 GROUP BY user_id;
@@ -141,7 +141,7 @@ CREATE TABLE sessions (
 ) ENGINE=InnoDB;
 
 -- 優化 InnoDB
-ALTER TABLE large_table 
+ALTER TABLE large_table
 ADD INDEX idx_covering (status, created_at, id);
 ```
 
@@ -175,14 +175,14 @@ CREATE TABLE users (
 ### 資料完整性檢查
 ```sql
 -- 檢查參照完整性
-SELECT o.user_id 
-FROM orders o 
-LEFT JOIN users u ON o.user_id = u.id 
+SELECT o.user_id
+FROM orders o
+LEFT JOIN users u ON o.user_id = u.id
 WHERE u.id IS NULL;
 
 -- 檢查資料一致性
 SELECT COUNT(*) as inconsistent_records
-FROM products 
+FROM products
 WHERE price < 0 OR stock_quantity < 0;
 ```
 
@@ -209,8 +209,8 @@ LEFT JOIN orders o ON u.id = o.user_id;
 ### 過度使用 DISTINCT
 ```sql
 -- ❌ 不佳：DISTINCT 掩蓋 Join 問題
-SELECT DISTINCT u.name 
-FROM users u, orders o 
+SELECT DISTINCT u.name
+FROM users u, orders o
 WHERE u.id = o.user_id;
 
 -- ✅ 優化：正確 Join 不需 DISTINCT
@@ -223,12 +223,12 @@ GROUP BY u.name;
 ### WHERE 子句誤用函式
 ```sql
 -- ❌ 不佳：函式阻礙索引
-SELECT * FROM orders 
+SELECT * FROM orders
 WHERE YEAR(order_date) = 2024;
 
 -- ✅ 優化：範圍條件可用索引
-SELECT * FROM orders 
-WHERE order_date >= '2024-01-01' 
+SELECT * FROM orders
+WHERE order_date >= '2024-01-01'
   AND order_date < '2025-01-01';
 ```
 
@@ -265,7 +265,7 @@ WHERE order_date >= '2024-01-01'
 ## 🎯 審查輸出格式
 
 ### 問題模板
-```
+````
 ## [優先級] [類別]：簡要說明
 
 **位置**：[資料表／檢視／程序名稱及行號]
@@ -285,7 +285,7 @@ WHERE order_date >= '2024-01-01'
 ```
 
 **預期改善**：[效能提升、安全性增強]
-```
+````
 
 ### 總結評分
 - **安全性分數**：1-10（SQL 注入防護、存取控制）

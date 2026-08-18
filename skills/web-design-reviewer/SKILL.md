@@ -105,6 +105,8 @@ flowchart TD
 
 ### 2.2 檢查項目
 
+檢查時請依照 [references/visual-checklist.md](references/visual-checklist.md) 進行，修復後也請再次核對。
+
 #### 版面配置問題
 
 | 問題 | 說明 | 嚴重性 |

@@ -24,6 +24,7 @@ metadata:
 | 建構程式碼評估者 | [evaluators-code-python](references/evaluators-code-python.md), [evaluators-code-typescript](references/evaluators-code-typescript.md) |
 | 建構 LLM 評估者 | [evaluators-llm-python](references/evaluators-llm-python.md), [evaluators-llm-typescript](references/evaluators-llm-typescript.md), [evaluators-custom-templates](references/evaluators-custom-templates.md) |
 | 批次評估 DataFrame | [evaluate-dataframe-python](references/evaluate-dataframe-python.md) |
+| 了解實驗 | [experiments-overview](references/experiments-overview.md) |
 | 執行實驗 | [experiments-running-python](references/experiments-running-python.md), [experiments-running-typescript](references/experiments-running-typescript.md) |
 | 建立資料集 | [experiments-datasets-python](references/experiments-datasets-python.md), [experiments-datasets-typescript](references/experiments-datasets-typescript.md) |
 | 產生合成資料 | [experiments-synthetic-python](references/experiments-synthetic-python.md), [experiments-synthetic-typescript](references/experiments-synthetic-typescript.md) |

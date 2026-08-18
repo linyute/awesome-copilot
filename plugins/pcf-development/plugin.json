@@ -1,0 +1,18 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "pcf-development",
+  "description": "使用適用於模型導向與畫布應用程式的 Power Apps Component Framework 開發自訂程式碼元件的完整工具包",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "power-apps",
+    "pcf",
+    "component-framework",
+    "typescript",
+    "power-platform"
+  ]
+}

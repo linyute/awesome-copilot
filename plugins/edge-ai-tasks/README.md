@@ -1,27 +1,27 @@
-# microsoft/edge-ai 任務外掛程式 (Tasks by microsoft/edge-ai Plugin)
+# Tasks by microsoft/edge-ai 外掛模組
 
-為中進階使用者與大型程式碼庫提供的任務研究員與任務規劃員 - 由 microsoft/edge-ai 提供
+適用於中級到專家使用者以及大型程式碼庫的工作研究員與工作規劃員 - 由 microsoft/edge-ai 提供
 
-## 安裝 (Installation)
+## 安裝
 
 ```bash
-# 使用 Copilot CLI
+# Using Copilot CLI
 copilot plugin install edge-ai-tasks@awesome-copilot
 ```
 
-## 包含內容 (What's Included)
+## 包含內容
 
-### 代理程式 (Agents)
+### 代理人
 
-| 代理程式 | 描述 |
+| 代理人 | 說明 |
 |-------|-------------|
-| `task-researcher` | 用於全面專案分析的任務研究專家 - 由 microsoft/edge-ai 提供 |
-| `task-planner` | 用於建立具體執行計畫的任務規劃員 - 由 microsoft/edge-ai 提供 |
+| `task-researcher` | 負責全面專案分析的工作研究專家 - 由 microsoft/edge-ai 提供 |
+| `task-planner` | 負責建立可執行實作計畫的工作規劃員 - 由 microsoft/edge-ai 提供 |
 
-## 來源 (Source)
+## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛模組是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群導向的 GitHub Copilot 擴充功能集合。
 
-## 授權 (License)
+## 授權條款
 
 MIT

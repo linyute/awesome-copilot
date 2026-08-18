@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "java-modernization-studio",
+  "description": "從互動式畫布推動適用於 Java 的 GitHub Copilot 應用程式現代化工作流程：環境整備度、存放庫評估、排定優先順序的計劃與進度、驗證關卡，以及基於存放庫真實產出物的一鍵執行預定義工作。",
+  "version": "1.0.2",
+  "author": {
+    "name": "Ayan Gupta",
+    "url": "https://github.com/ayangupt"
+  },
+  "keywords": [
+    "app-modernization",
+    "assessment-dashboard",
+    "azure-migration",
+    "java-modernization",
+    "legacy-java",
+    "modernization-cockpit",
+    "validation-gates"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/java-modernization-studio"
+      ]
+    }
+  }
+}

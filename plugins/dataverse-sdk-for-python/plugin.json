@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "dataverse-sdk-for-python",
+  "description": "用於建構與 Microsoft Dataverse 的正式環境就緒 Python 整合之完整集合。包含官方文件、最佳做法、進階功能、檔案操作與程式碼產生提示詞。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "dataverse",
+    "python",
+    "integration",
+    "sdk"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/dataverse-python-advanced-patterns/",
+        "./skills/dataverse-python-production-code/",
+        "./skills/dataverse-python-quickstart/",
+        "./skills/dataverse-python-usecase-builder/"
+      ]
+    }
+  }
+}

@@ -103,3 +103,17 @@ cookbooks:
           - copilot-sdk
           - web-app
           - community
+      - id: copilot-sdk-java-examples
+        name: Copilot SDK Java 範例
+        description: 使用 GitHub Copilot Java SDK 與 Jetty 構建的網頁聊天應用程式，包含認證狀態、JSON API、聊天功能與 CLI 連線範例
+        external: true
+        url: https://github.com/thesurenk/github-copilot-java-examples
+        author:
+          name: thesurenk
+          url: https://github.com/thesurenk
+        tags:
+          - java
+          - copilot-sdk
+          - web-app
+          - cli
+          - community

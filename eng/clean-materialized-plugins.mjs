@@ -6,34 +6,75 @@ import { fileURLToPath } from "url";
 import { ROOT_FOLDER } from "./constants.mjs";
 
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
+const EXTENSIONS_DIR = path.join(ROOT_FOLDER, "extensions");
+const COPILOT_CONTENT_DIR = "com.github.copilot";
+const AWESOME_COPILOT_NAMESPACE = "com.github.awesome-copilot";
 const MATERIALIZED_SPECS = {
   agents: {
-    path: "agents",
+    paths: [path.join(COPILOT_CONTENT_DIR, "agents"), "agents"],
     restore(dirPath) {
       return collectFiles(dirPath).map((relativePath) => `./agents/${relativePath}`);
     },
   },
-  commands: {
-    path: "commands",
+  hooks: {
+    paths: [path.join(COPILOT_CONTENT_DIR, "hooks"), "hooks"],
     restore(dirPath) {
-      return collectFiles(dirPath).map((relativePath) => `./commands/${relativePath}`);
+      return collectDirectoriesContainingFile(dirPath, "hooks.json")
+        .map((relativePath) => `./hooks/${relativePath}/`);
     },
   },
   skills: {
-    path: "skills",
+    paths: ["skills"],
     restore(dirPath) {
       return collectSkillDirectories(dirPath).map((relativePath) => `./skills/${relativePath}/`);
     },
   },
+  extensions: {
+    paths: [path.join(COPILOT_CONTENT_DIR, "extensions"), "extensions"],
+    restore(dirPath) {
+      return collectDirectoriesContainingFile(dirPath, "extension.mjs")
+        .map((relativePath) => `./extensions/${relativePath}`);
+    },
+  },
 };
 
-/**
- * 從已實體化的檔案還原清單
- * @param {string} pluginPath - 外掛路徑
- * @returns {boolean} - 是否有變更
- */
+function copyDirRecursive(src, dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const entry of fs.readdirSync(src, { withFileTypes: true })) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+
+function moveEntry(srcPath, destPath) {
+  fs.mkdirSync(path.dirname(destPath), { recursive: true });
+  try {
+    fs.renameSync(srcPath, destPath);
+    return;
+  } catch (error) {
+    if (!["EXDEV", "EEXIST", "ENOTEMPTY", "EPERM"].includes(error?.code)) {
+      throw error;
+    }
+  }
+
+  const stats = fs.statSync(srcPath);
+  if (stats.isDirectory()) {
+    copyDirRecursive(srcPath, destPath);
+    fs.rmSync(srcPath, { recursive: true, force: true });
+    return;
+  }
+
+  fs.copyFileSync(srcPath, destPath);
+  fs.rmSync(srcPath, { force: true });
+}
+
 export function restoreManifestFromMaterializedFiles(pluginPath) {
-  const pluginJsonPath = path.join(pluginPath, ".github/plugin", "plugin.json");
+  const pluginJsonPath = path.join(pluginPath, "plugin.json");
   if (!fs.existsSync(pluginJsonPath)) {
     return false;
   }
@@ -42,27 +83,24 @@ export function restoreManifestFromMaterializedFiles(pluginPath) {
   try {
     plugin = JSON.parse(fs.readFileSync(pluginJsonPath, "utf8"));
   } catch (error) {
-    throw new Error(`無法解析 ${pluginJsonPath}: ${error.message}`);
+    throw new Error(`無法剖析 ${pluginJsonPath}: ${error.message}`);
   }
 
   let changed = false;
   for (const [field, spec] of Object.entries(MATERIALIZED_SPECS)) {
-    if (Array.isArray(plugin[field])) {
-      const sortedEntries = sortPluginEntries(plugin[field]);
-      if (!arraysEqual(plugin[field], sortedEntries)) {
-        plugin[field] = sortedEntries;
-        changed = true;
-      }
-    }
-
-    const materializedPath = path.join(pluginPath, spec.path);
-    if (!fs.existsSync(materializedPath) || !fs.statSync(materializedPath).isDirectory()) {
+    const materializedPath = spec.paths
+      .map((subdir) => path.join(pluginPath, subdir))
+      .find((candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isDirectory());
+    if (!materializedPath) {
       continue;
     }
 
     const restored = spec.restore(materializedPath);
-    if (!arraysEqual(plugin[field], restored)) {
-      plugin[field] = restored;
+    const composition = plugin.extensions?.[AWESOME_COPILOT_NAMESPACE];
+    if (!arraysEqual(composition?.[field], restored)) {
+      plugin.extensions ??= {};
+      plugin.extensions[AWESOME_COPILOT_NAMESPACE] ??= {};
+      plugin.extensions[AWESOME_COPILOT_NAMESPACE][field] = restored;
       changed = true;
     }
   }
@@ -74,36 +112,95 @@ export function restoreManifestFromMaterializedFiles(pluginPath) {
   return changed;
 }
 
-/**
- * 清除外掛
- * @param {string} pluginPath - 外掛路徑
- * @returns {object} - 清除結果
- */
 function cleanPlugin(pluginPath) {
   const manifestUpdated = restoreManifestFromMaterializedFiles(pluginPath);
   if (manifestUpdated) {
-    console.log(`  已更新 ${path.basename(pluginPath)}/.github/plugin/plugin.json`);
+    console.log(`  已更新 ${path.basename(pluginPath)}/plugin.json`);
   }
 
   let removed = 0;
-  for (const { path: subdir } of Object.values(MATERIALIZED_SPECS)) {
-    const target = path.join(pluginPath, subdir);
-    if (fs.existsSync(target) && fs.statSync(target).isDirectory()) {
-      const count = countFiles(target);
-      fs.rmSync(target, { recursive: true, force: true });
-      removed += count;
-      console.log(`  已移除 ${path.basename(pluginPath)}/${subdir}/ (${count} 個檔案)`);
+  for (const { paths } of Object.values(MATERIALIZED_SPECS)) {
+    for (const subdir of paths) {
+      const target = path.join(pluginPath, subdir);
+      if (fs.existsSync(target) && fs.statSync(target).isDirectory()) {
+        const count = countFiles(target);
+        fs.rmSync(target, { recursive: true, force: true });
+        removed += count;
+        console.log(`  已移除 ${path.basename(pluginPath)}/${subdir}/ (${count} 個檔案)`);
+      }
     }
+  }
+
+  const copilotContentPath = path.join(pluginPath, COPILOT_CONTENT_DIR);
+  if (fs.existsSync(copilotContentPath) && fs.readdirSync(copilotContentPath).length === 0) {
+    fs.rmdirSync(copilotContentPath);
   }
 
   return { removed, manifestUpdated };
 }
 
-/**
- * 計算目錄下的檔案數量
- * @param {string} dir - 目錄路徑
- * @returns {number} - 檔案數量
- */
+export function cleanMaterializedExtensionPlugin(extensionPath) {
+  const pluginJsonPath = path.join(extensionPath, "plugin.json");
+  let manifestUpdated = false;
+  if (fs.existsSync(pluginJsonPath)) {
+    const plugin = JSON.parse(fs.readFileSync(pluginJsonPath, "utf8"));
+    const extensionBundlePrefix = `extensions/${path.basename(extensionPath)}/`;
+    if (plugin.extensions === "extensions") {
+      plugin.extensions = ".";
+      manifestUpdated = true;
+    }
+    if (typeof plugin.logo === "string" && plugin.logo.startsWith(extensionBundlePrefix)) {
+      plugin.logo = plugin.logo.slice(extensionBundlePrefix.length);
+      manifestUpdated = true;
+    }
+    if (manifestUpdated) {
+      fs.writeFileSync(pluginJsonPath, JSON.stringify(plugin, null, 2) + "\n", "utf8");
+      console.log(`  已更新 ${path.basename(extensionPath)}/plugin.json`);
+    }
+  }
+
+  const target = path.join(extensionPath, "extensions");
+  if (!fs.existsSync(target) || !fs.statSync(target).isDirectory()) {
+    return { removed: 0, manifestUpdated };
+  }
+
+  const bundleRoot = path.join(target, path.basename(extensionPath));
+  const count = countFiles(target);
+  if (fs.existsSync(bundleRoot) && fs.statSync(bundleRoot).isDirectory()) {
+    for (const entry of fs.readdirSync(bundleRoot, { withFileTypes: true })) {
+      moveEntry(path.join(bundleRoot, entry.name), path.join(extensionPath, entry.name));
+    }
+    console.log(`  已從具體化 extensions 套件組合中還原 ${path.basename(extensionPath)}/`);
+  }
+
+  fs.rmSync(target, { recursive: true, force: true });
+  console.log(`  已移除 ${path.basename(extensionPath)}/extensions/ (${count} 個檔案)`);
+  return { removed: count, manifestUpdated };
+}
+
+function isExtensionPluginDirectory(extensionPath) {
+  if (fs.existsSync(path.join(extensionPath, "extension.mjs"))) {
+    return true;
+  }
+
+  const bundleEntry = path.join(extensionPath, "extensions", path.basename(extensionPath), "extension.mjs");
+  if (fs.existsSync(bundleEntry)) {
+    return true;
+  }
+
+  const pluginJsonPath = path.join(extensionPath, "plugin.json");
+  if (!fs.existsSync(pluginJsonPath)) {
+    return false;
+  }
+
+  try {
+    const plugin = JSON.parse(fs.readFileSync(pluginJsonPath, "utf8"));
+    return plugin.extensions === "extensions";
+  } catch {
+    return false;
+  }
+}
+
 function countFiles(dir) {
   let count = 0;
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -116,12 +213,6 @@ function countFiles(dir) {
   return count;
 }
 
-/**
- * 收集目錄下的所有檔案
- * @param {string} dir - 目錄路徑
- * @param {string} [rootDir=dir] - 根目錄路徑
- * @returns {string[]} - 檔案清單
- */
 function collectFiles(dir, rootDir = dir) {
   const files = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -135,12 +226,6 @@ function collectFiles(dir, rootDir = dir) {
   return files.sort();
 }
 
-/**
- * 收集目錄下的技能目錄
- * @param {string} dir - 目錄路徑
- * @param {string} [rootDir=dir] - 根目錄路徑
- * @returns {string[]} - 技能目錄清單
- */
 function collectSkillDirectories(dir, rootDir = dir) {
   const skillDirs = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -159,12 +244,24 @@ function collectSkillDirectories(dir, rootDir = dir) {
   return skillDirs.sort();
 }
 
-/**
- * 比較陣列內容是否相等
- * @param {Array} left - 左陣列
- * @param {Array} right - 右陣列
- * @returns {boolean} - 相等性
- */
+function collectDirectoriesContainingFile(dir, fileName, rootDir = dir) {
+  const directories = [];
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) {
+      continue;
+    }
+
+    const entryPath = path.join(dir, entry.name);
+    if (fs.existsSync(path.join(entryPath, fileName))) {
+      directories.push(toPosixPath(path.relative(rootDir, entryPath)));
+      continue;
+    }
+
+    directories.push(...collectDirectoriesContainingFile(entryPath, fileName, rootDir));
+  }
+  return directories.sort();
+}
+
 function arraysEqual(left, right) {
   if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) {
     return false;
@@ -173,29 +270,12 @@ function arraysEqual(left, right) {
   return left.every((value, index) => value === right[index]);
 }
 
-/**
- * 使用 localeCompare 對外掛條目排序，並回傳新的排序後陣列。
- * @param {string[]} entries - 要排序的外掛條目字串陣列。
- * @returns {string[]} 回傳一個新的排序後陣列。
- */
-function sortPluginEntries(entries) {
-  return [...entries].sort((left, right) => left.localeCompare(right));
-}
-
-/**
- * 轉換為 POSIX 相容路徑
- * @param {string} filePath - 檔案路徑
- * @returns {string} - POSIX 路徑
- */
 function toPosixPath(filePath) {
   return filePath.split(path.sep).join("/");
 }
 
-/**
- * 主程式
- */
 function main() {
-  console.log("正在從外掛清除已實體化的檔案...\n");
+  console.log("正在從外掛程式清除具體化檔案...\n");
 
   if (!fs.existsSync(PLUGINS_DIR)) {
     console.error(`錯誤：在 ${PLUGINS_DIR} 找不到 plugins 目錄`);
@@ -217,13 +297,32 @@ function main() {
     }
   }
 
+  if (fs.existsSync(EXTENSIONS_DIR)) {
+    const extensionDirs = fs.readdirSync(EXTENSIONS_DIR, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .sort();
+
+    for (const dirName of extensionDirs) {
+      const extensionPath = path.join(EXTENSIONS_DIR, dirName);
+      if (!isExtensionPluginDirectory(extensionPath)) {
+        continue;
+      }
+      const { removed, manifestUpdated } = cleanMaterializedExtensionPlugin(extensionPath);
+      total += removed;
+      if (manifestUpdated) {
+        manifestsUpdated++;
+      }
+    }
+  }
+
   console.log();
   if (total === 0 && manifestsUpdated === 0) {
-    console.log("✅ 未發現已實體化的檔案。外掛已是乾淨狀態。");
+    console.log("✅ 找不到具體化檔案。外掛程式已經是乾淨的。");
   } else {
-    console.log(`✅ 從外掛移除 ${total} 個已實體化的檔案。`);
+    console.log(`✅ 已從外掛程式移除 ${total} 個具體化檔案。`);
     if (manifestsUpdated > 0) {
-      console.log(`✅ 已更新 ${manifestsUpdated} 個外掛清單，以還原並標準化規格條目。`);
+      console.log(`✅ 已更新 ${manifestsUpdated} 個外掛程式資訊清單以還原並標準化規格項目。`);
     }
   }
 }

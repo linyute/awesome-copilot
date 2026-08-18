@@ -1,32 +1,32 @@
-# Go MCP 伺服器開發外掛程式 (Go MCP Server Development Plugin)
+# Go MCP Server Development 外掛模組
 
-使用官方 github.com/modelcontextprotocol/go-sdk 在 Go 中建立 Model Context Protocol (MCP) 伺服器的完整工具包。包含最佳實務指引、產生伺服器的提示以及提供指引的專家聊天模式。
+使用官方 github.com/modelcontextprotocol/go-sdk 在 Go 中建構模型情境協定 (MCP) 伺服器的完整工具包。包含最佳做法指示、用於產生伺服器的提示詞，以及用於指引的專家聊天模式。
 
-## 安裝 (Installation)
+## 安裝
 
 ```bash
-# 使用 Copilot CLI
+# Using Copilot CLI
 copilot plugin install go-mcp-development@awesome-copilot
 ```
 
-## 包含內容 (What's Included)
+## 包含內容
 
-### 指令 (斜線指令) (Commands (Slash Commands))
+### 指令 (斜線指令)
 
-| 指令 | 描述 |
+| 指令 | 說明 |
 |---------|-------------|
-| `/go-mcp-development:go-mcp-server-generator` | 使用官方 github.com/modelcontextprotocol/go-sdk 建立具備正確結構、相依性與實作的完整 Go MCP 伺服器專案。 |
+| `/go-mcp-development:go-mcp-server-generator` | 使用官方 github.com/modelcontextprotocol/go-sdk 產生具有適當結構、相依套件與實作的完整 Go MCP 伺服器專案。 |
 
-### 代理程式 (Agents)
+### 代理人
 
-| 代理程式 | 描述 |
+| 代理人 | 說明 |
 |-------|-------------|
-| `go-mcp-expert` | 使用官方 SDK 在 Go 中建立 Model Context Protocol (MCP) 伺服器的專家助手。 |
+| `go-mcp-expert` | 使用官方 SDK 在 Go 中建構模型情境協定 (MCP) 伺服器的專家助理。 |
 
-## 來源 (Source)
+## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛模組是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群導向的 GitHub Copilot 擴充功能集合。
 
-## 授權 (License)
+## 授權條款
 
 MIT

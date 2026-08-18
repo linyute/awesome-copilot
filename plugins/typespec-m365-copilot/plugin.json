@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "typespec-m365-copilot",
+  "description": "提示、指示與資源的完整集合，用於使用 TypeSpec 建構宣告式 Agent 和 API 外掛程式以擴充 Microsoft 365 Copilot 功能。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "typespec",
+    "m365-copilot",
+    "declarative-agents",
+    "api-plugins",
+    "agent-development",
+    "microsoft-365"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/typespec-api-operations/",
+        "./skills/typespec-create-agent/",
+        "./skills/typespec-create-api-plugin/"
+      ]
+    }
+  }
+}

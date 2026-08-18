@@ -152,7 +152,7 @@ compatibility: 需要 Python 3
 - 為此階段產生一個 **指令碼**。
 - 請勿將此階段與其他階段合併。
 - 請勿預先計算未來階段的資料。
-- 將輸出儲存為 JSON 檔案：[`./run/data/report-data.json`](./run/data/report-data.json)
+- 將輸出儲存為 JSON 檔案：`./run/data/report-data.json`
 
 #### 結構描述定義
 
@@ -350,7 +350,7 @@ entry["Tunable"] = any(m["Checked"] for m in entry["Messages"])
     - 移除 **第一欄以 `#` 開頭** 的註解列。
     - 這同時也會移除以 `#` 開頭的標題列。
     - 使用 **1-based 行號** 作為鍵值，並以完整原始行作為值，建立一個註解對映。同時儲存空白行。
-    - 將此對映儲存於 JSON 檔案：[`./run/data/comments.json`](./run/data/comments.json)
+    - 將此對映儲存於 JSON 檔案：`./run/data/comments.json`
     - 範例：`{ "4": "# It's OK for small city states to leave state ISO2 code unspecified" }`
 
 - **備註**
@@ -426,7 +426,7 @@ entry["Tunable"] = any(m["Checked"] for m in entry["Messages"])
 
     - **子網段的地理定位未指定**
       - 條件：子網段的所有地理欄位 (`CountryCode`, `RegionCode`, `City`) 皆為空。
-      - 動作： 
+      - 動作：
         - 將條目的 `DoNotGeolocate` 設定為 `true`。
         - 將條目的 `CountryCode` 設定為 `ZZ`。
       - 訊息 ID：`3104`
@@ -537,7 +537,7 @@ entry["Tunable"] = any(m["Checked"] for m in entry["Messages"])
 
 #### 步驟 1：建立具有重複資料刪除功能的查詢負載
 
-從以下路徑載入資料集：[./run/data/report-data.json](./run/data/report-data.json)
+從以下路徑載入資料集：`./run/data/report-data.json`
 - 讀取 `Entries` 陣列。每個條目皆將用於建構 MCP 查詢負載。
 
 透過刪除重複的條目來減少伺服器請求：
@@ -563,7 +563,7 @@ entry["Tunable"] = any(m["Checked"] for m in entry["Messages"])
 - 讀取回應時，將每個回應的 `rowKey` 欄位匹配至對應的重複資料刪除條目，以擷取所有相關的 `entryIndices`。
 
 規則：
-- 寫入負載至：[./run/data/mcp-server-payload.json](./run/data/mcp-server-payload.json)
+- 寫入負載至：`./run/data/mcp-server-payload.json`
 - 寫入負載後結束指令碼。
 
 #### 步驟 2：呼叫 Fastah MCP 工具
@@ -585,7 +585,7 @@ entry["Tunable"] = any(m["Checked"] for m in entry["Messages"])
       {"rowKey": "550e8400-...", "countryCode":"CA", ...},
       {"rowKey": "690e9301-...", "countryCode":"ZZ", ...}
   ]
-- 開啟 [./run/data/mcp-server-payload.json](./run/data/mcp-server-payload.json) 並傳送所有已進行重複資料刪除的條目及其 rowKeys。
+- 開啟 `./run/data/mcp-server-payload.json` 並傳送所有已進行重複資料刪除的條目及其 rowKeys。
 - 若重複資料刪除後有超過 1000 個條目，請將其拆分為每次至多 1000 個條目的多個請求。
 - 伺服器將在每次回應中回傳相同的 `rowKey` 欄位以供對映。
 - 請勿使用本地資料。
@@ -593,7 +593,7 @@ entry["Tunable"] = any(m["Checked"] for m in entry["Messages"])
 #### 步驟 3：將調整資料附加至條目
 
 - 產生一個用於附加調整資料的新 **指令碼**。
-- 載入 [./run/data/report-data.json](./run/data/report-data.json) 與重複資料刪除對映 (從步驟 1 記憶體中保留，或從負載檔案重新導出)。
+- 載入 `./run/data/report-data.json` 與重複資料刪除對映 (從步驟 1 記憶體中保留，或從負載檔案重新導出)。
 - 針對來自 MCP 伺服器的每項回應：
   - 從回應中提取 `rowKey`。
   - 從重複資料刪除對映中查找與該 `rowKey` 相關聯的 `entryIndices` 陣列。
@@ -627,7 +627,7 @@ entry["Tunable"] = any(m["Checked"] for m in entry["Messages"])
 
 UUID 未匹配的條目 (即 MCP 伺服器針對其 UUID 未回傳回應) 必須收到一個空的 `TunedEntry: {}` 物件 — 絕不要遺漏此欄位。
 
-- 將資料集寫回至：[./run/data/report-data.json](./run/data/report-data.json)
+- 將資料集寫回至：`./run/data/report-data.json`
 - 規則：
   - 維護所有現有的驗證旗標。
   - 請勿建立額外的中介檔案。

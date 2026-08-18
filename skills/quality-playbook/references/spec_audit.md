@@ -208,7 +208,6 @@ assert "case VIRTIO_F_RING_RESET:" in source_of("vring_transport_features"), \
 
 將稽核報告儲存到 `quality/spec_audits/YYYY-MM-DD-[模型].md`
 將分類摘要儲存到 `quality/spec_audits/YYYY-MM-DD-triage.md`
-```
 
 ## 四個護欄（對所有稽核員至關重要）
 

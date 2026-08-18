@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "release-notes-showcase",
+  "description": "撰寫並修飾可隨時發布的發行說明，具備貢獻者重點標註與便於匯出的輸出格式。",
+  "version": "1.0.2",
+  "author": {
+    "name": "Kayla Cinnamon",
+    "url": "https://github.com/cinnamon-msft"
+  },
+  "keywords": [
+    "changelog",
+    "contributor-callouts",
+    "email-export",
+    "launch-summary",
+    "product-updates",
+    "release-notes"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/release-notes-showcase"
+      ]
+    }
+  }
+}

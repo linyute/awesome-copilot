@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * 為 GitHub Pages 網站產生 JSON metadata 檔案。
- * 此腳本會從 agents、instructions、skills 與 plugins 擷取 metadata
- * 並寫入 website/data/ 供客戶端搜尋與顯示使用。
+ * Generate JSON metadata files for the GitHub Pages website.
+ * This script extracts metadata from agents, instructions, skills, and plugins
+ * and writes them to website/data/ for client-side search and display.
  */
 
 import fs from "fs";
@@ -26,6 +26,10 @@ import {
   parseYamlFile,
 } from "./yaml-parser.mjs";
 import { readExternalPlugins } from "./external-plugin-validation.mjs";
+import {
+  readExtensionPluginOwners,
+  resolveExtensionPluginName,
+} from "./extension-plugin-ownership.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -35,8 +39,18 @@ const WEBSITE_SOURCE_DATA_DIR = path.join(WEBSITE_DIR, "data");
 const EXTERNAL_CANVAS_KEYWORD = "canvas";
 const EXTERNAL_CANVAS_PREVIEW_PATH = "assets/preview.png";
 
+function hasExtensionEntryPoint(extensionDir, extensionName) {
+  const candidateEntryPoints = [
+    path.join(extensionDir, "extension.mjs"),
+    path.join(extensionDir, "extensions", "extension.mjs"),
+    path.join(extensionDir, "extensions", extensionName, "extension.mjs"),
+  ];
+
+  return candidateEntryPoints.some((entryPointPath) => fs.existsSync(entryPointPath));
+}
+
 /**
- * 確保輸出目錄存在
+ * Ensure the output directory exists
  */
 function ensureDataDir() {
   if (!fs.existsSync(WEBSITE_DATA_DIR)) {
@@ -45,7 +59,7 @@ function ensureDataDir() {
 }
 
 /**
- * 從檔名或 frontmatter 擷取標題
+ * Extract title from filename or frontmatter
  */
 function extractTitle(filePath, frontmatter) {
   if (frontmatter?.name) {
@@ -54,7 +68,7 @@ function extractTitle(filePath, frontmatter) {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   }
-  // 若無則以檔名為備援
+  // Fallback to filename
   const basename = path.basename(filePath);
   const name = basename
     .replace(/\.(agent|prompt|instructions)\.md$/, "")
@@ -66,7 +80,7 @@ function extractTitle(filePath, frontmatter) {
 }
 
 /**
- * 將 kebab/snake 名稱轉為可讀的顯示名稱。
+ * Convert kebab/snake names into readable titles.
  */
 function formatDisplayName(value) {
   const acronymMap = new Map([
@@ -118,8 +132,8 @@ function joinRepoPath(...segments) {
 }
 
 /**
- * 將作者欄位（npm 字串格式或 { name, url } 物件）正規化為
- * { name, url? } | null。若沒有可用名稱則回傳 null。
+ * Normalize an author value (npm string form or { name, url } object) to
+ * { name, url? } | null. Returns null when no usable name is present.
  */
 function normalizeAuthor(value) {
   if (!value) return null;
@@ -137,7 +151,7 @@ function normalizeAuthor(value) {
 }
 
 /**
- * 取得某目錄下所有檔案的最新 git 修改日期
+ * Find the latest git-modified date for any file under a directory.
  */
 function getDirectoryLastUpdated(gitDates, relativeDirPath) {
   const prefix = `${relativeDirPath}/`;
@@ -157,7 +171,7 @@ function getDirectoryLastUpdated(gitDates, relativeDirPath) {
 }
 
 /**
- * 取得目前檢出的 commit SHA
+ * Get the current commit SHA for the checked-out repository.
  */
 function getCurrentCommitSha() {
   return execSync("git --no-pager rev-parse HEAD", {
@@ -168,7 +182,7 @@ function getCurrentCommitSha() {
 }
 
 /**
- * 產生 agents metadata
+ * Generate agents metadata
  */
 function generateAgentsData(gitDates) {
   const agents = [];
@@ -176,7 +190,7 @@ function generateAgentsData(gitDates) {
     .readdirSync(AGENTS_DIR)
     .filter((f) => f.endsWith(".agent.md"));
 
-  // 蒐集所有 filter 的唯一值
+  // Track all unique values for filters
   const allModels = new Set();
   const allTools = new Set();
 
@@ -191,7 +205,7 @@ function generateAgentsData(gitDates) {
     const tools = frontmatter?.tools || [];
     const handoffs = frontmatter?.handoffs || [];
 
-    // 蒐集唯一值
+    // Track unique values
     if (model) allModels.add(model);
     tools.forEach((t) => allTools.add(t));
 
@@ -215,7 +229,7 @@ function generateAgentsData(gitDates) {
     });
   }
 
-  // 排序並回傳含 filter metadata 的結果
+  // Sort and return with filter metadata
   const sortedAgents = agents.sort((a, b) => a.title.localeCompare(b.title));
 
   return {
@@ -228,17 +242,17 @@ function generateAgentsData(gitDates) {
 }
 
 /**
- * 將 applyTo 欄位解析為 pattern 陣列
+ * Parse applyTo field into an array of patterns
  */
 function parseApplyToPatterns(applyTo) {
   if (!applyTo) return [];
 
-  // 處理陣列格式
+  // Handle array format
   if (Array.isArray(applyTo)) {
     return applyTo.map((p) => p.trim()).filter((p) => p.length > 0);
   }
 
-  // 處理字串格式（逗號分隔）
+  // Handle string format (comma-separated)
   if (typeof applyTo === "string") {
     return applyTo
       .split(",")
@@ -250,14 +264,14 @@ function parseApplyToPatterns(applyTo) {
 }
 
 /**
- * 從 glob pattern 擷取檔案副檔名
+ * Extract file extension from a glob pattern
  */
 function extractExtensionFromPattern(pattern) {
-  // 匹配 **.ts, **/*.js, *.py 等
+  // Match patterns like **.ts, **/*.js, *.py, etc.
   const match = pattern.match(/\*\.(\w+)$/);
   if (match) return `.${match[1]}`;
 
-  // 匹配 **/*.{ts,tsx}
+  // Match patterns like **/*.{ts,tsx}
   const braceMatch = pattern.match(/\*\.\{([^}]+)\}$/);
   if (braceMatch) {
     return braceMatch[1].split(",").map((ext) => `.${ext.trim()}`);
@@ -267,7 +281,7 @@ function extractExtensionFromPattern(pattern) {
 }
 
 /**
- * 產生 instructions metadata
+ * Generate instructions metadata
  */
 function generateInstructionsData(gitDates) {
   const instructions = [];
@@ -275,7 +289,7 @@ function generateInstructionsData(gitDates) {
     .readdirSync(INSTRUCTIONS_DIR)
     .filter((f) => f.endsWith(".instructions.md"));
 
-  // 蒐集所有 pattern 與 extension 作為 filters
+  // Track all unique patterns and extensions for filters
   const allPatterns = new Set();
   const allExtensions = new Set();
 
@@ -289,7 +303,7 @@ function generateInstructionsData(gitDates) {
     const applyToRaw = frontmatter?.applyTo || null;
     const applyToPatterns = parseApplyToPatterns(applyToRaw);
 
-    // 從 patterns 擷取 extensions
+    // Extract extensions from patterns
     const extensions = [];
     for (const pattern of applyToPatterns) {
       allPatterns.add(pattern);
@@ -334,7 +348,7 @@ function generateInstructionsData(gitDates) {
 }
 
 /**
- * 產生 skills metadata
+ * Generate skills metadata
  */
 function generateSkillsData(gitDates) {
   const skills = [];
@@ -356,10 +370,10 @@ function generateSkillsData(gitDates) {
         .relative(ROOT_FOLDER, skillPath)
         .replace(/\\/g, "/");
 
-      // 取得 skill 資料夾下的所有檔案
+      // Get all files in the skill folder recursively
       const files = getFolderFiles(skillPath, relativePath);
 
-      // 以 SKILL.md 的最後更新時間作為 lastUpdated
+      // Get last updated from SKILL.md file
       const skillFilePath = `${relativePath}/SKILL.md`;
       const title = metadata.name
         .split("-")
@@ -403,7 +417,7 @@ function generateSkillsData(gitDates) {
 }
 
 /**
- * 取得資料夾內的所有檔案（遞迴）
+ * Get all files in a resource folder (skill or hook) recursively.
  */
 function getFolderFiles(skillPath, relativePath) {
   const files = [];
@@ -417,7 +431,7 @@ function getFolderFiles(skillPath, relativePath) {
       if (entry.isDirectory()) {
         walkDir(fullPath, relPath);
       } else {
-        // 取得檔案大小
+        // Get file size
         const stats = fs.statSync(fullPath);
         files.push({
           path: `${relativePath}/${relPath}`,
@@ -433,7 +447,7 @@ function getFolderFiles(skillPath, relativePath) {
 }
 
 /**
- * 從資料夾取得所有 agent markdown 檔案
+ * Get all agent markdown files from a folder
  */
 function getAgentFiles(agentDir, pluginRootPath) {
   if (!fs.existsSync(agentDir)) return [];
@@ -448,7 +462,8 @@ function getAgentFiles(agentDir, pluginRootPath) {
 }
 
 /**
- * 為具有專屬詳細頁面的資源（agent, skill, instruction, extension）建立 id -> { title, url } 的索引
+ * Build a lookup index of resource id -> { title, url } for the kinds that have
+ * dedicated detail pages, so plugin items can deep-link to them.
  */
 function buildResourceIndex({ agents, skills, instructions, extensions }) {
   const toMap = (items, urlPrefix) => {
@@ -492,8 +507,8 @@ function buildResourceIndex({ agents, skills, instructions, extensions }) {
 }
 
 /**
- * 從 plugin item path 推導候選 resource id
- * "./skills/foo/" -> "foo",
+ * Derive the candidate resource id for a plugin item path (basename without a
+ * known resource extension), e.g. "./skills/foo/" -> "foo",
  * "plugins/x/agents/bar.md" -> "bar".
  */
 function pluginItemCandidateId(itemPath) {
@@ -509,7 +524,8 @@ function pluginItemCandidateId(itemPath) {
 }
 
 /**
- * 為 plugin item ({ kind, path }) 補上顯示標題，若有詳細頁則加上 detailUrl
+ * Enrich a plugin item ({ kind, path }) with a display title and, when the item
+ * resolves to a known resource with a detail page, a detailUrl.
  */
 function resolvePluginItem(item, resourceIndex) {
   const candidateId = pluginItemCandidateId(item.path);
@@ -524,12 +540,10 @@ function resolvePluginItem(item, resourceIndex) {
 }
 
 /**
- * 產生 plugins metadata
+ * Generate plugins metadata
  */
 function generatePluginsData(gitDates, resourceIndex = {}) {
   const plugins = [];
-  const extensionEntriesByName = new Map();
-
   if (!fs.existsSync(PLUGINS_DIR)) {
     return { items: [], filters: { tags: [] } };
   }
@@ -538,85 +552,30 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
     .readdirSync(PLUGINS_DIR, { withFileTypes: true })
     .filter((d) => d.isDirectory());
 
-  if (fs.existsSync(EXTENSIONS_DIR)) {
-    const extensionDirs = fs.readdirSync(EXTENSIONS_DIR, { withFileTypes: true })
-      .filter((entry) => {
-        if (!entry.isDirectory()) return false;
-        return fs.existsSync(path.join(EXTENSIONS_DIR, entry.name, "extension.mjs"));
-      })
-      .map((entry) => entry.name)
-      .sort((a, b) => a.localeCompare(b));
-
-    for (const extensionDirName of extensionDirs) {
-      const extensionDir = path.join(EXTENSIONS_DIR, extensionDirName);
-      const pluginJsonPath = path.join(extensionDir, ".github", "plugin", "plugin.json");
-      if (!fs.existsSync(pluginJsonPath)) {
-        continue;
-      }
-
-      try {
-        const extensionPlugin = JSON.parse(fs.readFileSync(pluginJsonPath, "utf-8"));
-        const pluginName = normalizeText(extensionPlugin.name, extensionDirName);
-        const pluginDescription = normalizeText(extensionPlugin.description, "Canvas extension");
-        const extensionKeywords = Array.isArray(extensionPlugin.keywords)
-          ? [...new Set(extensionPlugin.keywords.filter((keyword) => typeof keyword === "string").map((keyword) => keyword.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b))
-          : [];
-        const relPath = `extensions/${extensionDirName}`;
-        const extensionItem = resolvePluginItem(
-          {
-            kind: "extension",
-            path: relPath,
-          },
-          resourceIndex
-        );
-        const extReadmePath = path.join(extensionDir, "README.md");
-        const extReadmeFile = fs.existsSync(extReadmePath)
-          ? `${relPath}/README.md`
-          : null;
-
-        extensionEntriesByName.set(pluginName, {
-          id: pluginName,
-          name: pluginName,
-          description: pluginDescription,
-          path: relPath,
-          readmeFile: extReadmeFile,
-          version: normalizeText(extensionPlugin.version, null),
-          tags: extensionKeywords,
-          itemCount: 1,
-          items: [extensionItem],
-          generatedFromExtension: true,
-          lastUpdated: getDirectoryLastUpdated(gitDates, relPath),
-          searchText: `${pluginName} ${pluginDescription} ${extensionKeywords.join(" ")} canvas extension`.toLowerCase(),
-        });
-      } catch (e) {
-        console.warn(`解析 extension plugin manifest ${extensionDirName} 失敗：${e.message}`);
-      }
-    }
-  }
-
   for (const dir of pluginDirs) {
     const pluginDir = path.join(PLUGINS_DIR, dir.name);
-    const jsonPath = path.join(pluginDir, ".github/plugin", "plugin.json");
+    const jsonPath = path.join(pluginDir, "plugin.json");
 
     if (!fs.existsSync(jsonPath)) continue;
 
     try {
       const data = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
       const relPath = `plugins/${dir.name}`;
-      const extensionRefs = Array.isArray(data?.["x-awesome-copilot"]?.extensions)
-        ? data["x-awesome-copilot"].extensions
-        : [];
+      const composition = data.extensions?.["com.github.awesome-copilot"] ?? {};
+      const extensionRefs = composition.extensions
+        ?.map((entry) => entry.replace(/^\.\/extensions\//, "").replace(/\/$/, ""))
+        .filter(Boolean) ?? [];
+      if (fs.existsSync(path.join(EXTENSIONS_DIR, dir.name, "extension.mjs")) && !extensionRefs.includes(dir.name)) {
+        extensionRefs.push(dir.name);
+      }
       const extensionItems = extensionRefs
-        .map((entry) => normalizeText(entry))
-        .filter(Boolean)
-        .map((entry) => entry.replace(/^\.\/+/, "").replace(/\/$/, ""))
-        .filter((entry) => entry.startsWith("extensions/"))
+        .filter((entry) => typeof entry === "string")
         .map((entry) => ({
           kind: "extension",
-          path: entry,
+          path: `extensions/${entry}`,
         }));
 
-      const agentItems = (data.agents || []).flatMap((agent) => {
+      const agentItems = (composition.agents || []).flatMap((agent) => {
         const agentPath = agent.replace("./", "");
         const fullPath = path.join(pluginDir, agentPath);
 
@@ -632,13 +591,13 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
         ];
       });
 
-      // 解析 mcpServers：支援指向 .mcp.json 檔案的路徑或內嵌物件
+      // Parse mcpServers: supports a path to a .mcp.json file or an inline object
       const mcpItems = [];
-      if (data.mcpServers) {
+      if (composition.mcpServers) {
         let mcpServersObj = null;
         let mcpConfigPath = relPath;
-        if (typeof data.mcpServers === "string") {
-          const manifestMcpPath = data.mcpServers.replace(/^\.\//, "");
+        if (typeof composition.mcpServers === "string") {
+          const manifestMcpPath = composition.mcpServers.replace(/^\.\//, "");
           mcpConfigPath = manifestMcpPath ? `${relPath}/${manifestMcpPath}` : relPath;
           const mcpJsonPath = path.join(pluginDir, manifestMcpPath);
           if (fs.existsSync(mcpJsonPath)) {
@@ -646,11 +605,11 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
               const mcpJson = JSON.parse(fs.readFileSync(mcpJsonPath, "utf-8"));
               mcpServersObj = mcpJson.mcpServers || mcpJson;
             } catch {
-              // 忽略解析錯誤
+              // ignore parse errors
             }
           }
-        } else if (typeof data.mcpServers === "object") {
-          mcpServersObj = data.mcpServers;
+        } else if (typeof composition.mcpServers === "object") {
+          mcpServersObj = composition.mcpServers;
         }
         if (mcpServersObj) {
           for (const serverName of Object.keys(mcpServersObj)) {
@@ -659,11 +618,10 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
         }
       }
 
-      // 從規格欄位（agents, commands, skills, mcpServers）建立 items 列表
+      // Build items list from supported composition fields.
       const items = [
         ...agentItems,
-        ...(data.commands || []).map((p) => ({ kind: "prompt", path: p })),
-        ...(data.skills || []).map((p) => ({ kind: "skill", path: p })),
+        ...(composition.skills || []).map((p) => ({ kind: "skill", path: p })),
         ...extensionItems,
         ...mcpItems,
       ].map((item) => resolvePluginItem(item, resourceIndex));
@@ -687,20 +645,15 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
         itemCount: items.length,
         items: items,
         lastUpdated: getDirectoryLastUpdated(gitDates, relPath),
-        searchText: `${pluginName} ${data.description || ""}
-          ${tags.join(" ")}`.toLowerCase(),
+        searchText: `${pluginName} ${data.description || ""
+          } ${tags.join(" ")}`.toLowerCase(),
       });
-      extensionEntriesByName.delete(pluginName);
     } catch (e) {
-      console.warn(`解析 plugin ${dir.name} 失敗：${e.message}`);
+      console.warn(`Failed to parse plugin: ${dir.name}`, e.message);
     }
   }
 
-  for (const extensionPlugin of extensionEntriesByName.values()) {
-    plugins.push(extensionPlugin);
-  }
-
-  // 從 plugins/external.json 載入外部 plugins
+  // Load external plugins from plugins/external.json
   const externalJsonPath = path.join(PLUGINS_DIR, "external.json");
   if (fs.existsSync(externalJsonPath)) {
     try {
@@ -712,15 +665,15 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
         for (const ext of externalPlugins) {
           if (!ext.name || !ext.description) {
             console.warn(
-              `跳過缺少 name/description 的外部 plugin`
+              `Skipping external plugin with missing name/description`
             );
             continue;
           }
 
-          // 若本地已有同名 plugin，則跳過
+          // Skip if a local plugin with the same name already exists
           if (plugins.some((p) => p.id === ext.name)) {
             console.warn(
-              `跳過外部 plugin "${ext.name}" — 本地已存在同名 plugin`
+              `Skipping external plugin "${ext.name}" — local plugin with same name exists`
             );
             continue;
           }
@@ -750,15 +703,15 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
           addedCount++;
         }
         console.log(
-          `  ✓ 已載入 ${addedCount} 個外部 plugin`
+          `  ✓ Loaded ${addedCount} external plugin(s)`
         );
       }
     } catch (e) {
-      console.warn(`解析 external plugins 失敗：${e.message}`);
+      console.warn(`Failed to parse external plugins: ${e.message}`);
     }
   }
 
-  // 蒐集所有唯一 tags
+  // Collect all unique tags
   const allTags = [...new Set(plugins.flatMap((p) => p.tags))].sort();
 
   const sortedPlugins = plugins.sort((a, b) => a.name.localeCompare(b.name));
@@ -770,7 +723,7 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
 }
 
 /**
- * 產生 Canvas extensions metadata
+ * Generate canvas extensions metadata
  */
 function getImageMimeType(filePath) {
   const extension = path.extname(filePath).toLowerCase();
@@ -1192,15 +1145,13 @@ function resolveExtensionScreenshots(pluginJson, extensionDir, relPath, ref) {
     }
     : null;
 
-  const logoEntry = normalizeExtensionScreenshotRole(pluginJson?.logo, relPath, ref);
-  const screenshotConfig = pluginJson?.["x-awesome-copilot"]?.screenshots || {};
-  const iconEntry = normalizeExtensionScreenshotRole(screenshotConfig.icon, relPath, ref);
-  const galleryRaw = screenshotConfig.gallery;
-  const firstGalleryEntry = Array.isArray(galleryRaw) ? galleryRaw[0] : galleryRaw;
-  const galleryEntry = normalizeExtensionScreenshotRole(firstGalleryEntry, relPath, ref);
-
-  const finalIcon = iconEntry || logoEntry || inferredIcon;
-  const finalGallery = galleryEntry || logoEntry || inferredGallery || finalIcon;
+  const copilotNs = pluginJson?.extensions?.["com.github.copilot"];
+  const logoEntry = normalizeExtensionScreenshotRole(
+    copilotNs?.logo ?? pluginJson?.logo,
+    relPath, ref
+  );
+  const finalIcon = logoEntry || inferredIcon;
+  const finalGallery = logoEntry || inferredGallery || finalIcon;
 
   return {
     screenshots: {
@@ -1229,16 +1180,12 @@ function generateCanvasManifest(gitDates, commitSha) {
     return { items: [], filters: { keywords: [] } };
   }
 
+  const extensionPluginOwners = readExtensionPluginOwners(PLUGINS_DIR);
   const extensionDirs = fs
     .readdirSync(EXTENSIONS_DIR, { withFileTypes: true })
     .filter((entry) => {
       if (!entry.isDirectory()) return false;
-      const extensionEntryPoint = path.join(
-        EXTENSIONS_DIR,
-        entry.name,
-        "extension.mjs"
-      );
-      return fs.existsSync(extensionEntryPoint);
+      return hasExtensionEntryPoint(path.join(EXTENSIONS_DIR, entry.name), entry.name);
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
@@ -1249,7 +1196,7 @@ function generateCanvasManifest(gitDates, commitSha) {
     const packageJson = fs.existsSync(packageJsonPath)
       ? JSON.parse(fs.readFileSync(packageJsonPath, "utf-8"))
       : {};
-    const pluginJsonPath = path.join(extensionDir, ".github", "plugin", "plugin.json");
+    const pluginJsonPath = path.join(PLUGINS_DIR, dir.name, "plugin.json");
     const pluginJson = fs.existsSync(pluginJsonPath)
       ? JSON.parse(fs.readFileSync(pluginJsonPath, "utf-8"))
       : {};
@@ -1269,6 +1216,7 @@ function generateCanvasManifest(gitDates, commitSha) {
       normalizeText(packageJson.description, "Canvas extension")
     );
     const extensionName = normalizeText(pluginJson.name, normalizeText(packageJson.name, dir.name));
+    const pluginName = resolveExtensionPluginName(dir.name, extensionPluginOwners);
     const extensionVersion = normalizeText(pluginJson.version, normalizeText(packageJson.version, "1.0.0"));
     const readmeFile = fs.existsSync(path.join(extensionDir, "README.md"))
       ? `${relPath}/README.md`
@@ -1287,7 +1235,7 @@ function generateCanvasManifest(gitDates, commitSha) {
       /\\/g,
       "/"
     )}`;
-    const installCommand = `copilot plugin install ${extensionName}@awesome-copilot`;
+    const installCommand = `copilot plugin install ${pluginName}@awesome-copilot`;
 
     for (const canvas of canvasEntries) {
       const canvasId = normalizeText(canvas.id, dir.name);
@@ -1298,7 +1246,7 @@ function generateCanvasManifest(gitDates, commitSha) {
         canvasId,
         extensionId: dir.name,
         extensionName,
-        pluginName: extensionName,
+        pluginName,
         name: canvasName,
         version: extensionVersion,
         readmeFile,
@@ -1395,7 +1343,7 @@ function generateCanvasManifest(gitDates, commitSha) {
         }
       }
     } catch (e) {
-      console.warn(`解析 external extensions 失敗：${e.message}`);
+      console.warn(`Failed to parse external extensions: ${e.message}`);
     }
   }
 
@@ -1408,7 +1356,7 @@ function generateCanvasManifest(gitDates, commitSha) {
   externalPluginWarnings.forEach((warning) => console.warn(`Warning: ${warning}`));
   if (externalPluginErrors.length > 0) {
     externalPluginErrors.forEach((error) => console.error(`Error: ${error}`));
-    throw new Error("外部插件驗證失敗");
+    throw new Error("External plugin validation failed");
   }
 
   for (const ext of externalPlugins) {
@@ -1429,13 +1377,13 @@ function generateCanvasManifest(gitDates, commitSha) {
 
     const source = ext?.source;
     if (source?.source !== "github" || !normalizeText(source?.repo)) {
-      console.warn(`Warning: 由於缺少 GitHub 原始文件，將跳過外部畫布 "${name}"`);
+      console.warn(`Warning: skipping external canvas "${name}" due to missing GitHub source`);
       continue;
     }
 
     const locator = normalizeText(source.sha) || normalizeText(source.ref);
     if (!locator) {
-      console.warn(`Warning: 跳過外部畫布 "${name}"，因為需要 source.sha 或 source.ref。`);
+      console.warn(`Warning: skipping external canvas "${name}" because source.sha or source.ref is required`);
       continue;
     }
 
@@ -1455,7 +1403,7 @@ function generateCanvasManifest(gitDates, commitSha) {
       name: displayName,
       version: normalizeText(ext?.version, "1.0.0"),
       readmeFile: null,
-      description: normalizeText(ext?.description, "外部畫布擴展"),
+      description: normalizeText(ext?.description, "External canvas extension"),
       path: null,
       ref: null,
       lastUpdated: null,
@@ -1519,7 +1467,7 @@ function generateExtensionsData(extensionManifestData) {
 }
 
 /**
- * 產生綜合搜尋索引
+ * Generate a combined index for search
  */
 function generateSearchIndex(
   agents,
@@ -1551,7 +1499,8 @@ function generateSearchIndex(
       description: instruction.description,
       path: instruction.path,
       lastUpdated: instruction.lastUpdated,
-      searchText: `${instruction.title} ${instruction.description} ${instruction.applyTo || ""}`.toLowerCase(),
+      searchText: `${instruction.title} ${instruction.description} ${instruction.applyTo || ""
+        }`.toLowerCase(),
     });
   }
 
@@ -1584,14 +1533,14 @@ function generateSearchIndex(
 }
 
 /**
- * 從 cookbook.yml 產生 samples/cookbook 資料
+ * Generate samples/cookbook data from cookbook.yml
  */
 function generateSamplesData() {
   const cookbookYamlPath = path.join(COOKBOOK_DIR, "cookbook.yml");
 
   if (!fs.existsSync(cookbookYamlPath)) {
     console.warn(
-      "警告：找不到 cookbook/cookbook.yml，跳過 samples 產生"
+      "Warning: cookbook/cookbook.yml not found, skipping samples generation"
     );
     return {
       cookbooks: [],
@@ -1603,7 +1552,7 @@ function generateSamplesData() {
 
   const cookbookManifest = parseYamlFile(cookbookYamlPath);
   if (!cookbookManifest || !cookbookManifest.cookbooks) {
-    console.warn("警告：cookbook.yml 格式不正確");
+    console.warn("Warning: Invalid cookbook.yml format");
     return {
       cookbooks: [],
       totalRecipes: 0,
@@ -1616,35 +1565,35 @@ function generateSamplesData() {
   const allTags = new Set();
   let totalRecipes = 0;
 
-  // 第一遍：蒐集所有 cookbook 中已知的 language IDs
+  // First pass: collect all known language IDs across cookbooks
   cookbookManifest.cookbooks.forEach((cookbook) => {
     cookbook.languages.forEach((lang) => allLanguages.add(lang.id));
   });
 
   const cookbooks = cookbookManifest.cookbooks.map((cookbook) => {
 
-    // 處理 recipes 並加入檔案路徑
+    // Process recipes and add file paths
     const recipes = cookbook.recipes.map((recipe) => {
-      // 收集 tags
+      // Collect tags
       if (recipe.tags) {
         recipe.tags.forEach((tag) => allTags.add(tag));
       }
 
       totalRecipes++;
 
-      // external recipe 連到外部 URL — 跳過本地檔案解析
+      // External recipes link to an external URL — skip local file resolution
       if (recipe.external) {
         if (recipe.url) {
           try {
             new URL(recipe.url);
           } catch {
-            console.warn(`警告：外部 recipe "${recipe.id}" 的 URL 無效： ${recipe.url}`);
+            console.warn(`Warning: Invalid URL for external recipe "${recipe.id}": ${recipe.url}`);
           }
         } else {
-          console.warn(`警告：外部 recipe "${recipe.id}" 缺少 url`);
+          console.warn(`Warning: External recipe "${recipe.id}" is missing a url`);
         }
 
-        // 從 tags 推導語言（符合已知 language IDs）
+        // Derive languages from tags that match known language IDs
         const recipeLanguages = (recipe.tags || []).filter((tag) => allLanguages.has(tag));
 
         return {
@@ -1660,13 +1609,13 @@ function generateSamplesData() {
         };
       }
 
-      // 為每種語言建立 variants 的檔案路徑
+      // Build variants with file paths for each language
       const variants = {};
       cookbook.languages.forEach((lang) => {
         const docPath = `${cookbook.path}/${lang.id}/${recipe.id}.md`;
         const examplePath = `${cookbook.path}/${lang.id}/recipe/${recipe.id}${lang.extension}`;
 
-        // 檢查檔案是否存在
+        // Check if files exist
         const docFullPath = path.join(ROOT_FOLDER, docPath);
         const exampleFullPath = path.join(ROOT_FOLDER, examplePath);
 
@@ -1711,15 +1660,15 @@ function generateSamplesData() {
 }
 
 /**
- * 主流程
+ * Main function
  */
 async function main() {
-  console.log("產生網站資料中...\n");
+  console.log("Generating website data...\n");
 
   ensureDataDir();
 
-  // 載入 git 日期以取得最後更新時間（一次效率較高的 git 指令）
-  console.log("載入 git 歷史以取得最後更新日期...");
+  // Load git dates for all resource files (single efficient git command)
+  console.log("Loading git history for last updated dates...");
   const gitDates = getGitFileDates(
     [
       "agents/",
@@ -1730,32 +1679,32 @@ async function main() {
     ],
     ROOT_FOLDER
   );
-  console.log(`✓ 已載入 ${gitDates.size} 個檔案的日期\n`);
+  console.log(`✓ Loaded dates for ${gitDates.size} files\n`);
 
-  // 產生所有資料
+  // Generate all data
   const commitSha = getCurrentCommitSha();
 
   const agentsData = generateAgentsData(gitDates);
   const agents = agentsData.items;
   console.log(
-    `✓ 已產生 ${agents.length} 個 agents（${agentsData.filters.models.length} 種 model, ${agentsData.filters.tools.length} 種工具）`
+    `✓ Generated ${agents.length} agents (${agentsData.filters.models.length} models, ${agentsData.filters.tools.length} tools)`
   );
 
   const instructionsData = generateInstructionsData(gitDates);
   const instructions = instructionsData.items;
   console.log(
-    `✓ 已產生 ${instructions.length} 個 instructions（${instructionsData.filters.extensions.length} 種 extension）`
+    `✓ Generated ${instructions.length} instructions (${instructionsData.filters.extensions.length} extensions)`
   );
 
   const skillsData = generateSkillsData(gitDates);
   const skills = skillsData.items;
-  console.log(`✓ 已產生 ${skills.length} 個 skills`);
+  console.log(`✓ Generated ${skills.length} skills`);
 
   const extensionManifestData = generateCanvasManifest(gitDates, commitSha);
   const extensionsData = generateExtensionsData(extensionManifestData);
   const extensions = extensionsData.items;
   console.log(
-    `✓ 已產生 ${extensions.length} 個 extensions（${extensionsData.filters.keywords.length} 個關鍵字）`
+    `✓ Generated ${extensions.length} extensions (${extensionsData.filters.keywords.length} keywords)`
   );
 
   const resourceIndex = buildResourceIndex({
@@ -1767,15 +1716,15 @@ async function main() {
   const pluginsData = generatePluginsData(gitDates, resourceIndex);
   const plugins = pluginsData.items;
   console.log(
-    `✓ 已產生 ${plugins.length} 個 plugins（${pluginsData.filters.tags.length} 個標籤）`
+    `✓ Generated ${plugins.length} plugins (${pluginsData.filters.tags.length} tags)`
   );
 
   const samplesData = generateSamplesData();
   console.log(
-    `✓ 已產生 ${samplesData.totalRecipes} 個 recipe，來自 ${samplesData.totalCookbooks} 個 cookbook（${samplesData.filters.languages.length} 種語言，${samplesData.filters.tags.length} 種標籤）`
+    `✓ Generated ${samplesData.totalRecipes} recipes in ${samplesData.totalCookbooks} cookbooks (${samplesData.filters.languages.length} languages, ${samplesData.filters.tags.length} tags)`
   );
 
-  // 從 .all-contributorsrc 計算貢獻者數量作為 manifest 統計
+  // Count contributors from .all-contributorsrc for manifest stats
   const contributorsRcPath = path.join(ROOT_FOLDER, ".all-contributorsrc");
   const contributorCount = fs.existsSync(contributorsRcPath)
     ? (JSON.parse(fs.readFileSync(contributorsRcPath, "utf-8")).contributors || []).length
@@ -1787,9 +1736,9 @@ async function main() {
     skills,
     plugins
   );
-  console.log(`✓ 已產生搜尋索引，共 ${searchIndex.length} 項`);
+  console.log(`✓ Generated search index with ${searchIndex.length} items`);
 
-  // 寫入 JSON 檔案
+  // Write JSON files
   fs.writeFileSync(
     path.join(WEBSITE_DATA_DIR, "agents.json"),
     JSON.stringify(agentsData, null, 2)
@@ -1826,7 +1775,7 @@ async function main() {
     JSON.stringify(searchIndex, null, 2)
   );
 
-  // 產生含統計與時間戳的 manifest
+  // Generate a manifest with counts and timestamps
   const manifest = {
     generated: new Date().toISOString(),
     counts: {
@@ -1846,10 +1795,10 @@ async function main() {
     JSON.stringify(manifest, null, 2)
   );
 
-  console.log(`\n✓ 所有資料已寫入 website/public/data/`);
+  console.log(`\n✓ All data written to website/public/data/`);
 }
 
 main().catch((err) => {
-  console.error("產生網站資料時發生錯誤：", err);
+  console.error("Error generating website data:", err);
   process.exit(1);
 });

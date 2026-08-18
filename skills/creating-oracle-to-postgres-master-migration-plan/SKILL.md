@@ -45,7 +45,7 @@ description: '探索 .NET 解決方案中的所有專案，將每個專案分類
 
 **步驟 4：撰寫計畫檔案**
 
-儲存至：`.github/oracle-to-postgres-migration/Reports/Master Migration Plan.md`
+儲存至：`.github/oracle-to-postgres-migration/Reports/MasterMigrationPlan.md`
 
 使用此確切模板 — 下游取用者依賴此結構：
 
@@ -56,6 +56,11 @@ description: '探索 .NET 解決方案中的所有專案，將每個專案分類
 **解決方案根目錄：** {REPOSITORY_ROOT}
 **建立時間：** {timestamp}
 **最後更新：** {timestamp}
+
+## DDL 產出物
+
+**位置：** {DDL 產出物路徑，例如 `.github/oracle-to-postgres-migration/DDL/`}
+**是否使用外部工具：** {是 / 否} — {若是，請註明工具名稱（例如 `ora2pg`），並說明第 4 階段（Schema 與 DDL 遷移）可跳過；PostgreSQL DDL 產出物已存在。}
 
 ## 解決方案摘要 (Solution Summary)
 

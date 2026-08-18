@@ -1,32 +1,32 @@
-# OpenAPI 轉應用程式 - Go 外掛程式 (OpenAPI to Application - Go Plugin)
+# OpenAPI 轉應用程式 - Go 外掛程式
 
-從 OpenAPI 規格產生生產等級的 Go 應用程式。包含專案骨架 (scaffolding)、處理常式 (handler) 產生、中介軟體設定以及 REST API 的 Go 最佳實務。
+從 OpenAPI 規格產生可用於生產環境的 Go 應用程式。包含專案 scaffolding、handler 產生、中介軟體設定以及適用於 REST API 的 Go 最佳做法。
 
-## 安裝 (Installation)
+## 安裝
 
 ```bash
-# 使用 Copilot CLI
+# Using Copilot CLI
 copilot plugin install openapi-to-application-go@awesome-copilot
 ```
 
-## 包含內容 (What's Included)
+## 內含項目
 
-### 指令 (斜線指令) (Commands (Slash Commands))
+### 指令 (Slash Commands)
 
-| 指令 | 描述 |
+| 指令 | 說明 |
 |---------|-------------|
-| `/openapi-to-application-go:openapi-to-application-code` | 從 OpenAPI 規格產生一個完整的生產等級應用程式 |
+| `/openapi-to-application-go:openapi-to-application-code` | 從 OpenAPI 規格產生完整且可用於生產環境的應用程式 |
 
-### 代理程式 (Agents)
+### Agent
 
-| 代理程式 | 描述 |
+| Agent | 說明 |
 |-------|-------------|
-| `openapi-to-application` | 從 OpenAPI 規格產生可用應用程式的專家助手 |
+| `openapi-to-application` | 從 OpenAPI 規格產生可運作應用程式的專家助手 |
 
-## 來源 (Source)
+## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個由社群驅動的 GitHub Copilot 擴充功能集合。
 
-## 授權 (License)
+## 授權條款
 
 MIT

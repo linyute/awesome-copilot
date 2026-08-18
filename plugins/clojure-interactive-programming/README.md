@@ -1,26 +1,32 @@
-# Clojure 互動式程式設計外掛程式
+# Clojure Interactive Programming 外掛程式
 
-用於 REPL 優先的 Clojure 工作流程工具，包含 Clojure 指引、互動式程式設計聊天模式以及支援指引。
+用於 REPL 優先 Clojure 工作流程的工具，包含 Clojure 指示、互動式程式設計聊天模式及支援指引。
+
 ## 安裝
 
 ```bash
-# 使用 Copilot CLI
+# Using Copilot CLI
 copilot plugin install clojure-interactive-programming@awesome-copilot
 ```
-## 包含內容
-### 命令 (斜線命令)
 
-| 命令 | 說明 |
+## 包含內容
+
+### 指令（斜線指令）
+
+| 指令 | 說明 |
 |---------|-------------|
-| `/clojure-interactive-programming:remember-interactive-programming` | 一個微提示詞，提醒 Agent 它是一位互動式程式設計師。當 Copilot 可以存取 REPL (可能透過 Backseat Driver) 時，在 Clojure 中效果極佳。適用於 Agent 可以使用的任何具有即時 REPL 的系統。可針對您工作流程和/或工作區中的任何特定提醒來調整提示詞。 |
+| `/clojure-interactive-programming:remember-interactive-programming` | 提醒 agent 其為互動式程式設計師的微提示。當 Copilot 可以存取 REPL（可能透過 Backseat Driver）時，在 Clojure 中效果極佳。適用於任何具有 agent 可使用的即時 REPL 系統。可根據工作流程及/或工作區中的任何特定提醒調整此提示。 |
+
 ### Agent
 
 | Agent | 說明 |
 |-------|-------------|
-| `clojure-interactive-programming` | 專業 Clojure 結對程式設計師，採用 REPL 優先方法論、架構監督與互動式問題解決。執行品質標準、防止規避做法，並在修改檔案前透過即時 REPL 評估來漸進式開發解決方案。 |
+| `clojure-interactive-programming` | 具備 REPL 優先方法論、架構監督與互動式問題解決能力的 Clojure 專家配對程式設計師。強制執行品質標準、避免權宜作法，並在修改檔案之前透過即時 REPL 評估循序漸進地開發解決方案。 |
+
 ## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能收藏。
-## 授權
+此外掛程式為 [Awesome Copilot](https://github.com/github/awesome-copilot)（GitHub Copilot 擴充功能的社群驅動集合）的一部分。
+
+## 授權條款
 
 MIT

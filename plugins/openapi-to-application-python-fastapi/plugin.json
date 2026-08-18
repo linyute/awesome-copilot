@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "openapi-to-application-python-fastapi",
+  "description": "從 OpenAPI 規格產生可用於生產環境的 FastAPI 應用程式。包含專案結構建置、路由產生、相依性注入 (dependency injection) 以及非同步 API 的 Python 最佳做法。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "openapi",
+    "code-generation",
+    "api",
+    "python",
+    "fastapi"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/openapi-to-application.md"
+      ],
+      "skills": [
+        "./skills/openapi-to-application-code/"
+      ]
+    }
+  }
+}

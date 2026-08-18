@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "noob-mode",
+  "description": "適用於非技術背景 Copilot CLI 使用者的白話英文翻譯層。將每個核准提示、錯誤訊息與技術輸出轉換為清晰、無行話的英文，並附帶顏色標示的風險指標。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "accessibility",
+    "plain-english",
+    "non-technical",
+    "beginner",
+    "translation",
+    "copilot-cli",
+    "ux"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/noob-mode/"
+      ]
+    }
+  }
+}

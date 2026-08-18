@@ -139,7 +139,7 @@ description: '設計並規劃端對端 Azure IoT 與智慧城市解決方案：�
 
 ## 輸出範本
 
-使用此回應結構：
+使用 `references/smart-city-solution-template.md` 來標準化每個情境的輸出，回應結構如下：
 
 1. 背景與目標
 2. 建議架構

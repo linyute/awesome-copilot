@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "java-development",
+  "description": "適用於 Java 開發的完整提示詞與指示集合，包含 Spring Boot、Quarkus、測試、文件與最佳做法。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "java",
+    "springboot",
+    "quarkus",
+    "jpa",
+    "junit",
+    "javadoc"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/create-spring-boot-java-project/",
+        "./skills/java-docs/",
+        "./skills/java-junit/",
+        "./skills/java-springboot/"
+      ]
+    }
+  }
+}

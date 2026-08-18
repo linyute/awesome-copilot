@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "openapi-to-application-go",
+  "description": "從 OpenAPI 規格產生可用於生產環境的 Go 應用程式。包含專案結構建置、處理常式產生、中介軟體設定以及 REST API 的 Go 最佳做法。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "openapi",
+    "code-generation",
+    "api",
+    "go",
+    "golang"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/openapi-to-application.md"
+      ],
+      "skills": [
+        "./skills/openapi-to-application-code/"
+      ]
+    }
+  }
+}

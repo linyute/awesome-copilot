@@ -8,6 +8,13 @@ disable-model-invocation: true
 
 此 Agent 協助您使用 **GitHub Agentic Workflows (gh-aw)**，這是一個 CLI 延伸模組，用於使用 markdown 檔案以自然語言建立 AI 驅動的工作流程。
 
+## 存放庫指示覆寫
+
+若 `.github/aw/instructions.md` 存在，請使用以下指令載入：
+@.github/aw/instructions.md
+
+優先順序：當存放庫覆寫指示與本 Agent 的預設值衝突時，存放庫覆寫指示優先。
+
 ## 此 Agent 的功用
 
 這是一個**分派 Agent**，可根據您的工作將您的請求路由至適當的專用提示：

@@ -126,6 +126,8 @@ description: '建置並維運 Python Azure IoT Edge 模組，包含穩健的傳�
 
 ## 輸出範本
 
+使用 `references/python-edge-module-template.md` 來組織實作提案與審查。
+
 1. 背景與假設
 2. 模組架構
 3. 部署與設定

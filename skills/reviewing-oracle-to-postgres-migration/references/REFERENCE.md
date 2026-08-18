@@ -4,7 +4,10 @@
 | --- | --- |
 | [empty-strings-handling.md](empty-strings-handling.md) | Oracle 將 '' 視為 NULL；PostgreSQL 保持空字串為獨立狀態——在程式碼、測試和移轉中對齊行為的模式。 |
 | [no-data-found-exceptions.md](no-data-found-exceptions.md) | Oracle SELECT INTO 會引發 "no data found" 例外狀況；PostgreSQL 則不會——加入明確的 NOT FOUND 處理以模擬 Oracle 行為。 |
+| [oracle-nvl-decode-functions.md](oracle-nvl-decode-functions.md) | Oracle NVL/NVL2/DECODE 沒有直接對應——改用 COALESCE、CASE WHEN 和 NULL 安全比較。 |
 | [oracle-parentheses-from-clause.md](oracle-parentheses-from-clause.md) | Oracle 允許 `FROM(TABLE_NAME)` 語法；PostgreSQL 需要 `FROM TABLE_NAME`——移除資料表名稱周圍不必要的括號。 |
+| [oracle-rownum-pagination.md](oracle-rownum-pagination.md) | Oracle ROWNUM 在 ORDER BY 之前被賦值；將 Top-N 和分頁模式替換為 LIMIT/OFFSET。 |
+| [oracle-sysdate-sequences-dual.md](oracle-sysdate-sequences-dual.md) | 將 SYSDATE/SYSTIMESTAMP 替換為 NOW()，序列 .NEXTVAL 替換為 nextval('seq')，並移除 FROM DUAL。 |
 | [oracle-to-postgres-sorting.md](oracle-to-postgres-sorting.md) | 如何使用 COLLATE "C" 和 DISTINCT 包裝模式在 PostgreSQL 中保留類似 Oracle 的排序語意。 |
 | [oracle-to-postgres-to-char-numeric.md](oracle-to-postgres-to-char-numeric.md) | Oracle 允許無格式的 TO_CHAR(numeric)；PostgreSQL 需要格式字串——改用 CAST(numeric AS TEXT)。 |
 | [oracle-to-postgres-type-coercion.md](oracle-to-postgres-type-coercion.md) | PostgreSQL 嚴格類型檢查對照 Oracle 隱含強制轉型——透過加上引號或對字面值進行轉型來修正比較錯誤。 |

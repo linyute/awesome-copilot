@@ -151,4 +151,5 @@ JSON 包含便籤和文字標籤的確切文字內容、它們的位置以及顏
 - 務必先檢查 PNG。如果找不到，提示使用者點擊「分享給 Copilot」。
 - 如果剪貼簿沒有 JSON 資料，請僅使用 PNG 繼續進行。
 - HTML 模板位於相對於此 `SKILL.md` 檔案的 `assets/napkin.html`。
+- 導覽圖示 `assets/step1-activate.svg`、`assets/step2-whiteboard.svg`、`assets/step3-draw.svg`、`assets/step4-share.svg` 和 `assets/step5-response.svg` 是文件說明插圖，並非執行時輸入。
 - 如果新手模式技能也處於作用中，在要求檔案或 Bash 權限時，請使用其風險指標格式（綠色/黃色/紅色）。

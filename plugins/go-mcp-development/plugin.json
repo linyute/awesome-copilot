@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "go-mcp-development",
+  "description": "使用官方 github.com/modelcontextprotocol/go-sdk 在 Go 中建構模型情境協定 (MCP) 伺服器的完整工具包。包含最佳做法指示、用於產生伺服器的提示詞，以及提供指引的專家聊天模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "go",
+    "golang",
+    "mcp",
+    "model-context-protocol",
+    "server-development",
+    "sdk"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/go-mcp-expert.md"
+      ],
+      "skills": [
+        "./skills/go-mcp-server-generator/"
+      ]
+    }
+  }
+}

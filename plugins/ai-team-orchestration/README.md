@@ -1,63 +1,69 @@
-# AI 團隊協作 (AI Team Orchestration)
+# AI Team Orchestration
 
-引導建立並執行一個具有具名角色（製作人、開發團隊、測試）的多代理 AI 開發團隊。規劃衝刺、以不同代理的聲音進行腦力激盪、協調平行的開發/測試工作流，並透過結構化的交接範本在上下文溢出時生存下來。
+執行一個輕量級、角色分離的 AI 開發團隊，具備靈活的工具、開發人員選定的模型、適度的規劃以及選用的 QA。
 
 ## 包含內容
 
-### 代理 (Agents)
+### Agent
 
-| 代理 | 提及 | 角色 | 工具存取權 |
-|-------|---------|------|-------------|
-| **製作人** (Remy) | `@ai-team-producer` | 衝刺規劃、協調、PR 合併 | 唯讀（不編輯程式碼） |
-| **開發團隊** (Nova, Sage, Milo) | `@ai-team-dev` | 前端、後端和視覺實作 | 完整程式碼編寫工具 |
-| **測試** (Ivy) | `@ai-team-qa` | 測試、回報 Bug、核可 (sign-off) | 讀取 + 測試（不編輯原始碼） |
+| Agent | 提及方式 | 角色 |
+|---|---|---|
+| **Producer** (Remy) | `@ai-team-producer` | 範疇、規劃、協調、分流分類與合併 |
+| **Dev Team** (Nova, Sage, Milo) | `@ai-team-dev` | 適應技術堆疊的實作、測試、自我審查與 Pull Request |
+| **QA** (Ivy) | `@ai-team-qa` | 選用性的獨立行為測試與修復驗證 |
 
-### 技能 (Skill)
+這些 agent 刻意省略了 `tools` 和 `model` frontmatter。它們會繼承開發人員啟用的內建工具、MCP 和擴充功能工具，並使用開發人員選定的模型。角色界限仍維持在指示以及正常的權限與核准控制機制中。
 
-`/ai-team-orchestration` 提供的範本包括：
-- **PROJECT_BRIEF.md** — 跨對話的 14 個章節單一真理來源
-- **腦力激盪格式** — 具有不同聲音的多代理辯論
-- **衝刺計畫** — 優先排序的工作任務、進度追蹤器、交接文件
-- **反模式** — 來自真實多代理專案的 19 個記錄在案的陷阱
+### 技能
+
+`/ai-team-orchestration` 提供：
+
+- 精簡的專案概要範本；
+- 適度的工作計畫範本；
+- 具備不同觀點的腦力激盪指引；
+- 適用於多 agent 工作的實用反模式。
+
+## 預設工作流程
+
+```text
+Plan -> Implement -> Test -> optional review or QA -> Merge -> update project state
+```
+
+使用符合工作需求的最輕量流程。小型變更可直接進行；實質性或具風險的變更則可受益於簡短的計畫、獨立審查或專責的 QA。
 
 ## 快速入門
 
-### 1. 引導專案建立
+### 規劃
 
-```
-@ai-team-producer 我想要建立 [描述您的專案]。
-使用 /ai-team-orchestration 來引導此專案建立。
-從腦力激盪開始，然後建立包含所有章節 (1-14) 的 PROJECT_BRIEF.md。
-```
-
-### 2. 規劃一個衝刺
-
-```
-@ai-team-producer 建立衝刺 1 計畫。範圍：[要建構的內容]。
-執行團隊會商 (consilium) 以驗證計畫。
+```text
+@ai-team-producer Help me define the next useful outcome for this project.
+Use /ai-team-orchestration and keep planning proportional to the work.
 ```
 
-### 3. 執行（獨立的 VS Code 視窗）
+### 實作
 
-```
-@ai-team-dev 閱讀 PROJECT_BRIEF.md，然後閱讀 docs/sprint-1/plan.md。執行衝刺 1。
-```
-
-### 4. 測試（另一個 VS Code 視窗）
-
-```
-@ai-team-qa 衝刺 1 已合併至 main。進行完整試玩。
-將 Bug 作為 GitHub Issues 回報。撰寫 docs/qa/sprint-1-signoff.md。
+```text
+@ai-team-dev Read the repository instructions and active plan or issue.
+Implement the requested outcome, run relevant checks, self-review the diff,
+and prepare the pull request. Do not merge.
 ```
 
-## 運作方式
+### 選用 QA
 
-人類扮演平行對話之間的訊息匯流排。每個團隊在獨立的 VS Code 視窗中工作，並擁有自己的存放庫複製 (clone)：
+```text
+@ai-team-qa Test the pull request against its acceptance criteria.
+Focus on important behavior and regressions. Report Ready, Ready with minor
+follow-ups, or Blocked with reproducible findings.
+```
 
-- **@ai-team-producer** — 無法編輯程式碼（受工具限制強制執行）
-- **@ai-team-qa** — 無法編輯原始檔，僅能讀取/測試/回報 Bug
-- **@ai-team-dev** — 完整工具，角色包含 Nova（前端）、Sage（後端）、Milo（設計）
+## 原則
 
-## 來源
+- Producer 負責協調，但從不實作應用程式程式碼。
+- Dev 負責實作與驗證，但從不合併或宣稱獨立核准。
+- QA 為選用項目，獨立驗證行為而無需修復應用程式原始碼。
+- 儲存庫貢獻原則與平台保護機制定義了 Git 和合併行為。
+- 重要情境與錯誤應留存在持久的專案檔案或問題追蹤器中，而非僅存在於聊天中。
 
-將交付 [Arcade After Dark](https://github.com/denis-a-evdokimov/guess-and-get) 的工作流程式碼化 — 這是一個由 7 個 AI 代理在 5 天內完全不使用人類編寫的程式碼而建構的 30 款遊戲生日禮物應用程式。
+## 起源
+
+此外掛程式源自於 [Arcade After Dark](https://github.com/denis-a-evdokimov/guess-and-get)，這是一個透過不同規劃、實作、設計和 QA 視角所建構的多 agent 專案。

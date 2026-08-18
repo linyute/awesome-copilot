@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "python-mcp-development",
+  "description": "使用官方 SDK 與 FastMCP 在 Python 中建構 Model Context Protocol (MCP) 伺服器的完整工具包。包含最佳做法指示、用於產生伺服器的提示，以及提供指引的專家聊天模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "python",
+    "mcp",
+    "model-context-protocol",
+    "fastmcp",
+    "server-development"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/python-mcp-expert.md"
+      ],
+      "skills": [
+        "./skills/python-mcp-server-generator/"
+      ]
+    }
+  }
+}

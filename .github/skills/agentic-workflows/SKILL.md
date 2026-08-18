@@ -5,12 +5,17 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 
 # Agentic Workflows 路由器
 
-當使用者在此儲存庫中要求設計、建立、更新、除錯或升級 GitHub Agentic Workflows 時，請使用此 skill。
+當使用者要求在此存放庫中設計、建立、更新、除錯或升級 GitHub Agentic Workflows 時，請使用此技能。
 
-此 skill 是一個分發器：識別任務類型，載入相符的工作流程 prompt/skill 檔案，並直接遵循其說明。保持回覆簡潔，若不清楚正確的 prompt，請提問以釐清。
+此技能為分派器：識別任務類型，載入相符的工作流程提示詞/技能檔案，並直接遵循。保持回應簡潔，若正確的提示詞不明確，請提出澄清問題。
 
-僅閱讀您需要的檔案：
-從 `github/gh-aw` 載入這些檔案（這些檔案在本地端無法取得）。
+存放庫覆蓋（選用）：
+- 若 `.github/aw/instructions.md` 存在，在載入相符的提示詞/技能後，使用 `@.github/aw/instructions.md` 載入它。
+- 優先順序：當發生衝突時，存放庫覆蓋指示會覆寫上游預設值。
+
+僅讀取您需要的檔案：
+從 `github/gh-aw` 載入這些檔案（本機無法使用）。
+- `.github/aw/action-container-substitutions.md`
 - `.github/aw/agentic-chat.md`
 - `.github/aw/agentic-workflows-mcp.md`
 - `.github/aw/asciicharts.md`
@@ -18,27 +23,36 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 - `.github/aw/charts-trending.md`
 - `.github/aw/charts.md`
 - `.github/aw/cli-commands.md`
+- `.github/aw/configure-agentic-engine.md`
 - `.github/aw/context.md`
+- `.github/aw/create-agentic-workflow-trigger-details.md`
 - `.github/aw/create-agentic-workflow.md`
 - `.github/aw/create-shared-agentic-workflow.md`
 - `.github/aw/debug-agentic-workflow.md`
 - `.github/aw/dependabot.md`
 - `.github/aw/deployment-status.md`
+- `.github/aw/designer.md`
+- `.github/aw/evals.md`
 - `.github/aw/experiments.md`
 - `.github/aw/github-agentic-workflows.md`
+- `.github/aw/github-mcp-server-pagination.md`
 - `.github/aw/github-mcp-server.md`
 - `.github/aw/instructions.md`
+- `.github/aw/linter-workflows.md`
 - `.github/aw/llms.md`
 - `.github/aw/loop.md`
 - `.github/aw/lsp.md`
+- `.github/aw/maintainer.md`
 - `.github/aw/mcp-clis.md`
 - `.github/aw/memory-stateful-patterns.md`
 - `.github/aw/memory.md`
 - `.github/aw/messages.md`
+- `.github/aw/multi-agent-research.md`
 - `.github/aw/network.md`
 - `.github/aw/optimize-agentic-workflow.md`
 - `.github/aw/patterns.md`
 - `.github/aw/pr-reviewer.md`
+- `.github/aw/release-workflow.md`
 - `.github/aw/report.md`
 - `.github/aw/reuse.md`
 - `.github/aw/safe-outputs-automation.md`
@@ -52,10 +66,13 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 - `.github/aw/subagents.md`
 - `.github/aw/syntax-agentic.md`
 - `.github/aw/syntax-core.md`
+- `.github/aw/syntax-engine.md`
 - `.github/aw/syntax-tools-imports.md`
 - `.github/aw/syntax.md`
 - `.github/aw/test-coverage.md`
 - `.github/aw/test-expression.md`
+- `.github/aw/token-optimization-caching-budgets.md`
+- `.github/aw/token-optimization-observability.md`
 - `.github/aw/token-optimization.md`
 - `.github/aw/triggers.md`
 - `.github/aw/update-agentic-workflow.md`
@@ -65,20 +82,21 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 - `.github/aw/workflow-editing.md`
 - `.github/aw/workflow-patterns.md`
 
-- `.github/skills/agentic-workflow-designer/SKILL.md`
-載入相符的工作流程 prompt 或 skill 後，直接遵循其說明：
-- 透過訪談從頭開始設計工作流程：`skills/agentic-workflow-designer/SKILL.md`
+載入相符的工作流程提示詞或技能後，直接遵循：
+- 透過訪談從頭設計工作流程：`.github/aw/designer.md`
 - 建立新工作流程：`.github/aw/create-agentic-workflow.md`
+- 設定或新增宣告式引擎：`.github/aw/configure-agentic-engine.md`
 - 更新現有工作流程：`.github/aw/update-agentic-workflow.md`
-- 除錯、審計或調查工作流程：`.github/aw/debug-agentic-workflow.md`
-- 升級工作流程並修正棄用功能：`.github/aw/upgrade-agentic-workflows.md`
-- 建立共享元件或 MCP 包裝器：`.github/aw/create-shared-agentic-workflow.md`
+- 除錯、稽核或調查工作流程：`.github/aw/debug-agentic-workflow.md`
+- 升級工作流程並修復已棄用項目：`.github/aw/upgrade-agentic-workflows.md`
+- 建立共用元件或 MCP 包裝器：`.github/aw/create-shared-agentic-workflow.md`
 - 建立產生報告的工作流程：`.github/aw/report.md`
-- 修正 Dependabot 資訊清單 PR：`.github/aw/dependabot.md`
-- 分析涵蓋率工作流程：`.github/aw/test-coverage.md`
-- 轉譯緊湊的 markdown 圖表：`.github/aw/asciicharts.md`
-- 將 CLI 指令對應至 MCP 用法：`.github/aw/cli-commands.md`
+- 修復 Dependabot 宣示說明 PR：`.github/aw/dependabot.md`
+- 分析涵蓋範圍工作流程：`.github/aw/test-coverage.md`
+- 轉譯精簡 Markdown 圖表：`.github/aw/asciicharts.md`
+- 將 CLI 命令對應至 MCP 用法：`.github/aw/cli-commands.md`
 - 選擇工作流程架構與模式：`.github/aw/patterns.md`
-- 最佳化權杖（Token）使用量與成本：`.github/aw/token-optimization.md`
+- 最佳化權杖使用量與成本：`.github/aw/token-optimization.md`
+- 設計長時間運行的多代理人研究工作流程：`.github/aw/multi-agent-research.md`
 
-當任務涉及 OTEL、OTLP、追蹤（traces）、觀測性後端或遙測驅動分析時，在載入相符的工作流程 prompt 或 skill 後，也請閱讀並遵循 `skills/otel-queries/SKILL.md`。
+當任務涉及 OTEL、OTLP、追蹤、可觀測性後端或遙測驅動分析時，請在載入相符的工作流程提示詞或技能後，亦閱讀並遵循 `skills/otel-queries/SKILL.md`。

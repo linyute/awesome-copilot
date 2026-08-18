@@ -1,0 +1,30 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "power-apps-code-apps",
+  "description": "Power Apps Code Apps 開發的完整工具包，包含專案樣板、開發標準，以及透過 Power Platform 整合建構程式碼優先應用程式的專家指引。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "power-apps",
+    "power-platform",
+    "typescript",
+    "react",
+    "code-apps",
+    "dataverse",
+    "connectors"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/power-platform-expert.md"
+      ],
+      "skills": [
+        "./skills/power-apps-code-app-scaffold/"
+      ]
+    }
+  }
+}

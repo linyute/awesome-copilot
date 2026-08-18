@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "repo-actions-hub",
+  "description": "從 Copilot 畫布瀏覽存放庫 GitHub Actions 工作流程、檢查最近的執行記錄，以及手動觸發 workflow_dispatch 執行。",
+  "version": "1.0.2",
+  "author": {
+    "name": "James Montemagno",
+    "url": "https://github.com/jamesmontemagno"
+  },
+  "keywords": [
+    "actions",
+    "canvas",
+    "copilot-extension",
+    "github-actions",
+    "recent-runs",
+    "workflow-dispatch"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/repo-actions-hub"
+      ]
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "color-orb",
+  "description": "一個視覺球體，使用者可要求 Agent 為其重新著色，同時在畫布中顯示即時活動記錄。",
+  "version": "1.0.2",
+  "author": {
+    "name": "Aaron Powell",
+    "url": "https://github.com/aaronpowell"
+  },
+  "keywords": [
+    "agent-actions",
+    "color-picker",
+    "interactive-demo",
+    "realtime-updates",
+    "sse-events",
+    "visual-feedback"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/color-orb"
+      ]
+    }
+  }
+}

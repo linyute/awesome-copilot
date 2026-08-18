@@ -1,0 +1,36 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "the-workshop",
+  "description": "不再充當 AI Agent 之間的總機 — 直接指導團隊。The Workshop 將長時間執行的 AI Agent (工作桌) 放在同一個空間中處理相同工作，各自擁有記憶體與歷程記錄，並共享同一個工作區，讓您直接指導工作而非轉達。",
+  "version": "0.1.0",
+  "author": {
+    "name": "jennyf19"
+  },
+  "repository": "https://github.com/jennyf19/the-workshop",
+  "license": "MIT",
+  "keywords": [
+    "multi-agent",
+    "coordination",
+    "desks",
+    "persistent-memory",
+    "agent-signals",
+    "developer-experience"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/workshop-ta.md"
+      ],
+      "skills": [
+        "./skills/bench-read/",
+        "./skills/desk-journal/",
+        "./skills/desk-open/",
+        "./skills/signal-write/",
+        "./skills/workshop-create/"
+      ],
+      "extensions": [
+        "./extensions/signals-dashboard"
+      ]
+    }
+  }
+}

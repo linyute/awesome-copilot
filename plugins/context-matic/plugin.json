@@ -1,0 +1,30 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "context-matic",
+  "description": "程式碼撰寫 Agent 容易對 API 產生幻覺。ContextMatic 為它們提供經策劃且具版本控制的 API 與 SDK 文件。當您要求 Agent「整合付款 API」時，它往往會胡亂猜測——退回使用過時的訓練資料以及與您實際 SDK 不符的通用模式。ContextMatic 透過在精確需要的時刻為 Agent 提供確定性、具版本感知且 SDK 原生的上下文來解決此問題。",
+  "version": "0.1.0",
+  "keywords": [
+    "api-context",
+    "api-integration",
+    "mcp",
+    "sdk",
+    "apimatic",
+    "third-party-apis",
+    "sdks"
+  ],
+  "author": {
+    "name": "APIMatic",
+    "email": "developer@apimatic.io"
+  },
+  "homepage": "https://www.apimatic.io",
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/integrate-context-matic/",
+        "./skills/onboard-context-matic/"
+      ]
+    }
+  }
+}

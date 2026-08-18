@@ -19,7 +19,7 @@ description: '根據新需求或現有程式碼更新，優化解決方案的規
 - 適時加入範例與邊界情境
 - 文件需自包含，不依賴外部上下文
 
-規格文件需儲存於 [/spec/](/spec/) 目錄，檔名格式為 `[a-z0-9-]+.md`，名稱需能描述規格內容，並以高階目的開頭（schema、tool、data、infrastructure、process、architecture、design 之一）。
+規格文件需儲存於 `/spec/` 目錄，檔名格式為 `[a-z0-9-]+.md`，名稱需能描述規格內容，並以高階目的開頭（schema、tool、data、infrastructure、process、architecture、design 之一）。
 
 規格文件必須為有效 Markdown 格式。
 

@@ -18,7 +18,7 @@
 
 適用於用戶端函式庫、SDK 和程式設計框架。
 
-```markdown
+````markdown
 ---
 name: {sdk-名稱}
 description: {功能說明}。當代理程式需要使用 {技術上下文} 執行 {主要任務} 時使用。支援 {語言/平台}。
@@ -83,7 +83,7 @@ description: {功能說明}。當代理程式需要使用 {技術上下文} 執�
 | {進階主題 1} | `microsoft_docs_search(query="{sdk} {topic}")` |
 | {進階主題 2} | `microsoft_docs_fetch(url="{url}")` |
 | {程式碼範例} | `microsoft_code_sample_search(query="{sdk} {scenario}", language="{lang}")` |
-```
+````
 
 ---
 
@@ -91,7 +91,7 @@ description: {功能說明}。當代理程式需要使用 {技術上下文} 執�
 
 適用於 Azure 服務和雲端資源。
 
-```markdown
+````markdown
 ---
 name: {服務名稱}
 description: 處理 {Azure 服務}。當代理程式需要 {主要功能} 時使用。涵蓋佈署、設定和 SDK 用法。
@@ -169,7 +169,7 @@ description: 處理 {Azure 服務}。當代理程式需要 {主要功能} 時使
 | REST API | `microsoft_docs_fetch(url="{url}")` |
 | ARM/Bicep | `microsoft_docs_search(query="{service} bicep template")` |
 | 安全性 | `microsoft_docs_search(query="{service} security best practices")` |
-```
+````
 
 ---
 
@@ -177,7 +177,7 @@ description: 處理 {Azure 服務}。當代理程式需要 {主要功能} 時使
 
 適用於開發框架和平台 (例如 ASP.NET, MAUI, Blazor)。
 
-```markdown
+````markdown
 ---
 name: {框架名稱}
 description: 使用 {框架} 建構 {應用程式類型}。當代理程式需要建立、修改或除錯 {框架} 應用程式時使用。
@@ -248,7 +248,7 @@ description: 使用 {框架} 建構 {應用程式類型}。當代理程式需要
 | {進階功能} | `microsoft_docs_search(query="{framework} {feature}")` |
 | {整合} | `microsoft_docs_fetch(url="{url}")` |
 | {範例} | `microsoft_code_sample_search(query="{framework} {scenario}")` |
-```
+````
 
 ---
 
@@ -256,7 +256,7 @@ description: 使用 {框架} 建構 {應用程式類型}。當代理程式需要
 
 適用於 API、協定和規格 (例如 Microsoft Graph, OOXML)。
 
-```markdown
+````markdown
 ---
 name: {api-名稱}
 description: 與 {API/協定} 互動。當代理程式需要執行 {主要操作} 時使用。涵蓋身份驗證、端點和常見操作。
@@ -321,7 +321,7 @@ description: 與 {API/協定} 互動。當代理程式需要執行 {主要操作
 | 完整端點參考 | `microsoft_docs_fetch(url="{url}")` |
 | 權限 | `microsoft_docs_search(query="{api} permissions {resource}")` |
 | SDK | `microsoft_docs_search(query="{api} SDK {language}")` |
-```
+````
 
 ---
 

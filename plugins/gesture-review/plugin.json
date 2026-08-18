@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "gesture-review",
+  "description": "透過即時相機畫面檢閱 Pull Request，並使用比讚/倒讚手勢進行核准或拒絕。",
+  "version": "1.0.2",
+  "author": {
+    "name": "Aaron Powell",
+    "url": "https://github.com/aaronpowell"
+  },
+  "keywords": [
+    "camera-input",
+    "gesture-control",
+    "github-prs",
+    "hands-free",
+    "mediapipe",
+    "pull-request-review"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/gesture-review"
+      ]
+    }
+  }
+}

@@ -2,23 +2,23 @@
 
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { ROOT_FOLDER } from "./constants.mjs";
 import { readExternalPlugins } from "./external-plugin-validation.mjs";
 
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
-const EXTENSIONS_DIR = path.join(ROOT_FOLDER, "extensions");
 const MARKETPLACE_FILE = path.join(ROOT_FOLDER, ".github/plugin", "marketplace.json");
 
 /**
- * 從 plugin.json 讀取 plugin 的 metadata
- * @param {string} pluginDir - plugin 目錄路徑
- * @returns {object|null} - plugin metadata，若找不到則回傳 null
+ * 從 plugin.json 檔案讀取外掛程式中繼資料
+ * @param {string} pluginDir - 外掛程式目錄路徑
+ * @returns {object|null} - 外掛程式中繼資料，若找不到則為 null
  */
 function readPluginMetadata(pluginDir) {
-  const pluginJsonPath = path.join(pluginDir, ".github/plugin", "plugin.json");
+  const pluginJsonPath = path.join(pluginDir, "plugin.json");
 
   if (!fs.existsSync(pluginJsonPath)) {
-    console.warn(`警告：在 ${path.basename(pluginDir)} 找不到 plugin.json`);
+    console.warn(`警告：找不到 ${path.basename(pluginDir)} 的 plugin.json`);
     return null;
   }
 
@@ -63,28 +63,21 @@ function collectLocalPluginsFromRoot(rootDir, sourcePrefix, includeEntry = () =>
 }
 
 /**
- * 產生 marketplace.json
+ * 從外掛程式目錄產生 marketplace.json
  */
-function generateMarketplace() {
+export function generateMarketplace() {
   console.log("正在產生 marketplace.json...");
 
-  if (!fs.existsSync(PLUGINS_DIR) && !fs.existsSync(EXTENSIONS_DIR)) {
-    console.error(`錯誤：找不到 plugins 目錄 (${PLUGINS_DIR}) 或 extensions 目錄 (${EXTENSIONS_DIR})`);
+  if (!fs.existsSync(PLUGINS_DIR)) {
+    console.error(`錯誤：找不到外掛程式目錄 (${PLUGINS_DIR})`);
     process.exit(1);
   }
 
-  const plugins = [
-    ...collectLocalPluginsFromRoot(PLUGINS_DIR, "plugins"),
-    ...collectLocalPluginsFromRoot(
-      EXTENSIONS_DIR,
-      "extensions",
-      (entryName) => fs.existsSync(path.join(EXTENSIONS_DIR, entryName, "extension.mjs"))
-    )
-  ];
+  const plugins = collectLocalPluginsFromRoot(PLUGINS_DIR, "plugins");
 
-  console.log(`找到 ${plugins.length} 個本地 plugin manifest`);
+  console.log(`找到 ${plugins.length} 個本地外掛程式資訊清單`);
 
-  // 讀取 external plugins 並直接合併
+  // 讀取外部外掛程式並照原樣合併
   const { plugins: externalPlugins, errors: externalErrors, warnings: externalWarnings } = readExternalPlugins({
     localPluginNames: plugins.map((plugin) => plugin.name),
     policy: "marketplace",
@@ -92,26 +85,26 @@ function generateMarketplace() {
   externalWarnings.forEach((warning) => console.warn(`警告：${warning}`));
   if (externalErrors.length > 0) {
     externalErrors.forEach((error) => console.error(`錯誤：${error}`));
-    console.error("錯誤：external.json 包含無效的條目");
+    console.error("錯誤：external.json 包含無效項目");
     process.exit(1);
   }
 
   if (externalPlugins.length > 0) {
-    console.log(`\n找到 ${externalPlugins.length} 個外部 plugin`);
+    console.log(`\n找到 ${externalPlugins.length} 個外部外掛程式`);
     for (const ext of externalPlugins) {
       plugins.push(ext);
-      console.log(`✓ 已加入外部 plugin：${ext.name}`);
+      console.log(`✓ 已新增外部外掛程式：${ext.name}`);
     }
   }
 
-  // 依名稱（不區分大小寫）排序所有 plugin
+  // 依名稱排序所有外掛程式（不區分大小寫）
   plugins.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
 
   // 建立 marketplace.json 結構
   const marketplace = {
     name: "awesome-copilot",
     metadata: {
-      description: "社群驅動的 GitHub Copilot plugin、agent、prompt 與 skill 集合",
+      description: "Community-driven collection of GitHub Copilot plugins, agents, prompts, and skills",
       version: "1.0.0"
     },
     owner: {
@@ -130,9 +123,10 @@ function generateMarketplace() {
   // 寫入 marketplace.json
   fs.writeFileSync(MARKETPLACE_FILE, JSON.stringify(marketplace, null, 2) + "\n");
 
-  console.log(`\n✓ 成功產生 marketplace.json，總共 ${plugins.length} 個 plugin（本地 ${plugins.length - externalPlugins.length}、外部 ${externalPlugins.length}）`);
+  console.log(`\n✓ 成功產生包含 ${plugins.length} 個外掛程式的 marketplace.json（${plugins.length - externalPlugins.length} 個本地，${externalPlugins.length} 個外部）`);
   console.log(`  位置：${MARKETPLACE_FILE}`);
 }
 
-// 執行腳本
-generateMarketplace();
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  generateMarketplace();
+}

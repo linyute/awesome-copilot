@@ -85,10 +85,6 @@ metadata:
 - [fundamentals-required-attributes](references/fundamentals-required-attributes.md) - 每個 Span 類型的必填欄位
 - [fundamentals-universal-attributes](references/fundamentals-universal-attributes.md) - 通用屬性 (user.id, session.id)
 - [fundamentals-flattening](references/fundamentals-flattening.md) - JSON 扁平化規則
-- [attributes-messages](references/attributes-messages.md) - 對話訊息格式
-- [attributes-metadata](references/attributes-metadata.md) - 自訂 Metadata 結構描述
-- [attributes-graph](references/attributes-graph.md) - 代理程式工作流程屬性
-- [attributes-exceptions](references/attributes-exceptions.md) - 錯誤追蹤
 
 ## 常見工作流程 (Common Workflows)
 

@@ -40,4 +40,6 @@ description: '針對 Oracle 到 PostgreSQL 遷移期間發現的缺陷建立結�
 
 ## 檔名慣例
 
-將錯誤報告儲存為 `BUG_REPORT_<DescriptiveSlug>.md`，其中 `<DescriptiveSlug>` 是簡短的 PascalCase 識別碼（例如：`EmptyStringNullHandling`, `RefCursorUnwrapFailure`）。
+將錯誤報告儲存至 `.github/oracle-to-postgres-migration/Reports/{ProjectName}/BUG_REPORT_<DescriptiveSlug>.md`，其中：
+- `{ProjectName}` 為專案的組件/資料夾名稱，空格以 `-` 取代（例如 `MyApp.DataAccess`）
+- `<DescriptiveSlug>` 為描述缺陷的簡短 PascalCase 識別字（例如 `EmptyStringNullHandling`、`RefCursorUnwrapFailure`）

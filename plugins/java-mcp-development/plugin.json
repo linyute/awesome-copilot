@@ -1,0 +1,31 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "java-mcp-development",
+  "description": "使用官方 MCP Java SDK 搭配響應式串流 (reactive streams) 與 Spring Boot 整合，在 Java 中建構模型情境協定伺服器的完整工具包。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "java",
+    "mcp",
+    "model-context-protocol",
+    "server-development",
+    "sdk",
+    "reactive-streams",
+    "spring-boot",
+    "reactor"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/java-mcp-expert.md"
+      ],
+      "skills": [
+        "./skills/java-mcp-server-generator/"
+      ]
+    }
+  }
+}

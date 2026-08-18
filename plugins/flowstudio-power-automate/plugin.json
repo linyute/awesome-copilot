@@ -1,0 +1,33 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "flowstudio-power-automate",
+  "description": "透過 FlowStudio MCP 伺服器讓您的 AI Agent 能夠完全掌握 Power Automate 雲端流程。大規模連線、偵錯、建構、監視健康狀態並控管流程——提供動作層級的輸入與輸出，而不僅僅是狀態碼。",
+  "version": "2.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "power-automate",
+    "power-platform",
+    "flowstudio",
+    "mcp",
+    "model-context-protocol",
+    "cloud-flows",
+    "workflow-automation",
+    "monitoring",
+    "governance"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/flowstudio-power-automate-build/",
+        "./skills/flowstudio-power-automate-debug/",
+        "./skills/flowstudio-power-automate-governance/",
+        "./skills/flowstudio-power-automate-mcp/",
+        "./skills/flowstudio-power-automate-monitoring/"
+      ]
+    }
+  }
+}

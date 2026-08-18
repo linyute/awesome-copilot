@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "eyeball",
+  "description": "具備內嵌來源螢幕擷取畫面的文件分析。當您要求 Copilot 分析文件時，Eyeball 會產生一個 Word 文件，其中每項事實主張都包含來自來源資料的高亮螢幕擷取畫面，讓您可以親自驗證。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "document-analysis",
+    "citation-verification",
+    "screenshot",
+    "contracts",
+    "legal",
+    "trust",
+    "visual-verification"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/eyeball/"
+      ]
+    }
+  }
+}

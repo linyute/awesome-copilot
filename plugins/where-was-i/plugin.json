@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "where-was-i",
+  "description": "重建您的開發情境 (分支、提交、未提交的工作、PR 線索)，並觸發繼續提示以迅速繼續工作。",
+  "version": "1.0.2",
+  "author": {
+    "name": "Aaron Powell",
+    "url": "https://github.com/aaronpowell"
+  },
+  "keywords": [
+    "branch-state",
+    "developer-context",
+    "git-history",
+    "interrupt-recovery",
+    "pull-request-context",
+    "resume-work"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/where-was-i"
+      ]
+    }
+  }
+}

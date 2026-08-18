@@ -1,6 +1,6 @@
 # Arch 外掛程式
 
-Architecture and modernization toolkit for locally-cloned repositories. It produces a single, cited architecture document from the code on disk, and generates a phased modernization plan that automatically runs Documentation mode first when no architecture document exists yet.
+適用於本機複製（clone）儲存庫的架構與現代化工具組。它會從磁碟上的程式碼產出單一且具引用的架構文件，並產生分階段的現代化計畫；當架構文件尚不存在時，它會自動先執行「文件模式」。
 
 ## 安裝
 
@@ -12,13 +12,13 @@ copilot plugin install arch@awesome-copilot
 
 ### 技能
 
-- **`doc-and-modernize`** — 在單一技能中為本機複製的儲存庫提供兩個互補的工作流程（透過此外掛程式安裝後，會以 `arch:doc-and-modernize` 的形式呈現）：
-  - **Documentation 模式** — 為您已在本機簽出的儲存庫產生一份完整、可驗證的架構文件。以本機優先運作（優先使用本機簽出，將遠端/API 查詢視為標記的最後手段），將每項聲明引用至檔案 + 行號，標記未經驗證的事實，解決矛盾，並深入探索最複雜的子系統。非常適合用於上線文件和系統設計地圖。
-  - **Modernization 模式** — 為舊版程式碼庫產生分階段的現代化計畫。若已有目前的架構文件，則在此基礎上繼續建構；否則，會先執行 Documentation 模式工作流程產生文件，再繼續進行計畫。產出的內容包括各功能的遷移文件、附有 ADR 的技術堆疊建議，以及具適應性且分階段安全推進的實作計畫。
+- **`doc-and-modernize`** — 針對本機複製儲存庫的兩種互補工作流程，整合於單一技能中（透過此外掛程式安裝時呈現為 `arch:doc-and-modernize`）：
+  - **文件模式（Documentation mode）** — 為您已簽出至本機的儲存庫產出一份全面且可驗證的架構文件。採本機優先（優先使用本機簽出內容，將遠端/API 查詢視為帶有標記的最後手段）、將每項陳述引用至檔案 + 行號、標記未經驗證的事實、解決矛盾，並深入剖析最複雜的子系統。非常適合新人引導（onboarding）文件與系統設計圖。
+  - **現代化模式（Modernization mode）** — 為遺留程式碼庫產生分階段的現代化計畫。若目前已存在架構文件，則會以此為基礎進行建構；否則會先執行文件模式工作流程以產出一份文件，接著再繼續進行計畫。產出每個功能的遷移文件、包含 ADR 的技術堆疊建議，以及具備調適性、安全漸進的分階段實作計畫。
 
 ## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分。
+此外掛程式為 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分。
 
 ## 授權條款
 

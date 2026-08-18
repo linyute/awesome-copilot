@@ -591,7 +591,6 @@ grep -c '^| [0-9]' quality/PROGRESS.md
 find quality/code_reviews -name "*.md" -size +500c | wc -l  # 應 >= 1
 find quality/spec_audits -name "*triage*" -size +500c | wc -l  # 應 >= 1
 ```
-```
 
 **基準線 vs 帶有文件比較模式：** 對同一個存放庫執行兩次技能 — 一次沒有補充文件，一次有包含專案歷史記錄的 `reference_docs/` 資料夾。比較：需求計數、情境計數、漏洞計數以及管線完成情況。帶有文件的執行應產出等於或更多的需求與漏洞。如果基準線在漏洞偵測方面優於帶有文件的執行，那是關於文件品質的發現，而非技能失敗。
 

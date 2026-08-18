@@ -1,0 +1,32 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "acreadiness-cockpit",
+  "description": "從 Copilot 聊天中推動 Microsoft AgentRC：評估 AI 整備度、產生 Copilot 指示（平面或具備 monorepo 的 applyTo glob 巢狀結構），並管理原則。在 reports/index.html 產生獨立的靜態 HTML 儀表板。",
+  "version": "1.0.0",
+  "keywords": [
+    "agentrc",
+    "ai-readiness",
+    "copilot-instructions",
+    "readiness-report",
+    "monorepo",
+    "policy",
+    "dashboard"
+  ],
+  "author": {
+    "name": "mvanderbend-msoft"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/ai-readiness-reporter.md"
+      ],
+      "skills": [
+        "./skills/acreadiness-assess/",
+        "./skills/acreadiness-generate-instructions/",
+        "./skills/acreadiness-policy/"
+      ]
+    }
+  }
+}

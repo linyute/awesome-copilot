@@ -31,6 +31,7 @@
 
 | 名稱 | 說明 | 事件 | 隨附資產 |
 | ---- | ----------- | ------ | -------------- |
+| [Attester Import Check](../hooks/attester-import-check/README.md) | 在 Copilot 編碼代理將 PyPI 和 npm 套件名稱寫入程式碼之前，對照 attester.dev 存在預言機進行驗證，以封鎖幻覺產生的相依性 | preToolUse | `check-imports.py`<br />`hooks.json` |
 | [Dependency License Checker](../hooks/dependency-license-checker/README.md) | 在工作階段結束時掃描新增加的相依套件以確保授權合規性 (GPL, AGPL 等) | sessionEnd | `check-licenses.sh`<br />`hooks.json` |
 | [Fix Broken Links](../hooks/fix-broken-links/README.md) | 在每次 Copilot 工具使用後，檢查變更的網頁檔案中是否存在損壞的超連結和 SEO 錨點問題。 | postToolUse | `hooks.json`<br />`link-fix.ps1`<br />`link-fix.sh` |
 | [Governance Audit](../hooks/governance-audit/README.md) | 掃描 Copilot 代理程式提示以尋找威脅訊號並記錄治理事件 | sessionStart, sessionEnd, userPromptSubmitted | `audit-prompt.sh`<br />`audit-session-end.sh`<br />`audit-session-start.sh`<br />`hooks.json` |

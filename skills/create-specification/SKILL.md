@@ -19,7 +19,7 @@ description: '為解決方案建立新的規格文件，並針對生成式 AI �
 - 適當時加入範例與邊界案例。
 - 文件需自洽，不依賴外部情境。
 
-規格文件應儲存於 [/spec/](/spec/) 目錄，檔名格式為 `spec-[a-z0-9-]+.md`，名稱需能描述規格內容且以高階目的為首（schema、tool、data、infrastructure、process、architecture、design 其中之一）。
+規格文件應儲存於 `/spec/` 目錄，檔名格式為 `spec-[a-z0-9-]+.md`，名稱需能描述規格內容且以高階目的為首（schema、tool、data、infrastructure、process、architecture、design 其中之一）。
 
 規格文件必須為格式正確的 Markdown。
 

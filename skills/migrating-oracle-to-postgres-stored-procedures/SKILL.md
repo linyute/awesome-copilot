@@ -39,8 +39,10 @@ description: '將 Oracle PL/SQL 預存程序遷移至 PostgreSQL PL/pgSQL。翻�
 - 將 `UNION ALL` 視為審查檢查點。驗證每個分支的計劃品質，若合併分支計劃導致效能回退（例如，在大型資料表上出現意外的循序掃描），請重新調整結構。
 - 在有助於提高清晰度或保真度時，利用 `orafce` 擴充功能。
 
-請參閱 `.github/oracle-to-postgres-migration/DDL/Postgres/Tables and Views/` 的 PostgreSQL 資料表/檢視定義以了解目標綱要詳情。
+請參閱 `.github/oracle-to-postgres-migration/DDL/Postgres/{ProjectName}/Tables and Views/` 的 PostgreSQL 資料表/檢視定義以了解目標綱要詳情。
 
 **步驟 3：將已遷移的程序寫入 Postgres 輸出目錄**
 
-將每個已遷移的程序放在 `.github/oracle-to-postgres-migration/DDL/Postgres/Procedures and Functions/{PACKAGE_NAME_IF_APPLICABLE}/` 下的獨立檔案中。每個檔案一個程序。
+將每個已遷移的程序放在 `.github/oracle-to-postgres-migration/DDL/Postgres/{ProjectName}/Procedures and Functions/{PACKAGE_NAME_IF_APPLICABLE}/` 下的獨立檔案中。每個檔案一個程序。
+
+> `{ProjectName}` 為專案的組件/資料夾名稱，空格以 `-` 取代（例如 `MyApp.DataAccess`）。此路徑與 agent 及其他遷移技能所使用的路徑一致。

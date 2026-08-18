@@ -2,44 +2,59 @@
 
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import { ROOT_FOLDER } from "./constants.mjs";
 import { readExternalPlugins } from "./external-plugin-validation.mjs";
+import { validateLicenseField } from "./lib/license.mjs";
+import { AGENT_PLUGIN_SCHEMA_URL, validateAgentPluginManifest } from "./agent-plugin-schema.mjs";
 
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
 const EXTENSIONS_DIR = path.join(ROOT_FOLDER, "extensions");
 
-// 驗證相關函式
+const AGENT_PLUGINS_SCHEMA = AGENT_PLUGIN_SCHEMA_URL;
+const COPILOT_NAMESPACE = "com.github.copilot";
+const AWESOME_COPILOT_NAMESPACE = "com.github.awesome-copilot";
+
+// 驗證函式
 function validateName(name, folderName) {
   const errors = [];
   if (!name || typeof name !== "string") {
-    errors.push("name 為必填，且必須為字串");
+    errors.push("name is required and must be a string");
     return errors;
   }
-  if (name.length < 1 || name.length > 50) {
-    errors.push("name 長度必須介於 1 到 50 個字元之間");
+  if (name.length < 1 || name.length > 64) {
+    errors.push("name must be between 1 and 64 characters");
   }
-  if (!/^[a-z0-9-]+$/.test(name)) {
-    errors.push("name 只能包含小寫字母、數字與連字號");
+  if (!/^(?!.*(?:--|\.\.))[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/.test(name)) {
+    errors.push("name must contain only lowercase letters, numbers, hyphens, and dots (spec §5.5)");
   }
   if (name !== folderName) {
-    errors.push(`name "${name}" 必須與資料夾名稱 "${folderName}" 相符`);
+    errors.push(`name "${name}" must match folder name "${folderName}"`);
   }
   return errors;
 }
 
+function validateSchema(parsed) {
+  if (parsed["$schema"] !== AGENT_PLUGINS_SCHEMA) {
+    return `$schema must be "${AGENT_PLUGINS_SCHEMA}"`;
+  }
+  const schemaErrors = validateAgentPluginManifest(parsed);
+  return schemaErrors.length ? `manifest does not conform to Agent Plugins schema: ${schemaErrors.join("; ")}` : null;
+}
+
 function validateDescription(description) {
   if (!description || typeof description !== "string") {
-    return "description 為必填，且必須為字串";
+    return "description is required and must be a string";
   }
   if (description.length < 1 || description.length > 500) {
-    return "description 長度必須介於 1 到 500 個字元之間";
+    return "description must be between 1 and 500 characters";
   }
   return null;
 }
 
 function validateVersion(version) {
   if (!version || typeof version !== "string") {
-    return "version 為必填，且必須為字串";
+    return "version is required and must be a string";
   }
   return null;
 }
@@ -47,20 +62,20 @@ function validateVersion(version) {
 function validateKeywords(keywords) {
   if (keywords === undefined) return null;
   if (!Array.isArray(keywords)) {
-    return "keywords 必須為陣列";
+    return "keywords must be an array";
   }
   if (keywords.length > 10) {
-    return "最多允許 10 個 keywords";
+    return "maximum 10 keywords allowed";
   }
   for (const keyword of keywords) {
     if (typeof keyword !== "string") {
-      return "所有 keywords 必須為字串";
+      return "all keywords must be strings";
     }
     if (!/^[a-z0-9-]+$/.test(keyword)) {
-      return `keyword "${keyword}" 只能包含小寫字母、數字與連字號`;
+      return `keyword "${keyword}" must contain only lowercase letters, numbers, and hyphens`;
     }
     if (keyword.length < 1 || keyword.length > 30) {
-      return `keyword "${keyword}" 長度必須介於 1 到 30 個字元`;
+      return `keyword "${keyword}" must be between 1 and 30 characters`;
     }
   }
   return null;
@@ -105,49 +120,57 @@ function validateSpecPaths(plugin) {
   const errors = [];
   const specs = {
     agents: { prefix: "./agents/", suffix: ".md", repoDir: "agents", repoSuffix: ".agent.md" },
+    hooks: { prefix: "./hooks/", suffix: "/", repoDir: "hooks", repoFile: "README.md" },
     skills: { prefix: "./skills/", suffix: "/", repoDir: "skills", repoFile: "SKILL.md" },
   };
 
   for (const [field, spec] of Object.entries(specs)) {
-    const arr = plugin[field];
+    const arr = plugin.extensions?.[AWESOME_COPILOT_NAMESPACE]?.[field];
     if (arr === undefined) continue;
     if (!Array.isArray(arr)) {
-      errors.push(`${field} 必須為陣列`);
+      errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field} must be an array`);
       continue;
     }
     if (!arraysEqual(arr, sortPluginEntries(arr))) {
-      errors.push(`${field} 必須按字母順序排序`);
+      errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field} must be sorted alphabetically`);
+    }
+    if (new Set(arr).size !== arr.length) {
+      errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field} must not contain duplicate references`);
     }
     for (let i = 0; i < arr.length; i++) {
       const p = arr[i];
       if (typeof p !== "string") {
-        errors.push(`${field}[${i}] 必須為字串`);
+        errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}[${i}] must be a string`);
         continue;
       }
       if (!p.startsWith("./")) {
-        errors.push(`${field}[${i}] 必須以 "./" 開頭`);
+        errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}[${i}] must start with "./"`);
         continue;
       }
       if (!p.startsWith(spec.prefix)) {
-        errors.push(`${field}[${i}] 必須以 "${spec.prefix}" 開頭`);
+        errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}[${i}] must start with "${spec.prefix}"`);
         continue;
       }
       if (!p.endsWith(spec.suffix)) {
-        errors.push(`${field}[${i}] 必須以 "${spec.suffix}" 結尾`);
+        errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}[${i}] must end with "${spec.suffix}"`);
         continue;
       }
-      // 檢查來源檔案在 repo 根目錄是否存在
+      // 驗證來源檔案存在於存放庫根目錄
       const basename = p.slice(spec.prefix.length, p.length - spec.suffix.length);
       if (field === "skills") {
         const skillDir = path.join(ROOT_FOLDER, spec.repoDir, basename);
         const skillFile = path.join(skillDir, spec.repoFile);
         if (!fs.existsSync(skillFile)) {
-          errors.push(`${field}[${i}] 找不到來源： ${spec.repoDir}/${basename}/SKILL.md`);
+          errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}[${i}] source not found: ${spec.repoDir}/${basename}/SKILL.md`);
         }
       } else {
-        const srcFile = path.join(ROOT_FOLDER, spec.repoDir, basename + spec.repoSuffix);
+        const srcFile = spec.repoFile
+          ? path.join(ROOT_FOLDER, spec.repoDir, basename, spec.repoFile)
+          : path.join(ROOT_FOLDER, spec.repoDir, basename + spec.repoSuffix);
         if (!fs.existsSync(srcFile)) {
-          errors.push(`${field}[${i}] 找不到來源： ${spec.repoDir}/${basename}${spec.repoSuffix}`);
+          errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}[${i}] source not found`);
+        } else if (field === "hooks" && !fs.existsSync(path.join(ROOT_FOLDER, spec.repoDir, basename, "hooks.json"))) {
+          errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}[${i}] source not found: ${spec.repoDir}/${basename}/hooks.json`);
         }
       }
     }
@@ -155,41 +178,61 @@ function validateSpecPaths(plugin) {
   return errors;
 }
 
-function validateCuratedPluginExtensionRefs(plugin) {
+function validateExtensionReferences(plugin, pluginDir) {
   const errors = [];
-  const extensionRefs = plugin?.["x-awesome-copilot"]?.extensions;
-  if (extensionRefs === undefined) {
+  const directories = plugin.extensions?.[AWESOME_COPILOT_NAMESPACE]?.extensions;
+  if (directories === undefined) {
+    return errors;
+  }
+  if (!Array.isArray(directories)) {
+    errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].extensions must be an array`);
+    return errors;
+  }
+  if (!arraysEqual(directories, sortPluginEntries(directories))) {
+    errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].extensions entries must be sorted alphabetically`);
+  }
+  if (new Set(directories).size !== directories.length) {
+    errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].extensions must not contain duplicate references`);
+  }
+
+  for (const [index, directory] of directories.entries()) {
+    const name = typeof directory === "string"
+      ? directory.replace(/^\.\/extensions\//, "").replace(/\/$/, "")
+      : "";
+    if (typeof directory !== "string" || !directory.startsWith("./extensions/") ||
+        !/^[a-z0-9][a-z0-9.-]*[a-z0-9]$|^[a-z0-9]$/.test(name)) {
+      errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].extensions[${index}] must be a valid ./extensions/<name> path`);
+      continue;
+    }
+    if (!fs.existsSync(path.join(EXTENSIONS_DIR, name, "extension.mjs"))) {
+      errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].extensions[${index}] source not found: extensions/${name}`);
+    }
+  }
+
+  return errors;
+}
+
+function validateCompositionNamespace(plugin) {
+  const errors = [];
+  const compositionFields = ["agents", "hooks", "mcpServers", "skills"];
+  const extensions = plugin.extensions;
+  const composition = extensions?.[AWESOME_COPILOT_NAMESPACE];
+
+  if (extensions !== undefined &&
+      (typeof extensions !== "object" || extensions === null || Array.isArray(extensions))) {
+    errors.push(`extensions must be an object containing "${AWESOME_COPILOT_NAMESPACE}"`);
     return errors;
   }
 
-  if (!Array.isArray(extensionRefs)) {
-    errors.push('x-awesome-copilot.extensions 必須為陣列');
+  if (composition !== undefined &&
+      (typeof composition !== "object" || composition === null || Array.isArray(composition))) {
+    errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"] must be an object`);
     return errors;
   }
 
-  if (!arraysEqual(extensionRefs, sortPluginEntries(extensionRefs))) {
-    errors.push('x-awesome-copilot.extensions 必須按字母順序排序');
-  }
-
-  const knownExtensions = new Set(getExtensionFolderNames());
-  for (let i = 0; i < extensionRefs.length; i++) {
-    const ref = extensionRefs[i];
-    if (typeof ref !== "string") {
-      errors.push(`x-awesome-copilot.extensions[${i}] 必須為字串`);
-      continue;
-    }
-    if (!ref.startsWith("./extensions/")) {
-      errors.push(`x-awesome-copilot.extensions[${i}] 必須以 "./extensions/" 開頭`);
-      continue;
-    }
-
-    const normalized = ref.replace(/^\.\/extensions\//, "").replace(/\/$/, "");
-    if (!normalized) {
-      errors.push(`x-awesome-copilot.extensions[${i}] 必須包含 extension 資料夾名稱`);
-      continue;
-    }
-    if (!knownExtensions.has(normalized)) {
-      errors.push(`x-awesome-copilot.extensions[${i}] 找不到來源： extensions/${normalized}`);
+  for (const field of compositionFields) {
+    if (extensions?.[field] !== undefined) {
+      errors.push(`extensions.${field} must be moved to extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}`);
     }
   }
 
@@ -200,32 +243,38 @@ function validatePlugin(folderName) {
   const pluginDir = path.join(PLUGINS_DIR, folderName);
   const errors = [];
   let parsedPlugin = null;
+  const extensionDir = path.join(EXTENSIONS_DIR, folderName);
+  const isExtensionPlugin = fs.existsSync(path.join(extensionDir, "extension.mjs"));
 
-  // 規則 1: 必須存在 .github/plugin/plugin.json
-  const pluginJsonPath = path.join(pluginDir, ".github/plugin", "plugin.json");
+  // 規則 1：外掛程式根目錄必須有 plugin.json
+  const pluginJsonPath = path.join(pluginDir, "plugin.json");
   if (!fs.existsSync(pluginJsonPath)) {
-    errors.push("缺少必要檔案：.github/plugin/plugin.json");
+    errors.push("missing required file: plugin.json");
     return errors;
   }
 
-  // 規則 2: 必須存在 README.md
+  // 規則 2：必須有 README.md
   const readmePath = path.join(pluginDir, "README.md");
   if (!fs.existsSync(readmePath)) {
-    errors.push("缺少必要檔案：README.md");
+    errors.push("missing required file: README.md");
   }
 
-  // 解析 plugin.json
+  // 剖析 plugin.json
   let plugin;
   try {
     const raw = fs.readFileSync(pluginJsonPath, "utf-8");
     plugin = JSON.parse(raw);
     parsedPlugin = plugin;
   } catch (err) {
-    errors.push(`解析 plugin.json 失敗：${err.message}`);
+    errors.push(`failed to parse plugin.json: ${err.message}`);
     return { errors, plugin: parsedPlugin };
   }
 
-  // 規則 3 & 4: name, description, version
+  // 規則 3：$schema 為必要項目
+  const schemaError = validateSchema(plugin);
+  if (schemaError) errors.push(schemaError);
+
+  // 規則 4 & 5：name, description, version
   const nameErrors = validateName(plugin.name, folderName);
   errors.push(...nameErrors);
 
@@ -235,157 +284,124 @@ function validatePlugin(folderName) {
   const versionError = validateVersion(plugin.version);
   if (versionError) errors.push(versionError);
 
-  // 規則 5: keywords（或向後相容使用 tags）
+  // 規則 6：keywords（或向後相容的 tags）
   const keywordsError = validateKeywords(plugin.keywords ?? plugin.tags);
   if (keywordsError) errors.push(keywordsError);
 
-  // 規則 6: agents, commands, skills 路徑
+  // 規則 5b：license（與外部外掛程式共用）。非 SPDX 為警告而非錯誤。
+  const warnings = [];
+  for (const field of ["agents", "hooks", "mcpServers", "skills"]) {
+    if (plugin[field] !== undefined) {
+      errors.push(`${field} must be moved to extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}`);
+    }
+  }
+  errors.push(...validateCompositionNamespace(plugin));
+  const licenseResult = validateLicenseField(plugin.license, { required: false });
+  errors.push(...licenseResult.errors);
+  warnings.push(...licenseResult.warnings);
+
+  // 規則 6：agents, hooks, 和 skills 路徑
   const specErrors = validateSpecPaths(plugin);
   errors.push(...specErrors);
 
-  const extensionRefErrors = validateCuratedPluginExtensionRefs(plugin);
+  const extensionRefErrors = validateExtensionReferences(plugin, pluginDir);
   errors.push(...extensionRefErrors);
 
-  return { errors, plugin: parsedPlugin };
+  if (isExtensionPlugin) {
+    const extension = plugin.extensions;
+    const namespace = extension?.[COPILOT_NAMESPACE];
+    if (!namespace || namespace.logo !== "assets/preview.png") {
+      errors.push(`extensions["${COPILOT_NAMESPACE}"].logo must be exactly "assets/preview.png" for extension plugins`);
+    } else {
+      validateExtensionScreenshotPath(extensionDir, namespace.logo, `extensions["${COPILOT_NAMESPACE}"].logo`, errors);
+    }
+  }
+
+  return { errors, warnings, plugin: parsedPlugin };
 }
 
 function validateExtensionScreenshotPath(extensionDir, pathValue, fieldName, errors) {
   if (!pathValue || typeof pathValue !== "string") {
-    errors.push(`${fieldName} 必須為字串路徑`);
+    errors.push(`${fieldName} must be a string path`);
     return;
   }
 
   const normalizedPath = pathValue.replace(/^\.\/+/, "");
   const absolutePath = path.join(extensionDir, normalizedPath);
   if (!fs.existsSync(absolutePath)) {
-    errors.push(`${fieldName} 找不到： ${normalizedPath}`);
+    errors.push(`${fieldName} not found: ${normalizedPath}`);
   }
-}
-
-function validateExtensionManifest(folderName) {
-  const extensionDir = path.join(EXTENSIONS_DIR, folderName);
-  const errors = [];
-  let parsedPlugin = null;
-
-  const pluginJsonPath = path.join(extensionDir, ".github/plugin", "plugin.json");
-  if (!fs.existsSync(pluginJsonPath)) {
-    errors.push("缺少必要檔案：.github/plugin/plugin.json");
-    return { errors, plugin: parsedPlugin };
-  }
-
-  const parsed = parseJsonFile(pluginJsonPath);
-  if (parsed.parseError) {
-    errors.push(`解析 plugin.json 失敗：${parsed.parseError}`);
-    return { errors, plugin: parsedPlugin };
-  }
-
-  parsedPlugin = parsed;
-
-  const nameErrors = validateName(parsed.name, folderName);
-  errors.push(...nameErrors);
-
-  const descError = validateDescription(parsed.description);
-  if (descError) errors.push(descError);
-
-  const versionError = validateVersion(parsed.version);
-  if (versionError) errors.push(versionError);
-
-  const keywordsError = validateKeywords(parsed.keywords ?? parsed.tags);
-  if (keywordsError) errors.push(keywordsError);
-
-  // Extension 慣例：logo 必須是正好 "assets/preview.png"
-  if (parsed.logo !== "assets/preview.png") {
-    errors.push('logo 必須正好為 "assets/preview.png"（extension 慣例）');
-  } else {
-    validateExtensionScreenshotPath(extensionDir, parsed.logo, "logo", errors);
-  }
-
-  // Extension 慣例：不得帶有 x-awesome-copilot
-  if (parsed["x-awesome-copilot"] !== undefined) {
-    errors.push("不得包含 x-awesome-copilot 欄位（請改用慣例化的 logo）");
-  }
-
-  // Extension 慣例：extensions 欄位必須是 "."
-  if (parsed.extensions !== ".") {
-    errors.push('extensions 欄位必須正好為 "."（extension 慣例）');
-  }
-
-  return { errors, plugin: parsedPlugin };
 }
 
 // 主驗證函式
-function validatePlugins() {
+export function isReusableExtensionRegistered(extensionName, pluginDirectoryNames, referencedExtensionNames) {
+  return pluginDirectoryNames.has(extensionName) || referencedExtensionNames.has(extensionName);
+}
+
+export function validatePlugins() {
   const pluginDirs = fs.existsSync(PLUGINS_DIR)
     ? fs.readdirSync(PLUGINS_DIR, { withFileTypes: true })
       .filter((d) => d.isDirectory())
       .map((d) => d.name)
     : [];
-  const extensionDirs = getExtensionFolderNames();
-
-  if (pluginDirs.length === 0 && extensionDirs.length === 0) {
-    console.log("未找到 plugins 或 extension plugin manifest — 已跳過驗證");
+  if (pluginDirs.length === 0) {
+    console.log("No plugin manifests found - validation skipped");
     return true;
   }
 
-  console.log(`驗證 ${pluginDirs.length} 個 plugins...\n`);
-  console.log(`驗證 ${extensionDirs.length} 個 extensions 作為 plugin 來源...\n`);
+  console.log(`Validating ${pluginDirs.length} plugins...\n`);
 
   let hasErrors = false;
   const seenNames = new Set();
   const localPluginNames = [];
+  const pluginDirectoryNames = new Set(pluginDirs);
+  const referencedExtensionNames = new Set();
 
   for (const dir of pluginDirs) {
-    console.log(`驗證 ${dir}...`);
+    console.log(`Validating ${dir}...`);
 
-    const { errors, plugin } = validatePlugin(dir);
+    const { errors, warnings, plugin } = validatePlugin(dir);
 
     if (errors.length > 0) {
       console.error(`❌ ${dir}:`);
       errors.forEach((e) => console.error(`   - ${e}`));
       hasErrors = true;
     } else {
-      console.log(`✅ ${dir} 驗證通過`);
+      console.log(`✅ ${dir} is valid`);
+    }
+
+    if (warnings?.length > 0) {
+      warnings.forEach((w) => console.warn(`⚠️  ${dir}: ${w}`));
     }
 
     if (plugin?.name) {
       if (seenNames.has(plugin.name)) {
-        console.error(`❌ 重複的 plugin 名稱 "${plugin.name}"`);
+        console.error(`❌ Duplicate plugin name "${plugin.name}"`);
         hasErrors = true;
       } else {
         seenNames.add(plugin.name);
         localPluginNames.push(plugin.name);
       }
     }
+
+    const extensionReferences = plugin?.extensions?.[AWESOME_COPILOT_NAMESPACE]?.extensions;
+    if (Array.isArray(extensionReferences)) {
+      for (const reference of extensionReferences) {
+        if (typeof reference === "string" && reference.startsWith("./extensions/")) {
+          referencedExtensionNames.add(reference.replace(/^\.\/extensions\//, "").replace(/\/$/, ""));
+        }
+      }
+    }
   }
 
-  if (extensionDirs.length > 0) {
-    console.log("");
-  }
-
-  for (const dir of extensionDirs) {
-    console.log(`驗證 extension ${dir}...`);
-    const { errors, plugin } = validateExtensionManifest(dir);
-
-    if (errors.length > 0) {
-      console.error(`❌ extension ${dir}:`);
-      errors.forEach((e) => console.error(`   - ${e}`));
+  for (const dir of getExtensionFolderNames()) {
+    if (!isReusableExtensionRegistered(dir, pluginDirectoryNames, referencedExtensionNames)) {
+      console.error(`❌ extension ${dir}: must be referenced by a plugin or have a standalone manifest at plugins/${dir}/plugin.json`);
       hasErrors = true;
-    } else {
-      console.log(`✅ extension ${dir} 驗證通過`);
-    }
-
-    if (plugin?.name) {
-      if (seenNames.has(plugin.name)) {
-        console.error(`❌ 重複的 plugin 名稱 "${plugin.name}"`);
-        hasErrors = true;
-      } else {
-        seenNames.add(plugin.name);
-        localPluginNames.push(plugin.name);
-      }
     }
   }
 
-  console.log("\n驗證外部 plugin 目錄...");
+  console.log("\nValidating external plugin catalog...");
   const { plugins: externalPlugins, errors: externalErrors, warnings: externalWarnings } = readExternalPlugins({
     localPluginNames,
     policy: "marketplace",
@@ -398,25 +414,26 @@ function validatePlugins() {
     externalErrors.forEach((error) => console.error(`   - ${error}`));
     hasErrors = true;
   } else {
-    console.log(`✅ external.json 驗證通過（${externalPlugins.length} 個外部 plugins）`);
+    console.log(`✅ external.json is valid (${externalPlugins.length} external plugins)`);
   }
 
   if (!hasErrors) {
-    console.log(`\n✅ 所有 ${pluginDirs.length} 個 plugins、${extensionDirs.length} 個 extensions，以及外部目錄均驗證通過`);
+    console.log(`\n✅ All ${pluginDirs.length} plugins and the external catalog are valid`);
   }
 
   return !hasErrors;
 }
 
-// 執行驗證
-try {
-  const isValid = validatePlugins();
-  if (!isValid) {
-    console.error("\n❌ Plugin 驗證失敗");
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  try {
+    const isValid = validatePlugins();
+    if (!isValid) {
+      console.error("\n❌ Plugin validation failed");
+      process.exit(1);
+    }
+    console.log("\n🎉 Plugin validation passed");
+  } catch (error) {
+    console.error(`Error during validation: ${error.message}`);
     process.exit(1);
   }
-  console.log("\n🎉 Plugin 驗證通過");
-} catch (error) {
-  console.error(`驗證過程發生錯誤：${error.message}`);
-  process.exit(1);
 }

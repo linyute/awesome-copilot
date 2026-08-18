@@ -14,6 +14,8 @@
 
 剛開始接觸 GitHub Copilot 自訂功能？網站上的 **[學習中心 (Learning Hub)](https://awesome-copilot.github.com/learning-hub)** 提供精選文章、逐步解說和參考資料 — 涵蓋從代理程式、技能和指示等核心概念，到掛鉤、代理工作流程、MCP 伺服器和 Copilot 編碼代理程式的實作指南。
 
+[⬆ 回到頂部](#-awesome-github-copilot)
+
 ## 此存放庫中的內容
 
 | 資源                                                           | 說明                                             | 瀏覽                                                           |
@@ -23,6 +25,8 @@
 | 🎯 [技能 (Skills)](docs/README.skills.md)                       | 包含指示和隨附資產的獨立資料夾                   | [所有技能 →](https://awesome-copilot.github.com/skills)        |
 | 🔌 [外掛程式 (Plugins)](docs/README.plugins.md)                 | 針對特定工作流程精選的代理程式和技能組合         | [所有外掛程式 →](https://awesome-copilot.github.com/plugins)   |
 | 🍳 [教戰手冊 (Cookbook)](cookbook/README.md)                    | 用於使用 Copilot API 的隨插即用食譜              | —                                                              |
+
+[⬆ 回到頂部](#-awesome-github-copilot)
 
 ## 安裝外掛程式
 
@@ -39,11 +43,15 @@ copilot plugin marketplace add github/awesome-copilot
 copilot plugin install <plugin-name>@awesome-copilot
 ```
 
+[⬆ 回到頂部](#-awesome-github-copilot)
+
 ## 貢獻
 
 參閱 [CONTRIBUTING.md](CONTRIBUTING.md) · [AGENTS.md](AGENTS.md) 了解 AI 代理程式指南 · [安全性 (Security)](SECURITY.md) · [行為準則 (Code of Conduct)](CODE_OF_CONDUCT.md)
 
 > 這裡的自訂功能來自第三方開發人員。安裝前請檢查任何代理程式及其文件。
+
+[⬆ 回到頂部](#-awesome-github-copilot)
 
 ## 貢獻者 ✨
 
@@ -535,17 +543,10 @@ copilot plugin install <plugin-name>@awesome-copilot
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/lovyjain"><img src="https://avatars.githubusercontent.com/u/54174168?v=4" width="100px;" alt=""/><br /><sub><b>Lovy Jain</b></sub></a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kimtth"><img src="https://avatars.githubusercontent.com/u/13846660?v=4" width="100px;" alt=""/><br /><sub><b>kimtth</b></sub></a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AkashAi7"><img src="https://avatars.githubusercontent.com/u/46550108?v=4" width="100px;" alt=""/><br /><sub><b>Akash Dwivedi</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://surenk.com"><img src="https://avatars.githubusercontent.com/u/902972?v=4" width="100px;" alt=""/><br /><sub><b>Suren K</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.cloudblogger.eu"><img src="https://avatars.githubusercontent.com/u/53148138?v=4" width="100px;" alt=""/><br /><sub><b>Konstantinos Passadis | Azure MVP | MCT</b></sub></a></td>
     </tr>
   </tbody>
-  <tfoot>
-    <tr>
-      <td align="center" size="13px" colspan="7">
-        <img src="https://raw.githubusercontent.com/all-contributors/all-contributors-cli/1b8533af435da9854653492b1327a23a4dbd0a10/assets/logo-small.svg">
-          <a href="https://all-contributors.js.org/docs/en/bot/usage">Add your contributions</a>
-        </img>
-      </td>
-    </tr>
-  </tfoot>
 </table>
 
 <!-- markdownlint-restore -->
@@ -553,13 +554,19 @@ copilot plugin install <plugin-name>@awesome-copilot
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
+<p><a href="https://all-contributors.js.org/docs/en/bot/usage">加入你的貢獻</a></p>
+
 此專案遵循 [all-contributors](https://github.com/all-contributors/all-contributors) 規範。歡迎任何形式的貢獻！
+
+[⬆ 回到頂部](#-awesome-github-copilot)
 
 ## 📚 其他資源
 
 - [VS Code Copilot 自訂文件](https://code.visualstudio.com/docs/copilot/copilot-customization) - Microsoft 官方文件
 - [GitHub Copilot Chat 文件](https://code.visualstudio.com/docs/copilot/chat/copilot-chat) - 完整的聊天功能指南
 - [VS Code 設定](https://code.visualstudio.com/docs/getstarted/settings) - 一般 VS Code 設定指南
+
+[⬆ 回到頂部](#-awesome-github-copilot)
 
 ## ™️ 商標
 

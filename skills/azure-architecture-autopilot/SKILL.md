@@ -166,3 +166,6 @@ Microsoft Foundry, Azure OpenAI, AI Search, ADLS Gen2, Key Vault, Microsoft Fabr
 | `references/azure-dynamic-sources.md` | MS 文件 URL 註冊表 |
 | `references/azure-common-patterns.md` | PE/安全性/命名模式 |
 | `references/ai-data.md` | AI/資料服務指南 |
+| `assets/06-architecture-diagram.png` | 產生的架構圖範例 |
+| `assets/07-azure-portal-resources.png` | Azure 入口網站資源視圖範例 |
+| `assets/08-deployment-succeeded.png` | 部署成功結果範例 |

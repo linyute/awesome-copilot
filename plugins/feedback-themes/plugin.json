@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "feedback-themes",
+  "description": "依影響程度探索分組的客戶意見反應訊號，並深入探討主題以指引產品的後續步驟。",
+  "version": "1.0.2",
+  "author": {
+    "name": "Aaron Powell",
+    "url": "https://github.com/aaronpowell"
+  },
+  "keywords": [
+    "customer-feedback",
+    "impact-prioritization",
+    "product-insights",
+    "signal-grouping",
+    "theme-analysis",
+    "trend-discovery"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/feedback-themes"
+      ]
+    }
+  }
+}

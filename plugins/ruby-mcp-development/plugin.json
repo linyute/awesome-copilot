@@ -1,0 +1,30 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ruby-mcp-development",
+  "description": "在 Ruby 中使用官方 MCP Ruby SDK gem 建構 Model Context Protocol 伺服器的完整工具包，支援 Rails 整合。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "ruby",
+    "mcp",
+    "model-context-protocol",
+    "server-development",
+    "sdk",
+    "rails",
+    "gem"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/ruby-mcp-expert.md"
+      ],
+      "skills": [
+        "./skills/ruby-mcp-server-generator/"
+      ]
+    }
+  }
+}

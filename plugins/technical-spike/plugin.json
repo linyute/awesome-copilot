@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "technical-spike",
+  "description": "用於建立、管理和研究技術探究 (Technical Spike) 的工具，以便在進行解決方案的規格制定與實作之前減少未知數和假設。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "technical-spike",
+    "assumption-testing",
+    "validation",
+    "research"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/research-technical-spike.md"
+      ],
+      "skills": [
+        "./skills/create-technical-spike/"
+      ]
+    }
+  }
+}

@@ -194,6 +194,7 @@ gh api repos/github/awesome-copilot/issues \
 |------------|-------------|-----------|
 | 進階搜尋 | 具備布林邏輯、日期範圍、跨儲存庫搜尋、議題欄位篩選 (`field.name:value`) 的複雜查詢 | [references/search.md](references/search.md) |
 | 子議題與父議題 | 將工作拆分為階層式任務 | [references/sub-issues.md](references/sub-issues.md) |
+| 里程碑 | 建立、讀取、更新、關閉、重新開啟、刪除里程碑，以及管理里程碑相關議題 | [references/milestones.md](references/milestones.md) |
 | 議題相依性 | 追蹤「被哪些阻礙」/「阻礙了哪些」的關係 | [references/dependencies.md](references/dependencies.md) |
 | 議題類型 (進階) | 超出 MCP `list_issue_types` / `type` 參數的 GraphQL 作業 | [references/issue-types.md](references/issue-types.md) |
 | 專案 V2 | 專案面板、進度報告、欄位管理 | [references/projects.md](references/projects.md) |

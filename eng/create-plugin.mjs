@@ -131,11 +131,11 @@ async function createPlugin() {
     }
 
     // 建立目錄結構
-    const githubPluginDir = path.join(pluginDir, ".github", "plugin");
-    fs.mkdirSync(githubPluginDir, { recursive: true });
+    fs.mkdirSync(pluginDir, { recursive: true });
 
     // 產生 plugin.json
     const pluginJson = {
+      "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
       name: pluginId,
       description,
       version: "1.0.0",
@@ -143,10 +143,16 @@ async function createPlugin() {
       author: { name: "Awesome Copilot Community" },
       repository: "https://github.com/linyute/awesome-copilot",
       license: "MIT",
+      extensions: {
+        "com.github.awesome-copilot": {
+          agents: [],
+          skills: [],
+        },
+      },
     };
 
     fs.writeFileSync(
-      path.join(githubPluginDir, "plugin.json"),
+      path.join(pluginDir, "plugin.json"),
       JSON.stringify(pluginJson, null, 2) + "\n"
     );
 
@@ -179,7 +185,7 @@ MIT
     console.log(`\n✅ 已建立外掛程式：${pluginDir}`);
     console.log("\n📝 後續步驟：");
     console.log(`1. 將代理程式、提示或指引加入 plugins/${pluginId}/`);
-    console.log(`2. 使用您的 Metadata 更新 plugins/${pluginId}/.github/plugin/plugin.json`);
+    console.log(`2. 使用您的 Metadata 更新 plugins/${pluginId}/plugin.json`);
     console.log(`3. 編輯 plugins/${pluginId}/README.md 以描述您的外掛程式`);
     console.log("4. 執行 'npm run build' 以重新產生文件");
   } catch (error) {

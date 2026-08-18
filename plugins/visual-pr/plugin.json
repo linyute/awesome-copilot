@@ -1,0 +1,31 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "visual-pr",
+  "description": "在提取要求說明中擷取、標註並嵌入螢幕擷取畫面和 GIF 動畫示範。包含以 Playwright 為基礎的 UI 擷取、PIL 影像標註、適用於 GitHub 與 Azure DevOps 的 PR 嵌入工作流程，以及可變計時的螢幕錄影。",
+  "version": "1.0.0",
+  "keywords": [
+    "screenshots",
+    "pull-request",
+    "before-after",
+    "annotations",
+    "playwright",
+    "gif",
+    "screen-recording",
+    "visual"
+  ],
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/image-annotations/",
+        "./skills/pr-screenshots/",
+        "./skills/screen-recording/",
+        "./skills/ui-screenshots/"
+      ]
+    }
+  }
+}

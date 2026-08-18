@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Skill Stack"
+  short_description: "將任何目標轉化為最小化、經審核的 Skill Stack"
+  default_prompt: "使用 $agent-skill-stack 將我的目標轉化為最小化、相容且符合專案需求的 Agent Skill Stack，並用淺顯易懂的方式說明。"

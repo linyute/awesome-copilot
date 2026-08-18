@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "apng-studio",
+  "description": "用於從影格建構動態 PNG (APNG) 檔案的互動式 GitHub Copilot 應用程式畫布擴充功能。繪製或上傳影格、調整每個影格的時間與合成、即時預覽、透過 QR 碼將結果傳送到您的手機，並匯出動態 .png。",
+  "version": "1.0.2",
+  "author": {
+    "name": "Andrea Griffiths",
+    "url": "https://github.com/AndreaGriffiths11"
+  },
+  "keywords": [
+    "animated-png",
+    "apng",
+    "copilot-canvas",
+    "frame-animation",
+    "image-export",
+    "interactive-canvas"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/apng-studio"
+      ]
+    }
+  }
+}

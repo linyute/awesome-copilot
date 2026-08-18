@@ -9,22 +9,22 @@ compatibility: "需要：gh CLI 與 git"
 # GitHub 發布技能
 
 此技能可自動化單一封裝 (single-package) GitHub 存放庫的完整發布工作流程，
-涵蓋從分析、變更日誌 (changelog) 撰寫到 PR 建立的過程。它完全依賴 
+涵蓋從分析、變更日誌 (changelog) 撰寫到 PR 建立的過程。它完全依賴
 `gh` (GitHub CLI) 與 `git` — 不需要其他工具。
 
 步驟 1–4 為**唯讀勘查** — 在步驟 5 確認版本號之前，不會對存放庫進行任何寫入。
 
 ## 何時使用此技能
 
-每當使用者想要發布新版本、發行新版、升級版本、建立發布分支、產生變更日誌或 
-在 GitHub 存放庫上開啟發布 PR 時，請使用此技能。即使使用者口語化地說出 
+每當使用者想要發布新版本、發行新版、升級版本、建立發布分支、產生變更日誌或
+在 GitHub 存放庫上開啟發布 PR 時，請使用此技能。即使使用者口語化地說出
 「讓我們發布一個新版本」或「是時候發布了」之類的內容，也要觸發此技能。
 
 ---
 
 ## 前提條件
 
-下方的範例同時包含 Bash 與 PowerShell 變體；Windows 使用者應優先使用 
+下方的範例同時包含 Bash 與 PowerShell 變體；Windows 使用者應優先使用
 PowerShell 區塊。
 
 在開始之前，請驗證環境：
@@ -44,8 +44,8 @@ git status                            # 工作樹應該是乾淨的
 > 看到的內容。按 Enter 鍵以掃描整個存放庫。）」*
 
 將答案儲存為 `PUBLIC_PATH`。如果為空，`PUBLIC_PATH` 即為 `.` (存放庫根目錄)。
-無論如何，請從所有差異比較中排除以下路徑： `tests/`, `test/`, `spec/`, 
-`__tests__/`, `docs/`, `*.lock`, `*-lock.json`, `*.sum`, 產生的檔案 
+無論如何，請從所有差異比較中排除以下路徑： `tests/`, `test/`, `spec/`,
+`__tests__/`, `docs/`, `*.lock`, `*-lock.json`, `*.sum`, 產生的檔案
 (具有「不要編輯」標頭註解的檔案) 以及建構產物。
 
 ---
@@ -70,9 +70,9 @@ git pull origin main
 
 ### 步驟 2 — 獲取最新的版本標籤 (Tag)
 
-> **為什麼不使用 `gh release list`？** GitHub 發布 (Releases) 是建構在 Git 標籤 
-> 之上的選填層。許多存放庫使用 `git tag` 標記發布而從未建立 GitHub 發布， 
-> 因此即使版本標籤存在，`gh release list` 也可能傳回空結果。直接從 git 
+> **為什麼不使用 `gh release list`？** GitHub 發布 (Releases) 是建構在 Git 標籤
+> 之上的選填層。許多存放庫使用 `git tag` 標記發布而從未建立 GitHub 發布，
+> 因此即使版本標籤存在，`gh release list` 也可能傳回空結果。直接從 git
 > 讀取標籤是可靠的事實來源。
 
 ```bash
@@ -110,15 +110,15 @@ Write-Output "最新標籤：$prevTag"
 git ls-remote --tags origin | grep "refs/tags/$PREV_TAG$"
 ```
 
-如果遠端檢查未傳回任何內容，請警告使用者該標籤似乎僅存在於本機且尚未推播 — 
+如果遠端檢查未傳回任何內容，請警告使用者該標籤似乎僅存在於本機且尚未推播 —
 他們可能希望在繼續之前先將其推播。
 
-- `PREV_TAG` 是找到的確切標籤名稱 (例如 `v1.4.2`)。在進行算術運算時請 
+- `PREV_TAG` 是找到的確切標籤名稱 (例如 `v1.4.2`)。在進行算術運算時請
   去除前導的 `v`；在命名事物時請保留它。
-- 如果**完全不存在標籤**，請將 `PREV_TAG` 視為 `(無)`，將 `PREV_SHA` 設為 
-  第一個提交，並將新版本預設為 `1.0.0` (略過步驟 4 的版本控制邏輯， 
+- 如果**完全不存在標籤**，請將 `PREV_TAG` 視為 `(無)`，將 `PREV_SHA` 設為
+  第一個提交，並將新版本預設為 `1.0.0` (略過步驟 4 的版本控制邏輯，
   直接進入步驟 5)。
-- 如果標籤未指向真實提交 (孤立標籤)，請退回到 
+- 如果標籤未指向真實提交 (孤立標籤)，請退回到
   `git rev-list --max-parents=0 HEAD` 並警告使用者。
 
 ```bash
@@ -129,7 +129,7 @@ PREV_SHA=$(git rev-list -n 1 "$PREV_TAG" 2>/dev/null || git rev-list --max-paren
 
 ### 步驟 3 — 分析自上次發布以來的變更
 
-此步驟使用**兩個互補的訊號**。程式碼差異 (diff) 是主要的事實來源； 
+此步驟使用**兩個互補的訊號**。程式碼差異 (diff) 是主要的事實來源；
 提交訊息則提供關於意圖的輔助背景資訊。
 
 #### 3a — 程式碼差異 (主要訊號)
@@ -164,7 +164,7 @@ git diff "$($prevSha)..HEAD" -- $publicPath `
 git diff "$PREV_SHA"..HEAD --stat -- "$PUBLIC_PATH"
 ```
 
-將詳細閱讀重點放在變更最多的檔案，以及檔名暗示定義了公開介面的檔案 
+將詳細閱讀重點放在變更最多的檔案，以及檔名暗示定義了公開介面的檔案
 (例如 `index.*`, `api.*`, `exports.*`, `public.*`, `mod.*`, `__init__.*`)。
 
 #### 3b — 提交記錄 (次要訊號)
@@ -175,7 +175,7 @@ git log "$PREV_SHA"..HEAD --oneline --no-merges
 
 用於：
 - 了解僅憑差異無法自我說明的程式碼變更**意圖** (例如標記為安全修復的一行代碼)。
-- 捕捉可能位於 `PUBLIC_PATH` 之外但仍對使用者可見的變更 
+- 捕捉可能位於 `PUBLIC_PATH` 之外但仍對使用者可見的變更
   (例如 `cmd/` 目錄中的 CLI 旗標變更)。
 - 為變更日誌條目補充程式碼本身無法完整說明的背景資訊。
 
@@ -214,8 +214,8 @@ git log "$PREV_SHA"..HEAD --oneline --no-merges
 
 **向使用者展示提議的版本**，並附上引用特定程式碼發現 (而不僅僅是提交訊息) 的簡短理由。範例：
 
-> *「我提議 v2.1.0。差異顯示 `src/client.go` 中有兩個新的匯出函式 (`NewClient` 
-> 與 `WithTimeout`)，且沒有現有的公開符號被移除或變更。提交訊息證實了 
+> *「我提議 v2.1.0。差異顯示 `src/client.go` 中有兩個新的匯出函式 (`NewClient`
+> 與 `WithTimeout`)，且沒有現有的公開符號被移除或變更。提交訊息證實了
 > 這些是新增功能。」*
 
 詢問：*「這個版本看起來正確嗎？或者您想要調整它？」*
@@ -236,7 +236,7 @@ git push -u origin release/vX.Y.Z
 
 ### 步驟 6 — 更新 CHANGELOG.md
 
-閱讀現有的 `CHANGELOG.md` (若無則建立)。嚴格遵循 
+閱讀現有的 `CHANGELOG.md` (若無則建立)。嚴格遵循
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 格式。
 
 **插入到頂部的結構** (就在 `# Changelog` 標頭下方)：
@@ -266,7 +266,7 @@ git push -u origin release/vX.Y.Z
 規則：
 - 使用今天的日期，格式為 `YYYY-MM-DD`。
 - 省略沒有條目的章節 — 不要留下空白標題。
-- 以**使用者的視角用平易近人的文字**撰寫條目，主要根據程式碼差異推導， 
+- 以**使用者的視角用平易近人的文字**撰寫條目，主要根據程式碼差異推導，
   並輔以提交訊息背景。
   佳：*「在 HTTP 用戶端建構函式中新增了 `WithTimeout` 選項。」*
   劣：*「feat: add timeout cfg param」*
@@ -277,7 +277,7 @@ git push -u origin release/vX.Y.Z
   - 臭蟲/邏輯修正、效能 ? Fixed
   - 安全修復 ? Security
   - 內部重構、文件、日常維護、測試 ? 除非對使用者可見，否則省略
-- 如果提交訊息揭露了僅憑程式碼差異無法傳達的意圖 
+- 如果提交訊息揭露了僅憑程式碼差異無法傳達的意圖
   (例如偽裝成一行變更的安全修復)，請在變更日誌條目中包含該背景。
 - 同時更新檔案底部的差異比較連結：
   ```markdown
@@ -306,7 +306,7 @@ git push origin release/vX.Y.Z
 ### 步驟 8 — 開啟提取要求 (Pull Request)
 
 **?? 重要：** 務必使用 `--body-file` 傳遞 PR 描述文字，絕不要使用內嵌文字的 `--body`。
-PowerShell 不會將內嵌的逸出序列 (如 `\n`) 解釋為換行符號，而是會作為文字出現在 PR 中。 
+PowerShell 不會將內嵌的逸出序列 (如 `\n`) 解釋為換行符號，而是會作為文字出現在 PR 中。
 使用檔案可確保正確的 Markdown 格式。
 
 ```bash
@@ -336,7 +336,7 @@ EOF
 )"
 ```
 
-```PowerShell
+````PowerShell
 # 使用 here-string 建立 PR 描述 (保留實際換行，而非逸出序列)
 $prBody = @"
 ## Release vX.Y.Z
@@ -352,16 +352,16 @@ $prBody = @"
 - [ ] CI 已通過
 
 合併後，請在合併提交上建立標籤：
-``````
+```
 git tag vX.Y.Z <merge-commit-sha>
 git push origin vX.Y.Z
-``````
+```
 "@
 
 # 寫入檔案並使用 --body-file (不要使用帶有逸出序列的內嵌 --body)
 $prBody | Out-File -FilePath release_pr_body.md -Encoding utf8 -NoNewline
 gh pr create --base main --head release/vX.Y.Z --title "Release vX.Y.Z" --body-file release_pr_body.md
-```
+````
 
 將變更日誌章節貼入 PR 描述的「包含內容」區塊 (或保留預留位置以便手動檢閱)。
 

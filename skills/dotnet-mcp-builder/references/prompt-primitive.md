@@ -1,8 +1,8 @@
-# Prompts
+# 提示詞 (Prompts)
 
-Prompts 是可重複使用且參數化的訊息範本，使用者（而非 LLM）通常會從清單中挑選 — 就像聊天用戶端中的「斜線指令」。伺服器定義它們；主機則將其呈現為功能表。
+提示詞是可重複使用、參數化的訊息範本，通常由使用者（而非 LLM）從清單中挑選 — 類似聊天用戶端中的「斜線指令 (slash commands)」。伺服器定義它們；主機將它們轉譯為功能表。
 
-## Anatomy of a prompt
+## 提示詞結構剖析
 
 ```csharp
 using System.ComponentModel;
@@ -12,20 +12,20 @@ using ModelContextProtocol.Server;
 [McpServerPromptType]
 public class CodePrompts
 {
-    [McpServerPrompt, Description("Generates a code review prompt.")]
+    [McpServerPrompt, Description("產生程式碼審查提示詞。")]
     public static IEnumerable<ChatMessage> CodeReview(
-        [Description("The programming language")] string language,
-        [Description("The code to review")] string code) =>
+        [Description("程式設計語言")] string language,
+        [Description("要審查的程式碼")] string code) =>
         [
             new(ChatRole.User,
-                $"Please review the following {language} code:\n\n```{language}\n{code}\n```"),
+                $"請審查以下 {language} 程式碼：\n\n```{language}\n{code}\n```"),
             new(ChatRole.Assistant,
-                "I'll review the code for correctness, style, and potential improvements.")
+                "我將審查程式碼的正確性、風格和潛在的改進空間。")
         ];
 }
 ```
 
-註冊它：
+註冊提示詞：
 
 ```csharp
 .WithPrompts<CodePrompts>()
@@ -39,51 +39,51 @@ public class CodePrompts
 |---|---|
 | `ChatMessage` | 單一訊息。 |
 | `IEnumerable<ChatMessage>` | 對話種子。 |
-| `PromptMessage` / `IEnumerable<PromptMessage>` | 低階 — 當您需要完整控制內容區塊（內嵌資源、每條訊息多個具型別的區塊）時使用。 |
-| `GetPromptResult` | 完整控制 — 設定 `Messages` 和 `Description`。 |
+| `PromptMessage` / `IEnumerable<PromptMessage>` | 較低階 — 當你需要完全控制內容區塊（內嵌資源、每個訊息多個具型別區塊）時使用。 |
+| `GetPromptResult` | 完全控制 — 設定 `Messages` 和 `Description`。 |
 
-`ChatMessage`/`ChatRole` 來自 `Microsoft.Extensions.AI`。它們是高階形式，也是您 90% 的時間應該使用的型別。僅在需要內嵌資源或精細的內容分型時，才降級使用 `PromptMessage`/`ContentBlock`。
+`ChatMessage`/`ChatRole` 來自 `Microsoft.Extensions.AI`。它們是高階結構，也是你 90% 的時間應該使用的型別。僅在需要內嵌資源或細微的內容型別設定時，才降級使用 `PromptMessage`/`ContentBlock`。
 
 ## 引數
 
-每個參數（在 SDK 排除掉的特殊參數 — `IMcpServer`、`CancellationToken` 等之後）都會成為使用者在挑選 Prompt 時可見的 Prompt 引數。請在每個參數上使用 `[Description]` 來解釋使用者應該提供什麼。
+每個參數（在排除 SDK 移除的特殊參數如 `IMcpServer`、`CancellationToken` 等之後）都會變成提示詞引數，在使用者挑選提示詞時對其可見。對每個參數使用 `[Description]` 來解釋使用者應該提供什麼。
 
-若要將引數標記為選填，請給予其預設值：
+若要將引數標記為選用，請為其指定預設值：
 
 ```csharp
 [McpServerPrompt, Description("…")]
 public static ChatMessage Greeting(
-    [Description("Their preferred greeting style")] string style = "casual")
-    => new(ChatRole.User, $"Greet me in a {style} style.");
+    [Description("他們偏好的問候風格")] string style = "casual")
+    => new(ChatRole.User, $"請以 {style} 風格向我問候。");
 ```
 
 ## 圖片與檔案內容
 
-對於包含圖片的 Prompt：
+包含圖片的提示詞：
 
 ```csharp
-[McpServerPrompt, Description("Asks the model to analyze an image.")]
+[McpServerPrompt, Description("要求模型分析圖片。")]
 public static IEnumerable<ChatMessage> AnalyzeImage(
-    [Description("Instructions for the analysis")] string instructions)
+    [Description("分析指示")] string instructions)
 {
     byte[] imageBytes = LoadSampleImage();
     return new[]
     {
         new ChatMessage(ChatRole.User, new AIContent[]
         {
-            new TextContent($"Please analyze this image: {instructions}"),
+            new TextContent($"請分析此圖片：{instructions}"),
             new DataContent(imageBytes, "image/png")
         })
     };
 }
 ```
 
-對於內嵌文字資源（例如：使用使用者挑選的文件做為對話種子）：
+內嵌文字資源（例如使用使用者選取的文件為對話植入種子）：
 
 ```csharp
-[McpServerPrompt, Description("Reviews a referenced document.")]
+[McpServerPrompt, Description("審查參考的文件。")]
 public static IEnumerable<PromptMessage> ReviewDocument(
-    [Description("The document ID to review")] string documentId)
+    [Description("要審查的文件 ID")] string documentId)
 {
     string content = LoadDocument(documentId);
     return new[]
@@ -91,7 +91,7 @@ public static IEnumerable<PromptMessage> ReviewDocument(
         new PromptMessage
         {
             Role = Role.User,
-            Content = new TextContentBlock { Text = "Please review the following document:" }
+            Content = new TextContentBlock { Text = "請審查以下文件：" }
         },
         new PromptMessage
         {
@@ -110,12 +110,12 @@ public static IEnumerable<PromptMessage> ReviewDocument(
 }
 ```
 
-## 非同步 Prompt
+## 非同步提示詞
 
-Prompt 可以是非同步的 — 當您需要查閱資料來建構訊息時非常有用：
+提示詞可以是非同步的 — 在需要查詢資料來建構訊息時很有用：
 
 ```csharp
-[McpServerPrompt, Description("Drafts a release-notes prompt.")]
+[McpServerPrompt, Description("草擬版本資訊提示詞。")]
 public static async Task<IEnumerable<ChatMessage>> ReleaseNotes(
     string repo,
     string fromTag,
@@ -128,12 +128,12 @@ public static async Task<IEnumerable<ChatMessage>> ReleaseNotes(
     return new[]
     {
         new ChatMessage(ChatRole.User,
-            $"Draft release notes for {repo} {fromTag}→{toTag} from these commits:\n{summary}")
+            $"請根據以下認可記錄為 {repo} {fromTag}→{toTag} 草擬版本資訊：\n{summary}")
     };
 }
 ```
 
-## 通知用戶端 Prompt 變更
+## 向用戶端通知提示詞變更
 
 ```csharp
 await server.SendNotificationAsync(
@@ -142,9 +142,9 @@ await server.SendNotificationAsync(
     cancellationToken);
 ```
 
-## 何時使用 Prompt 與工具 (Tool)
+## 何時使用提示詞 vs. 工具
 
-- **Prompt：** 由「使用者」從功能表中觸發，並提供任何必要的引數。其輸出是訊息，而非資料。適用於「/摘要」、「/程式碼檢視」、「/草擬電子郵件」。
-- **工具 (Tool)：** 由「LLM」觸發（通常無需使用者明確操作）以擷取或變更資料。適用於「get_weather」、「create_issue」。
+- **提示詞 (Prompt)：** 由*使用者*從功能表中觸發，提供任何必要的引數。輸出是訊息而非資料。適合用於 "/summarize"、"/code-review"、"/draft-email"。
+- **工具 (Tool)：** 由 *LLM* 觸發（通常無需明確的使用者動作）以擷取或變更資料。適合用於 "get_weather"、"create_issue"。
 
-如果兩者皆適用（使用者想要一個斜線指令，而該指令會觸發與 LLM 可呼叫的相同邏輯處理），請同時公開兩者 — 相同的 DTO/服務可以同時支援這兩者。
+如果兩者皆適用（使用者希望有一個斜線指令來觸發 LLM 也可以呼叫的相同邏輯），請同時公開兩者 — 相同的 DTO/服務可以同時支援這兩者。

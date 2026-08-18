@@ -1,6 +1,6 @@
 # Structured Autonomy 外掛程式
 
-優質規劃，節省實作
+優質規劃，精實實作
 
 ## 安裝
 
@@ -15,13 +15,13 @@ copilot plugin install structured-autonomy@awesome-copilot
 
 | 指令 | 說明 |
 |---------|-------------|
-| `/structured-autonomy:structured-autonomy-plan` | Structured Autonomy 規劃 |
-| `/structured-autonomy:structured-autonomy-generate` | Structured Autonomy 產生 |
-| `/structured-autonomy:structured-autonomy-implement` | Structured Autonomy 實作 |
+| `/structured-autonomy:structured-autonomy-plan` | Structured Autonomy Plan |
+| `/structured-autonomy:structured-autonomy-generate` | Structured Autonomy Generate |
+| `/structured-autonomy:structured-autonomy-implement` | Structured Autonomy Implement |
 
 ## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個由社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛程式為 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，該專案為社群推動的 GitHub Copilot 擴充套件集合。
 
 ## 授權
 

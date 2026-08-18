@@ -1,45 +1,45 @@
-# 專案規劃與管理外掛程式 (Project Planning & Management Plugin)
+# 專案規劃與管理外掛程式
 
-為開發團隊提供的軟體專案規劃、功能拆解、epic 管理、實作規劃與任務組織工具與指引。
+適用於開發團隊的軟體專案規劃、功能拆解、Epic 管理、實作規劃以及工作組織的工具與指引。
 
-## 安裝 (Installation)
+## 安裝
 
 ```bash
-# 使用 Copilot CLI
+# Using Copilot CLI
 copilot plugin install project-planning@awesome-copilot
 ```
 
-## 包含內容 (What's Included)
+## 包含內容
 
-### 指令 (斜線指令) (Commands (Slash Commands))
+### 命令 (斜線命令)
 
-| 指令 | 描述 |
+| 命令 | 描述 |
 |---------|-------------|
-| `/project-planning:breakdown-feature-implementation` | 用於建立詳細功能實作計畫的提示，遵循 Epoch monorepo 結構。 |
+| `/project-planning:breakdown-feature-implementation` | 建立詳細功能實作計畫的提示，遵循 Epoch monorepo 架構。 |
 | `/project-planning:breakdown-feature-prd` | 根據 Epic 建立新功能產品需求文件 (PRD) 的提示。 |
 | `/project-planning:breakdown-epic-arch` | 根據產品需求文件為 Epic 建立高階技術架構的提示。 |
 | `/project-planning:breakdown-epic-pm` | 為新 Epic 建立 Epic 產品需求文件 (PRD) 的提示。此 PRD 將作為產生技術架構規格的輸入。 |
 | `/project-planning:create-implementation-plan` | 為新功能、重構現有程式碼或升級套件、設計、架構或基礎架構建立新的實作計畫檔案。 |
-| `/project-planning:update-implementation-plan` | 使用新需求或更新需求來更新現有的實作計畫檔案，以提供新功能、重構現有程式碼或升級套件、設計、架構或基礎架構。 |
-| `/project-planning:create-github-issues-feature-from-implementation-plan` | 使用 feature_request.yml 或 chore_request.yml 範本從實作計畫階段建立 GitHub Issues。 |
-| `/project-planning:create-technical-spike` | 建立限時的技術探針 (technical spike) 文件，用於在實作前研究並解決關鍵開發決策。 |
+| `/project-planning:update-implementation-plan` | 以全新或更新的需求來更新現有實作計畫檔案，以提供新功能、重構現有程式碼或升級套件、設計、架構或基礎架構。 |
+| `/project-planning:create-github-issues-feature-from-implementation-plan` | 使用 feature_request.yml 或 chore_request.yml 範本從實作計畫階段建立 GitHub Issue。 |
+| `/project-planning:create-technical-spike` | 建立具備時限的技術探討 (technical spike) 文件，以便在實作前研究並解決關鍵開發決策。 |
 
-### 代理程式 (Agents)
+### Agents
 
-| 代理程式 | 描述 |
+| Agent | 描述 |
 |-------|-------------|
-| `task-planner` | 用於建立具體執行計畫的任務規劃員 — 由 microsoft/edge-ai 提供 |
-| `task-researcher` | 用於全面專案分析的任務研究專家 — 由 microsoft/edge-ai 提供 |
+| `task-planner` | 用於建立可據以執行之實作計畫的工作規劃工具 — 由 microsoft/edge-ai 提供 |
+| `task-researcher` | 負責全方位專案分析的工作研究專家 — 由 microsoft/edge-ai 提供 |
 | `planner` | 為新功能或重構現有程式碼產生實作計畫。 |
-| `plan` | 戰略規劃與架構助手，專注於實作前的周全分析。協助開發人員瞭解程式碼庫、釐清需求並制定全面的實作策略。 |
-| `prd` | 以 Markdown 格式產生全面的產品需求文件 (PRD)，詳述使用者故事、驗收標準、技術考量與指標。可選擇在使用者確認後建立 GitHub issue。 |
+| `plan` | 策略規劃與架構助理，專注於實作前的深思熟慮分析。協助開發人員了解程式碼庫、釐清需求並制定全方位的實作策略。 |
+| `prd` | 以 Markdown 格式產生全方位的產品需求文件 (PRD)，詳細說明使用者故事、驗收準則、技術考量與指標。在使用者確認後可選擇建立 GitHub Issue。 |
 | `implementation-plan` | 為新功能或重構現有程式碼產生實作計畫。 |
-| `research-technical-spike` | 透過詳盡的調查與受控實驗，系統地研究並驗證技術探針文件。 |
+| `research-technical-spike` | 透過詳盡調查與對照實驗，系統化地研究並驗證技術探討 (technical spike) 文件。 |
 
-## 來源 (Source)
+## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛程式為 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
 
-## 授權 (License)
+## 授權
 
 MIT

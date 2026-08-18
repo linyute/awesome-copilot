@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { ROOT_FOLDER } from "./constants.mjs";
+import { validateLicenseField } from "./lib/license.mjs";
+import { inlineCode } from "./lib/markdown.mjs";
 
 export const EXTERNAL_PLUGINS_FILE = path.join(ROOT_FOLDER, "plugins", "external.json");
 
@@ -12,6 +14,7 @@ export const EXTERNAL_PLUGIN_POLICIES = Object.freeze({
     requireKeywords: true,
     requireLicense: false,
     requireImmutableLocator: false,
+    warnMissingImmutableLocator: true,
   }),
   publicSubmission: Object.freeze({
     allowedSourceTypes: ["github"],
@@ -20,10 +23,35 @@ export const EXTERNAL_PLUGIN_POLICIES = Object.freeze({
     requireKeywords: true,
     requireLicense: true,
     requireImmutableLocator: true,
+    warnMissingImmutableLocator: false,
   }),
 });
 
-// 備註：請與 external-plugin-quality-gates.mjs 中的 PLUGIN_JSON_CANDIDATES 保持同步
+// Allowed keys for typo detection. Kept intentionally permissive: unknown keys
+// produce warnings (not errors) so the schema stays forward-compatible.
+const ALLOWED_PLUGIN_KEYS = Object.freeze([
+  "name",
+  "description",
+  "version",
+  "author",
+  "repository",
+  "homepage",
+  "license",
+  "keywords",
+  "tags",
+  "source",
+]);
+
+const ALLOWED_AUTHOR_KEYS = Object.freeze(["name", "url", "email"]);
+
+const ALLOWED_SOURCE_KEYS = Object.freeze(["source", "repo", "path", "ref", "sha"]);
+
+// Semantic Versioning 2.0.0 (https://semver.org). Anchored: major.minor.patch
+// with optional -prerelease and +build metadata.
+const SEMVER_PATTERN =
+  /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/;
+
+// NOTE: Keep in sync with PLUGIN_JSON_CANDIDATES in external-plugin-quality-gates.mjs
 const EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS = Object.freeze([
   "plugin.json",
   ".github/plugin/plugin.json",
@@ -38,7 +66,7 @@ function resolvePolicy(policy) {
   if (typeof policy === "string") {
     const resolved = EXTERNAL_PLUGIN_POLICIES[policy];
     if (!resolved) {
-      throw new Error(`未知的外部外掛驗證政策 "${policy}"`);
+      throw new Error(`Unknown external plugin validation policy "${policy}"`);
     }
 
     return resolved;
@@ -56,86 +84,100 @@ function isNonEmptyString(value) {
 
 function validatePluginName(name, prefix, errors) {
   if (!isNonEmptyString(name)) {
-    errors.push(`${prefix}: "name" 是必填項，且必須為非空字串`);
+    errors.push(`${prefix}: "name" is required and must be a non-empty string`);
     return;
   }
 
-  if (name.length > 50) {
-    errors.push(`${prefix}: "name" 長度不能超過 50 個字元`);
+  if (name.length > 64) {
+    errors.push(`${prefix}: "name" must be 64 characters or fewer`);
   }
 
-  if (!/^[a-z0-9-]+$/.test(name)) {
-    errors.push(`${prefix}: "name" 只能包含小寫字母、數字和連字號`);
+  if (!/^[a-z0-9.-]+$/.test(name)) {
+    errors.push(`${prefix}: "name" must contain only lowercase letters, numbers, hyphens, and periods`);
+  }
+
+  if (!/^[a-z0-9].*[a-z0-9]$/.test(name) && !/^[a-z0-9]$/.test(name)) {
+    errors.push(`${prefix}: "name" must start and end with a lowercase letter or number`);
+  }
+
+  if (name.includes("--") || name.includes("..")) {
+    errors.push(`${prefix}: "name" must not contain consecutive hyphens or periods`);
   }
 }
 
 function validateDescription(description, prefix, errors) {
   if (!isNonEmptyString(description)) {
-    errors.push(`${prefix}: "description" 是必填項，且必須為非空字串`);
+    errors.push(`${prefix}: "description" is required and must be a non-empty string`);
     return;
   }
 
   if (description.length > 500) {
-    errors.push(`${prefix}: "description" 長度不能超過 500 個字元`);
+    errors.push(`${prefix}: "description" must be 500 characters or fewer`);
   }
 }
 
 function validateVersion(version, prefix, errors) {
   if (!isNonEmptyString(version)) {
-    errors.push(`${prefix}: "version" 是必填項，且必須為非空字串`);
+    errors.push(`${prefix}: "version" is required and must be a non-empty string`);
     return;
   }
 
   if (version.length > 100) {
-    errors.push(`${prefix}: "version" 長度不能超過 100 個字元`);
+    errors.push(`${prefix}: "version" must be 100 characters or fewer`);
+  }
+
+  if (!SEMVER_PATTERN.test(version)) {
+    errors.push(
+      `${prefix}: "version" must be a valid semantic version (e.g. "1.2.3" or "1.2.3-beta.1"); see https://semver.org`
+    );
   }
 }
 
 function validateKeywords(keywords, prefix, errors, warnings, required) {
   if (keywords === undefined) {
     if (required) {
-      errors.push(`${prefix}: "keywords" 是必填項，且必須是小寫標籤陣列`);
+      errors.push(`${prefix}: "keywords" is required and must be an array of lowercase tags`);
     }
     return;
   }
 
   if (!Array.isArray(keywords)) {
-    errors.push(`${prefix}: "keywords" 必須是一個陣列`);
+    errors.push(`${prefix}: "keywords" must be an array`);
     return;
   }
 
   if (keywords.length > 10) {
-    errors.push(`${prefix}: "keywords" 不能超過 10 個項目`);
+    errors.push(`${prefix}: "keywords" must contain no more than 10 entries`);
   }
 
   for (let i = 0; i < keywords.length; i++) {
     const keyword = keywords[i];
     if (!isNonEmptyString(keyword)) {
-      errors.push(`${prefix}: "keywords[${i}]" 必須是非空字串`);
+      errors.push(`${prefix}: "keywords[${i}]" must be a non-empty string`);
       continue;
     }
 
     if (!/^[a-z0-9-]+$/.test(keyword)) {
-      errors.push(`${prefix}: "keywords[${i}]" 只能包含小寫字母、數字和連字號`);
+      errors.push(`${prefix}: "keywords[${i}]" must contain only lowercase letters, numbers, and hyphens`);
     }
 
     if (keyword.length > 30) {
-      errors.push(`${prefix}: "keywords[${i}]" 長度不能超過 30 個字元`);
+      errors.push(`${prefix}: "keywords[${i}]" must be 30 characters or fewer`);
     }
   }
 
   if (keywords.length === 0) {
     if (required) {
-      errors.push(`${prefix}: "keywords" 必須包含至少一個項目`);
+      errors.push(`${prefix}: "keywords" must contain at least one entry`);
     } else {
-      warnings.push(`${prefix}: "keywords" 為空；建議至少提供一個關鍵字以便搜尋`);
+      warnings.push(`${prefix}: "keywords" is empty; at least one keyword is recommended for discovery`);
     }
   }
 }
 
 function validateHttpsUrl(value, fieldName, prefix, errors, options = {}) {
   if (!isNonEmptyString(value)) {
-    errors.push(`${prefix}: "${fieldName}" 必須是非空字串`);
+    errors.push(`${prefix}: "${fieldName}" must be a non-empty string`);
     return;
   }
 
@@ -143,58 +185,83 @@ function validateHttpsUrl(value, fieldName, prefix, errors, options = {}) {
   try {
     parsed = new URL(value);
   } catch {
-    errors.push(`${prefix}: "${fieldName}" 必須是有效的 URL`);
+    errors.push(`${prefix}: "${fieldName}" must be a valid URL`);
     return;
   }
 
   if (parsed.protocol !== "https:") {
-    errors.push(`${prefix}: "${fieldName}" 必須使用 https`);
+    errors.push(`${prefix}: "${fieldName}" must use https`);
   }
 
   if (options.githubOnly && parsed.hostname !== "github.com") {
-    errors.push(`${prefix}: "${fieldName}" 必須指向 https://github.com/...`);
+    errors.push(`${prefix}: "${fieldName}" must point to https://github.com/...`);
   }
 }
 
-function validateAuthor(author, prefix, errors, required) {
+function validateAuthor(author, prefix, errors, warnings, required) {
   if (author === undefined) {
     if (required) {
-      errors.push(`${prefix}: "author" 是必填項`);
+      errors.push(`${prefix}: "author" is required`);
     }
     return;
   }
 
   if (!author || typeof author !== "object" || Array.isArray(author)) {
-    errors.push(`${prefix}: "author" 必須是一個物件`);
+    errors.push(`${prefix}: "author" must be an object`);
     return;
   }
 
   if (!isNonEmptyString(author.name)) {
-    errors.push(`${prefix}: "author.name" 是必填項，且必須為非空字串`);
+    errors.push(`${prefix}: "author.name" is required and must be a non-empty string`);
   }
 
   if (author.url !== undefined) {
     validateHttpsUrl(author.url, "author.url", prefix, errors);
   }
+
+  if (author.email !== undefined) {
+    validateEmail(author.email, "author.email", prefix, errors);
+  }
+
+  validateKnownFields(author, ALLOWED_AUTHOR_KEYS, "author", prefix, warnings);
 }
 
-function validateLicense(license, prefix, errors, required) {
-  if (license === undefined) {
-    if (required) {
-      errors.push(`${prefix}: "license" 是必填項`);
-    }
+function validateEmail(value, fieldName, prefix, errors) {
+  if (!isNonEmptyString(value)) {
+    errors.push(`${prefix}: "${fieldName}" must be a non-empty string`);
     return;
   }
 
-  if (!isNonEmptyString(license)) {
-    errors.push(`${prefix}: "license" 必須是非空字串`);
+  // Pragmatic email check: single "@", non-empty local part, and a dotted domain.
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    errors.push(`${prefix}: "${fieldName}" must be a valid email address`);
+  }
+}
+
+function validateLicense(license, prefix, errors, warnings, required) {
+  const result = validateLicenseField(license, { prefix, required });
+  errors.push(...result.errors);
+  warnings.push(...result.warnings);
+}
+
+function validateKnownFields(value, allowedKeys, scope, prefix, warnings) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return;
+  }
+
+  const allowed = new Set(allowedKeys);
+  const label = scope ? `${scope}.` : "";
+  for (const key of Object.keys(value)) {
+    if (!allowed.has(key)) {
+      warnings.push(`${prefix}: unknown ${scope || "top-level"} field ${inlineCode(`${label}${key}`)} (possible typo)`);
+    }
   }
 }
 
 function validateRepository(repository, prefix, errors, required) {
   if (repository === undefined) {
     if (required) {
-      errors.push(`${prefix}: "repository" 是必填項`);
+      errors.push(`${prefix}: "repository" is required`);
     }
     return;
   }
@@ -216,7 +283,7 @@ function formatExpectedPluginRootMessage() {
 
 function validateRelativePath(pathValue, prefix, errors) {
   if (!isNonEmptyString(pathValue)) {
-    errors.push(`${prefix}: 提供時 "source.path" 必須是非空字串`);
+    errors.push(`${prefix}: "source.path" must be a non-empty string when provided`);
     return;
   }
 
@@ -228,73 +295,73 @@ function validateRelativePath(pathValue, prefix, errors) {
   const segments = pathValue.split("/");
 
   if (pathValue.startsWith("/") || pathValue.startsWith("../") || normalized !== pathValue || segments.includes("..")) {
-    errors.push(`${prefix}: "source.path" 必須是儲存庫內的安全相對路徑`);
+    errors.push(`${prefix}: "source.path" must be a safe relative path inside the repository`);
   }
 
   if (pathValue.includes("\\")) {
-    errors.push(`${prefix}: "source.path" 必須使用正斜線 (/)`);
+    errors.push(`${prefix}: "source.path" must use forward slashes`);
   }
 
   if (normalized === ".") {
-    errors.push(`${prefix}: "source.path" 對於儲存庫根目錄必須為 "/"，或是相對於儲存庫根目錄的外掛根目錄`);
+    errors.push(`${prefix}: "source.path" must be "/" for the repository root or a plugin root directory relative to the repository root`);
   }
 
   if (path.posix.basename(normalized) === "plugin.json") {
     errors.push(
-      `${prefix}: "source.path" 必須指向外掛根目錄，而不是資訊清單檔案；相對於 "source.path"，預期為 ${formatExpectedPluginRootMessage()} 之一`
+      `${prefix}: "source.path" must point to the plugin root directory, not the manifest file; relative to "source.path", expected one of ${formatExpectedPluginRootMessage()}`
     );
   }
 }
 
 function validateImmutableRef(ref, prefix, errors) {
   if (!isNonEmptyString(ref)) {
-    errors.push(`${prefix}: 提供時 "source.ref" 必須是非空字串`);
+    errors.push(`${prefix}: "source.ref" must be a non-empty string when provided`);
     return;
   }
 
   if (ref.startsWith("refs/heads/")) {
-    errors.push(`${prefix}: "source.ref" 必須是標籤 (tag) 或提交 SHA，不能是分支引用`);
+    errors.push(`${prefix}: "source.ref" must be a tag or commit SHA, not a branch ref`);
     return;
   }
 
   if (["main", "master", "develop", "development", "dev", "trunk"].includes(ref)) {
-    errors.push(`${prefix}: "source.ref" 必須是標籤或提交 SHA，不能是分支名稱`);
+    errors.push(`${prefix}: "source.ref" must be a tag or commit SHA, not a branch name`);
   }
 
   if (ref.startsWith("refs/") && !ref.startsWith("refs/tags/")) {
-    errors.push(`${prefix}: "source.ref" 必須是標籤引用或提交 SHA`);
+    errors.push(`${prefix}: "source.ref" must be a tag ref or commit SHA`);
   }
 
   if (/^[0-9a-f]+$/i.test(ref) && ref.length !== 40) {
-    errors.push(`${prefix}: 引用提交時，"source.ref" 必須是完整的 40 字元提交 SHA`);
+    errors.push(`${prefix}: "source.ref" must be a full 40-character commit SHA when referencing a commit`);
   }
 }
 
 function validateCommitSha(sha, prefix, errors) {
   if (!isNonEmptyString(sha)) {
-    errors.push(`${prefix}: 提供時 "source.sha" 必須是非空字串`);
+    errors.push(`${prefix}: "source.sha" must be a non-empty string when provided`);
     return;
   }
 
   if (!/^[0-9a-f]{40}$/i.test(sha)) {
-    errors.push(`${prefix}: "source.sha" 必須是完整的 40 字元提交 SHA`);
+    errors.push(`${prefix}: "source.sha" must be a full 40-character commit SHA`);
   }
 }
 
-function validateGitHubSource(source, prefix, errors, requireImmutableLocator) {
+function validateGitHubSource(source, prefix, errors, warnings, policy) {
   if (!source || typeof source !== "object" || Array.isArray(source)) {
-    errors.push(`${prefix}: "source" 必須是一個物件`);
+    errors.push(`${prefix}: "source" must be an object`);
     return;
   }
 
   if (source.source !== "github") {
-    errors.push(`${prefix}: "source.source" 必須是 "github"`);
+    errors.push(`${prefix}: "source.source" must be "github"`);
   }
 
   if (!isNonEmptyString(source.repo)) {
-    errors.push(`${prefix}: "source.repo" 是必填項，且必須為非空字串`);
+    errors.push(`${prefix}: "source.repo" is required and must be a non-empty string`);
   } else if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(source.repo)) {
-    errors.push(`${prefix}: "source.repo" 格式必須為 "owner/repo"`);
+    errors.push(`${prefix}: "source.repo" must be in "owner/repo" format`);
   }
 
   if (source.path !== undefined) {
@@ -309,8 +376,15 @@ function validateGitHubSource(source, prefix, errors, requireImmutableLocator) {
     validateCommitSha(source.sha, prefix, errors);
   }
 
-  if (requireImmutableLocator && source.ref === undefined && source.sha === undefined) {
-    errors.push(`${prefix}: 公開外部外掛提交必須提供 "source.ref" 或 "source.sha" 之一`);
+  const missingLocator = source.ref === undefined && source.sha === undefined;
+  if (missingLocator) {
+    if (policy.requireImmutableLocator) {
+      errors.push(`${prefix}: one of "source.ref" or "source.sha" is required for public external plugin submissions`);
+    } else if (policy.warnMissingImmutableLocator) {
+      warnings.push(
+        `${prefix}: "source" has no "source.ref" or "source.sha"; an immutable tag ref or commit SHA is recommended for reproducible installs`
+      );
+    }
   }
 }
 
@@ -322,7 +396,7 @@ export function validateExternalPlugin(plugin, index, options = {}) {
 
   if (!plugin || typeof plugin !== "object" || Array.isArray(plugin)) {
     return {
-      errors: [`${prefix}: 項目必須是一個物件`],
+      errors: [`${prefix}: entry must be an object`],
       warnings,
     };
   }
@@ -330,24 +404,28 @@ export function validateExternalPlugin(plugin, index, options = {}) {
   validatePluginName(plugin.name, prefix, errors);
   validateDescription(plugin.description, prefix, errors);
   validateVersion(plugin.version, prefix, errors);
-  validateAuthor(plugin.author, prefix, errors, policy.requireAuthor);
+  validateAuthor(plugin.author, prefix, errors, warnings, policy.requireAuthor);
   validateRepository(plugin.repository, prefix, errors, policy.requireRepository);
   validateHomepage(plugin.homepage, prefix, errors);
-  validateLicense(plugin.license, prefix, errors, policy.requireLicense);
+  validateLicense(plugin.license, prefix, errors, warnings, policy.requireLicense);
   validateKeywords(plugin.keywords ?? plugin.tags, prefix, errors, warnings, policy.requireKeywords);
+  validateKnownFields(plugin, ALLOWED_PLUGIN_KEYS, "", prefix, warnings);
 
   if (plugin.tags !== undefined && plugin.keywords === undefined) {
-    warnings.push(`${prefix}: 建議使用 "keywords" 而非舊版的 "tags"`);
+    warnings.push(`${prefix}: prefer "keywords" over legacy "tags"`);
   }
 
   if (!plugin.source) {
-    errors.push(`${prefix}: "source" 是必填項`);
-  } else if (typeof plugin.source === "string") {
-    errors.push(`${prefix}: "source" 必須是一個物件（外部外掛不允許使用本地檔案路徑）`);
-  } else if (!policy.allowedSourceTypes.includes(plugin.source.source)) {
-    errors.push(`${prefix}: "source.source" 必須是以下之一：${policy.allowedSourceTypes.join(", ")}`);
-  } else if (plugin.source.source === "github") {
-    validateGitHubSource(plugin.source, prefix, errors, policy.requireImmutableLocator);
+    errors.push(`${prefix}: "source" is required`);
+  } else if (typeof plugin.source !== "object" || Array.isArray(plugin.source)) {
+    errors.push(`${prefix}: "source" must be an object (local file paths are not allowed for external plugins)`);
+  } else {
+    validateKnownFields(plugin.source, ALLOWED_SOURCE_KEYS, "source", prefix, warnings);
+    if (!policy.allowedSourceTypes.includes(plugin.source.source)) {
+      errors.push(`${prefix}: "source.source" must be one of: ${policy.allowedSourceTypes.join(", ")}`);
+    } else if (plugin.source.source === "github") {
+      validateGitHubSource(plugin.source, prefix, errors, warnings, policy);
+    }
   }
 
   return { errors, warnings };
@@ -364,7 +442,7 @@ export function validateExternalPlugins(plugins, options = {}) {
 
   if (!Array.isArray(plugins)) {
     return {
-      errors: ["external.json 必須包含一個陣列"],
+      errors: ["external.json must contain an array"],
       warnings,
     };
   }
@@ -381,14 +459,14 @@ export function validateExternalPlugins(plugins, options = {}) {
     const normalizedName = plugin.name.toLowerCase();
     const duplicateIndex = seenExternalNames.get(normalizedName);
     if (duplicateIndex !== undefined) {
-      errors.push(`external.json[${index}]: 外掛名稱 "${plugin.name}" 重複，已被 external.json[${duplicateIndex}] 使用`);
+      errors.push(`external.json[${index}]: duplicate plugin name "${plugin.name}" already used by external.json[${duplicateIndex}]`);
     } else {
       seenExternalNames.set(normalizedName, index);
     }
 
     const localDuplicate = localNames.get(normalizedName);
     if (localDuplicate) {
-      errors.push(`external.json[${index}]: 外掛名稱 "${plugin.name}" 與本地外掛 "${localDuplicate}" 衝突`);
+      errors.push(`external.json[${index}]: plugin name "${plugin.name}" conflicts with local plugin "${localDuplicate}"`);
     }
   });
 
@@ -413,7 +491,7 @@ export function readExternalPlugins(options = {}) {
   } catch (error) {
     return {
       plugins: [],
-      errors: [`讀取 ${path.basename(filePath)} 時發生錯誤：${error.message}`],
+      errors: [`Error reading ${path.basename(filePath)}: ${error.message}`],
       warnings: [],
     };
   }

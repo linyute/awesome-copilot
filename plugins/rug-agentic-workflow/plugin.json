@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "rug-agentic-workflow",
+  "description": "用於協調整合軟體交付的三代理程式工作流程，包含協調器加上實作與品管 (QA) 子代理程式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "agentic-workflow",
+    "orchestration",
+    "subagents",
+    "software-engineering",
+    "qa"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/qa-subagent.md",
+        "./agents/rug-orchestrator.md",
+        "./agents/swe-subagent.md"
+      ]
+    }
+  }
+}

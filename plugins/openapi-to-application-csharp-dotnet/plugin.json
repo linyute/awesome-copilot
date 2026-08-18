@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "openapi-to-application-csharp-dotnet",
+  "description": "從 OpenAPI 規格產生可用於生產環境的 .NET 應用程式。包含 ASP.NET Core 專案結構建置、控制器產生、Entity Framework 整合以及 C# 最佳做法。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "openapi",
+    "code-generation",
+    "api",
+    "csharp",
+    "dotnet",
+    "aspnet"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/openapi-to-application.md"
+      ],
+      "skills": [
+        "./skills/openapi-to-application-code/"
+      ]
+    }
+  }
+}

@@ -12,7 +12,7 @@
 
 **運作方式：**
 - 掃描 `plugins/` 中的所有目錄
-- 讀取每個外掛程式的 `.github/plugin/plugin.json` 以取得 Metadata
+- 讀取每個外掛程式根目錄的 `plugin.json` 以取得中繼資料
 - 產生包含所有可用外掛程式的合併 `marketplace.json`
 - 作為 `npm run build` 的一部分自動執行
 

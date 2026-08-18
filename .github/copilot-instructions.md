@@ -59,7 +59,7 @@
 
 **僅套用於 `plugins/` 目錄中的目錄**
 
-- [ ] Plugin 目錄包含一個 `.github/plugin/plugin.json` 檔案。
+- [ ] Plugin 目錄包含一個根目錄的 `plugin.json` 檔案。
 - [ ] Plugin 目錄包含一個 `README.md` 檔案.
 - [ ] plugin.json 具有一個與目錄名稱相符的 `name` 欄位。
 - [ ] plugin.json 具有 `description` 欄位。

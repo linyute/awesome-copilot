@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "arize-ax",
+  "description": "用於 LLM 可觀測性、評估與最佳化的 Arize AX 平台技能。包含追蹤匯出、檢測、資料集、實驗、評估器、AI 提供者整合、註解、提示最佳化，以及指向 Arize 使用者介面的深層連結。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Arize AI"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "arize",
+    "llm",
+    "observability",
+    "tracing",
+    "evaluation",
+    "instrumentation",
+    "datasets",
+    "experiments",
+    "prompt-optimization"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/arize-ai-provider-integration/",
+        "./skills/arize-annotation/",
+        "./skills/arize-dataset/",
+        "./skills/arize-evaluator/",
+        "./skills/arize-experiment/",
+        "./skills/arize-instrumentation/",
+        "./skills/arize-link/",
+        "./skills/arize-prompt-optimization/",
+        "./skills/arize-trace/"
+      ]
+    }
+  }
+}

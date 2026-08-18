@@ -1,0 +1,32 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "rust-mcp-development",
+  "description": "在 Rust 中使用官方 rmcp SDK 搭配 async/await、程序巨集和型別安全實作，建構高效能 Model Context Protocol 伺服器。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "rust",
+    "mcp",
+    "model-context-protocol",
+    "server-development",
+    "sdk",
+    "tokio",
+    "async",
+    "macros",
+    "rmcp"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/rust-mcp-expert.md"
+      ],
+      "skills": [
+        "./skills/rust-mcp-server-generator/"
+      ]
+    }
+  }
+}

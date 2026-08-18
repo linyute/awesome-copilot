@@ -1,0 +1,38 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "aws-cloud-development",
+  "description": "全方位的 AWS 雲端開發工具，包含基礎設施即程式碼、無伺服器函式、架構模式以及用於建構具延展性雲端應用程式的成本最佳化。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "aws",
+    "cloud",
+    "infrastructure",
+    "cloudformation",
+    "terraform",
+    "serverless",
+    "architecture",
+    "devops",
+    "cdk"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/aws-principal-architect.md",
+        "./agents/aws-serverless-architect.md",
+        "./agents/terraform-aws-implement.md",
+        "./agents/terraform-aws-planning.md"
+      ],
+      "skills": [
+        "./skills/aws-cost-optimize/",
+        "./skills/aws-resource-health-diagnose/",
+        "./skills/aws-resource-query/",
+        "./skills/aws-well-architected-review/"
+      ]
+    }
+  }
+}

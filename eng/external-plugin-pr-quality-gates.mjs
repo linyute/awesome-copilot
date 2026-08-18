@@ -66,13 +66,35 @@ function aggregateResultStatus(pluginResults) {
   };
 }
 
+function createValidationFailureQuality(errors) {
+  const output = errors.map((error) => `- ${error}`).join("\n");
+  return {
+    overall_status: "fail",
+    vally_lint_status: "fail",
+    smoke_status: "not_run",
+    version_match_status: "not_run",
+    ref_sha_consistency_status: "not_run",
+    canvas_structure_status: "not_run",
+    failure_class: "submitter_fixes",
+    summary: "外掛程式項目未通過 external.json 驗證。請修正所列錯誤後重新執行品質檢查。",
+    vally_lint_output: output,
+    smoke_output: "由於 external.json 驗證錯誤，跳過安裝冒煙測試。",
+    version_match_output: "由於 external.json 驗證錯誤，跳過版本比對。",
+    ref_sha_consistency_output: "由於 external.json 驗證錯誤，跳過 Ref/SHA 一致性檢查。",
+    canvas_structure_output: "由於 external.json 驗證錯誤，跳過 Canvas 結構檢查。",
+  };
+}
+
 export async function runExternalPluginPrQualityGates(plugins) {
   if (!Array.isArray(plugins)) {
     throw new Error("plugins 必須是一個陣列");
   }
 
   const checkedPlugins = await Promise.all(plugins.map(async (plugin) => {
-    const quality = await runExternalPluginQualityGates(plugin);
+    const validation = validateExternalPlugin(plugin, "changed-plugin", { policy: "marketplace" });
+    const quality = validation.errors.length > 0
+      ? createValidationFailureQuality(validation.errors)
+      : await runExternalPluginQualityGates(plugin);
     return {
       name: plugin?.name ?? "unknown",
       source: plugin?.source ?? {},

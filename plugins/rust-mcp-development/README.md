@@ -1,32 +1,32 @@
-# Rust MCP 伺服器開發外掛程式 (Rust MCP Server Development Plugin)
+# Rust MCP 伺服器開發外掛程式
 
-使用官方 rmcp SDK 並搭配 async/await、程序式巨集 (procedural macros) 與型別安全實作，在 Rust 中建立高效能的 Model Context Protocol 伺服器。
+使用官方 rmcp SDK 搭配 async/await、程序性巨集 (procedural macros) 與型別安全實作，在 Rust 中建構高效能的 Model Context Protocol 伺服器。
 
-## 安裝 (Installation)
+## 安裝
 
 ```bash
-# 使用 Copilot CLI
+# Using Copilot CLI
 copilot plugin install rust-mcp-development@awesome-copilot
 ```
 
-## 包含內容 (What's Included)
+## 包含內容
 
-### 指令 (斜線指令) (Commands (Slash Commands))
+### 命令 (斜線命令)
 
-| 指令 | 描述 |
+| 命令 | 描述 |
 |---------|-------------|
-| `/rust-mcp-development:rust-mcp-server-generator` | 使用官方 rmcp SDK 建立包含工具、提示、資源與測試的完整 Rust Model Context Protocol 伺服器專案 |
+| `/rust-mcp-development:rust-mcp-server-generator` | 使用官方 rmcp SDK 產生具備工具、提示、資源與測試的完整 Rust Model Context Protocol 伺服器專案 |
 
-### 代理程式 (Agents)
+### Agents
 
-| 代理程式 | 描述 |
+| Agent | 描述 |
 |-------|-------------|
-| `rust-mcp-expert` | 使用 rmcp SDK 與 tokio 非同步執行環境進行 Rust MCP 伺服器開發的專家助手 |
+| `rust-mcp-expert` | 使用 rmcp SDK 搭配 tokio 非同步執行階段進行 Rust MCP 伺服器開發的專家助理 |
 
-## 來源 (Source)
+## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛程式為 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
 
-## 授權 (License)
+## 授權
 
 MIT

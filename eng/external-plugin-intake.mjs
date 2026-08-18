@@ -2,9 +2,14 @@
 
 import fs from "fs";
 import path from "path";
+import { lookup } from "node:dns/promises";
+import http from "node:http";
+import https from "node:https";
 import { fileURLToPath } from "url";
+import { isIP } from "node:net";
 import { ROOT_FOLDER } from "./constants.mjs";
 import { readExternalPlugins, validateExternalPlugin } from "./external-plugin-validation.mjs";
+import { evaluateRefShaConsistency, normalizeCommitSha } from "./lib/external-plugin-source-ref-sha.mjs";
 
 export const ISSUE_FORM_MARKER = "<!-- external-plugin-submission -->";
 export const EXTERNAL_PLUGIN_INTAKE_COMMENT_MARKER = "<!-- external-plugin-intake -->";
@@ -20,13 +25,13 @@ const MARK_READY_FOR_REVIEW_COMMAND_PATTERN = new RegExp(
 );
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
 
-// 每一項都是一個等效檢查清單項目文字的 Set (新 + 舊別名)。
-// 如果勾選的項目至少包含每個 Set 中的一個文字，則提交通過。
+// Each entry is a Set of equivalent checklist item texts (new + legacy aliases).
+// A submission passes if the checked items contain at least one text from each Set.
 const REQUIRED_CHECKLIST_ITEMS = [
   new Set(["The plugin lives in a public GitHub repository."]),
   new Set([
     "The ref and/or sha I provided is immutable (release tag and/or full 40-character commit SHA), not a branch.",
-    // 原始 Issue 範本中使用的舊文字
+    // Legacy text used in the original issue template
     "The ref I provided is an immutable release tag or full 40-character commit SHA, not a branch.",
   ]),
   new Set(["This submission follows this repository's contribution, security, and responsible AI policies."]),
@@ -34,28 +39,37 @@ const REQUIRED_CHECKLIST_ITEMS = [
 ];
 
 const FIELD_TITLES = Object.freeze({
-  pluginName: "外掛程式名稱",
-  shortDescription: "簡短描述",
-  githubRepository: "GitHub 儲存庫",
-  pluginPath: "儲存庫內的外掛程式路徑",
-  immutableRef: "待審核的 Ref",
-  immutableSha: "待審核的 Commit SHA",
-  version: "版本",
-  license: "授權標識符",
-  authorName: "作者姓名",
-  authorUrl: "作者 URL",
-  homepageUrl: "首頁 URL",
-  keywords: "關鍵字",
-  additionalNotes: "給審核者的補充說明",
-  submissionChecklist: "提交檢查清單",
+  pluginName: "Plugin name",
+  shortDescription: "Short description",
+  githubRepository: "GitHub repository",
+  pluginPath: "Plugin path inside the repository",
+  immutableRef: "Ref to review",
+  immutableSha: "Commit SHA to review",
+  version: "Version",
+  license: "License identifier",
+  authorName: "Author name",
+  authorUrl: "Author URL",
+  homepageUrl: "Homepage URL",
+  keywords: "Keywords",
+  additionalNotes: "Additional notes for reviewers",
+  submissionChecklist: "Submission checklist",
 });
 
-// 原始 Issue 範本中使用的舊欄位標題 (在 ref/sha 分拆之前)
+// Legacy field title used in the original issue template (before the ref/sha split)
 const LEGACY_FIELD_TITLES = Object.freeze({
-  immutableRef: "待審核的固定 Ref",
+  immutableRef: "Immutable ref to review",
 });
 const EXTERNAL_CANVAS_KEYWORD = "canvas";
 const EXTERNAL_CANVAS_PREVIEW_PATH = "assets/preview.png";
+const HOMEPAGE_FETCH_TIMEOUT_MS = 10_000;
+const HOMEPAGE_MAX_BYTES = 512_000;
+const HOMEPAGE_MAX_REDIRECTS = 5;
+const MARKETING_SIGNAL_PATTERNS = Object.freeze([
+  ["pricing", /\bpricing\b|\bplans?\b|\bsubscription\b|\bmonthly\b|\bannual\b/i],
+  ["sales", /\bbook\s+a\s+demo\b|\bcontact\s+sales\b|\btalk\s+to\s+sales\b|\brequest\s+a\s+demo\b/i],
+  ["trial", /\bfree\s+trial\b|\bstart\s+your\s+trial\b|\bget\s+started\s+free\b/i],
+  ["checkout", /\bstripe\b|\bcheckout\b|\bsubscribe\s+now\b|\bbuy\s+now\b/i],
+]);
 const EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS = Object.freeze([
   ".github/plugin/plugin.json",
   ".plugin/plugin.json",
@@ -193,25 +207,25 @@ function getGitHubApiErrorReason(response, data) {
   const message = String(data?.message ?? "").toLowerCase();
 
   if (response.status === 429) {
-    return "已達到速率限制";
+    return "rate limited";
   }
 
   if (response.status === 503) {
     if (message.includes("secondary rate limit")) {
-      return "已達到次要速率限制";
+      return "secondary rate limited";
     }
-    return "服務無法使用";
+    return "service unavailable";
   }
 
   if (response.status === 403 && isGitHubRateLimitResponse(response, data)) {
     if (message.includes("secondary rate limit")) {
-      return "已達到次要速率限制";
+      return "secondary rate limited";
     }
-    return "已達到速率限制";
+    return "rate limited";
   }
 
   if (response.status === 0) {
-    return "網路錯誤";
+    return "network error";
   }
 
   return response.statusText || `HTTP ${response.status}`;
@@ -255,7 +269,7 @@ async function fetchGitHubJson(apiPath, token) {
       ok: false,
       status: 0,
       data: null,
-      reason: "網路錯誤",
+      reason: "network error",
       error,
     };
   }
@@ -278,6 +292,251 @@ async function fetchGitHubFile(repo, filePath, ref, token) {
   );
 }
 
+function isPublicAddress(address) {
+  if (isIP(address) === 4) {
+    const octets = address.split(".").map(Number);
+    const value = octets.reduce((result, octet) => (result * 256) + octet, 0);
+    return !(
+      octets[0] === 0 ||
+      octets[0] === 10 ||
+      octets[0] === 127 ||
+      (octets[0] === 100 && octets[1] >= 64 && octets[1] <= 127) ||
+      (octets[0] === 169 && octets[1] === 254) ||
+      (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+      (octets[0] === 192 && octets[1] === 0 && octets[2] === 0) ||
+      (octets[0] === 192 && octets[1] === 0 && octets[2] === 2) ||
+      (octets[0] === 192 && octets[1] === 168) ||
+      (octets[0] === 198 && octets[1] >= 18 && octets[1] <= 19) ||
+      (octets[0] === 198 && octets[1] === 51 && octets[2] === 100) ||
+      (octets[0] === 203 && octets[1] === 0 && octets[2] === 113) ||
+      octets[0] >= 224 ||
+      value === 0xffffffff
+    );
+  }
+
+  if (isIP(address) !== 6) {
+    return false;
+  }
+
+  const normalized = address.toLowerCase().split("%")[0];
+  const embeddedIpv4 = normalized.slice(normalized.lastIndexOf(":") + 1);
+  if (isIP(embeddedIpv4) === 4 && !isPublicAddress(embeddedIpv4)) {
+    return false;
+  }
+  const groups = normalized.split("::");
+  const left = groups[0] ? groups[0].split(":") : [];
+  const right = groups[1] ? groups[1].split(":") : [];
+  const expanded = groups.length === 2
+    ? [...left, ...Array(8 - left.length - right.length).fill("0"), ...right]
+    : left;
+  const values = expanded.map((group) => Number.parseInt(group || "0", 16));
+  const first = values[0] ?? 0;
+  const second = values[1] ?? 0;
+  const isMappedIpv4 = values.slice(0, 6).every((value, index) => value === (index === 5 ? 0xffff : 0));
+  return !(
+    values.every((value) => value === 0) ||
+    (values.slice(0, 7).every((value) => value === 0) && values[7] === 1) ||
+    (first & 0xfe00) === 0xfc00 ||
+    (first & 0xffc0) === 0xfe80 ||
+    (first & 0xff00) === 0xff00 ||
+    (first === 0x2001 && second === 0x0db8) ||
+    isMappedIpv4 && !isPublicAddress(
+      `${values[6] >> 8}.${values[6] & 0xff}.${values[7] >> 8}.${values[7] & 0xff}`,
+    )
+  );
+}
+
+async function assertPublicUrl(url) {
+  const addresses = await lookup(url.hostname, { all: true, verbatim: true });
+  if (!addresses.length || addresses.some(({ address }) => !isPublicAddress(address))) {
+    throw new Error("Homepage URL resolves to a non-public address.");
+  }
+  return addresses[0];
+}
+
+// Native fetch does not expose a lookup hook. This dispatcher connects to the
+// address checked above while retaining the original hostname for Host/SNI.
+export class PinnedAddressDispatcher {
+  constructor(url, address) {
+    this.url = url;
+    this.address = address;
+  }
+
+  dispatch(options, handler) {
+    const requestHeaders = Array.isArray(options.headers)
+      ? Object.fromEntries(
+        Array.from({ length: options.headers.length / 2 }, (_, index) => [
+          options.headers[index * 2],
+          options.headers[index * 2 + 1],
+        ]),
+      )
+      : { ...options.headers };
+    const defaultPort = this.url.protocol === "https:" ? "443" : "80";
+    if (!Object.keys(requestHeaders).some((name) => name.toLowerCase() === "host")) {
+      requestHeaders.Host = this.url.port && this.url.port !== defaultPort
+        ? `${this.url.hostname}:${this.url.port}`
+        : this.url.hostname;
+    }
+
+    const requestOptions = {
+      protocol: this.url.protocol,
+      hostname: this.address.address,
+      port: this.url.port || defaultPort,
+      path: `${this.url.pathname}${this.url.search}`,
+      method: options.method,
+      headers: requestHeaders,
+      ...(this.url.protocol === "https:" ? { servername: this.url.hostname } : {}),
+    };
+    const request = (this.url.protocol === "https:" ? https : http).request(requestOptions);
+    handler.onConnect?.(() => request.destroy());
+    request.once("response", (response) => {
+      const headers = response.rawHeaders;
+      if (handler.onHeaders(response.statusCode, headers, () => {}, response.statusMessage) === false) {
+        request.destroy();
+        return;
+      }
+      response.on("data", (chunk) => handler.onData(chunk));
+      response.once("end", () => handler.onComplete(null));
+      response.once("error", (error) => handler.onError(error));
+    });
+    request.once("error", (error) => handler.onError(error));
+    request.end();
+    return true;
+  }
+
+  close() {}
+  destroy() {}
+}
+
+async function readHomepageBody(response) {
+  if (!response.body?.getReader) {
+    throw new Error("Homepage response body was not readable.");
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  const chunks = [];
+  let totalBytes = 0;
+  try {
+    while (totalBytes < HOMEPAGE_MAX_BYTES) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const remaining = HOMEPAGE_MAX_BYTES - totalBytes;
+      const chunk = value.byteLength > remaining ? value.subarray(0, remaining) : value;
+      chunks.push(decoder.decode(chunk, { stream: true }));
+      totalBytes += chunk.byteLength;
+      if (chunk.byteLength < value.byteLength) {
+        await reader.cancel();
+        break;
+      }
+    }
+    return chunks.join("") + decoder.decode();
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+async function inspectHomepage(homepage) {
+  const result = {
+    status: "not_run",
+    url: homepage,
+    signals: [],
+    output: "",
+  };
+
+  if (!homepage) {
+    return result;
+  }
+
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(homepage);
+  } catch {
+    return { ...result, status: "warning", output: "Homepage URL could not be parsed." };
+  }
+
+  if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+    return { ...result, status: "warning", output: "Homepage URL uses an unsupported protocol." };
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), HOMEPAGE_FETCH_TIMEOUT_MS);
+  try {
+    let url = parsedUrl;
+    let response;
+    for (let redirectCount = 0; redirectCount <= HOMEPAGE_MAX_REDIRECTS; redirectCount += 1) {
+      const address = await assertPublicUrl(url);
+      response = await fetch(url, {
+        redirect: "manual",
+        headers: { Accept: "text/html,text/plain;q=0.9", "User-Agent": "awesome-copilot-external-plugin-intake" },
+        signal: controller.signal,
+        dispatcher: new PinnedAddressDispatcher(url, address),
+      });
+      if (response.status < 300 || response.status >= 400) break;
+      const location = response.headers?.get?.("location");
+      if (!location) break;
+      if (redirectCount === HOMEPAGE_MAX_REDIRECTS) {
+        return { ...result, status: "warning", output: "Homepage exceeded the redirect limit." };
+      }
+      url = new URL(location, url);
+      if (!["http:", "https:"].includes(url.protocol)) {
+        return { ...result, status: "warning", output: "Homepage URL uses an unsupported protocol." };
+      }
+    }
+    if (!response.ok) {
+      return { ...result, status: "warning", output: `Homepage returned HTTP ${response.status}.` };
+    }
+
+    const content = await readHomepageBody(response);
+    for (const [name, pattern] of MARKETING_SIGNAL_PATTERNS) {
+      if (pattern.test(content)) {
+        result.signals.push(name);
+      }
+    }
+
+    result.status = "pass";
+    result.output = result.signals.length
+      ? `Detected homepage signals: ${result.signals.join(", ")}.`
+      : "No configured pricing or sales signals detected in the homepage content.";
+    return result;
+  } catch (error) {
+    return {
+      ...result,
+      status: "warning",
+      output: error?.name === "AbortError" ? "Homepage inspection timed out." : `Homepage inspection failed: ${error.message}`,
+    };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function buildRepositorySignals(repository) {
+  if (!repository) {
+    return { status: "not_run", output: "" };
+  }
+
+  const createdAt = repository.created_at ? new Date(repository.created_at) : null;
+  const ageDays = createdAt && !Number.isNaN(createdAt.valueOf())
+    ? Math.max(0, Math.floor((Date.now() - createdAt.valueOf()) / 86_400_000))
+    : undefined;
+  const signals = [];
+  if (ageDays !== undefined && ageDays <= 14) signals.push(`repository is ${ageDays} day(s) old`);
+  if (repository.stargazers_count === 0) signals.push("0 stars");
+  if (repository.subscribers_count === 0) signals.push("0 watchers");
+  if (repository.forks_count === 0) signals.push("0 forks");
+
+  return {
+    status: "pass",
+    age_days: ageDays,
+    stars: repository.stargazers_count,
+    watchers: repository.subscribers_count,
+    forks: repository.forks_count,
+    open_issues: repository.open_issues_count,
+    signals,
+    output: signals.length ? `Detected repository signals: ${signals.join(", ")}.` : "No configured repository signals detected.",
+  };
+}
+
 function decodeGitHubFileContent(fileResponse) {
   const encodedContent = fileResponse?.data?.content;
   if (!encodedContent || typeof encodedContent !== "string") {
@@ -293,93 +552,241 @@ function encodeRepoPath(repo) {
   return `${encodeURIComponent(owner ?? "")}/${encodeURIComponent(name ?? "")}`;
 }
 
+async function resolveCommitSha(repo, locator, token) {
+  const encodedRepo = encodeRepoPath(repo);
+  const commitResponse = await fetchGitHubJson(`/repos/${encodedRepo}/commits/${encodeURIComponent(locator)}`, token);
+  if (commitResponse.kind !== "found") {
+    return commitResponse;
+  }
+
+  return {
+    ...commitResponse,
+    commitSha: normalizeCommitSha(commitResponse.data?.sha),
+  };
+}
+
 async function validateRemoteRepository(repo, { ref, sha }, errors, warnings, token) {
   const encodedRepo = encodeRepoPath(repo);
   const repositoryResponse = await fetchGitHubJson(`/repos/${encodedRepo}`, token);
+  const normalizedSha = normalizeCommitSha(sha);
 
   if (repositoryResponse.kind === "notFound") {
-    errors.push(`submission: 找不到 GitHub 儲存庫 "${repo}"`);
-    return;
+    errors.push(`submission: GitHub repository "${repo}" was not found`);
+    return { status: "not_found", output: "" };
   }
 
   if (repositoryResponse.kind === "apiError") {
-    const statusText = repositoryResponse.status ? `HTTP ${repositoryResponse.status}` : "網路錯誤";
+    const statusText = repositoryResponse.status ? `HTTP ${repositoryResponse.status}` : "network error";
     warnings.push(
-      `submission: 無法驗證 GitHub 儲存庫 "${repo}" (${statusText}${repositoryResponse.reason ? ` — ${repositoryResponse.reason}` : ""}); 維護者應重新執行 intake`,
+      `submission: could not verify GitHub repository "${repo}" (${statusText}${repositoryResponse.reason ? ` — ${repositoryResponse.reason}` : ""}); a maintainer should re-run intake`,
     );
-    return;
+    return { status: "warning", output: `Repository metadata unavailable (${statusText}).` };
   }
 
   if (repositoryResponse.data?.private) {
-    errors.push(`submission: GitHub 儲存庫 "${repo}" 必須是公開的`);
+    errors.push(`submission: GitHub repository "${repo}" must be public`);
   }
 
   if (repositoryResponse.data?.archived) {
-    warnings.push(`submission: GitHub 儲存庫 "${repo}" 已封存`);
+    warnings.push(`submission: GitHub repository "${repo}" is archived`);
   }
 
   if (sha) {
     if (/^[0-9a-f]{40}$/i.test(sha)) {
       const commitResponse = await fetchGitHubJson(`/repos/${encodedRepo}/git/commits/${encodeURIComponent(sha)}`, token);
       if (commitResponse.kind === "notFound") {
-        errors.push(`submission: 在 GitHub 儲存庫 "${repo}" 中找不到 Commit "${sha}"`);
+        errors.push(`submission: commit "${sha}" was not found in GitHub repository "${repo}"`);
       } else if (commitResponse.kind === "apiError") {
-        const statusText = commitResponse.status ? `HTTP ${commitResponse.status}` : "網路錯誤";
+        const statusText = commitResponse.status ? `HTTP ${commitResponse.status}` : "network error";
         warnings.push(
-          `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的 Commit "${sha}" (${statusText}${commitResponse.reason ? ` — ${commitResponse.reason}` : ""}); 維護者應重新執行 intake`,
+          `submission: could not verify commit "${sha}" in GitHub repository "${repo}" (${statusText}${commitResponse.reason ? ` — ${commitResponse.reason}` : ""}); a maintainer should re-run intake`,
         );
       }
+    }
+
+  }
+
+  function validateRefShaConsistency(refCommitSha) {
+    if (!normalizedSha || !refCommitSha) {
+      return;
+    }
+
+    const consistency = evaluateRefShaConsistency({ ref, sha, resolvedRefCommitSha: refCommitSha });
+    if (!consistency.matches) {
+      errors.push(
+        `submission: when both "Ref to review" and "Commit SHA to review" are provided, they must reference the same commit (ref "${ref}" resolves to "${consistency.normalizedRefCommitSha}", sha is "${sha}")`,
+      );
     }
   }
 
   if (!ref) {
-    return;
+    return buildRepositorySignals(repositoryResponse.data);
   }
 
   if (/^[0-9a-f]{40}$/i.test(ref)) {
     const commitResponse = await fetchGitHubJson(`/repos/${encodedRepo}/git/commits/${encodeURIComponent(ref)}`, token);
     if (commitResponse.kind === "notFound") {
-      errors.push(`submission: 在 GitHub 儲存庫 "${repo}" 中找不到 Commit "${ref}"`);
+      errors.push(`submission: commit "${ref}" was not found in GitHub repository "${repo}"`);
     } else if (commitResponse.kind === "apiError") {
-      const statusText = commitResponse.status ? `HTTP ${commitResponse.status}` : "網路錯誤";
+      const statusText = commitResponse.status ? `HTTP ${commitResponse.status}` : "network error";
       warnings.push(
-        `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的 Commit "${ref}" (${statusText}${commitResponse.reason ? ` — ${commitResponse.reason}` : ""}); 維護者應重新執行 intake`,
+        `submission: could not verify commit "${ref}" in GitHub repository "${repo}" (${statusText}${commitResponse.reason ? ` — ${commitResponse.reason}` : ""}); a maintainer should re-run intake`,
       );
     }
-    return;
+
+    validateRefShaConsistency(normalizeCommitSha(ref));
+    return buildRepositorySignals(repositoryResponse.data);
   }
 
   if (ref.startsWith("refs/heads/") || ["main", "master", "develop", "development", "dev", "trunk"].includes(ref)) {
-    return;
+    return buildRepositorySignals(repositoryResponse.data);
   }
 
   if (ref.startsWith("refs/") && !ref.startsWith("refs/tags/")) {
-    return;
+    return buildRepositorySignals(repositoryResponse.data);
   }
 
   const tagName = ref.startsWith("refs/tags/") ? ref.slice("refs/tags/".length) : ref;
   const tagResponse = await fetchGitHubJson(`/repos/${encodedRepo}/git/ref/tags/${encodeURIComponent(tagName)}`, token);
 
   if (tagResponse.kind === "found") {
-    return;
+    if (!normalizedSha) {
+      return buildRepositorySignals(repositoryResponse.data);
+    }
+
+    const resolvedRefResponse = await resolveCommitSha(repo, ref, token);
+    if (resolvedRefResponse.kind === "notFound") {
+      errors.push(`submission: ref "${ref}" could not be resolved to a commit in GitHub repository "${repo}"`);
+      return buildRepositorySignals(repositoryResponse.data);
+    }
+
+    if (resolvedRefResponse.kind === "apiError") {
+      if (resolvedRefResponse.status === 422) {
+        errors.push(
+          `submission: ref "${ref}" does not resolve to a commit in GitHub repository "${repo}" (it may point to a tag object, tree, or blob); only commit-backed refs are supported`,
+        );
+        return buildRepositorySignals(repositoryResponse.data);
+      }
+      const statusText = resolvedRefResponse.status ? `HTTP ${resolvedRefResponse.status}` : "network error";
+      warnings.push(
+        `submission: could not resolve ref "${ref}" to a commit in GitHub repository "${repo}" (${statusText}${resolvedRefResponse.reason ? ` — ${resolvedRefResponse.reason}` : ""}); a maintainer should re-run intake`,
+      );
+      return buildRepositorySignals(repositoryResponse.data);
+    }
+
+    if (!resolvedRefResponse.commitSha) {
+      warnings.push(
+        `submission: could not determine the commit SHA for ref "${ref}" in GitHub repository "${repo}"; a maintainer should re-run intake`,
+      );
+      return buildRepositorySignals(repositoryResponse.data);
+    }
+
+    validateRefShaConsistency(resolvedRefResponse.commitSha);
+    return buildRepositorySignals(repositoryResponse.data);
   }
 
   if (/^[0-9a-f]+$/i.test(ref) && ref.length !== 40) {
-    errors.push('submission: "待審核的 Ref" 中的 Commit SHA 必須使用完整的 40 字元 SHA，或在 "待審核的 Commit SHA" 中提交');
-    return;
+    errors.push('submission: commit SHAs in "Ref to review" must use the full 40-character SHA or be submitted in "Commit SHA to review"');
+    return buildRepositorySignals(repositoryResponse.data);
   }
 
   if (tagResponse.kind === "notFound") {
-    errors.push(`submission: 在 GitHub 儲存庫 "${repo}" 中找不到標籤 "${ref}"`);
+    errors.push(`submission: tag "${ref}" was not found in GitHub repository "${repo}"`);
   } else if (tagResponse.kind === "apiError") {
-    const statusText = tagResponse.status ? `HTTP ${tagResponse.status}` : "網路錯誤";
+    const statusText = tagResponse.status ? `HTTP ${tagResponse.status}` : "network error";
     warnings.push(
-      `submission: 無法驗證 GitHub 儲存庫 "${repo}" 中的標籤 "${ref}" (${statusText}${tagResponse.reason ? ` — ${tagResponse.reason}` : ""}); 維護者應重新執行 intake`,
+      `submission: could not verify tag "${ref}" in GitHub repository "${repo}" (${statusText}${tagResponse.reason ? ` — ${tagResponse.reason}` : ""}); a maintainer should re-run intake`,
     );
   }
+  return buildRepositorySignals(repositoryResponse.data);
 }
 
-async function validateCanvasPluginMetadata(plugin, errors, warnings, token) {
+function buildGitTreePath(repo, treeish, { recursive = false } = {}) {
+  const encodedRepo = encodeRepoPath(repo);
+  const query = recursive ? "?recursive=1" : "";
+  return `/repos/${encodedRepo}/git/trees/${encodeURIComponent(treeish)}${query}`;
+}
+
+function normalizeTreeish(locator) {
+  const value = String(locator ?? "").trim();
+  // The Git Trees API takes the tree-ish as a single path segment. A full "refs/tags/<tag>"
+  // ref would break that, so reduce it to the bare tag name; commit SHAs and simple tag
+  // names pass through unchanged.
+  return value.startsWith("refs/tags/") ? value.slice("refs/tags/".length) : value;
+}
+
+// Resolve the tree SHA of a directory by walking the path one level at a time. Each hop is a
+// non-recursive tree fetch of a single directory, so the work is bounded by the path depth and
+// is independent of the overall repository size — unlike a root recursive fetch, which a large
+// unrelated monorepo can push over the API's truncation limit and never validate.
+async function resolveDirectoryTreeSha(repo, treeish, segments, token) {
+  let currentTreeish = treeish;
+  for (const segment of segments) {
+    const response = await fetchGitHubJson(buildGitTreePath(repo, currentTreeish), token);
+    if (response.kind !== "found" || !Array.isArray(response.data?.tree)) {
+      return { status: "apiError" };
+    }
+    if (response.data.truncated) {
+      // A single directory level exceeded the response limit; presence is unverifiable.
+      return { status: "apiError" };
+    }
+
+    const match = response.data.tree.find((entry) => entry?.path === segment);
+    if (!match) {
+      return { status: "missing" };
+    }
+    if (match.type !== "tree") {
+      return { status: "notDirectory" };
+    }
+    currentTreeish = match.sha;
+  }
+
+  return { status: "found", treeSha: currentTreeish };
+}
+
+// Inspect the (recursively fetched) "extensions" subtree for the plugin's canvas extension
+// entry point. Paths are relative to "extensions/", so the flat form is "extension.mjs" and a
+// nested form is "<name>/extension.mjs". Scoping the recursive fetch to this subtree keeps the
+// lookup complete without depending on the size of the rest of the repository.
+function analyzeCanvasExtensionSubtree(subtreeEntries) {
+  let flatIsBlob = false;
+  let flatIsTree = false;
+  let nestedEntryPath = null;
+
+  for (const entry of subtreeEntries) {
+    const entryPath = entry?.path;
+    if (typeof entryPath !== "string") {
+      continue;
+    }
+
+    if (entryPath === "extension.mjs") {
+      if (entry.type === "blob") {
+        flatIsBlob = true;
+      } else if (entry.type === "tree") {
+        flatIsTree = true;
+      }
+      continue;
+    }
+
+    const segments = entryPath.split("/");
+    if (segments.length === 2 && segments[1] === "extension.mjs" && entry.type === "blob") {
+      nestedEntryPath = nestedEntryPath ?? `extensions/${entryPath}`;
+    }
+  }
+
+  if (flatIsBlob) {
+    return { status: "found", entryPath: "extensions/extension.mjs" };
+  }
+  if (nestedEntryPath) {
+    return { status: "found", entryPath: nestedEntryPath };
+  }
+  if (flatIsTree) {
+    return { status: "notFile" };
+  }
+  return { status: "notFound" };
+}
+
+export async function validateCanvasPluginMetadata(plugin, errors, warnings, token) {
   const repo = plugin?.source?.repo;
   const sha = plugin?.source?.sha;
   const ref = plugin?.source?.ref;
@@ -388,7 +795,7 @@ async function validateCanvasPluginMetadata(plugin, errors, warnings, token) {
   const pluginRoot = normalizeRepoRelativePath(plugin?.source?.path);
 
   if (!releaseLocator) {
-    errors.push('submission: 帶有"canvas"標籤的插件必須提供"Ref to review"和/或"Commit SHA to review"。');
+    errors.push('submission: plugins tagged with "canvas" must provide "Ref to review" and/or "Commit SHA to review"');
     return;
   }
 
@@ -421,7 +828,7 @@ async function validateCanvasPluginMetadata(plugin, errors, warnings, token) {
 
     const decoded = decodeGitHubFileContent(response);
     if (!decoded) {
-      errors.push(`submission: 無法解碼插件清單 "${candidatePath}" at ${releaseLocatorDescription}`);
+      errors.push(`submission: could not decode plugin manifest "${candidatePath}" at ${releaseLocatorDescription}`);
       return;
     }
 
@@ -431,7 +838,7 @@ async function validateCanvasPluginMetadata(plugin, errors, warnings, token) {
       break;
     } catch (error) {
       errors.push(
-        `submission: 插件清單 "${candidatePath}" 位於 ${releaseLocatorDescription} 處，不是有效的 JSON (${error.message})`,
+        `submission: plugin manifest "${candidatePath}" at ${releaseLocatorDescription} is not valid JSON (${error.message})`,
       );
       return;
     }
@@ -440,37 +847,96 @@ async function validateCanvasPluginMetadata(plugin, errors, warnings, token) {
   if (!manifest) {
     if (sawManifestApiError) {
       warnings.push(
-        `submission: 無法驗證 GitHub 倉庫 "${repo}" 中位於 ${releaseLocatorDescription} 的 canvas 插件清單；維護者應重新執行 intake 指令。`,
+        `submission: could not verify canvas plugin manifest in GitHub repository "${repo}" at ${releaseLocatorDescription}; a maintainer should re-run intake`,
       );
       return;
     }
 
     const expectedPaths = manifestCandidates.map((candidatePath) => `"${candidatePath}"`).join(", ");
     errors.push(
-      `submission: 帶有 "canvas" 標籤的插件必須在 ${releaseLocatorDescription} 中的 ${expectedPaths} 之一包含清單檔案`,
+      `submission: plugins tagged with "canvas" must include a manifest at one of ${expectedPaths} in ${releaseLocatorDescription}`,
     );
     return;
   }
 
   if (manifest.logo !== EXTERNAL_CANVAS_PREVIEW_PATH) {
     errors.push(
-      `submission: 帶有 "canvas" 標籤的插件必須在 ${releaseLocatorDescription} 中的 ${expectedPaths} 之一包含清單檔案。`,
+      `submission: plugins tagged with "canvas" must set "logo" to "${EXTERNAL_CANVAS_PREVIEW_PATH}" in "${manifestPath}"`,
     );
+  }
+
+  if (manifest.extenions !== undefined) {
+    errors.push(
+      `submission: plugins tagged with "canvas" must use "extensions" (found misspelled key "extenions") in "${manifestPath}"`,
+    );
+  }
+
+  if (manifest.extensions !== undefined && manifest.extensions !== "extensions") {
+    errors.push(
+      `submission: plugins tagged with "canvas" may omit "extensions", but if provided it must be "extensions" in "${manifestPath}"`,
+    );
+  }
+
+  const unverifiableEntryPointWarning =
+    `submission: could not verify the canvas extension entry point in GitHub repository "${repo}" at ${releaseLocatorDescription}; a maintainer should re-run intake`;
+  const extensionsSegments = [...(pluginRoot ? pluginRoot.split("/") : []), "extensions"];
+  const extensionsTree = await resolveDirectoryTreeSha(
+    repo,
+    normalizeTreeish(releaseLocator),
+    extensionsSegments,
+    token,
+  );
+  if (extensionsTree.status === "apiError") {
+    warnings.push(unverifiableEntryPointWarning);
+  } else if (extensionsTree.status === "missing") {
+    errors.push(
+      `submission: plugins tagged with "canvas" must include an "extensions" directory at ${releaseLocatorDescription}`,
+    );
+  } else if (extensionsTree.status === "notDirectory") {
+    errors.push(
+      `submission: "extensions" must be a directory in ${releaseLocatorDescription}`,
+    );
+  } else {
+    const subtreeResponse = await fetchGitHubJson(
+      buildGitTreePath(repo, extensionsTree.treeSha, { recursive: true }),
+      token,
+    );
+    if (subtreeResponse.kind !== "found" || !Array.isArray(subtreeResponse.data?.tree)) {
+      warnings.push(unverifiableEntryPointWarning);
+    } else {
+      const canvasStructure = analyzeCanvasExtensionSubtree(subtreeResponse.data.tree);
+      if (canvasStructure.status === "found") {
+        // Entry point located (flat or nested); nothing to report.
+      } else if (subtreeResponse.data.truncated) {
+        // Absence is only inconclusive if the (already extensions-scoped) subtree itself is
+        // truncated, which would take an implausibly large extensions directory; flag it as
+        // unverifiable rather than falsely rejecting.
+        warnings.push(unverifiableEntryPointWarning);
+      } else if (canvasStructure.status === "notFile") {
+        errors.push(
+          `submission: "extensions/extension.mjs" must be a file in ${releaseLocatorDescription}`,
+        );
+      } else {
+        errors.push(
+          `submission: plugins tagged with "canvas" must include a canvas extension entry point at "extensions/extension.mjs" or "extensions/<extension>/extension.mjs" at ${releaseLocatorDescription}`,
+        );
+      }
+    }
   }
 
   const previewPath = joinRepoPath(pluginRoot, EXTERNAL_CANVAS_PREVIEW_PATH);
   const previewResponse = await fetchGitHubFile(repo, previewPath, releaseLocator, token);
   if (previewResponse.kind === "notFound") {
     errors.push(
-      `submission: 帶有 "canvas "標籤的插件必須在 ${releaseLocatorDescription} 處包含 "${EXTERNAL_CANVAS_PREVIEW_PATH}"。`,
+      `submission: plugins tagged with "canvas" must include "${EXTERNAL_CANVAS_PREVIEW_PATH}" at ${releaseLocatorDescription}`,
     );
   } else if (previewResponse.kind === "apiError") {
     warnings.push(
-      `submission: 無法驗證 GitHub 倉庫 "${repo}" 中位於 ${releaseLocatorDescription} 的 "${EXTERNAL_CANVAS_PREVIEW_PATH}"；維護者應重新執行 intake`
+      `submission: could not verify "${EXTERNAL_CANVAS_PREVIEW_PATH}" in GitHub repository "${repo}" at ${releaseLocatorDescription}; a maintainer should re-run intake`,
     );
   } else if (previewResponse.data?.type !== "file") {
     errors.push(
-      `submission: "${EXTERNAL_CANVAS_PREVIEW_PATH}" 必須是 ${releaseLocatorDescription} 中的一個文件`,
+      `submission: "${EXTERNAL_CANVAS_PREVIEW_PATH}" must be a file in ${releaseLocatorDescription}`,
     );
   }
 }
@@ -482,7 +948,7 @@ export function parseExternalPluginIssueBody(body) {
   function requiredField(title) {
     const value = stripNoResponse(sections.get(title));
     if (!value) {
-      errors.push(`submission: "${title}" 為必填項目`);
+      errors.push(`submission: "${title}" is required`);
     }
     return value;
   }
@@ -490,7 +956,7 @@ export function parseExternalPluginIssueBody(body) {
   const pluginName = requiredField(FIELD_TITLES.pluginName);
   const shortDescription = requiredField(FIELD_TITLES.shortDescription);
   const repoInput = normalizeGitHubRepo(requiredField(FIELD_TITLES.githubRepository));
-  // 同時支援目前的欄位標題以及 ref/sha 分拆之前的舊標題
+  // Support both the current field title and the legacy title used before the ref/sha split
   const immutableRef = stripNoResponse(
     sections.get(FIELD_TITLES.immutableRef) ?? sections.get(LEGACY_FIELD_TITLES.immutableRef),
   );
@@ -507,7 +973,7 @@ export function parseExternalPluginIssueBody(body) {
   const checkedItems = parseChecklist(sections.get(FIELD_TITLES.submissionChecklist));
 
   if (!immutableRef && !immutableSha) {
-    errors.push(`submission: "${FIELD_TITLES.immutableRef}" 或 "${FIELD_TITLES.immutableSha}" 其中之一為必填`);
+    errors.push(`submission: one of "${FIELD_TITLES.immutableRef}" or "${FIELD_TITLES.immutableSha}" is required`);
   }
 
   for (const equivalents of REQUIRED_CHECKLIST_ITEMS) {
@@ -519,9 +985,9 @@ export function parseExternalPluginIssueBody(body) {
       }
     }
     if (!isChecked) {
-      // 使用每個等效 Set 中的規範 (第一個) 文字進行回報
+      // Report using the canonical (first) text in each equivalents Set
       const [canonical] = equivalents;
-      errors.push(`submission: 檢查清單項目必須勾選: "${canonical}"`);
+      errors.push(`submission: checklist item must be checked: "${canonical}"`);
     }
   }
 
@@ -576,14 +1042,20 @@ export function parseMarkReadyForReviewCommand(body) {
 function normalizeQualityGateResult(rawResult) {
   const defaults = {
     overall_status: "not_run",
+    spec_compliance_status: "not_run",
     vally_lint_status: "not_run",
     smoke_status: "not_run",
     version_match_status: "not_run",
+    ref_sha_consistency_status: "not_run",
+    canvas_structure_status: "not_run",
     failure_class: "none",
     summary: "",
+    spec_compliance_output: "",
     vally_lint_output: "",
     smoke_output: "",
     version_match_output: "",
+    ref_sha_consistency_output: "",
+    canvas_structure_output: "",
   };
 
   if (!rawResult || typeof rawResult !== "object" || Array.isArray(rawResult)) {
@@ -597,29 +1069,67 @@ function normalizeQualityGateResult(rawResult) {
 }
 
 function buildQualityGatesCommentSection(qualityResult) {
+  const formatStatus = (rawStatus, gate) => {
+    const status = String(rawStatus || "not_run");
+    if (status === "pass") {
+      return "✅ pass";
+    }
+
+    if (status === "warning" || (gate === "spec" && status === "fail")) {
+      return "⚠️ warning";
+    }
+    if (status === "fail" || status === "infra_error") {
+      return "🛑 fail";
+    }
+    return "⚪ not_run";
+  };
+
+  const specState = qualityResult.spec_compliance_status || "not_run";
   const vallyState = qualityResult.vally_lint_status || "not_run";
   const smokeState = qualityResult.smoke_status || "not_run";
   const versionMatchState = qualityResult.version_match_status || "not_run";
-  const summaryText = String(qualityResult.summary || "").trim() || "_未提供品質閘門 (quality gate) 詳細資訊。_";
+  const refShaConsistencyState = qualityResult.ref_sha_consistency_status || "not_run";
+  const canvasStructureState = qualityResult.canvas_structure_status || "not_run";
+  const summaryText = String(qualityResult.summary || "").trim() || "_No quality gate details were provided._";
 
   const sections = [
-    "### 品質閘門摘要",
+    "### Quality gate summary",
     "",
-    "| 閘門 | 狀態 |",
+    "_Legend: ✅ pass · ⚠️ warning · 🛑 fail_",
+    "",
+    "| Gate | Status |",
     "|---|---|",
-    `| vally lint | ${vallyState} |`,
-    `| 安裝冒煙測試 | ${smokeState} |`,
-    `| 版本匹配 | ${versionMatchState} |`,
+    `| spec compliance (non-blocking) | ${formatStatus(specState, "spec")} |`,
+    `| vally lint | ${formatStatus(vallyState, "vally")} |`,
+    `| install smoke test | ${formatStatus(smokeState, "smoke")} |`,
+    `| version match | ${formatStatus(versionMatchState, "version match")} |`,
+    `| ref/sha consistency | ${formatStatus(refShaConsistencyState, "ref/sha consistency")} |`,
+    `| canvas structure | ${formatStatus(canvasStructureState, "canvas structure")} |`,
     "",
     summaryText,
   ];
+
+  const specOutput = String(qualityResult.spec_compliance_output || "").trim();
+  if (specOutput) {
+    sections.push(
+      "",
+      "<details>",
+      `<summary>spec compliance output (${formatStatus(specState, "spec")})</summary>`,
+      "",
+      "```text",
+      specOutput,
+      "```",
+      "",
+      "</details>",
+    );
+  }
 
   const vallyOutput = String(qualityResult.vally_lint_output || "").trim();
   if (vallyOutput) {
     sections.push(
       "",
       "<details>",
-      "<summary>vally lint 輸出</summary>",
+      `<summary>vally lint output (${formatStatus(vallyState, "vally")})</summary>`,
       "",
       "```text",
       vallyOutput,
@@ -634,7 +1144,7 @@ function buildQualityGatesCommentSection(qualityResult) {
     sections.push(
       "",
       "<details>",
-      "<summary>安裝冒煙測試 (smoke test) 輸出</summary>",
+      `<summary>install smoke test output (${formatStatus(smokeState, "smoke")})</summary>`,
       "",
       "```text",
       smokeOutput,
@@ -649,7 +1159,7 @@ function buildQualityGatesCommentSection(qualityResult) {
     sections.push(
       "",
       "<details>",
-      "<summary>版本匹配 (version match) 輸出</summary>",
+      "<summary>Version match output</summary>",
       "",
       "```text",
       versionMatchOutput,
@@ -659,7 +1169,71 @@ function buildQualityGatesCommentSection(qualityResult) {
     );
   }
 
+  const refShaConsistencyOutput = String(qualityResult.ref_sha_consistency_output || "").trim();
+  if (refShaConsistencyOutput) {
+    sections.push(
+      "",
+      "<details>",
+      "<summary>Ref/SHA consistency output</summary>",
+      "",
+      "```text",
+      refShaConsistencyOutput,
+      "```",
+      "",
+      "</details>",
+    );
+  }
+
+  const canvasStructureOutput = String(qualityResult.canvas_structure_output || "").trim();
+  if (canvasStructureOutput) {
+    sections.push(
+      "",
+      "<details>",
+      "<summary>Canvas structure output</summary>",
+      "",
+      "```text",
+      canvasStructureOutput,
+      "```",
+      "",
+      "</details>",
+    );
+  }
+
   return sections.join("\n");
+}
+
+function buildReviewSignalsCommentSection(reviewSignals) {
+  const repository = reviewSignals?.repository;
+  const homepage = reviewSignals?.homepage;
+  if (!repository && !homepage) {
+    return "";
+  }
+
+  const rows = [
+    "### Reviewer signals",
+    "",
+    "_These are non-blocking heuristics for maintainer review; they are not evidence of misconduct or low quality._",
+    "",
+    "| Signal | Result |",
+    "|---|---|",
+  ];
+  if (repository?.status === "pass") {
+    rows.push(
+      `| Repository age | ${repository.age_days === undefined ? "unknown" : `${repository.age_days} day(s)`} |`,
+      `| Repository activity | ${repository.signals?.length ? repository.signals.join("; ") : "no configured signal"} |`,
+      `| Repository counts | ${repository.stars ?? "unknown"} stars · ${repository.watchers ?? "unknown"} watchers · ${repository.forks ?? "unknown"} forks · ${repository.open_issues ?? "unknown"} open issues/PRs |`,
+    );
+  } else if (repository?.output) {
+    rows.push(`| Repository metadata | ${repository.output} |`);
+  }
+
+  if (homepage?.status === "pass") {
+    rows.push(`| Homepage heuristics | ${homepage.signals?.length ? `⚠️ ${homepage.signals.join(", ")}` : "no configured signal"} |`);
+  } else if (homepage?.output) {
+    rows.push(`| Homepage inspection | ${homepage.output} |`);
+  }
+
+  return rows.join("\n");
 }
 
 function getIntakeStateFromQualityResult(baseResult, qualityResult) {
@@ -685,21 +1259,26 @@ function buildMergedIntakeComment(baseResult, qualityResult, runId, owner, repo)
 
   const marker = baseResult.commentMarker ?? EXTERNAL_PLUGIN_INTAKE_COMMENT_MARKER;
   const qualitySection = buildQualityGatesCommentSection(qualityResult);
-  const runLink = runId && owner && repo ? `_[查看工作流程執行狀況](https://github.com/${owner}/${repo}/actions/runs/${runId})_` : "";
+  const runLink = runId && owner && repo ? `_[View workflow run](https://github.com/${owner}/${repo}/actions/runs/${runId})_` : "";
 
+  const hasSpecWarnings = String(qualityResult.spec_compliance_status || "") === "warning";
   const intro =
     qualityResult.failure_class === "submitter_fixes"
-      ? "## ⚠️ 外部外掛程式攝取需要提交者修正"
+      ? "## 🛑 External plugin intake failed (submitter fixes required)"
       : qualityResult.failure_class === "infra"
-        ? "## ⚠️ 外部外掛程式攝取無法完成品質檢查"
-        : "## ✅ 外部外掛程式攝取已通過";
+        ? "## 🛑 External plugin intake failed (quality checks could not complete)"
+        : hasSpecWarnings
+          ? "## ⚠️ External plugin intake passed with spec warnings"
+          : "## ✅ External plugin intake passed";
 
   const statusLine =
     qualityResult.failure_class === "submitter_fixes"
-      ? "此提交已通過中繼資料驗證，但品質閘門發現必須在進行維護者審核之前修正的問題。請更新 Issue 詳細資訊或來源外掛程式，然後留言 `/rerun-intake`。"
+      ? "This submission passed metadata validation, but quality gates found issues that must be fixed before it can move to maintainer review. Update the issue details or source plugin and then comment `/rerun-intake`."
       : qualityResult.failure_class === "infra"
-        ? "此提交已通過中繼資料驗證，但自動品質檢查遇到基礎設施問題。維護者應重新執行攝取，或在審核後使用明確的覆蓋 (override) 指令。"
-        : "此提交已通過自動攝取驗證和品質檢查，已準備好供維護者審核。";
+        ? "This submission passed metadata validation, but the automated quality checks hit an infrastructure issue. A maintainer should rerun intake or use the explicit override command after review."
+        : hasSpecWarnings
+          ? "This submission passed blocking quality checks and is ready for maintainer review, but it has non-blocking Agent Plugins spec compliance warnings."
+          : "This submission passed automated intake validation and quality checks and is ready for maintainer review.";
 
   return [
     marker,
@@ -707,22 +1286,24 @@ function buildMergedIntakeComment(baseResult, qualityResult, runId, owner, repo)
     "",
     statusLine,
     "",
-    `- **外掛程式:** ${baseResult.plugin?.name ?? "未知"}`,
-    `- **儲存庫:** ${baseResult.plugin?.repository ?? "未知"}`,
+    `- **Plugin:** ${baseResult.plugin?.name ?? "unknown"}`,
+    `- **Repository:** ${baseResult.plugin?.repository ?? "unknown"}`,
     baseResult.plugin?.source?.ref ? `- **Ref:** [\`${baseResult.plugin.source.ref.replaceAll('\`', '\\\`')}\`](https://github.com/${encodeRepoPath(baseResult.plugin.source.repo)}/tree/${encodeURIComponent(baseResult.plugin.source.ref).replaceAll("%2F", "/")})` : undefined,
     baseResult.plugin?.source?.sha ? `- **SHA:** [\`${baseResult.plugin.source.sha.replaceAll('\`', '\\\`')}\`](https://github.com/${encodeRepoPath(baseResult.plugin.source.repo)}/tree/${encodeURIComponent(baseResult.plugin.source.sha).replaceAll("%2F", "/")})` : undefined,
+    "",
+    buildReviewSignalsCommentSection(baseResult.reviewSignals),
     "",
     qualitySection,
     "",
     "",
-    "### 規範 external.json 內容 (payload)",
+    "### Canonical external.json payload",
     "",
     "",
     "```json",
     JSON.stringify(baseResult.plugin ?? {}, null, 2),
     "```",
     baseResult.warnings?.length
-      ? ["", "### 警告", "", ...baseResult.warnings.map((warning) => `- ${warning}`)].join("\n")
+      ? ["", "### Warnings", "", ...baseResult.warnings.map((warning) => `- ${warning}`)].join("\n")
       : "",
     runLink ? `\n${runLink}` : "",
   ].join("\n");
@@ -748,6 +1329,7 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
   const parsed = parseExternalPluginIssueBody(issueBody);
   const errors = [...parsed.errors];
   const warnings = [];
+  let repositorySignals = { status: "not_run", output: "" };
 
   const localPluginNames = readLocalPluginNames();
   const { plugins: existingExternalPlugins } = readExternalPlugins({ policy: "marketplace" });
@@ -766,13 +1348,15 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
       (name) => String(name).toLowerCase() === String(parsed.plugin.name).toLowerCase(),
     );
     if (matchingName) {
-      errors.push(`submission: 外掛程式名稱 "${parsed.plugin.name}" 與現有的外掛程式 "${matchingName}" 衝突`);
+      errors.push(`submission: plugin name "${parsed.plugin.name}" conflicts with existing plugin "${matchingName}"`);
     }
   }
 
   if (parsed.plugin?.source?.repo && (parsed.plugin?.source?.ref || parsed.plugin?.source?.sha)) {
-    await validateRemoteRepository(parsed.plugin.source.repo, parsed.plugin.source, errors, warnings, token);
+    repositorySignals = await validateRemoteRepository(parsed.plugin.source.repo, parsed.plugin.source, errors, warnings, token);
   }
+  const homepageSignals = await inspectHomepage(parsed.plugin?.homepage);
+  const reviewSignals = { repository: repositorySignals, homepage: homepageSignals };
 
   if (isCanvasPlugin) {
     await validateCanvasPluginMetadata(parsed.plugin, errors, warnings, token);
@@ -782,8 +1366,8 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
   const dedupedWarnings = [...new Set(warnings)];
   const valid = dedupedErrors.length === 0;
   const marker = EXTERNAL_PLUGIN_INTAKE_COMMENT_MARKER;
-  const normalizedKeywords = parsed.plugin?.keywords?.length ? parsed.plugin.keywords.join(", ") : "_未提供_";
-  const notes = parsed.additionalNotes ?? "_未提供額外說明。_";
+  const normalizedKeywords = parsed.plugin?.keywords?.length ? parsed.plugin.keywords.join(", ") : "_None provided_";
+  const notes = parsed.additionalNotes ?? "_No additional notes provided._";
   const payload = parsed.plugin
     ? [
         "```json",
@@ -792,48 +1376,51 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
       ].join("\n")
     : "```json\n{}\n```";
 
-  const runLink = runId && owner && repo ? `_[查看工作流程執行狀況](https://github.com/${owner}/${repo}/actions/runs/${runId})_` : "";
+  const runLink = runId && owner && repo ? `_[View workflow run](https://github.com/${owner}/${repo}/actions/runs/${runId})_` : "";
 
   const commentBody = valid
     ? [
         marker,
-        "## ✅ 外部外掛程式攝取已通過",
+        "## ✅ External plugin intake passed",
         "",
-        `此提交已通過自動攝取驗證，已準備好供維護者審核。`,
+        `This submission passed automated intake validation and is ready for maintainer review.`,
         "",
-        `- **外掛程式:** ${parsed.plugin.name}`,
-        `- **儲存庫:** ${parsed.plugin.repository}`,
+        `- **Plugin:** ${parsed.plugin.name}`,
+        `- **Repository:** ${parsed.plugin.repository}`,
         parsed.plugin.source.ref ? `- **Ref:** [\`${parsed.plugin.source.ref.replaceAll('\`', '\\\`')}\`](https://github.com/${encodeRepoPath(parsed.plugin.source.repo)}/tree/${encodeURIComponent(parsed.plugin.source.ref).replaceAll("%2F", "/")})` : undefined,
         parsed.plugin.source.sha ? `- **SHA:** [\`${parsed.plugin.source.sha.replaceAll('\`', '\\\`')}\`](https://github.com/${encodeRepoPath(parsed.plugin.source.repo)}/tree/${encodeURIComponent(parsed.plugin.source.sha).replaceAll("%2F", "/")})` : undefined,
-        `- **關鍵字:** ${normalizedKeywords}`,
+        `- **Keywords:** ${normalizedKeywords}`,
+        "",
+        buildReviewSignalsCommentSection(reviewSignals),
         "",
         "",
-        "### 規範 external.json 內容 (payload)",
+        "### Canonical external.json payload",
         "",
         "",
         payload,
         "",
-        "### 審核者說明",
+        "### Reviewer notes",
         "",
         "",
         notes,
         dedupedWarnings.length > 0
-          ? ["", "### 警告", "", ...dedupedWarnings.map((warning) => `- ${warning}`)].join("\n")
+          ? ["", "### Warnings", "", ...dedupedWarnings.map((warning) => `- ${warning}`)].join("\n")
           : "",
         runLink ? `\n${runLink}` : "",
       ].join("\n")
     : [
         marker,
-        "## ⚠️ 外部外掛程式攝取需要提交者修正",
+        "## 🛑 External plugin intake failed (submitter fixes required)",
         "",
-        "此提交未通過自動攝取驗證，尚無法進行維護者審核。",
-        `請編輯 Issue 表單以處理下方的修正。當 Issue 被編輯時，攝取會自動重新執行，或者 Issue 作者/維護者可以留言 \`${RERUN_INTAKE_COMMAND}\` 以根據需求重新執行。`,
+        "This submission did not pass automated intake validation and cannot move to maintainer review yet.",
+        `Edit the issue form to address the fixes below. Intake reruns automatically when the issue is edited, or the issue author/maintainer can comment \`${RERUN_INTAKE_COMMAND}\` to re-run on demand.`,
         "",
-        "### 需要修正的項目",
+        "### Required fixes",
         "",
         ...dedupedErrors.map((error) => `- ${error}`),
+        buildReviewSignalsCommentSection(reviewSignals),
         dedupedWarnings.length > 0
-          ? ["", "### 警告", "", ...dedupedWarnings.map((warning) => `- ${warning}`)].join("\n")
+          ? ["", "### Warnings", "", ...dedupedWarnings.map((warning) => `- ${warning}`)].join("\n")
           : "",
         runLink ? `\n${runLink}` : "",
       ].join("\n");
@@ -845,6 +1432,7 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
     errors: dedupedErrors,
     warnings: dedupedWarnings,
     plugin: parsed.plugin,
+    reviewSignals,
     isCanvasPlugin,
     commentBody,
     commentMarker: marker,
@@ -856,7 +1444,7 @@ const isCli = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve
 if (isCli) {
   const eventPath = process.argv[2];
   if (!eventPath) {
-    console.error("用法: node ./eng/external-plugin-intake.mjs <github-event.json> [runId] [owner] [repo]");
+    console.error("Usage: node ./eng/external-plugin-intake.mjs <github-event.json> [runId] [owner] [repo]");
     process.exit(1);
   }
 

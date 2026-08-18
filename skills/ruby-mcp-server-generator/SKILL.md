@@ -92,7 +92,7 @@ end
 module MyMcpServer
   class Server
     attr_reader :mcp_server
-    
+
     def initialize(server_context: {})
       @mcp_server = MCP::Server.new(
         name: 'my_mcp_server',
@@ -109,21 +109,21 @@ module MyMcpServer
         ],
         server_context: server_context
       )
-      
+
       setup_resource_handler
     end
-    
+
     def handle_json(json_string)
       mcp_server.handle_json(json_string)
     end
-    
+
     def start_stdio
       transport = MCP::Server::Transports::StdioTransport.new(mcp_server)
       transport.open
     end
-    
+
     private
-    
+
     def setup_resource_handler
       mcp_server.resources_read_handler do |params|
         Resources::ExampleResource.read(params[:uri])
@@ -143,7 +143,7 @@ module MyMcpServer
     class GreetTool < MCP::Tool
       tool_name 'greet'
       description '產生問候訊息'
-      
+
       input_schema(
         properties: {
           name: {
@@ -153,7 +153,7 @@ module MyMcpServer
         },
         required: ['name']
       )
-      
+
       output_schema(
         properties: {
           message: { type: 'string' },
@@ -161,21 +161,21 @@ module MyMcpServer
         },
         required: ['message', 'timestamp']
       )
-      
+
       annotations(
         read_only_hint: true,
         idempotent_hint: true
       )
-      
+
       def self.call(name:, server_context:)
         timestamp = Time.now.iso8601
         message = "Hello, #{name}! Welcome to MCP."
-        
+
         structured_data = {
           message: message,
           timestamp: timestamp
         }
-        
+
         MCP::Tool::Response.new(
           [{ type: 'text', text: message }],
           structured_content: structured_data
@@ -196,7 +196,7 @@ module MyMcpServer
     class CalculateTool < MCP::Tool
       tool_name 'calculate'
       description '執行數學計算'
-      
+
       input_schema(
         properties: {
           operation: {
@@ -215,7 +215,7 @@ module MyMcpServer
         },
         required: ['operation', 'a', 'b']
       )
-      
+
       output_schema(
         properties: {
           result: { type: 'number' },
@@ -223,12 +223,12 @@ module MyMcpServer
         },
         required: ['result', 'operation']
       )
-      
+
       annotations(
         read_only_hint: true,
         idempotent_hint: true
       )
-      
+
       def self.call(operation:, a:, b:, server_context:)
         result = case operation
                  when 'add' then a + b
@@ -240,18 +240,18 @@ module MyMcpServer
                  else
                    return error_response("未知操作: #{operation}")
                  end
-        
+
         structured_data = {
           result: result,
           operation: operation
         }
-        
+
         MCP::Tool::Response.new(
           [{ type: 'text', text: "結果: #{result}" }],
           structured_content: structured_data
         )
       end
-      
+
       def self.error_response(message)
         MCP::Tool::Response.new(
           [{ type: 'text', text: message }],
@@ -273,7 +273,7 @@ module MyMcpServer
     class CodeReviewPrompt < MCP::Prompt
       prompt_name 'code_review'
       description '產生程式碼審查提示'
-      
+
       arguments [
         MCP::Prompt::Argument.new(
           name: 'language',
@@ -286,16 +286,16 @@ module MyMcpServer
           required: false
         )
       ]
-      
+
       meta(
         version: '1.0',
         category: 'development'
       )
-      
+
       def self.template(args, server_context:)
         language = args['language'] || 'Ruby'
         focus = args['focus'] || 'general quality'
-        
+
         MCP::Prompt::Result.new(
           description: "針對 #{language} 程式碼進行審查，重點關注 #{focus}",
           messages: [
@@ -334,7 +334,7 @@ module MyMcpServer
   module Resources
     class ExampleResource
       RESOURCE_URI = 'resource://data/example'
-      
+
       def self.resource
         MCP::Resource.new(
           uri: RESOURCE_URI,
@@ -343,16 +343,16 @@ module MyMcpServer
           mime_type: 'application/json'
         )
       end
-      
+
       def self.read(uri)
         return [] unless uri == RESOURCE_URI
-        
+
         data = {
           message: '範例資源資料',
           timestamp: Time.now.iso8601,
           version: MyMcpServer::VERSION
         }
-        
+
         [{
           uri: uri,
           mimeType: 'application/json',
@@ -415,21 +415,21 @@ module MyMcpServer
           name: 'Ruby',
           server_context: {}
         )
-        
+
         refute response.is_error
         assert_equal 1, response.content.length
         assert_match(/Ruby/, response.content.first[:text])
-        
+
         assert response.structured_content
         assert_equal 'Hello, Ruby! Welcome to MCP.', response.structured_content[:message]
       end
-      
+
       def test_output_schema_validation
         response = GreetTool.call(
           name: 'Test',
           server_context: {}
         )
-        
+
         assert response.structured_content.key?(:message)
         assert response.structured_content.key?(:timestamp)
       end
@@ -455,11 +455,11 @@ module MyMcpServer
           b: 3,
           server_context: {}
         )
-        
+
         refute response.is_error
         assert_equal 8, response.structured_content[:result]
       end
-      
+
       def test_subtraction
         response = CalculateTool.call(
           operation: 'subtract',
@@ -467,11 +467,11 @@ module MyMcpServer
           b: 4,
           server_context: {}
         )
-        
+
         refute response.is_error
         assert_equal 6, response.structured_content[:result]
       end
-      
+
       def test_multiplication
         response = CalculateTool.call(
           operation: 'multiply',
@@ -479,11 +479,11 @@ module MyMcpServer
           b: 7,
           server_context: {}
         )
-        
+
         refute response.is_error
         assert_equal 42, response.structured_content[:result]
       end
-      
+
       def test_division
         response = CalculateTool.call(
           operation: 'divide',
@@ -491,11 +491,11 @@ module MyMcpServer
           b: 3,
           server_context: {}
         )
-        
+
         refute response.is_error
         assert_equal 5.0, response.structured_content[:result]
       end
-      
+
       def test_division_by_zero
         response = CalculateTool.call(
           operation: 'divide',
@@ -503,11 +503,11 @@ module MyMcpServer
           b: 0,
           server_context: {}
         )
-        
+
         assert response.is_error
         assert_match(/除數為零/, response.content.first[:text])
       end
-      
+
       def test_unknown_operation
         response = CalculateTool.call(
           operation: 'modulo',
@@ -515,7 +515,7 @@ module MyMcpServer
           b: 3,
           server_context: {}
         )
-        
+
         assert response.is_error
         assert_match(/未知操作/, response.content.first[:text])
       end
@@ -526,7 +526,7 @@ end
 
 ## README.md 模板
 
-```markdown
+````markdown
 # 我的 MCP 伺服器
 
 使用 Ruby 和官方 MCP Ruby SDK 建立的模型上下文協定伺服器。
@@ -644,7 +644,7 @@ my-mcp-server/
 ## 授權
 
 MIT
-```
+````
 
 ## 產生指令
 

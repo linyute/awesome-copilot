@@ -1,0 +1,29 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "convert-to-md",
+  "description": "一組將常見文件格式轉換為 Markdown 的 Copilot Skill，以便精準分析、摘要、搜尋或擷取其內容。只需告訴 Copilot 您的需求——系統會自動呼叫適當的 Skill 並在幕後完成轉換。",
+  "version": "1.0.1",
+  "keywords": [
+    "skills",
+    "configuration",
+    "copilot",
+    "convert-word-to-md",
+    "convert-excel-to-md",
+    "convert-pdf-to-md"
+  ],
+  "author": {
+    "name": "Willie Yao",
+    "url": "https://github.com/1YaoWei0"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/convert-excel-to-md/",
+        "./skills/convert-pdf-to-md/",
+        "./skills/convert-word-to-md/"
+      ]
+    }
+  }
+}

@@ -1,119 +1,139 @@
-# Oracle-to-PostgreSQL 遷移專家外掛程式 (Migration Expert Plugin)
+# Oracle 轉 PostgreSQL 移轉專家外掛程式
 
-用於 .NET 解決方案中 Oracle 到 PostgreSQL 應用程式遷移的專家代理。執行程式碼編輯、執行指令，並呼叫擴充工具，以將 .NET/Oracle 資料存取模式遷移至 PostgreSQL。
+適用於 .NET 解決方案中 Oracle 轉 PostgreSQL 應用程式移轉的專家 Agent。直接執行程式碼編輯、執行指令，並引導使用者完成結構化、設有關卡的移轉工作流程。
 
-## 安裝 (Installation)
+## 安裝
 
 ```bash
-# 使用 Copilot CLI
+# Using Copilot CLI
 copilot plugin install oracle-to-postgres-migration-expert@awesome-copilot
 ```
 
-## 內容包含 (What's Included)
+## 內含項目
 
-### 代理 (Agents)
+### Agent
 
-| 代理 | 說明 |
+| Agent | 說明 |
 |-------|-------------|
-| `Oracle-to-PostgreSQL Migration Expert` | 用於 Oracle→PostgreSQL 遷移的專家代理。直接進行程式碼編輯和執行指令，針對遷移概念和陷阱教育使用者，並在使用者確認後呼叫擴充工具。 |
+| `Oracle-to-PostgreSQL Migration Expert` | 適用於 Oracle→PostgreSQL 移轉的專家 Agent。直接進行程式碼編輯並執行指令，向使用者介紹移轉概念與常見陷阱。 |
 
 ### 技能 (Skills)
 
 | 技能 | 說明 |
 |-------|-------------|
-| `reviewing-oracle-to-postgres-migration` | 透過將程式碼與已知的行為差異（空字串、refcursor、型別強制轉換、排序/排序規則、UNION ALL 計畫風險、實體檢視重新整理行為、時間戳記、平行交易等）進行交叉參考，來識別 Oracle 到 PostgreSQL 遷移的風險。 |
-| `creating-oracle-to-postgres-master-migration-plan` | 發現 .NET 解決方案中的所有專案，對其 Oracle 到 PostgreSQL 遷移適格性進行分類，並產生持續性的主要遷移計畫。 |
-| `migrating-oracle-to-postgres-stored-procedures` | 將 Oracle PL/SQL 預存程序遷移至 PostgreSQL PL/pgSQL。翻譯 Oracle 特定語法，保留方法簽章和型別錨定參數，並套用明確的排序規則（僅在適當時使用 `"C"`，需要區域設定特定的排序規則時則使用相應的排序規則）。 |
-| `planning-oracle-to-postgres-migration-integration-testing` | 為 .NET 資料存取成品建立整合測試計畫，識別需要驗證涵蓋範圍的儲存庫、DAO 和服務層。 |
-| `scaffolding-oracle-to-postgres-migration-test-project` | 建立一個包含交易回復基底類別和種子資料管理器的 xUnit 整合測試專案腳手架，用於 Oracle-to-PostgreSQL 遷移驗證。 |
-| `creating-oracle-to-postgres-migration-integration-tests` | 產生與資料庫無關且具備確定性種子資料的 xUnit 整合測試，以驗證跨兩個資料庫系統的行為一致性。 |
-| `creating-oracle-to-postgres-migration-bug-report` | 為 Oracle-to-PostgreSQL 遷移驗證期間發現的缺陷建立結構化錯誤報告，包含嚴重程度、根本原因和修復步驟。 |
+| `reviewing-oracle-to-postgres-migration` | 透過比對程式碼與已知行為差異（空字串、refcursors、型別強制轉換、排序/定序、UNION ALL 規劃風險、具體化檢視表重新整理行為、時間戳記、並行交易等）來識別 Oracle 轉 PostgreSQL 的移轉風險。 |
+| `creating-oracle-to-postgres-master-migration-plan` | 探索 .NET 解決方案中的所有專案，分類各專案的 Oracle 轉 PostgreSQL 移轉資格，並產出持久的總體移轉計畫。 |
+| `migrating-oracle-to-postgres-stored-procedures` | 將 Oracle PL/SQL 預存程序移轉至 PostgreSQL PL/pgSQL。轉換 Oracle 專屬語法，保留方法簽章與型別錨定參數，並套用明確的定序規則（僅在適當時使用 `"C"`，需要時使用特定地區設定的定序）。 |
+| `planning-oracle-to-postgres-migration-integration-testing` | 為 .NET 資料存取產物建立整合測試計畫，識別需要驗證涵蓋範圍的儲存機制 (repository)、DAO 和服務層。 |
+| `scaffolding-oracle-to-postgres-migration-test-project` | 搭建一個帶有交易回復基底類別與種子資料管理器的 xUnit 整合測試專案，用於 Oracle 轉 PostgreSQL 移轉驗證。 |
+| `creating-oracle-to-postgres-migration-integration-tests` | 產生具備確定性種子資料的資料庫無關 xUnit 整合測試，驗證兩個資料庫系統之間的行為一致性。 |
+| `creating-oracle-to-postgres-migration-bug-report` | 為 Oracle 轉 PostgreSQL 移轉驗證期間發現的缺陷建立結構化錯誤報告，包含嚴重性、根本原因與補救步驟。 |
+| `migrating-oracle-to-postgres-data-access-code` | 將 .NET/C# 資料存取程式碼從 Oracle 移轉至 PostgreSQL (Npgsql)。替換 Oracle NuGet 套件、重寫 ADO.NET 型別參考、修正 DbType 對應、更新預存程序呼叫模式，並調整連線字串設定。 |
 
-## 功能特性 (Features)
+## 功能
 
-### 教育性引導 (Educational Guidance)
+### 教育指引
 
-專家代理在整個遷移旅程中對使用者進行教育：
+專家 Agent 在整個移轉過程中為使用者提供指導：
 
-- **Migration Concepts**: 說明 Oracle→PostgreSQL 的差異（空字串與 NULL、NO_DATA_FOUND 例外狀況、排序/排序規則行為、TO_CHAR 轉換、型別強制轉換嚴格性、REF CURSOR 處理、UNION ALL 計畫注意事項、實體檢視重新整理需求、平行交易、時間戳記/時區行為）
-- **陷阱參考 (Pitfall Reference)**：呈現遷移知識中的深入見解，讓使用者瞭解為何需要進行變更
-- **最佳實務 (Best Practices)**：針對最小化變更、保留邏輯以及確保結構不可變性 (schema immutability) 提供建議
-- **工作流程引導 (Workflow Guidance)**：呈現四個階段的遷移工作流程，作為使用者可以按照自己的進度遵循的指南
+- **移轉概念**：解釋 Oracle→PostgreSQL 的差異（空字串與 NULL、NO_DATA_FOUND 例外狀況、排序/定序行為、TO_CHAR 轉換、型別強制轉換嚴格度、REF CURSOR 處理、UNION ALL 規劃注意事項、具體化檢視表重新整理需求、並行交易、時間戳記/時區行為）
+- **陷阱參考**：呈現移轉知識中的洞見，讓使用者了解為何需要進行變更
+- **最佳做法**：就盡可能減少變更、保留邏輯與確保結構描述不變性提供建議
+- **工作流程指引**：呈現一個六階段、設有關卡的移轉工作流程，並在每個關卡提供明確的成功準則
 
-### 建議後執行模式 (Suggest-Then-Act Pattern)
+### 建議後行動 (Suggest-Then-Act) 模式
 
-專家會建議可執行的後續步驟，並僅在使用者確認後才繼續：
+專家會建議可採取行動的後續步驟，且僅在使用者確認後才會繼續：
 
-1. **教育 (Educate)**：針對遷移主題及其重要性進行說明
-2. **建議 (Suggest)**：提供具有預期結果的建議動作
-3. **確認 (Confirm)**：確認使用者想要繼續
-4. **執行 (Act)**：直接進行編輯、執行指令或呼叫擴充工具
-5. **總結 (Summarize)**：總結產出的內容並建議下一步
+1. **教育**說明移轉主題及其重要性
+2. **建議**具有預期成果的建議動作
+3. **確認**使用者是否希望繼續
+4. **採取行動** — 直接進行編輯並執行指令
+5. **摘要**已產生的內容並建議下一步
 
-不再有自動鏈接 (autonomous chaining) — 使用者控制進度與順序。
+無自主鏈結 — 由使用者控制進度與順序。
 
-對於會變更資料庫的操作，專家會提供腳本和明確的執行指示；由使用者來套用資料庫變更。
+對於變更資料庫的動作，專家會提供指令碼與明確的執行指示；由使用者套用資料庫變更。
 
-## 遷移工作流程 (Migration Workflow)
+## 移轉工作流程
 
-專家引導使用者完成四個階段的工作流程：
+專家引導使用者完成六個階段、設有關卡的工作流程。每個階段在推進之前都必須滿足其成功準則。
 
-**第 1 階段 — 探索與規劃 (Discovery & Planning)**
+**第 1 階段 — 探索與規劃** *(整個解決方案)*
 
-1. 建立主要遷移計畫（將解決方案中的所有專案進行分類）
-2. 設定 Oracle 與 PostgreSQL 的 DDL 成品 (artifacts)
+- 探索所有專案並分類移轉資格
+- 產出 `Reports/MasterMigrationPlan.md`，記錄 DDL 產物位置以及是否已使用外部工具（例如 `ora2pg`）
 
-**第 2 階段 — 程式碼遷移 (Code Migration)** *(各專案)*
-3. 遷移應用程式程式碼（透過 `ms-ossdata.vscode-pgsql` 擴充功能）
-4. 遷移預存程序 (Oracle PL/SQL → PostgreSQL PL/pgSQL)
+**第 2 階段 — 移轉前規劃與風險分析** *(每個專案)*
 
-**第 3 階段 — 驗證 (Validation)** *(各專案)*
-5. 規劃整合測試
-6. 建立 xUnit 測試專案腳手架
-7. 建立整合測試
-8. 對 Oracle（基準線）與 PostgreSQL（目標）執行測試
-9. 驗證測試結果
-10. 為任何失敗建立錯誤報告 (bug reports)
+- 識別資料存取層（儲存機制、DAO、服務類別、SQL/程序呼叫）
+- 產出 `Reports/{ProjectName}/OracleRiskAnalysis.md` — 程式碼中發現的 Oracle/PostgreSQL 行為差異的穩定分析參考
+- 推導出 `Reports/{ProjectName}/MigrationChecklist.md` — 適用於第 5 階段的編號且可執行的檢查清單
 
-**第 4 階段 — 報告 (Reporting)**
-11. 產生最終遷移報告（透過 `ms-ossdata.vscode-pgsql` 擴充功能）
+**第 3 階段 — Oracle 測試專案建立與驗證** *(每個專案)*
 
-## 先決條件 (Prerequisites)
+- 搭建以 Oracle 為目標的 xUnit 測試專案並撰寫整合測試
+- 建立通過的 Oracle 基準線 — 失敗的基準線代表在移轉開始*之前*就已存在缺陷
+- 將任何行為差異記錄為結構化錯誤報告
+
+**第 4 階段 — 結構描述與 DDL 移轉** *(每個專案)*
+
+- 若 `MasterMigrationPlan.md` 記錄了外部工具已產生 PostgreSQL DDL，則略過
+- 依相依性順序移轉：型別/列舉 → 資料表/序列 → 索引/條件約束 → 檢視表 → 觸發程序 → 預存程序 (PL/SQL → PL/pgSQL)
+- 將產物輸出至 `DDL/Postgres/{ProjectName}/`；使用者套用指令碼並確認乾淨套用
+
+**第 5 階段 — 程式碼移轉** *(每個專案)*
+
+- 將應用程式專案複製到同層級的 `.Postgres` 專案中，新增至解決方案，並更新命名空間/組件名稱
+- 使用 `migrating-oracle-to-postgres-data-access-code` 技能逐項處理 `MigrationChecklist.md`
+- 在每個項目之後執行 `dotnet build`；在繼續之前修正錯誤
+- 將完成的檢查清單與 `OracleRiskAnalysis.md` 進行交叉比對，以確認每項風險都已解決或具有合理解釋而推遲
+
+**第 6 階段 — PostgreSQL 測試專案建立與驗證** *(每個專案)*
+
+- 將 Oracle 測試專案複製為以第 5 階段應用程式複本為目標的 `.Postgres` 命名空間測試專案
+- 移轉測試專案，以 `dotnet build` 作為每次變更的關卡
+- 迭代修正使用者回報的失敗 — 預存程序的修正會寫回 `DDL/Postgres/{ProjectName}/`
+- Oracle 測試專案在整個過程中必須保持不變
+
+## 先決條件
 
 - 具備 GitHub Copilot 的 Visual Studio Code
-- PostgreSQL 擴充功能 (`ms-ossdata.vscode-pgsql`) — 應用程式程式碼遷移和報告產生所需
-- 待遷移的包含 Oracle 依賴項的 .NET 解決方案
+- 具有待移轉 Oracle 相依性的 .NET 解決方案
+- 存取 Oracle 執行個體（用於基準線測試）與 PostgreSQL 執行個體（用於驗證）
 
-## 目錄結構 (Directory Structure)
+## 目錄結構
 
-代理程式期望並在您的儲存庫中建立以下結構：
+Agent 預期並會在您的存放庫中建立以下結構：
 
 ```
 .github/
 └── oracle-to-postgres-migration/
     ├── Reports/
-    │   ├── Master Migration Plan.md
-    │   ├── {Project} Integration Testing Plan.md
-    │   ├── {Project} Application Migration Report.md
-    │   ├── BUG_REPORT_*.md
-    │   └── TestResults/
+    │   ├── MasterMigrationPlan.md
+    │   └── {ProjectName}/
+    │       ├── OracleRiskAnalysis.md
+    │       ├── MigrationChecklist.md
+    │       ├── PostgresTestMigrationPlan.md
+    │       └── BUG_REPORT_*.md
     └── DDL/
-        ├── Oracle/      # Oracle DDL 腳本 (遷移前)
-        └── Postgres/    # PostgreSQL DDL 腳本 (遷移後)
+        ├── Oracle/                  # Oracle DDL scripts (pre-migration)
+        └── Postgres/
+            └── {ProjectName}/       # PostgreSQL DDL scripts per project (post-migration)
 ```
 
-## 使用方式 (Usage)
+## 使用方式
 
-1. **尋求引導**：針對遷移問題或情況呼叫專家（例如：*「我應該如何將我的 .NET 解決方案遷移到 PostgreSQL？」*或*「Oracle 與 PostgreSQL 在處理空字串方面有什麼不同？」*）
-2. **學習與規劃**：專家解釋概念，呈現陷阱見解，並呈現建議的工作流程步驟
-3. **選擇您的下一步**：決定要處理哪個工作（主要計畫、程式碼遷移、測試等）
-4. **確認並執行**：告訴專家繼續執行，它將直接進行編輯、執行指令或呼叫擴充工具
-5. **檢閱並繼續**：檢查結果並要求進行下一步
+1. **尋求指引**：使用移轉問題或情境呼叫專家（例如：*「我該如何處理將 .NET 解決方案移轉到 PostgreSQL 的問題？」* 或 *「Oracle 對於空字串的處理與 PostgreSQL 有何不同？」*）
+2. **學習與規劃**：專家會解釋概念、揭示陷阱洞見，並呈現建議的工作流程步驟
+3. **選擇您的下一步**：決定要處理的任務（總體計畫、風險分析、測試、程式碼移轉等）
+4. **確認並採取行動**：告知專家繼續執行，它將直接進行編輯並執行指令
+5. **檢閱並繼續**：檢查結果並詢問下一步
 
-## 來源 (Source)
+## 來源
 
-此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛程式是 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個由社群驅動的 GitHub Copilot 擴充功能集合。
 
-## 授權 (License)
+## 授權條款
 
 MIT

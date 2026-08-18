@@ -6,7 +6,7 @@
 
 ## 範本
 
-```markdown
+````markdown
 # Azure 部署發布前報告
 
 **產生時間：** {timestamp}
@@ -196,7 +196,7 @@ az deployment group create \
 ---
 
 *報告由 Azure 部署發布前驗證技能產生*
-```
+````
 
 ---
 
@@ -223,7 +223,7 @@ az deployment group create \
 
 ## 範例報告
 
-```markdown
+````markdown
 # Azure 部署發布前報告
 
 **產生時間：** 2026-01-16T14:32:00Z
@@ -338,7 +338,7 @@ azd provision --environment dev
 ---
 
 *報告由 Azure 部署發布前驗證技能產生*
-```
+````
 
 ---
 

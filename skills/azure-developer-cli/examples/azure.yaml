@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: sample-app
+
+infra:
+  provider: bicep
+  path: ./infra
+  module: main
+
+services:
+  api:
+    project: ./src/api
+    language: ts
+    host: appservice
+  web:
+    project: ./src/web
+    dist: dist
+    language: ts
+    host: staticwebapp
+
+# 僅在預設生命週期無法滿足需求時才新增 hooks。
+# 將非平凡的命令保留在 scripts/azd 中，並提供兩種作業系統版本。
+hooks:
+  preprovision:
+    windows:
+      shell: pwsh
+      run: ./scripts/azd/validate.ps1
+      interactive: false
+      continueOnError: false
+    posix:
+      shell: sh
+      run: ./scripts/azd/validate.sh
+      interactive: false
+      continueOnError: false

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "arch",
+  "description": "架構與現代化工具套件：為本機複製的存放庫產出具引用的架構文件，並在需要時產生自動執行文件模式的分階段現代化計劃。",
+  "version": "1.0.0",
+  "keywords": [
+    "architecture",
+    "modernization",
+    "documentation",
+    "migration",
+    "onboarding"
+  ],
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/doc-and-modernize/"
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ember",
+  "description": "AI 夥伴，而非單純的工具。Ember 在人與人之間傳遞薪火——協助人們發現 AI 夥伴關係並非學習得來，而是自然探尋而得。",
+  "version": "1.2.0",
+  "author": {
+    "name": "jennyf19"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "ai-partnership",
+    "coaching",
+    "onboarding",
+    "collaboration",
+    "storytelling",
+    "developer-experience"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/ember.md"
+      ],
+      "skills": [
+        "./skills/daily-focus-board/",
+        "./skills/from-the-other-side-anitta/",
+        "./skills/from-the-other-side-quinn/",
+        "./skills/from-the-other-side-vega/",
+        "./skills/from-the-other-side-wiggins/"
+      ],
+      "extensions": [
+        "./extensions/daily-focus-board"
+      ]
+    }
+  }
+}

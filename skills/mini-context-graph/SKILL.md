@@ -8,7 +8,7 @@ description: |
 
 # 迷你上下文圖譜技能 (Mini Context Graph Skill)
 
-## 核心概念 (The Core Idea)
+## 核心概念
 
 標準的 RAG 在每次查詢時都會從頭開始重新發現知識。此技能則有所不同：
 
@@ -20,7 +20,7 @@ description: |
 
 ---
 
-## 三個層級 (Three Layers)
+## 三個層級
 
 | 層級 | 位置 | LLM 的工作 | Python 的工作 |
 |-------|-------|-------------------|-----------------|
@@ -30,7 +30,9 @@ description: |
 
 ---
 
-## ⚡ 代理程式快速入門 (⚡ Quick Start for Agents)
+## ⚡ 代理程式快速入門
+
+完整的可執行工作流程版本位於 `scripts/template_agent_workflow.py` — 請複製並根據需求調整。
 
 ```python
 from scripts.contextgraph import ContextGraphSkill
@@ -97,7 +99,7 @@ pages = wiki_store.search_wiki("memory leak")
 
 ---
 
-## 操作 (Operations)
+## 操作
 
 ### 內嵌 (Ingest)
 
@@ -157,7 +159,7 @@ issues = wiki_store.lint_wiki()
 
 ---
 
-## 完整 Python API 參考 (Full Python API Reference)
+## 完整 Python API 參考
 
 | 方法 | 用途 | 何時使用 |
 |--------|---------|-------------|

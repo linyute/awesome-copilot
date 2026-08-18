@@ -119,7 +119,7 @@ description: '對目前的工項 IaC 和架構執行 AWS Well-Architected Framew
 **標題**: `[WAF-<支柱名稱>] [簡短髮現] — [風險級別]`
 
 **正文**:
-```markdown
+````markdown
 ## 🏗️ Well-Architected 發現結果：[簡短標題]
 
 **支柱**：[名稱] | **風險級別**：[高/中/低] | **投入精力**：[低/中/高]
@@ -158,7 +158,7 @@ aws s3api put-bucket-encryption --bucket <name> \
 - [ ] Security Hub 發現結果已解決（如果適用）
 
 **Well-Architected 問題**: [對應的 WAF 問題]
-```
+````
 
 ### 第 7 步：建立 EPIC 追蹤 Issue
 標記為 "well-architected" 和 "epic"。

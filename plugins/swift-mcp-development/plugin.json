@@ -1,0 +1,33 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "swift-mcp-development",
+  "description": "在 Swift 中使用官方 MCP Swift SDK 與新式並行功能建構 Model Context Protocol 伺服器的完整集合。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "swift",
+    "mcp",
+    "model-context-protocol",
+    "server-development",
+    "sdk",
+    "ios",
+    "macos",
+    "concurrency",
+    "actor",
+    "async-await"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/swift-mcp-expert.md"
+      ],
+      "skills": [
+        "./skills/swift-mcp-server-generator/"
+      ]
+    }
+  }
+}

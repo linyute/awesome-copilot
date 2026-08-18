@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "automate-this",
+  "description": "錄製您執行手動流程的螢幕畫面，將影片放到桌面上，讓 Copilot CLI 逐格分析以建構可運作的自動化指令碼。支援包含音訊轉錄的旁白錄影。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "automation",
+    "screen-recording",
+    "workflow",
+    "video-analysis",
+    "process-automation",
+    "scripting",
+    "productivity",
+    "copilot-cli"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/automate-this/"
+      ]
+    }
+  }
+}

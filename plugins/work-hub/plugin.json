@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "work-hub",
+  "description": "適用於 GitHub Copilot 的通用跨存放庫控制中心畫布，具備新手引導、焦點規劃、存放庫健全狀況、工作訊號及工作階段清理功能。",
+  "version": "1.0.2",
+  "author": {
+    "name": "James Montemagno",
+    "url": "https://github.com/jamesmontemagno"
+  },
+  "keywords": [
+    "cross-repo-dashboard",
+    "focus-planning",
+    "repo-health",
+    "session-cleanup",
+    "work-triage",
+    "workflow-visibility"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/work-hub"
+      ]
+    }
+  }
+}

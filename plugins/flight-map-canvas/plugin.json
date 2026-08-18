@@ -1,0 +1,29 @@
+{
+  "name": "flight-map-canvas",
+  "description": "一個 GitHub Copilot 畫布，可產生能使用 3D 控制項探索 Google 地圖的檢視，彷彿飛行模擬器一般。Agent 可以將飛行傳送至任何地方，並回報它們正在處理的工作。",
+  "version": "1.0.0",
+  "author": {
+    "name": "John Haugabook",
+    "url": "https://github.com/jhauga"
+  },
+  "keywords": [
+    "copilot-canvas",
+    "flight-simulator",
+    "geography",
+    "google-maps",
+    "interactive-canvas",
+    "session-breaks",
+    "threejs"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/flight-map-canvas"
+      ]
+    }
+  },
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json"
+}
