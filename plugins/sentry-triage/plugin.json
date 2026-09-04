@@ -1,0 +1,31 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "sentry-triage",
+  "description": "在 Copilot 畫布中掃描即時 Sentry 問題，依緊急程度分組，並移交問題以進行追蹤或建立修復 PR。",
+  "version": "1.1.0",
+  "author": {
+    "name": "Liz Tom",
+    "url": "https://github.com/liztom"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "canvas",
+    "copilot-canvas",
+    "copilot-extension",
+    "error-triage",
+    "incident-response",
+    "on-call",
+    "sentry"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/sentry-triage"
+      ]
+    }
+  }
+}

@@ -18,22 +18,22 @@ copilot plugin install awesome-copilot@awesome-copilot
 
 ### 指令（斜線指令）
 
-| 指令 | 說明 |
-|---------|-------------|
-| `/awesome-copilot:suggest-awesome-github-copilot-collections` | 根據目前儲存庫情境與聊天記錄，建議來自 awesome-copilot 儲存庫的相關 GitHub Copilot 集合，提供集合資產的自動下載與安裝，並識別需要更新的過期集合資產。 |
-| `/awesome-copilot:suggest-awesome-github-copilot-instructions` | 根據目前儲存庫情境與聊天記錄，建議來自 awesome-copilot 儲存庫的相關 GitHub Copilot 指示檔案，避免與此儲存庫中的現有指示重複，並識別需要更新的過期指示。 |
-| `/awesome-copilot:suggest-awesome-github-copilot-agents` | 根據目前儲存庫情境與聊天記錄，建議來自 awesome-copilot 儲存庫的相關 GitHub Copilot 自訂 Agent 檔案，避免與此儲存庫中的現有自訂 agent 重複，並識別需要更新的過期 agent。 |
-| `/awesome-copilot:suggest-awesome-github-copilot-skills` | 根據目前儲存庫情境與聊天記錄，建議來自 awesome-copilot 儲存庫的相關 GitHub Copilot 技能，避免與此儲存庫中的現有技能重複，並識別需要更新的過期技能。 |
+| 指令                                                           | 說明                                                                                                                                                                    |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/awesome-copilot:suggest-awesome-github-copilot-collections`  | 根據目前儲存庫情境與聊天記錄，建議來自 awesome-copilot 儲存庫的相關 GitHub Copilot 集合，提供集合資產的自動下載與安裝，並識別需要更新的過期集合資產。                   |
+| `/awesome-copilot:suggest-awesome-github-copilot-instructions` | 根據目前儲存庫情境與聊天記錄，建議來自 awesome-copilot 儲存庫的相關 GitHub Copilot 指示檔案，避免與此儲存庫中的現有指示重複，並識別需要更新的過期指示。                 |
+| `/awesome-copilot:suggest-awesome-github-copilot-agents`       | 根據目前儲存庫情境與聊天記錄，建議來自 awesome-copilot 儲存庫的相關 GitHub Copilot 自訂 Agent 檔案，避免與此儲存庫中的現有自訂 agent 重複，並識別需要更新的過期 agent。 |
+| `/awesome-copilot:suggest-awesome-github-copilot-skills`       | 根據目前儲存庫情境與聊天記錄，建議來自 awesome-copilot 儲存庫的相關 GitHub Copilot 技能，避免與此儲存庫中的現有技能重複，並識別需要更新的過期技能。                     |
 
 ### Agent
 
-| Agent | 說明 |
-|-------|-------------|
+| Agent                           | 說明                                                                  |
+| ------------------------------- | --------------------------------------------------------------------- |
 | `meta-agentic-project-scaffold` | 中繼 agent 架構專案建立助理，協助使用者有效地建立和管理專案工作流程。 |
 
 ### MCP 伺服器
 
-此外掛程式包含於 [`./.mcp.json`](./.mcp.json) 中設定的 `awesome-copilot` MCP 伺服器。若無法使用 Docker，MCP 啟動將會失敗。
+此外掛程式包含於 [`./mcp.json`](./mcp.json) 中設定的 `awesome-copilot` MCP 伺服器。若無法使用 Docker，MCP 啟動將會失敗。
 
 ## 來源
 

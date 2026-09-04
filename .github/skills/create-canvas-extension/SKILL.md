@@ -72,7 +72,7 @@ plugins/<extension-id>/
 }
 ```
 
-將 Agent Plugins 欄位保留在宣示說明最頂層。存放庫組合僅屬於 `extensions.com.github.awesome-copilot` 下；請勿將 `agents`、`commands`、`hooks`、`mcpServers` 或 `skills` 置於頂層或直接放在 `extensions` 下。請勿新增 `x-awesome-copilot`、`standalone` 或其他存放庫專屬的頂層欄位。
+將 Agent Plugins 欄位保留在資訊清單的頂層。存放庫組成僅隸屬於 `extensions.com.github.awesome-copilot`；請勿將 `agents`、`commands`、`hooks` 或 `skills` 放在頂層或直接放在 `extensions` 下。MCP 伺服器應在外掛程式根目錄的 `mcp.json` 中宣告，絕不可放在 `plugin.json` 中。請勿新增 `x-awesome-copilot`、`standalone` 或其他存放庫專用的頂層欄位。
 
 對於現有的父外掛程式，建立或更新：
 

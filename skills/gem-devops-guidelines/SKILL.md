@@ -5,6 +5,8 @@ description: '設計或審查基礎設施、部署、CI/CD、Docker、Kubernetes
 
 # DevOps 指引
 
+僅套用與工作負載、供應商、環境及驗收標準相關的章節。不適用時，略過 Docker、Kubernetes、行動端、正式環境、復原、健康狀態、特性旗標及安全性檢查。
+
 ## 部署策略
 
 - 滾動更新 (Rolling，預設)：漸進式、零停機時間替換。
@@ -23,12 +25,12 @@ description: '設計或審查基礎設施、部署、CI/CD、Docker、Kubernetes
 
 ## CI/CD
 
-- PR：lint → 型別檢查 → 單元測試 → 整合測試 → 預覽。
-- Main：建構 → staging → 冒煙測試 → 正式環境。
+- PR：lint -> 型別檢查 -> 單元測試 -> 整合測試 -> 預覽。
+- Main：建構 -> staging -> 冒煙測試 -> 正式環境。
 
 ## 健全度與關機
 
-- 簡易：`GET /health` → `{ "status": "ok" }`。
+- 簡易：`GET /health` -> `{ "status": "ok" }`。
 - 詳細：相依性、正常運作時間 (uptime)、版本。
 - 當工作負載需要時，服務必須公開有意義的健康狀態並優雅地處理 `SIGTERM`。
 
@@ -42,7 +44,7 @@ Kubernetes：`kubectl rollout undo`。Vercel：`vercel rollback`。Docker：重�
 
 ## 特性旗標
 
-- 生命週期：建立 → 啟用 → 5% → 25% → 50% → 100% → 移除旗標與無用程式碼。
+- 生命週期：建立 -> 啟用 -> 5% -> 25% -> 50% -> 100% -> 移除旗標與無用程式碼。
 - 每個旗標必須擁有負責人、到期日與復原觸發條件。在兩週內移除。
 
 ## 檢核清單
@@ -58,4 +60,4 @@ Kubernetes：`kubectl rollout undo`。Vercel：`vercel rollback`。Docker：重�
 - Fastlane：iOS `match`/`cert`/`sigh`/`pilot`；Android Gradle/`supply`。
 - 將憑證保留在環境/機密儲存區中，絕不可放在 Git。使用 `fastlane match` 自動化 iOS 開發/發發布簽署；Android 使用 `keytool` 與 Google Play 應用程式簽署。
 - TestFlight：內部即時；外部 90 天/100 名測試者。Google Play：內部/測試版/正式發布。預計需要 1–7 天審查期。
-- 復原：EAS `eas update:rollback`；原生發布 → 復原建構；商店發布 → 調降階段性推出百分比。
+- 復原：EAS `eas update:rollback`；原生發布 -> 復原建構；商店發布 -> 調降階段性推出百分比。

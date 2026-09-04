@@ -8,16 +8,16 @@
 
 ### MCP 伺服器
 
-| 伺服器 | 說明 |
-| --------------- | ---------------------------------------------------------------------------------- |
+| 伺服器          | 說明                                                        |
+| --------------- | ----------------------------------------------------------- |
 | `context-matic` | 用於版本感知的第三方 API 整合與 SDK 探索的託管 MCP 伺服器。 |
 
 ### 技能
 
-| 技能 | 說明 |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `/integrate-context-matic` | 使用權威 SDK 與端點資訊整合受支援第三方 API 的專注工作流程。 |
-| `/onboard-context-matic` | ContextMatic MCP 伺服器、受支援 API 及工具使用方式的引導式導覽。 |
+| 技能                       | 說明                                                             |
+| -------------------------- | ---------------------------------------------------------------- |
+| `/integrate-context-matic` | 使用權威 SDK 與端點資訊整合受支援第三方 API 的專注工作流程。     |
+| `/onboard-context-matic`   | ContextMatic MCP 伺服器、受支援 API 及工具使用方式的引導式導覽。 |
 
 ## ContextMatic 的功能
 
@@ -32,17 +32,17 @@ ContextMatic 為 GitHub Copilot 提供奠基於真實 API 定義與 SDK 的版�
 
 此外掛模組為代理人提供以下 API 的 SDK 原生情境，支援 TypeScript、C#、Python、Java、PHP 和 Ruby：
 
-| API | 說明 |
-| ------------------------------ | ----------------------------------------------------------------------------------------- |
-| **Adyen API** | 付款處理：擷取付款方式、建立訂單、管理儲存的付款權杖 |
-| **Google Maps APIs** | 位置服務：地理編碼、路線規劃、距離矩陣、高度、道路和地點 |
-| **PayPal Server SDK** | 付款流程：訂單、付款、保管庫 (vault)、交易搜尋和訂閱 |
-| **PayQuicker API** | 付款與金融服務：方案協議、銀行帳戶、回饋消費報價 |
-| **Slack API** | 工作區自動化：OAuth 機器人、訊息傳遞、對話管理 |
-| **Spotify Web API** | 音樂與 Podcast：資料庫管理、播放控制、探索 |
-| **Tesla Fleet Management API** | 車輛與車隊營運：充電記錄、車輛指令、能源管理 |
-| **Tesser API Portal** | 數位付款：付款意圖、鏈上付款、應用程式管理 |
-| **Twilio API** | 通訊：SMS、語音、影片和驗證服務 |
+| API                            | 說明                                                     |
+| ------------------------------ | -------------------------------------------------------- |
+| **Adyen API**                  | 付款處理：擷取付款方式、建立訂單、管理儲存的付款權杖     |
+| **Google Maps APIs**           | 位置服務：地理編碼、路線規劃、距離矩陣、高度、道路和地點 |
+| **PayPal Server SDK**          | 付款流程：訂單、付款、保管庫 (vault)、交易搜尋和訂閱     |
+| **PayQuicker API**             | 付款與金融服務：方案協議、銀行帳戶、回饋消費報價         |
+| **Slack API**                  | 工作區自動化：OAuth 機器人、訊息傳遞、對話管理           |
+| **Spotify Web API**            | 音樂與 Podcast：資料庫管理、播放控制、探索               |
+| **Tesla Fleet Management API** | 車輛與車隊營運：充電記錄、車輛指令、能源管理             |
+| **Tesser API Portal**          | 數位付款：付款意圖、鏈上付款、應用程式管理               |
+| **Twilio API**                 | 通訊：SMS、語音、影片和驗證服務                          |
 
 此清單持續增加中。[建議新 API](#contributing) 以請求支援未在此處列出的 API。
 
@@ -52,15 +52,15 @@ ContextMatic 為 GitHub Copilot 提供奠基於真實 API 定義與 SDK 的版�
 
 安裝後，此外掛模組會向代理人公開七個工具。每個工具都對應到整合工作流程的特定階段：
 
-| 工具 | 所啟用的開發者工作 |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_api` | 提供完全符合的 API 或列出所提供 `language` 的所有可用 API，包括每個 API 的名稱、索引鍵和說明。傳入專案的語言和 API `key` 進行精確比對查閱（僅傳回該 API）。若未找到精確比對，則會傳回該 `language` 的完整 API 目錄。代理人會先呼叫此工具以探索哪些 API 可用。 |
-| `ask` | 與 API Copilot 對話以獲取逐步整合指引與一般 API 問題解答：驗證設定、用戶端初始化、功能行為、特定架構模式（例如「如何在 Laravel 中初始化 Twilio 用戶端？」）以及符合慣用法的 SDK 程式碼範例。 |
-| `endpoint_search` | 依方法名稱傳回 SDK 端點方法的說明、輸入參數和回應結構。 |
-| `model_search` | 依名稱傳回 SDK 模型的完整定義及其具型別屬性。在撰寫建構請求主體或讀取回應物件的程式碼之前呼叫此工具。 |
-| `update_activity` | 記錄具體的整合里程碑，例如 SDK 設定、驗證設定、第一次成功的 API 呼叫以及已解決的錯誤。代理人會在程式碼或基礎架構中實際達成里程碑後呼叫此工具。 |
-| `add_guidelines` | 新增語言專屬的指引檔案（例如安全性、測試或工作流程指引），代理人可在實作期間遵循。 |
-| `add_skills` | 新增可重複使用的專案技能，例如 `{language}-conventions`，以便未來的 API 整合工作能夠遵循專案特定語言的慣例。 |
+| 工具              | 所啟用的開發者工作                                                                                                                                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_api`       | 提供完全符合的 API 或列出所提供 `language` 的所有可用 API，包括每個 API 的名稱、索引鍵和說明。傳入專案的語言和 API `key` 進行精確比對查閱（僅傳回該 API）。若未找到精確比對，則會傳回該 `language` 的完整 API 目錄。代理人會先呼叫此工具以探索哪些 API 可用。 |
+| `ask`             | 與 API Copilot 對話以獲取逐步整合指引與一般 API 問題解答：驗證設定、用戶端初始化、功能行為、特定架構模式（例如「如何在 Laravel 中初始化 Twilio 用戶端？」）以及符合慣用法的 SDK 程式碼範例。                                                                  |
+| `endpoint_search` | 依方法名稱傳回 SDK 端點方法的說明、輸入參數和回應結構。                                                                                                                                                                                                       |
+| `model_search`    | 依名稱傳回 SDK 模型的完整定義及其具型別屬性。在撰寫建構請求主體或讀取回應物件的程式碼之前呼叫此工具。                                                                                                                                                         |
+| `update_activity` | 記錄具體的整合里程碑，例如 SDK 設定、驗證設定、第一次成功的 API 呼叫以及已解決的錯誤。代理人會在程式碼或基礎架構中實際達成里程碑後呼叫此工具。                                                                                                                |
+| `add_guidelines`  | 新增語言專屬的指引檔案（例如安全性、測試或工作流程指引），代理人可在實作期間遵循。                                                                                                                                                                            |
+| `add_skills`      | 新增可重複使用的專案技能，例如 `{language}-conventions`，以便未來的 API 整合工作能夠遵循專案特定語言的慣例。                                                                                                                                                  |
 
 如需循序漸進結合使用這些工具的指引，請在代理人中叫用 `/integrate-context-matic` 技能。它會指示代理人在整個整合工作流程中何時以及如何呼叫每個工具。
 
@@ -72,16 +72,16 @@ ContextMatic 為 GitHub Copilot 提供奠基於真實 API 定義與 SDK 的版�
 
 **您的提示詞：** _"/integrate-context-matic Add Twilio SMS notifications to my Next.js app. Send a text when an order ships."_
 
-| 步驟 | 呼叫的工具 | 傳回的內容 |
-| ---- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | `add_guidelines` (`language=typescript`) | 新增專案指引檔案，代理人在開始 API 整合前可遵循這些檔案進行安全性、測試和實作工作流程。 |
-| 2 | `add_skills` (`language=typescript`) | 新增可重複使用的語言特定技能（例如慣例指引），使專案設定與未來的整合工作相符。 |
-| 3 | `fetch_api` (`language=typescript`, `key="twilio"`) | 找到精確比對 — 傳回 Twilio 的項目及其名稱、索引鍵和說明 |
-| 4 | `ask` (`key=twilio`, query=_"How do I initialize the Twilio TypeScript client?"_) | 傳回包含驗證設定的精確 SDK 設定程式碼 |
-| 5 | `update_activity` (`milestone=auth_configured`) | 在將傳回的 SDK/驗證設定新增至應用程式後，記錄憑證已連接至應用程式，且整合已準備好進行第一次即時呼叫 |
-| 6 | `endpoint_search` (`query=createMessage`) | 傳回 SMS 傳送端點的方法簽章、必要參數和驗證需求 |
-| 7 | `model_search` (`query=CreateMessageRequest`) | 傳回包含所有可用欄位的完整具型別請求模型 |
-| 8 | `ask` (`query="How do I handle delivery status callbacks in Next.js?"`) | 傳回與 Twilio SDK 一致的 Webhook 處理程式碼 |
+| 步驟 | 呼叫的工具                                                                        | 傳回的內容                                                                                          |
+| ---- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| 1    | `add_guidelines` (`language=typescript`)                                          | 新增專案指引檔案，代理人在開始 API 整合前可遵循這些檔案進行安全性、測試和實作工作流程。             |
+| 2    | `add_skills` (`language=typescript`)                                              | 新增可重複使用的語言特定技能（例如慣例指引），使專案設定與未來的整合工作相符。                      |
+| 3    | `fetch_api` (`language=typescript`, `key="twilio"`)                               | 找到精確比對 — 傳回 Twilio 的項目及其名稱、索引鍵和說明                                             |
+| 4    | `ask` (`key=twilio`, query=_"How do I initialize the Twilio TypeScript client?"_) | 傳回包含驗證設定的精確 SDK 設定程式碼                                                               |
+| 5    | `update_activity` (`milestone=auth_configured`)                                   | 在將傳回的 SDK/驗證設定新增至應用程式後，記錄憑證已連接至應用程式，且整合已準備好進行第一次即時呼叫 |
+| 6    | `endpoint_search` (`query=createMessage`)                                         | 傳回 SMS 傳送端點的方法簽章、必要參數和驗證需求                                                     |
+| 7    | `model_search` (`query=CreateMessageRequest`)                                     | 傳回包含所有可用欄位的完整具型別請求模型                                                            |
+| 8    | `ask` (`query="How do I handle delivery status callbacks in Next.js?"`)           | 傳回與 Twilio SDK 一致的 Webhook 處理程式碼                                                         |
 
 每個步驟都在單一工具呼叫中完成。代理人負責協調流程。您只需描述目標，它就會在適當時機挑選正確的工具。
 
@@ -93,7 +93,7 @@ ContextMatic 為 GitHub Copilot 提供奠基於真實 API 定義與 SDK 的版�
 https://chatbotapi.apimatic.io/mcp/plugins
 ```
 
-此外掛模組透過其外掛模組根目錄的 `.mcp.json` 檔案註冊 MCP 伺服器，因此該伺服器可與隨附的技能一起使用。
+此外掛模組透過其外掛模組根目錄的 `mcp.json` 檔案註冊 MCP 伺服器，因此該伺服器可與隨附的技能一起使用。
 
 ---
 
@@ -131,19 +131,19 @@ Transaction Search or Vault. Make it deployable with npm install and npm start.
 
 **工具使用方式：**
 
-| 步驟 | 工具 | 查詢 | 傳回的內容 |
-| ---- | ----------------- | --------------------------------- | -------------------------------------------------------------------------------------------------- |
-| 1 | `fetch_api` | `language=typescript` | 可用 API；識別出索引鍵為 `paypal` 的 PayPal Server SDK |
-| 2 | `ask` | SDK 設定與環境切換 | 用戶端初始化程式碼、`.env` 結構、透過 `Client.fromEnvironment` 進行沙箱與正式環境設定 |
-| 3 | `ask` | 訂單建立流程 | 包含完整 TypeScript 伺服器端程式碼的端對端建立 → 核准 → 擷取流程 |
-| 4 | `endpoint_search` | `ordersCreate` | `CreateOrder` 方法簽章、`OrderRequest` 主體結構、回應型別 `Order`、錯誤代碼 |
-| 5 | `endpoint_search` | `capture` | `CaptureOrder` 協定 — 必要 `id` 參數、選用主體、回應中的擷取 ID 位置 |
-| 6 | `model_search` | `OrderRequest` | 完整請求模型屬性；將 `payer` 與 `application_context` 標記為已棄用 |
-| 7 | `model_search` | `Money` | 用於建構金額的貨幣代碼與數值欄位 |
-| 8 | `ask` | 智慧付款按鈕 | 前端按鈕整合 — `createOrder` / `onApprove` 連接到後端端點 |
-| 9 | `endpoint_search` | `getOrder` | 確認頁面的 `GetOrder` 方法簽章與回應結構 |
-| 10 | `model_search` | `PurchaseUnitRequest` | 包含 `amount`、`items`、`shipping` 及所有選用欄位的完整模型 |
-| 11 | `model_search` | `Order` | 完整回應模型 — `status`、`purchaseUnits`、`links`（包含 `approve` 重新導向 URL） |
+| 步驟 | 工具              | 查詢                  | 傳回的內容                                                                            |
+| ---- | ----------------- | --------------------- | ------------------------------------------------------------------------------------- |
+| 1    | `fetch_api`       | `language=typescript` | 可用 API；識別出索引鍵為 `paypal` 的 PayPal Server SDK                                |
+| 2    | `ask`             | SDK 設定與環境切換    | 用戶端初始化程式碼、`.env` 結構、透過 `Client.fromEnvironment` 進行沙箱與正式環境設定 |
+| 3    | `ask`             | 訂單建立流程          | 包含完整 TypeScript 伺服器端程式碼的端對端建立 → 核准 → 擷取流程                      |
+| 4    | `endpoint_search` | `ordersCreate`        | `CreateOrder` 方法簽章、`OrderRequest` 主體結構、回應型別 `Order`、錯誤代碼           |
+| 5    | `endpoint_search` | `capture`             | `CaptureOrder` 協定 — 必要 `id` 參數、選用主體、回應中的擷取 ID 位置                  |
+| 6    | `model_search`    | `OrderRequest`        | 完整請求模型屬性；將 `payer` 與 `application_context` 標記為已棄用                    |
+| 7    | `model_search`    | `Money`               | 用於建構金額的貨幣代碼與數值欄位                                                      |
+| 8    | `ask`             | 智慧付款按鈕          | 前端按鈕整合 — `createOrder` / `onApprove` 連接到後端端點                             |
+| 9    | `endpoint_search` | `getOrder`            | 確認頁面的 `GetOrder` 方法簽章與回應結構                                              |
+| 10   | `model_search`    | `PurchaseUnitRequest` | 包含 `amount`、`items`、`shipping` 及所有選用欄位的完整模型                           |
+| 11   | `model_search`    | `Order`               | 完整回應模型 — `status`、`purchaseUnits`、`links`（包含 `approve` 重新導向 URL）      |
 
 **應用程式成果：**
 
@@ -184,22 +184,22 @@ logos anywhere.
 
 **工具使用方式：**
 
-| 步驟 | 工具 | 查詢 | 傳回的內容 |
-| ---- | ----------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | `fetch_api` | `language=python` | 可用 API；識別出索引鍵為 `spotify` 的 Spotify Web API SDK |
-| 2 | `ask` | 用戶登入的 SDK 設定與 OAuth 2.0 授權碼流程 | 完整的 `pip install spotify-api-sdk` 設定、使用 `AuthorizationCodeAuthCredentials` 的 `SpotifywebapiClient` 初始化、`.env` 結構、`get_authorization_url()` → `fetch_token(code)` → `clone_with(o_auth_token=token)` 流程、權杖重新整理模式 |
-| 3 | `ask` | 如何擷取使用者的熱門藝人與熱門曲目 | 使用 `users_controller.get_users_top_artists()` 與 `users_controller.get_users_top_tracks()` 並帶入 `time_range`、`limit`、`offset` 參數的端對端程式碼；讀取 `PagingArtistObject.items` 與 `PagingTrackObject.items` |
-| 4 | `endpoint_search` | `get_users_top_artists` | 方法簽章 — 參數 `time_range`、`limit`、`offset`；回應型別 `PagingArtistObject`；必要範圍 `OAuthScopeEnum.USER_TOP_READ` |
-| 5 | `endpoint_search` | `get_users_top_tracks` | 方法簽章 — 與熱門藝人相同的參數；包含 `List[TrackObject]` 項目的回應型別 `PagingTrackObject` |
-| 6 | `endpoint_search` | `get_audio_features` | 透過 `tracks_controller.get_audio_features(id)` 的單一曲目方法；回應型別 `AudioFeaturesObject` |
-| 7 | `endpoint_search` | `get_several_audio_features` | 透過 `tracks_controller.get_several_audio_features(ids)` 的批次方法 — 接收逗號分隔的曲目 ID 字串；回應型別 `ManyAudioFeatures` |
-| 8 | `endpoint_search` | `get_current_users_profile` | `users_controller.get_current_users_profile()` — 無參數；回應 `PrivateUserObject`；必要範圍 `USER_READ_EMAIL`、`USER_READ_PRIVATE` |
-| 9 | `model_search` | `AudioFeaturesObject` | 所有 14 個屬性 — `danceability`、`energy`、`valence`、`acousticness`、`instrumentalness`、`liveness`、`speechiness`、`tempo`、`loudness`、`key`、`mode`、`time_signature`、`duration_ms`、`uri`（皆為 0.0–1.0 浮點數，用於雷達圖與個性邏輯） |
-| 10 | `model_search` | `ArtistObject` | 屬性 `name`、`id`、`popularity`（0–100 整數，用於尋找最冷門藝人）、`genres`（`List[str]`，用於前 5 大類型彙總）、`images`、`external_urls` |
-| 11 | `model_search` | `TrackObject` | 屬性 `id`（音訊特徵批次呼叫所需）、`name`、`popularity`、`artists` (`List[ArtistObject]`)、`album`、`duration_ms`、`uri` |
-| 12 | `model_search` | `PagingTrackObject` | 分頁包裝函式 — `items` (`List[TrackObject]`)、`total`、`next`、`offset`、`limit` |
-| 13 | `model_search` | `ManyAudioFeatures` | 批次回應包裝函式 — 用於反覆運算與計算平均值的 `audio_features` (`List[AudioFeaturesObject]`) |
-| 14 | `model_search` | `PrivateUserObject` | 使用者設定檔 — `display_name`、`images` (`List[ImageObject]`)、`id`、`email`、`country`（用於個人化 DNA 卡片標頭） |
+| 步驟 | 工具              | 查詢                                       | 傳回的內容                                                                                                                                                                                                                                   |
+| ---- | ----------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | `fetch_api`       | `language=python`                          | 可用 API；識別出索引鍵為 `spotify` 的 Spotify Web API SDK                                                                                                                                                                                    |
+| 2    | `ask`             | 用戶登入的 SDK 設定與 OAuth 2.0 授權碼流程 | 完整的 `pip install spotify-api-sdk` 設定、使用 `AuthorizationCodeAuthCredentials` 的 `SpotifywebapiClient` 初始化、`.env` 結構、`get_authorization_url()` → `fetch_token(code)` → `clone_with(o_auth_token=token)` 流程、權杖重新整理模式   |
+| 3    | `ask`             | 如何擷取使用者的熱門藝人與熱門曲目         | 使用 `users_controller.get_users_top_artists()` 與 `users_controller.get_users_top_tracks()` 並帶入 `time_range`、`limit`、`offset` 參數的端對端程式碼；讀取 `PagingArtistObject.items` 與 `PagingTrackObject.items`                         |
+| 4    | `endpoint_search` | `get_users_top_artists`                    | 方法簽章 — 參數 `time_range`、`limit`、`offset`；回應型別 `PagingArtistObject`；必要範圍 `OAuthScopeEnum.USER_TOP_READ`                                                                                                                      |
+| 5    | `endpoint_search` | `get_users_top_tracks`                     | 方法簽章 — 與熱門藝人相同的參數；包含 `List[TrackObject]` 項目的回應型別 `PagingTrackObject`                                                                                                                                                 |
+| 6    | `endpoint_search` | `get_audio_features`                       | 透過 `tracks_controller.get_audio_features(id)` 的單一曲目方法；回應型別 `AudioFeaturesObject`                                                                                                                                               |
+| 7    | `endpoint_search` | `get_several_audio_features`               | 透過 `tracks_controller.get_several_audio_features(ids)` 的批次方法 — 接收逗號分隔的曲目 ID 字串；回應型別 `ManyAudioFeatures`                                                                                                               |
+| 8    | `endpoint_search` | `get_current_users_profile`                | `users_controller.get_current_users_profile()` — 無參數；回應 `PrivateUserObject`；必要範圍 `USER_READ_EMAIL`、`USER_READ_PRIVATE`                                                                                                           |
+| 9    | `model_search`    | `AudioFeaturesObject`                      | 所有 14 個屬性 — `danceability`、`energy`、`valence`、`acousticness`、`instrumentalness`、`liveness`、`speechiness`、`tempo`、`loudness`、`key`、`mode`、`time_signature`、`duration_ms`、`uri`（皆為 0.0–1.0 浮點數，用於雷達圖與個性邏輯） |
+| 10   | `model_search`    | `ArtistObject`                             | 屬性 `name`、`id`、`popularity`（0–100 整數，用於尋找最冷門藝人）、`genres`（`List[str]`，用於前 5 大類型彙總）、`images`、`external_urls`                                                                                                   |
+| 11   | `model_search`    | `TrackObject`                              | 屬性 `id`（音訊特徵批次呼叫所需）、`name`、`popularity`、`artists` (`List[ArtistObject]`)、`album`、`duration_ms`、`uri`                                                                                                                     |
+| 12   | `model_search`    | `PagingTrackObject`                        | 分頁包裝函式 — `items` (`List[TrackObject]`)、`total`、`next`、`offset`、`limit`                                                                                                                                                             |
+| 13   | `model_search`    | `ManyAudioFeatures`                        | 批次回應包裝函式 — 用於反覆運算與計算平均值的 `audio_features` (`List[AudioFeaturesObject]`)                                                                                                                                                 |
+| 14   | `model_search`    | `PrivateUserObject`                        | 使用者設定檔 — `display_name`、`images` (`List[ImageObject]`)、`id`、`email`、`country`（用於個人化 DNA 卡片標頭）                                                                                                                           |
 
 **應用程式成果：**
 
@@ -247,24 +247,24 @@ animation and suspense make it feel like a game.
 
 **工具使用方式：**
 
-| 步驟 | 工具 | 查詢 | 傳回的內容 |
-| ---- | ----------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1 | `fetch_api` | `language=php` | 可用 API；識別出索引鍵為 `googlemaps` 的 Google Maps Platform SDK（還有：`paypal`、`spotify`、`maxio`、`verizon`） |
-| 2 | `ask` | SDK 設定、API 金鑰驗證設定 | `composer require sdksio/google-maps-platform-sdk:1.0.3`、帶有 `CustomQueryAuthenticationCredentialsBuilder::init('key')` 的 `GoogleMapsPlatformClientBuilder::init()`、`.env` 結構、`Environment::PRODUCTION` |
-| 3 | `ask` | 如何搜尋半徑內的附近餐廳 | 使用 `$client->getPlacesApi()->nearbySearch($location, $radius, 'restaurant', ...)` 的完整程式碼、透過 `isSuccess()` / `getResult()` 處理回應、反覆運算 `Place[]` 結果 |
-| 4 | `endpoint_search` | `nearbySearch` | 方法簽章 — 參數 `location` (`"lat,lng"`)、`radius`（公尺）、`keyword`、`maxprice`、`minprice`、`opennow`、`pagetoken`、`rankby`、`type`、`language`；回應型別 `PlacesNearbySearchResponse` |
-| 5 | `endpoint_search` | `placeDetails` | 方法簽章 — 參數 `placeId`、`fields[]`（Basic/Contact/Atmosphere 類別）、`sessiontoken`、`language`、`region`；回應型別 `PlacesDetailsResponse` |
-| 6 | `endpoint_search` | `placePhoto` | 方法簽章 — 參數 `photoReference`（字串）、`maxheight`、`maxwidth`（1-1600px）；回應型別 `mixed`（原始影像位元組） |
-| 7 | `endpoint_search` | `streetView` | 方法簽章 — 參數 `size` (`"{w}x{h}"`，最大 640px)、`fov`、`heading`、`location`、`pitch`、`radius`、`source`；回應型別 `mixed`（影像位元組） |
-| 8 | `endpoint_search` | `directions` | 方法簽章 — 參數 `destination`、`origin`、`mode`、`avoid`、`units`、`waypoints`、`language`、`region`；回應型別 `DirectionsResponse` |
-| 9 | `model_search` | `PlacesNearbySearchResponse` | 屬性：`results` (`Place[]`)、`status` (`PlacesSearchStatus`)、`nextPageToken`、`errorMessage`、`htmlAttributions` |
-| 10 | `model_search` | `PlacesDetailsResponse` | 屬性：`result` (`Place`)、`status` (`PlacesDetailsStatus`)、`htmlAttributions`、`infoMessages` |
-| 11 | `model_search` | `Place` | 完整模型 — `name`、`placeId`、`formattedAddress`、`geometry` (`Geometry`)、`rating`、`userRatingsTotal`、`priceLevel`、`photos` (`PlacePhoto[]`)、`openingHours`、`types`、`vicinity`、`website`、`businessStatus`、`reviews` (`PlaceReview[]`) |
-| 12 | `model_search` | `PlacePhoto` | 屬性：`photoReference`（字串，用於 `placePhoto` 呼叫）、`height`、`width`、`htmlAttributions` |
-| 13 | `model_search` | `Geometry` | 屬性：`location` (`LatLngLiteral`)、`viewport` (`Bounds`) |
-| 14 | `model_search` | `LatLngLiteral` | 屬性：`lat`（浮點數）、`lng`（浮點數）— 用於擷取街景與路線規劃的座標 |
-| 15 | `model_search` | `DirectionsResponse` | 屬性：`routes` (`DirectionsRoute[]`)、`status` (`DirectionsStatus`)、`geocodedWaypoints`、`availableTravelModes`、`errorMessage` |
-| 16 | `ask` | 如何在給定緯度/經度下使用街景靜態 API | `$client->getStreetViewApi()->streetView($size, null, null, $location)`，傳回原始影像位元組；用於可用性檢查的 `streetViewMetadata()` |
+| 步驟 | 工具              | 查詢                                  | 傳回的內容                                                                                                                                                                                                                                      |
+| ---- | ----------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1    | `fetch_api`       | `language=php`                        | 可用 API；識別出索引鍵為 `googlemaps` 的 Google Maps Platform SDK（還有：`paypal`、`spotify`、`maxio`、`verizon`）                                                                                                                              |
+| 2    | `ask`             | SDK 設定、API 金鑰驗證設定            | `composer require sdksio/google-maps-platform-sdk:1.0.3`、帶有 `CustomQueryAuthenticationCredentialsBuilder::init('key')` 的 `GoogleMapsPlatformClientBuilder::init()`、`.env` 結構、`Environment::PRODUCTION`                                  |
+| 3    | `ask`             | 如何搜尋半徑內的附近餐廳              | 使用 `$client->getPlacesApi()->nearbySearch($location, $radius, 'restaurant', ...)` 的完整程式碼、透過 `isSuccess()` / `getResult()` 處理回應、反覆運算 `Place[]` 結果                                                                          |
+| 4    | `endpoint_search` | `nearbySearch`                        | 方法簽章 — 參數 `location` (`"lat,lng"`)、`radius`（公尺）、`keyword`、`maxprice`、`minprice`、`opennow`、`pagetoken`、`rankby`、`type`、`language`；回應型別 `PlacesNearbySearchResponse`                                                      |
+| 5    | `endpoint_search` | `placeDetails`                        | 方法簽章 — 參數 `placeId`、`fields[]`（Basic/Contact/Atmosphere 類別）、`sessiontoken`、`language`、`region`；回應型別 `PlacesDetailsResponse`                                                                                                  |
+| 6    | `endpoint_search` | `placePhoto`                          | 方法簽章 — 參數 `photoReference`（字串）、`maxheight`、`maxwidth`（1-1600px）；回應型別 `mixed`（原始影像位元組）                                                                                                                               |
+| 7    | `endpoint_search` | `streetView`                          | 方法簽章 — 參數 `size` (`"{w}x{h}"`，最大 640px)、`fov`、`heading`、`location`、`pitch`、`radius`、`source`；回應型別 `mixed`（影像位元組）                                                                                                     |
+| 8    | `endpoint_search` | `directions`                          | 方法簽章 — 參數 `destination`、`origin`、`mode`、`avoid`、`units`、`waypoints`、`language`、`region`；回應型別 `DirectionsResponse`                                                                                                             |
+| 9    | `model_search`    | `PlacesNearbySearchResponse`          | 屬性：`results` (`Place[]`)、`status` (`PlacesSearchStatus`)、`nextPageToken`、`errorMessage`、`htmlAttributions`                                                                                                                               |
+| 10   | `model_search`    | `PlacesDetailsResponse`               | 屬性：`result` (`Place`)、`status` (`PlacesDetailsStatus`)、`htmlAttributions`、`infoMessages`                                                                                                                                                  |
+| 11   | `model_search`    | `Place`                               | 完整模型 — `name`、`placeId`、`formattedAddress`、`geometry` (`Geometry`)、`rating`、`userRatingsTotal`、`priceLevel`、`photos` (`PlacePhoto[]`)、`openingHours`、`types`、`vicinity`、`website`、`businessStatus`、`reviews` (`PlaceReview[]`) |
+| 12   | `model_search`    | `PlacePhoto`                          | 屬性：`photoReference`（字串，用於 `placePhoto` 呼叫）、`height`、`width`、`htmlAttributions`                                                                                                                                                   |
+| 13   | `model_search`    | `Geometry`                            | 屬性：`location` (`LatLngLiteral`)、`viewport` (`Bounds`)                                                                                                                                                                                       |
+| 14   | `model_search`    | `LatLngLiteral`                       | 屬性：`lat`（浮點數）、`lng`（浮點數）— 用於擷取街景與路線規劃的座標                                                                                                                                                                            |
+| 15   | `model_search`    | `DirectionsResponse`                  | 屬性：`routes` (`DirectionsRoute[]`)、`status` (`DirectionsStatus`)、`geocodedWaypoints`、`availableTravelModes`、`errorMessage`                                                                                                                |
+| 16   | `ask`             | 如何在給定緯度/經度下使用街景靜態 API | `$client->getStreetViewApi()->streetView($size, null, null, $location)`，傳回原始影像位元組；用於可用性檢查的 `streetViewMetadata()`                                                                                                            |
 
 **應用程式成果：**
 

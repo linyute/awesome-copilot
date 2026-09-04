@@ -18,7 +18,7 @@ Streamable HTTP 是現代的遠端傳輸方式。單一端點接受透過 HTTP P
 ```bash
 dotnet new web -n MyHttpServer -f net10.0
 cd MyHttpServer
-dotnet add package ModelContextProtocol.AspNetCore
+dotnet add package ModelContextProtocol.AspNetCore --version 2.2.0
 ```
 
 ```csharp
@@ -55,10 +55,10 @@ public static class EchoTool
 
 > **v2 重大變更：** `HttpServerTransportOptions.Stateless` 現預設為 **`true`**（在 1.x 上預設為 `false`）。升級至 2.x 而未修改選項的伺服器會停止建立工作階段並停止公開 SSE 端點。請明確設定 `Stateless = false` 以還原舊版行為。
 
-| 模式 | `options.Stateless` | 行為 | 何時使用 |
-|---|---|---|---|
-| **無狀態 (Stateless)** | `true` (自 2.x 起為預設) | 無 `Mcp-Session-Id`。每個 POST 都是獨立的。服務目前的 (2026-07-28) 修訂版。 | 水平擴展、簡單工具伺服器、目前通訊協定用戶端。 |
-| **具狀態 (Stateful)** | `false` | 伺服器指派並追蹤 `Mcp-Session-Id`。長生命週期工作階段。**降級相容模式：** 伺服器拒絕 2026-07-28 修訂版，以便雙路徑用戶端後備至支援 initialize 的修訂版（2025-11-25 或更早）。 | 舊版 `ElicitAsync`/sampling/roots 路徑、推送記錄通知、尚未採用 2026-07-28 的用戶端。需要在負載平衡器設定工作階段同質性 (session affinity)。 |
+| 模式                   | `options.Stateless`      | 行為                                                                                                                                                                          | 何時使用                                                                                                                                    |
+| ---------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| **無狀態 (Stateless)** | `true` (自 2.x 起為預設) | 無 `Mcp-Session-Id`。每個 POST 都是獨立的。服務目前的 (2026-07-28) 修訂版。                                                                                                   | 水平擴展、簡單工具伺服器、目前通訊協定用戶端。                                                                                              |
+| **具狀態 (Stateful)**  | `false`                  | 伺服器指派並追蹤 `Mcp-Session-Id`。長生命週期工作階段。**降級相容模式：** 伺服器拒絕 2026-07-28 修訂版，以便雙路徑用戶端後備至支援 initialize 的修訂版（2025-11-25 或更早）。 | 舊版 `ElicitAsync`/sampling/roots 路徑、推送記錄通知、尚未採用 2026-07-28 的用戶端。需要在負載平衡器設定工作階段同質性 (session affinity)。 |
 
 **原則：** 在目前的 (2026-07-28) 通訊協定上沒有 HTTP 工作階段 —「在工具執行途中向使用者提問」使用多來回模式（擲出 `InputRequiredException`，處理重試的呼叫；請參閱 [`elicitation.md`](./elicitation.md)），該模式在兩種工作階段模式和兩種修訂版中均可運作。僅針對舊版路徑設定 `Stateless = false` — `ElicitAsync`、已棄用的 `SampleAsync`/`RequestRootsAsync` 或推送記錄/通知訊息 — 並且要知道這會將 HTTP 用戶端鎖定在支援 initialize 的舊版修訂版。在無狀態預設下，這些舊版呼叫在執行階段會因為沒有可傳遞的通道而失敗。
 

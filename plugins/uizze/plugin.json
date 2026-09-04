@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "uizze",
-  "description": "防止通用的 UI 被發布。將 GitHub Copilot 以超過 800,000 個真實 Web 和 iOS 畫面為基準，撰寫產品專屬的設計契約，並執行嚴格的完成把關。",
-  "version": "1.0.0",
+  "description": "透過專注的 UIZZE 工作流程、可選的真實畫面佐證，以及實用的完成度檢查，打造符合產品需求的介面。",
+  "version": "1.2.13",
   "author": {
     "name": "UIZZE",
     "url": "https://uizze.com"

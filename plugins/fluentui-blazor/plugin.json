@@ -1,0 +1,32 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "fluentui-blazor",
+  "description": "使用 Microsoft Fluent UI Blazor 函式庫建構 Blazor 應用程式。結合了提供正確使用模式（提供者、服務註冊、圖示、對話方塊、資料格線、佈景主題設定）的 fluentui-blazor skill 與官方 Fluent UI Blazor MCP 伺服器，可即時查閱元件、參數、列舉、圖示和文件，並提供 v4 至 v5 移轉指南。",
+  "version": "1.0.0",
+  "keywords": [
+    "fluentui",
+    "blazor",
+    "dotnet",
+    "components",
+    "aspnetcore",
+    "mcp",
+    "model-context-protocol",
+    "migration",
+    "icons",
+    "theming"
+  ],
+  "author": {
+    "name": "Adrien Clerbois",
+    "url": "https://github.com/AClerbois"
+  },
+  "homepage": "https://www.fluentui-blazor.net",
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/fluentui-blazor/"
+      ]
+    }
+  }
+}

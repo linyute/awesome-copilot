@@ -1,202 +1,218 @@
 ---
 name: github-issues
-description: '使用 MCP 工具建立、更新與管理 GitHub 議題。當使用者想要建立錯誤回報、功能請求或任務議題、更新現有議題、加入標籤/指派者/里程碑、設定議題欄位（日期、優先權、自訂欄位）、指定議題類型、管理議題工作流程、連結議題、加入相依性或追蹤「被阻擋/阻擋」關係時使用。觸發範例："建立議題"、"回報錯誤"、"請求功能"、"更新議題 X"、"設定優先權"、"設定開始日期"、"連結議題"、"加入相依性"、"被阻擋"、"阻擋"。'
+description: '使用 MCP 工具建立、更新與管理 GitHub Issue。當使用者想要建立錯誤報告、功能請求或工作 Issue、更新既有 Issue、新增標籤/指派對象/里程碑、管理儲存庫標籤、設定 Issue 欄位（日期、優先順序、自訂欄位）、設定 Issue 類型、管理 Issue 工作流程、連結 Issue、新增相依性或追蹤阻礙中 (blocked-by)/阻礙其他項目 (blocking) 關聯時使用此技能。可由 "create an issue"、"file a bug"、"request a feature"、"update issue X"、"set the priority"、"set the start date"、"create a label"、"rename a label"、"list repo labels"、"link issues"、"add dependency"、"blocked by"、"blocking" 或任何 GitHub Issue 管理任務等請求觸發。'
 ---
 
-# GitHub 議題 (Issues)
+# GitHub Issues
 
-使用 `@modelcontextprotocol/server-github` MCP 伺服器管理 GitHub 議題。
+使用 `@modelcontextprotocol/server-github` MCP 伺服器管理 GitHub Issue。
 
-## 可用的工具
+## 可用工具
 
-### MCP 工具 (讀取作業)
+### MCP 工具（讀取操作）
 
 | 工具 | 用途 |
 |------|---------|
-| `mcp__github__issue_read` | 讀取議題詳細資料、子議題、評論、標籤 (方法：get, get_comments, get_sub_issues, get_labels) |
-| `mcp__github__list_issues` | 列出並根據狀態、標籤、日期篩選儲存庫議題 |
-| `mcp__github__search_issues` | 使用 GitHub 搜尋語法跨儲存庫搜尋議題 |
+| `mcp__github__issue_read` | 讀取 Issue 詳細資料、子 Issue、留言、標籤（方法：get、get_comments、get_sub_issues、get_labels） |
+| `mcp__github__list_issues` | 依狀態、標籤、日期列出並篩選儲存庫 Issue |
+| `mcp__github__search_issues` | 使用 GitHub 搜尋語法跨儲存庫搜尋 Issue |
 | `mcp__github__projects_list` | 列出專案、專案欄位、專案項目、狀態更新 |
 | `mcp__github__projects_get` | 取得專案、欄位、項目或狀態更新的詳細資料 |
-| `mcp__github__projects_write` | 新增/更新/刪除專案項目，建立狀態更新 |
+| `mcp__github__projects_write` | 新增/更新/刪除專案項目、建立狀態更新 |
 
-### CLI / REST API (寫入作業)
+### MCP 工具（寫入操作）
 
-目前 MCP 伺服器不支援建立、更新議題或對議題發表評論。請使用 `gh api` 執行這些作業。
+| 工具 | 用途 |
+|------|---------|
+| `mcp__github__issue_write` | 建立或更新 Issue（方法：create、update）。支援標題、內文、類型、標籤、指派對象、里程碑與 Issue 欄位 |
+| `mcp__github__add_issue_comment` | 對 Issue 新增留言或反應 (reaction) |
+| `mcp__github__sub_issue_write` | 新增、移除或重新排定子 Issue 優先順序 |
 
-| 作業 | 指令 |
+### CLI / REST API（寫入操作）
+
+`gh api` 執行相同的寫入操作，也是以下範例所使用的形式。當 MCP 伺服器未連線，或需要 MCP 工具未公開的 REST 欄位時，請使用此方式。
+
+| 操作 | 命令 |
 |-----------|---------|
-| 建立議題 | `gh api repos/{owner}/{repo}/issues -X POST -f title=... -f body=...` |
-| 更新議題 | `gh api repos/{owner}/{repo}/issues/{number} -X PATCH -f title=... -f state=...` |
-| 加入評論 | `gh api repos/{owner}/{repo}/issues/{number}/comments -X POST -f body=...` |
-| 關閉議題 | `gh api repos/{owner}/{repo}/issues/{number} -X PATCH -f state=closed` |
-| 設定議題類型 | 在建立呼叫中包含 `-f type=Bug` (僅限 REST API，`gh issue create` CLI 不支援) |
+| 建立 Issue | `gh api repos/{owner}/{repo}/issues -X POST -f title=... -f body=...` |
+| 更新 Issue | `gh api repos/{owner}/{repo}/issues/{number} -X PATCH -f title=... -f state=...` |
+| 新增留言 | `gh api repos/{owner}/{repo}/issues/{number}/comments -X POST -f body=...` |
+| 關閉 Issue | `gh api repos/{owner}/{repo}/issues/{number} -X PATCH -f state=closed` |
+| 設定 Issue 類型 | 在建立呼叫中加入 `-f type=Bug`（僅限 REST API，`gh issue create` CLI 不支援） |
 
-**注意：** `gh issue create` 適用於基本的議題建立，但 **不支援** `--type` 旗標。當您需要設定議題類型時，請使用 `gh api`。
+**注意：** `gh issue create` 適用於基本的 Issue 建立，但**不**支援 `--type` 旗標。當你需要設定 Issue 類型時，請使用 `gh api`。
 
 ## 工作流程
 
-1. **判斷動作**：建立、更新還是查詢？
-2. **收集上下文**：視需要取得儲存庫資訊、現有標籤、里程碑
-3. **建構內容**：使用 [references/templates.md](references/templates.md) 中的適當範本
-4. **執行**：讀取作業使用 MCP 工具，寫入作業使用 `gh api`
-5. **確認**：向使用者回報議題 URL
+1. **確定操作**：建立、更新還是查詢？
+2. **收集上下文**：取得儲存庫資訊、現有標籤、里程碑（若需要）
+3. **結構化內容**：使用來自 [references/templates.md](references/templates.md) 的適當範本
+4. **執行**：讀取使用 MCP 工具，寫入使用 `gh api`
+5. **確認**：回報 Issue URL 給使用者
 
-## 建立議題
+## 建立 Issue
 
-使用 `gh api` 建立議題。這支援包含議題類型在內的所有參數。
+使用 `gh api` 建立 Issue。此方式支援包括 Issue 類型在內的所有參數。
 
 ```bash
 gh api repos/{owner}/{repo}/issues \
   -X POST \
-  -f title="議題標題" \
-  -f body="Markdown 格式的議題本文" \
+  -f title="Issue title" \
+  -f body="Issue body in markdown" \
   -f type="Bug" \
   --jq '{number, html_url}'
 ```
 
 ### 選用參數
 
-在 `gh api` 呼叫中加入下列任何旗標：
+將以下任何旗標加入 `gh api` 呼叫中：
 
 ```
--f type="Bug"                    # 議題類型 (Bug, Feature, Task, Epic 等)
--f labels[]="bug"                # 標籤 (多個標籤請重複使用)
--f assignees[]="username"        # 指派者 (多個指派者請重複使用)
+-f type="Bug"                    # Issue 類型 (Bug, Feature, Task, Epic 等)
+-f 'labels[]=bug'                # 標籤 (多個標籤請重複指定)
+-f 'assignees[]=username'        # 指派對象 (多個對象請重複指定)
 -f milestone=1                   # 里程碑編號
 ```
 
-**議題類型** 是組織層級的 Metadata。若要探索可用的類型，請使用：
-```bash
-gh api graphql -f query='{ organization(login: "組織名稱") { issueTypes(first: 10) { nodes { name } } } }' --jq '.data.organization.issueTypes.nodes[].name'
+**請將整個 `name[]=value` 鍵值對用引號括起來。** `[]` 是 macOS 預設 shell (zsh) 中的 glob 模式，
+因此未加引號的 `-f labels[]=bug` 永遠無法傳遞至 `gh`：
+
+```
+zsh: no matches found: labels[]=bug
 ```
 
-**分類時優先使用議題類型而非標籤。** 當議題類型可用時 (例如 Bug, Feature, Task)，請使用 `type` 參數，而非套用對等的標籤 (如 `bug` 或 `enhancement`)。議題類型是 GitHub 上對議題進行分類的規範方式。僅當組織未設定任何議題類型時，才退而使用標籤。
+**Issue 類型** 屬於組織層級的 Metadata。若要探索可用的類型，請使用：
+```bash
+gh api graphql -f query='{ organization(login: "ORG") { issueTypes(first: 10) { nodes { name } } } }' --jq '.data.organization.issueTypes.nodes[].name'
+```
 
-### 標題準則
+**優先使用 Issue 類型而非標籤進行分類。** 當 Issue 類型可用時（例如：Bug、Feature、Task），請使用 `type` 參數，而非套用如 `bug` 或 `enhancement` 等同等標籤。Issue 類型是 GitHub 上對 Issue 進行分類的標準正式方式。僅在組織未設定 Issue 類型時，才退回使用標籤。
 
-- 應具體且具備行動性
+### 標題指引
+
+- 具體且可據以採取行動
 - 保持在 72 個字元以內
-- 設定議題類型時，不要加入冗餘的前綴 (如 `[Bug]`)
+- 當已設定 Issue 類型時，不要加入重複的前綴（如 `[Bug]`）
 - 範例：
-  - `啟用 SSO 時登入失敗` (使用 type=Bug)
-  - `加入深色模式支援` (使用 type=Feature)
-  - `為驗證模組加入單元測試` (使用 type=Task)
+  - `Login fails with SSO enabled`（搭配 type=Bug）
+  - `Add dark mode support`（搭配 type=Feature）
+  - `Add unit tests for auth module`（搭配 type=Task）
 
-### 本文結構
+### 內文結構
 
-務必使用 [references/templates.md](references/templates.md) 中的範本。根據議題類型進行選擇：
+一律使用 [references/templates.md](references/templates.md) 中的範本。根據 Issue 類型進行選擇：
 
 | 使用者請求 | 範本 |
 |--------------|----------|
-| 錯誤、故障、損壞、無法運作 | 錯誤報告 (Bug Report) |
-| 功能、增強、加入、新增 | 功能請求 (Feature Request) |
-| 任務、瑣事、重構、更新 | 任務 (Task) |
+| Bug、錯誤、損壞、無法運作 | Bug Report |
+| 功能、強化、新增、新項目 | Feature Request |
+| 任務、雜務、重構、更新 | Task |
 
-## 更新議題
+## 更新 Issue
 
-搭配 PATCH 使用 `gh api`：
+使用 `gh api` 搭配 PATCH：
 
 ```bash
 gh api repos/{owner}/{repo}/issues/{number} \
   -X PATCH \
   -f state=closed \
-  -f title="更新後的標題" \
+  -f title="Updated title" \
   --jq '{number, html_url}'
 ```
 
-僅包含您想要變更的欄位。可用欄位：`title`、`body`、`state` (open/closed)、`labels`、`assignees`、`milestone`。
+僅包含你想要變更的欄位。可用欄位：`title`、`body`、`state`（open/closed）、`labels`、`assignees`、`milestone`。
 
 ## 範例
 
 ### 範例 1：錯誤報告 (Bug Report)
 
-**使用者**：「建立一個 Bug 議題 - 使用 SSO 時登入頁面當機」
+**使用者**："Create a bug issue - the login page crashes when using SSO"
 
-**動作**：
+**操作**：
 ```bash
 gh api repos/github/awesome-copilot/issues \
   -X POST \
-  -f title="使用 SSO 時登入頁面當機" \
+  -f title="Login page crashes when using SSO" \
   -f type="Bug" \
-  -f body="## 說明
-當使用者嘗試使用 SSO 進行驗證時，登入頁面會發生當機。
+  -f body="## Description
+The login page crashes when users attempt to authenticate using SSO.
 
-## 重現步驟
-1. 導覽至登入頁面
-2. 按一下「使用 SSO 登入」
-3. 頁面當機
+## Steps to Reproduce
+1. Navigate to login page
+2. Click 'Sign in with SSO'
+3. Page crashes
 
-## 預期行為
-SSO 驗證應完成並重新導向至儀表板。
+## Expected Behavior
+SSO authentication should complete and redirect to dashboard.
 
-## 實際行為
-頁面變得無回應並顯示錯誤。" \
+## Actual Behavior
+Page becomes unresponsive and displays error." \
   --jq '{number, html_url}'
 ```
 
 ### 範例 2：功能請求 (Feature Request)
 
-**使用者**：「為深色模式建立一個高優先級的功能請求」
+**使用者**："Create a feature request for dark mode with high priority"
 
-**動作**：
+**操作**：
 ```bash
 gh api repos/github/awesome-copilot/issues \
   -X POST \
-  -f title="加入深色模式支援" \
+  -f title="Add dark mode support" \
   -f type="Feature" \
-  -f labels[]="high-priority" \
-  -f body="## 摘要
-加入深色模式主題選項，以提升使用者體驗與無障礙性。
+  -f 'labels[]=high-priority' \
+  -f body="## Summary
+Add dark mode theme option for improved user experience and accessibility.
 
-## 動機
-- 減輕低光源環境下的眼睛疲勞
-- 使用者對此功能的預期日益增加
+## Motivation
+- Reduces eye strain in low-light environments
+- Increasingly expected by users
 
-## 建議解決方案
-實作具備系統偏好設定偵測功能的主題切換。
+## Proposed Solution
+Implement theme toggle with system preference detection.
 
-## 驗收標準
-- [ ] 設定中有切換開關
-- [ ] 永久儲存使用者偏好
-- [ ] 預設遵循系統偏好設定" \
+## Acceptance Criteria
+- [ ] Toggle switch in settings
+- [ ] Persists user preference
+- [ ] Respects system preference by default" \
   --jq '{number, html_url}'
 ```
 
 ## 常見標籤
 
-適用時請使用下列標準標籤：
+在適用時使用這些標準標籤：
 
-| 標籤 | 用途 |
+| 標籤 | 用於 |
 |-------|---------|
-| `bug` | 某些功能無法運作 |
+| `bug` | 某些功能無法正常運作 |
 | `enhancement` | 新功能或改進 |
 | `documentation` | 文件更新 |
 | `good first issue` | 適合新手 |
-| `help wanted` | 需要額外關注 |
-| `question` | 請求進一步資訊 |
+| `help wanted` | 需要額外關注或協助 |
+| `question` | 需要進一步資訊 |
 | `wontfix` | 將不予處理 |
-| `duplicate` | 已存在重複項 |
-| `high-priority` | 緊急議題 |
+| `duplicate` | 已存在重複項目 |
+| `high-priority` | 緊急 Issue |
 
-## 提示
+## 秘訣
 
-- 建立議題前務必確認儲存庫內容
-- 缺少關鍵資訊時請詢問，而非自行猜測
-- 已知時請連結相關議題：`Related to #123`
-- 進行更新時，先抓取目前議題以保留未變更的欄位
+- 在建立 Issue 之前一律確認儲存庫上下文
+- 詢問缺失的關鍵資訊，而不是盲目猜測
+- 若已知相關 Issue，請予以連結：`Related to #123`
+- 更新時，先擷取目前的 Issue 以保留未變更的欄位
 
 ## 擴充功能
 
-下列功能需要基礎 MCP 工具之外的 REST 或 GraphQL API。每一項都記錄在各自的參考文件中，以便代理程式僅載入所需的知識。
+以下功能需要超出基本 MCP 工具的 REST 或 GraphQL API。各項功能皆記錄在其專屬參考檔案中，以便代理人僅載入所需的知識。
 
-| 功能 | 使用時機 | 參考資料 |
+| 功能 | 何時使用 | 參考資料 |
 |------------|-------------|-----------|
-| 進階搜尋 | 具備布林邏輯、日期範圍、跨儲存庫搜尋、議題欄位篩選 (`field.name:value`) 的複雜查詢 | [references/search.md](references/search.md) |
-| 子議題與父議題 | 將工作拆分為階層式任務 | [references/sub-issues.md](references/sub-issues.md) |
-| 里程碑 | 建立、讀取、更新、關閉、重新開啟、刪除里程碑，以及管理里程碑相關議題 | [references/milestones.md](references/milestones.md) |
-| 議題相依性 | 追蹤「被哪些阻礙」/「阻礙了哪些」的關係 | [references/dependencies.md](references/dependencies.md) |
-| 議題類型 (進階) | 超出 MCP `list_issue_types` / `type` 參數的 GraphQL 作業 | [references/issue-types.md](references/issue-types.md) |
-| 專案 V2 | 專案面板、進度報告、欄位管理 | [references/projects.md](references/projects.md) |
-| 議題欄位 | 自定義 Metadata：日期、優先級、文字、數字 (私人預覽) | [references/issue-fields.md](references/issue-fields.md) |
-| 議題中的圖片 | 透過 CLI 在議題本文與評論中嵌入圖片 | [references/images.md](references/images.md) |
+| 進階搜尋 | 具有布林邏輯、日期範圍、跨儲存庫搜尋、Issue 欄位篩選條件 (`field.name:value`) 的複雜查詢 | [references/search.md](references/search.md) |
+| 子 Issue 與父 Issue | 將工作拆解為階層式任務 | [references/sub-issues.md](references/sub-issues.md) |
+| 里程碑 | 建立、讀取、更新、關閉、重新開啟、刪除里程碑，以及管理里程碑 Issue | [references/milestones.md](references/milestones.md) |
+| 標籤 | 探索、建立、重新命名、變更色彩與刪除儲存庫標籤；在 Issue 上新增或取代標籤 | [references/labels.md](references/labels.md) |
+| Issue 相依性 | 追蹤阻礙中 (blocked-by) / 阻礙其他項目 (blocking) 關聯 | [references/dependencies.md](references/dependencies.md) |
+| Issue 類型（進階） | 超出 MCP `list_issue_types` / `type` 參數的 GraphQL 操作 | [references/issue-types.md](references/issue-types.md) |
+| Projects V2 | 專案看板、進度報告、欄位管理 | [references/projects.md](references/projects.md) |
+| Issue 欄位 | 自訂 Metadata：日期、優先順序、文字、數字（私人預覽） | [references/issue-fields.md](references/issue-fields.md) |
+| Issue 中的圖片 | 透過 CLI 在 Issue 內文與留言中嵌入圖片 | [references/images.md](references/images.md) |

@@ -12,11 +12,11 @@ FlowStudio Power Automate MCP 伺服器的回應形狀和行為備註。
 
 ## 資訊來源 (Source of Truth)
 
-| 優先順序 | 來源 | 涵蓋範圍 |
-|----------|--------|--------|
-| 1 | **實際的 API 回應** | 始終相信伺服器實際傳回的內容 |
-| 2 | **`list_skills` / `tool_search`** | 授權工具結構描述、參數名稱、類型、必填旗標 |
-| 3 | **此文件** | 回應形狀、行為備註、陷阱 |
+| 優先順序 | 來源                              | 涵蓋範圍                                   |
+| -------- | --------------------------------- | ------------------------------------------ |
+| 1        | **實際的 API 回應**               | 始終相信伺服器實際傳回的內容               |
+| 2        | **`list_skills` / `tool_search`** | 授權工具結構描述、參數名稱、類型、必填旗標 |
+| 3        | **此文件**                        | 回應形狀、行為備註、陷阱                   |
 
 > 如果此文件與 `tool_search`、`tools/list` 或實際的 API 行為不符，以 API 為準。請相應地更新此文件。
 
@@ -258,12 +258,12 @@ FlowStudio Power Automate MCP 伺服器的回應形狀和行為備註。
 
 常見模式：
 
-| 呼叫形狀 | 用途 |
-|---|---|
-| 不帶 `connectorName` 使用 `search="send email"` | 跨連接器搜尋操作 |
-| `connectorName="shared_sharepointonline"` | 單一連接器的精簡操作目錄 |
-| `operationId="GetItems"` | 單一操作的擴展結構描述 |
-| `variant="flowbot_chat"` | 單一操作變體的作者撰寫範例 |
+| 呼叫形狀                                        | 用途                       |
+| ----------------------------------------------- | -------------------------- |
+| 不帶 `connectorName` 使用 `search="send email"` | 跨連接器搜尋操作           |
+| `connectorName="shared_sharepointonline"`       | 單一連接器的精簡操作目錄   |
+| `operationId="GetItems"`                        | 單一操作的擴展結構描述     |
+| `variant="flowbot_chat"`                        | 單一操作變體的作者撰寫範例 |
 
 操作詳細資訊可包含：
 - `hint`：來自連接器提示表的作者撰寫指引。
@@ -405,22 +405,44 @@ responseSchemaCount - 定義輸出結構描述的「回應」動作數量
 
 ### `get_live_flow_trigger_url`
 
-已過期。當您需要調用 HTTP 觸發流程時，建議優先使用 `trigger_live_flow`；它會在內部擷取目前的回呼 URL。
+已過期。需要執行流程時，建議優先使用 `trigger_live_flow`；對於 HTTP 觸發器，
+該工具會在內部取得回呼 URL；對於沒有回呼 URL 的按鈕和 PowerApps 觸發器，
+則會使用連接器執行階段。
 
-傳回 HTTP 觸發流程的已簽署回呼 URL。回應包含 `flowKey`, `triggerName`, `triggerType`, `triggerKind`, `triggerMethod`, `triggerUrl`。
+傳回 HTTP 觸發流程的已簽署回呼 URL。回應包含
+`flowKey`、`triggerName`、`triggerType`、`triggerKind`、`triggerMethod`、`triggerUrl`。
 
 ### `trigger_live_flow`
 
-回應索引鍵：`flowKey`, `triggerName`, `triggerUrl`, `requiresAadAuth`, `authType`,
-`responseStatus`, `responseBody`。
+回應索引鍵：`flowKey`、`triggerName`、`triggerKind`、`invocation`、`triggerUrl`、
+`requiresAadAuth`、`authType`、`responseStatus`、`responseBody`、`runName`，以及
+未提供必要觸發器輸入時的 `warning`。
 
-> **僅適用於 `Request` (HTTP) 觸發器。** 對於定期執行和其他觸發器類型，會傳回錯誤：`"only HTTP Request triggers can be invoked via this tool"` (僅 HTTP 要求觸發器可透過此工具調用)。
-> `Button` 類型的觸發器會傳回 `ListCallbackUrlOperationBlocked`。
+> **適用於 `Request` 觸發器：HTTP 要求、按鈕和 PowerApps。** 對 Recurrence 和連接器觸發器
+> 會傳回錯誤：
+> `"only HTTP Request triggers can be invoked via this tool"`.
 >
-> `responseStatus` + `responseBody` 包含流程的「回應」動作輸出。
-> 自動處理經 AAD 驗證的觸發器。
+> HTTP 觸發器會透過已簽署的回呼 URL (`invocation: callbackUrl`) 執行。
+> 按鈕和 PowerApps 觸發器沒有回呼 URL；提供 `body` 時，會透過 Power Platform
+> 連接器執行階段 (`connectorFlowToken` 或 `connectorApihubToken`) 執行，這是傳遞輸入的唯一途徑。
+> 未提供 body 時，會使用成本較低的直接執行 (`directRun`)。
 >
-> **內容類型備註**：本文是以 `application/octet-stream` (原始) 格式傳送的，而不是 `application/json`。具有包含 `required` (必填) 欄位之觸發器結構描述的流程，將會因 `InvalidRequestContent` (400) 而拒絕請求，因為 Power Automate 會在根據結構描述進行解析之前驗證 `Content-Type`。沒有結構描述的流程，或旨在接受原始輸入的流程（例如內部解析本文的 Baker 模式流程），將能正常運作。流程會收到 JSON 作為 Base64 編碼的 `$content`，並帶有 `$content-type: application/octet-stream`。
+> 只有透過連接器執行階段執行時才會傳回 `runName`。其他情況請使用
+> `get_live_flow_runs` 查詢流程執行個體。
+>
+> Power Automate 不會強制執行觸發器的 `required` 清單。即使缺少輸入，仍會以 null 值啟動執行；
+> `warning` 會列出遺漏的索引鍵以及重試時應使用的本文結構。
+>
+> 瀏覽器擴充功能索引鍵無法連線至連接器執行階段，因此按鈕和 PowerApps 觸發器使用此索引鍵類型時，
+> 只能以空本文執行。錯誤訊息會列出替代方案（重新提交過去的執行、在流程內使用 `coalesce()`
+> 設定輸入的預設值，或使用標準索引鍵）。
+>
+> `responseStatus` + `responseBody` 包含流程之「回應」動作的輸出。
+> 已驗證 AAD 的觸發器會自動處理。
+>
+> **內容類型**：`body` 會以 `application/json` 傳送，因此 `triggerBody()` 和觸發器結構描述
+> 會看到您傳入的物件。已於 2026-08-27 在伺服器 1.2.43 上，針對具有 `required` 結構描述的
+> Button、PowerAppV2 和 Skills 觸發器完成驗證。
 
 ---
 
@@ -524,7 +546,10 @@ responseSchemaCount - 定義輸出結構描述的「回應」動作數量
 - **無法變更流程狀態。** 僅更新 displayName, definition, 和 connectionReferences。請使用 `set_live_flow_state` 來啟動/停止流程。
 
 ### `trigger_live_flow`
-- **僅適用於 HTTP Request 觸發器。** 對於定期執行、連接器及其他觸發器類型，會傳回錯誤。
+- **適用於 HTTP、按鈕和 PowerApps 觸發程序。** 對於週期、連接器和其他觸發程序類型，
+  會傳回錯誤。
+- 將觸發程序輸入作為 `body` 傳遞。結果中的 `warning` 表示缺少必要輸入，
+  且執行已以 null 值啟動。
 - 自動處理 AAD 驗證的觸發器 (模擬 Bearer 權杖)。
 
 ### `get_live_flow_runs`

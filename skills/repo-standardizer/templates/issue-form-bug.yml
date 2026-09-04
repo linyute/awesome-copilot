@@ -1,0 +1,53 @@
+name: 錯誤回報
+description: 回報錯誤以協助我們改進
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝您撥冗填寫此錯誤回報！
+  - type: textarea
+    id: description
+    attributes:
+      label: 描述錯誤
+      description: 清楚且簡要地描述該錯誤是什麼。
+      placeholder: 請告訴我們發生了什麼事
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 重現步驟
+      description: 我們該如何重現此問題？
+      placeholder: |
+        1. 前往 '...'
+        2. 點擊 '...'
+        3. 出現錯誤
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 預期行為
+      description: 您預期會發生什麼事？
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 環境
+      description: 請填寫以下資訊。
+      value: |
+        - OS: [例如 Ubuntu 24.04, macOS 14, Windows 11]
+        - Version / commit: [例如 v1.2.3 / abc1234]
+        - Runtime: [例如 Node 22, Python 3.12]
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: 確認
+      options:
+        - label: 我已搜尋過既有的 Issue，且這不是重複的項目
+          required: true

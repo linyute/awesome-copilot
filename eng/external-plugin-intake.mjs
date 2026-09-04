@@ -25,13 +25,13 @@ const MARK_READY_FOR_REVIEW_COMMAND_PATTERN = new RegExp(
 );
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
 
-// Each entry is a Set of equivalent checklist item texts (new + legacy aliases).
-// A submission passes if the checked items contain at least one text from each Set.
+// 每個項目都是等效檢查清單項目文字 (新版 + 舊版別名) 的 Set。
+// 如果勾選的項目至少包含來自每個 Set 的一個文字，則提交通過。
 const REQUIRED_CHECKLIST_ITEMS = [
   new Set(["The plugin lives in a public GitHub repository."]),
   new Set([
     "The ref and/or sha I provided is immutable (release tag and/or full 40-character commit SHA), not a branch.",
-    // Legacy text used in the original issue template
+    // 原始 issue 範本中使用的舊版文字
     "The ref I provided is an immutable release tag or full 40-character commit SHA, not a branch.",
   ]),
   new Set(["This submission follows this repository's contribution, security, and responsible AI policies."]),
@@ -55,12 +55,17 @@ const FIELD_TITLES = Object.freeze({
   submissionChecklist: "Submission checklist",
 });
 
-// Legacy field title used in the original issue template (before the ref/sha split)
+// 原始 issue 範本中使用的舊版欄位標題 (在 ref/sha 拆分之前)
 const LEGACY_FIELD_TITLES = Object.freeze({
   immutableRef: "Immutable ref to review",
 });
 const EXTERNAL_CANVAS_KEYWORD = "canvas";
 const EXTERNAL_CANVAS_PREVIEW_PATH = "assets/preview.png";
+// 外部外掛程式直接以 Copilot 應用程式用戶端 harness 為目標，因此其 canvas extension
+// 檔案位於用戶端自己的命名空間目錄下，而非用於具體化此存放庫中現有外掛程式的存放庫本地端
+// "com.github.awesome-copilot" 命名空間。
+const COPILOT_CLIENT_NAMESPACE = "com.github.copilot";
+const COPILOT_EXTENSIONS_DIRECTORY = "extensions";
 const HOMEPAGE_FETCH_TIMEOUT_MS = 10_000;
 const HOMEPAGE_MAX_BYTES = 512_000;
 const HOMEPAGE_MAX_REDIRECTS = 5;
@@ -354,8 +359,8 @@ async function assertPublicUrl(url) {
   return addresses[0];
 }
 
-// Native fetch does not expose a lookup hook. This dispatcher connects to the
-// address checked above while retaining the original hostname for Host/SNI.
+// 原生 fetch 未公開查詢掛鉤 (lookup hook)。此派送器 (dispatcher) 會連線至
+// 上方檢查過的位址，同時保留 Host/SNI 的原始主機名稱。
 export class PinnedAddressDispatcher {
   constructor(url, address) {
     this.url = url;
@@ -709,16 +714,16 @@ function buildGitTreePath(repo, treeish, { recursive = false } = {}) {
 
 function normalizeTreeish(locator) {
   const value = String(locator ?? "").trim();
-  // The Git Trees API takes the tree-ish as a single path segment. A full "refs/tags/<tag>"
-  // ref would break that, so reduce it to the bare tag name; commit SHAs and simple tag
-  // names pass through unchanged.
+  // Git Trees API 將 tree-ish 視為單一路徑區段。完整的 "refs/tags/<tag>"
+  // ref 會破壞該規則，因此將其縮減為單純的 tag 名稱；commit SHA 與單純 tag
+  // 名稱則原樣傳遞。
   return value.startsWith("refs/tags/") ? value.slice("refs/tags/".length) : value;
 }
 
-// Resolve the tree SHA of a directory by walking the path one level at a time. Each hop is a
-// non-recursive tree fetch of a single directory, so the work is bounded by the path depth and
-// is independent of the overall repository size — unlike a root recursive fetch, which a large
-// unrelated monorepo can push over the API's truncation limit and never validate.
+// 透過逐層遍歷路徑來解析目錄的 tree SHA。每一次跳轉都是對單一目錄的
+// 非遞迴 tree 擷取，因此工作量受限於路徑深度，
+// 且與整體存放庫大小無關 — 不同於根目錄遞迴擷取，
+// 大型無關的 monorepo 可能會使其超出 API 的截斷限制而永遠無法驗證。
 async function resolveDirectoryTreeSha(repo, treeish, segments, token) {
   let currentTreeish = treeish;
   for (const segment of segments) {
@@ -727,7 +732,7 @@ async function resolveDirectoryTreeSha(repo, treeish, segments, token) {
       return { status: "apiError" };
     }
     if (response.data.truncated) {
-      // A single directory level exceeded the response limit; presence is unverifiable.
+      // 單一目錄層級超出了回應限制；無法驗證是否存在。
       return { status: "apiError" };
     }
 
@@ -744,14 +749,14 @@ async function resolveDirectoryTreeSha(repo, treeish, segments, token) {
   return { status: "found", treeSha: currentTreeish };
 }
 
-// Inspect the (recursively fetched) "extensions" subtree for the plugin's canvas extension
-// entry point. Paths are relative to "extensions/", so the flat form is "extension.mjs" and a
-// nested form is "<name>/extension.mjs". Scoping the recursive fetch to this subtree keeps the
-// lookup complete without depending on the size of the rest of the repository.
+// 檢查 (遞迴擷取的) "com.github.copilot" 子樹狀結構，以尋找外掛程式的 canvas
+// extension 進入點。路徑相對於 "com.github.copilot/"，且必須使用
+// Copilot 應用程式所使用的 "extensions/<extension-name>/extension.mjs" 配置。
+// 將遞迴擷取範圍限定在此子樹狀結構，可保持查詢完整性，
+// 而不受存放庫其餘部分大小的影響。
 function analyzeCanvasExtensionSubtree(subtreeEntries) {
-  let flatIsBlob = false;
-  let flatIsTree = false;
   let nestedEntryPath = null;
+  let nestedEntryIsNotFile = false;
 
   for (const entry of subtreeEntries) {
     const entryPath = entry?.path;
@@ -759,28 +764,20 @@ function analyzeCanvasExtensionSubtree(subtreeEntries) {
       continue;
     }
 
-    if (entryPath === "extension.mjs") {
-      if (entry.type === "blob") {
-        flatIsBlob = true;
-      } else if (entry.type === "tree") {
-        flatIsTree = true;
-      }
-      continue;
-    }
-
     const segments = entryPath.split("/");
-    if (segments.length === 2 && segments[1] === "extension.mjs" && entry.type === "blob") {
-      nestedEntryPath = nestedEntryPath ?? `extensions/${entryPath}`;
+    if (segments.length === 3 && segments[0] === COPILOT_EXTENSIONS_DIRECTORY && segments[2] === "extension.mjs") {
+      if (entry.type === "blob") {
+        nestedEntryPath = nestedEntryPath ?? `${COPILOT_CLIENT_NAMESPACE}/${entryPath}`;
+      } else {
+        nestedEntryIsNotFile = true;
+      }
     }
   }
 
-  if (flatIsBlob) {
-    return { status: "found", entryPath: "extensions/extension.mjs" };
-  }
   if (nestedEntryPath) {
     return { status: "found", entryPath: nestedEntryPath };
   }
-  if (flatIsTree) {
+  if (nestedEntryIsNotFile) {
     return { status: "notFile" };
   }
   return { status: "notFound" };
@@ -859,46 +856,39 @@ export async function validateCanvasPluginMetadata(plugin, errors, warnings, tok
     return;
   }
 
-  if (manifest.logo !== EXTERNAL_CANVAS_PREVIEW_PATH) {
+  const copilotNamespace = manifest.extensions?.[COPILOT_CLIENT_NAMESPACE];
+  if (!copilotNamespace || typeof copilotNamespace !== "object" || Array.isArray(copilotNamespace)) {
     errors.push(
-      `submission: plugins tagged with "canvas" must set "logo" to "${EXTERNAL_CANVAS_PREVIEW_PATH}" in "${manifestPath}"`,
+      `submission: plugins tagged with "canvas" must set "extensions.${COPILOT_CLIENT_NAMESPACE}.logo" to "${EXTERNAL_CANVAS_PREVIEW_PATH}" in "${manifestPath}"`,
     );
-  }
-
-  if (manifest.extenions !== undefined) {
+  } else if (copilotNamespace.logo !== EXTERNAL_CANVAS_PREVIEW_PATH) {
     errors.push(
-      `submission: plugins tagged with "canvas" must use "extensions" (found misspelled key "extenions") in "${manifestPath}"`,
-    );
-  }
-
-  if (manifest.extensions !== undefined && manifest.extensions !== "extensions") {
-    errors.push(
-      `submission: plugins tagged with "canvas" may omit "extensions", but if provided it must be "extensions" in "${manifestPath}"`,
+      `submission: plugins tagged with "canvas" must set "logo" to "${EXTERNAL_CANVAS_PREVIEW_PATH}" in "extensions.${COPILOT_CLIENT_NAMESPACE}" of "${manifestPath}"`,
     );
   }
 
   const unverifiableEntryPointWarning =
     `submission: could not verify the canvas extension entry point in GitHub repository "${repo}" at ${releaseLocatorDescription}; a maintainer should re-run intake`;
-  const extensionsSegments = [...(pluginRoot ? pluginRoot.split("/") : []), "extensions"];
-  const extensionsTree = await resolveDirectoryTreeSha(
+  const namespaceSegments = [...(pluginRoot ? pluginRoot.split("/") : []), COPILOT_CLIENT_NAMESPACE];
+  const namespaceTree = await resolveDirectoryTreeSha(
     repo,
     normalizeTreeish(releaseLocator),
-    extensionsSegments,
+    namespaceSegments,
     token,
   );
-  if (extensionsTree.status === "apiError") {
+  if (namespaceTree.status === "apiError") {
     warnings.push(unverifiableEntryPointWarning);
-  } else if (extensionsTree.status === "missing") {
+  } else if (namespaceTree.status === "missing") {
     errors.push(
-      `submission: plugins tagged with "canvas" must include an "extensions" directory at ${releaseLocatorDescription}`,
+      `submission: plugins tagged with "canvas" must include a "${COPILOT_CLIENT_NAMESPACE}" directory at ${releaseLocatorDescription}`,
     );
-  } else if (extensionsTree.status === "notDirectory") {
+  } else if (namespaceTree.status === "notDirectory") {
     errors.push(
-      `submission: "extensions" must be a directory in ${releaseLocatorDescription}`,
+      `submission: "${COPILOT_CLIENT_NAMESPACE}" must be a directory in ${releaseLocatorDescription}`,
     );
   } else {
     const subtreeResponse = await fetchGitHubJson(
-      buildGitTreePath(repo, extensionsTree.treeSha, { recursive: true }),
+      buildGitTreePath(repo, namespaceTree.treeSha, { recursive: true }),
       token,
     );
     if (subtreeResponse.kind !== "found" || !Array.isArray(subtreeResponse.data?.tree)) {
@@ -906,19 +896,19 @@ export async function validateCanvasPluginMetadata(plugin, errors, warnings, tok
     } else {
       const canvasStructure = analyzeCanvasExtensionSubtree(subtreeResponse.data.tree);
       if (canvasStructure.status === "found") {
-        // Entry point located (flat or nested); nothing to report.
+        // 進入點位於所需的具名 extension 目錄中。
       } else if (subtreeResponse.data.truncated) {
-        // Absence is only inconclusive if the (already extensions-scoped) subtree itself is
-        // truncated, which would take an implausibly large extensions directory; flag it as
-        // unverifiable rather than falsely rejecting.
+        // 只有當 (已經限定命名空間範圍的) 子樹狀結構本身被截斷時，不存在才是不確定的，
+        // 這需要難以置信的大型 extension 目錄；
+        // 將其標記為無法驗證而非錯誤地拒絕。
         warnings.push(unverifiableEntryPointWarning);
       } else if (canvasStructure.status === "notFile") {
         errors.push(
-          `submission: "extensions/extension.mjs" must be a file in ${releaseLocatorDescription}`,
+          `submission: "${COPILOT_CLIENT_NAMESPACE}/${COPILOT_EXTENSIONS_DIRECTORY}/<extension>/extension.mjs" must be a file in ${releaseLocatorDescription}`,
         );
       } else {
         errors.push(
-          `submission: plugins tagged with "canvas" must include a canvas extension entry point at "extensions/extension.mjs" or "extensions/<extension>/extension.mjs" at ${releaseLocatorDescription}`,
+          `submission: plugins tagged with "canvas" must include a canvas extension entry point at "${COPILOT_CLIENT_NAMESPACE}/${COPILOT_EXTENSIONS_DIRECTORY}/<extension>/extension.mjs" at ${releaseLocatorDescription}`,
         );
       }
     }
@@ -956,7 +946,7 @@ export function parseExternalPluginIssueBody(body) {
   const pluginName = requiredField(FIELD_TITLES.pluginName);
   const shortDescription = requiredField(FIELD_TITLES.shortDescription);
   const repoInput = normalizeGitHubRepo(requiredField(FIELD_TITLES.githubRepository));
-  // Support both the current field title and the legacy title used before the ref/sha split
+  // 同時支援目前的欄位標題以及在 ref/sha 拆分之前使用的舊版標題
   const immutableRef = stripNoResponse(
     sections.get(FIELD_TITLES.immutableRef) ?? sections.get(LEGACY_FIELD_TITLES.immutableRef),
   );
@@ -985,7 +975,7 @@ export function parseExternalPluginIssueBody(body) {
       }
     }
     if (!isChecked) {
-      // Report using the canonical (first) text in each equivalents Set
+      // 使用每個等效項目 Set 中的標準 (第一個) 文字進行報告
       const [canonical] = equivalents;
       errors.push(`submission: checklist item must be checked: "${canonical}"`);
     }

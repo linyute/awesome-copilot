@@ -207,6 +207,7 @@ LangChain 為聊天模型提供了統一的介面，並具有用於監控、偵�
 - 對於對話，精確輸入快取通常無效。考慮對重複的語義級查詢進行語義快取 (基於嵌入)。
 - 語義快取引入了對嵌入的依賴，並且不普遍適用。
 - 僅在減少成本並滿足正確性要求 (例如，FAQ 機器人) 的情況下進行快取。
+- 透過 `langchain_core.globals` 中的 `set_llm_cache(...)` 設定快取；精確比對的後端包括 `InMemoryCache`、`SQLiteCache`、`RedisCache` 和 `UpstashRedisCache` (透過 HTTP 提供的無伺服器 Redis，可選用 `ttl`)，而 `RedisSemanticCache` 則是以嵌入為基礎的選項。
 
 ## 最佳實踐
 

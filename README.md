@@ -18,13 +18,13 @@
 
 ## 此存放庫中的內容
 
-| 資源                                                           | 說明                                             | 瀏覽                                                           |
-| -------------------------------------------------------------- | ------------------------------------------------ | -------------------------------------------------------------- |
-| 🤖 [代理程式 (Agents)](docs/README.agents.md)                   | 與 MCP 伺服器整合的專用 Copilot 代理程式         | [所有代理程式 →](https://awesome-copilot.github.com/agents)    |
-| 📋 [指示 (Instructions)](docs/README.instructions.md)           | 根據檔案模式自動套用的程式碼標準                 | [所有指示 →](https://awesome-copilot.github.com/instructions)  |
-| 🎯 [技能 (Skills)](docs/README.skills.md)                       | 包含指示和隨附資產的獨立資料夾                   | [所有技能 →](https://awesome-copilot.github.com/skills)        |
-| 🔌 [外掛程式 (Plugins)](docs/README.plugins.md)                 | 針對特定工作流程精選的代理程式和技能組合         | [所有外掛程式 →](https://awesome-copilot.github.com/plugins)   |
-| 🍳 [教戰手冊 (Cookbook)](cookbook/README.md)                    | 用於使用 Copilot API 的隨插即用食譜              | —                                                              |
+| 資源                                                 | 說明                                     | 瀏覽                                                          |
+| ---------------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------- |
+| 🤖 [代理程式 (Agents)](docs/README.agents.md)         | 與 MCP 伺服器整合的專用 Copilot 代理程式 | [所有代理程式 →](https://awesome-copilot.github.com/agents)   |
+| 📋 [指示 (Instructions)](docs/README.instructions.md) | 根據檔案模式自動套用的程式碼標準         | [所有指示 →](https://awesome-copilot.github.com/instructions) |
+| 🎯 [技能 (Skills)](docs/README.skills.md)             | 包含指示和隨附資產的獨立資料夾           | [所有技能 →](https://awesome-copilot.github.com/skills)       |
+| 🔌 [外掛程式 (Plugins)](docs/README.plugins.md)       | 針對特定工作流程精選的代理程式和技能組合 | [所有外掛程式 →](https://awesome-copilot.github.com/plugins)  |
+| 🍳 [教戰手冊 (Cookbook)](cookbook/README.md)          | 用於使用 Copilot API 的隨插即用食譜      | —                                                             |
 
 [⬆ 回到頂部](#-awesome-github-copilot)
 
@@ -545,6 +545,9 @@ copilot plugin install <plugin-name>@awesome-copilot
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AkashAi7"><img src="https://avatars.githubusercontent.com/u/46550108?v=4" width="100px;" alt=""/><br /><sub><b>Akash Dwivedi</b></sub></a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://surenk.com"><img src="https://avatars.githubusercontent.com/u/902972?v=4" width="100px;" alt=""/><br /><sub><b>Suren K</b></sub></a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.cloudblogger.eu"><img src="https://avatars.githubusercontent.com/u/53148138?v=4" width="100px;" alt=""/><br /><sub><b>Konstantinos Passadis | Azure MVP | MCT</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/alx-so"><img src="https://avatars.githubusercontent.com/u/8975621?v=4" width="100px;" alt=""/><br /><sub><b>Alex Sokol</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://blogs.gnome.org/jmatsuzawa/"><img src="https://avatars.githubusercontent.com/u/545426?v=4" width="100px;" alt=""/><br /><sub><b>Jiro Matsuzawa</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/GuoCheng24"><img src="https://avatars.githubusercontent.com/u/224264187?v=4" width="100px;" alt=""/><br /><sub><b>Guo Cheng</b></sub></a></td>
     </tr>
   </tbody>
 </table>

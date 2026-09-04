@@ -1,0 +1,23 @@
+name: 提問
+description: 詢問關於此專案的問題
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        歡迎提出問題！請盡量詳細具體，以便我們能迅速提供協助。
+  - type: textarea
+    id: question
+    attributes:
+      label: 您的問題
+      description: 您想了解什麼？
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: 背景脈絡
+      description: 您已經嘗試或確認過哪些內容？
+    validations:
+      required: false

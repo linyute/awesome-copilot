@@ -147,7 +147,7 @@ Meta = new JsonObject
   <body>
     <div id="root">載入中…</div>
     <script type="module">
-      import { App } from "https://esm.sh/@modelcontextprotocol/ext-apps@1";
+      import { App } from "https://esm.sh/@modelcontextprotocol/ext-apps@1.7.5";
 
       const app = new App();
       await app.connect();

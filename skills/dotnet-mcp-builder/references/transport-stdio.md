@@ -16,8 +16,8 @@
 ```bash
 dotnet new console -n MyStdioServer -f net10.0
 cd MyStdioServer
-dotnet add package ModelContextProtocol
-dotnet add package Microsoft.Extensions.Hosting
+dotnet add package ModelContextProtocol --version 2.2.0
+dotnet add package Microsoft.Extensions.Hosting --version 10.0.11
 ```
 
 ```csharp

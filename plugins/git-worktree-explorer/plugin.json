@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "git-worktree-explorer",
+  "description": "透過工作樹、分支、認可以及選用的 GitHub 提取要求情境資訊，將作用中的 Git 存放庫視覺化。",
+  "version": "1.0.0",
+  "author": {
+    "name": "James Montemagno",
+    "url": "https://github.com/jamesmontemagno"
+  },
+  "keywords": [
+    "branch-visualization",
+    "canvas",
+    "commit-history",
+    "git",
+    "repository-topology",
+    "worktrees"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/git-worktree-explorer"
+      ]
+    }
+  }
+}

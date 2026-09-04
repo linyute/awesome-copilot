@@ -1,0 +1,26 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "chat-cards",
+  "description": "GHCP 畫布中的互動式卡片組：分頁卡片、表格、SVG 圖表、顯示/隱藏區段、編號大綱、轉譯的 Markdown 文件、短片，以及提交內容會傳回對話作為提示詞的表單。",
+  "version": "0.1.0",
+  "keywords": [
+    "interactive-cards",
+    "charts",
+    "forms",
+    "education",
+    "visual-explanations"
+  ],
+  "author": { "name": "John Haugabook" },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/chat-cards"
+      ]
+    }
+  }
+}

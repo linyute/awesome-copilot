@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Generate JSON metadata files for the GitHub Pages website.
- * This script extracts metadata from agents, instructions, skills, and plugins
- * and writes them to website/data/ for client-side search and display.
+ * 為 GitHub Pages 網站產生 JSON metadata 檔案。
+ * 此指令碼從 agents、instructions、skills 和 plugins 擷取 metadata
+ * 並將其寫入 website/data/ 以供用戶端搜尋與顯示。
  */
 
 import fs from "fs";
@@ -50,7 +50,7 @@ function hasExtensionEntryPoint(extensionDir, extensionName) {
 }
 
 /**
- * Ensure the output directory exists
+ * 確保輸出目錄存在
  */
 function ensureDataDir() {
   if (!fs.existsSync(WEBSITE_DATA_DIR)) {
@@ -59,7 +59,7 @@ function ensureDataDir() {
 }
 
 /**
- * Extract title from filename or frontmatter
+ * 從檔案名稱或 frontmatter 擷取標題
  */
 function extractTitle(filePath, frontmatter) {
   if (frontmatter?.name) {
@@ -68,7 +68,7 @@ function extractTitle(filePath, frontmatter) {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   }
-  // Fallback to filename
+  // 回退至檔案名稱
   const basename = path.basename(filePath);
   const name = basename
     .replace(/\.(agent|prompt|instructions)\.md$/, "")
@@ -80,7 +80,7 @@ function extractTitle(filePath, frontmatter) {
 }
 
 /**
- * Convert kebab/snake names into readable titles.
+ * 將 kebab/snake 名稱轉換為易讀的標題。
  */
 function formatDisplayName(value) {
   const acronymMap = new Map([
@@ -132,8 +132,8 @@ function joinRepoPath(...segments) {
 }
 
 /**
- * Normalize an author value (npm string form or { name, url } object) to
- * { name, url? } | null. Returns null when no usable name is present.
+ * 將作者值 (npm 字串形式或 { name, url } 物件) 正規化為
+ * { name, url? } | null。當沒有可用名稱時傳回 null。
  */
 function normalizeAuthor(value) {
   if (!value) return null;
@@ -151,7 +151,7 @@ function normalizeAuthor(value) {
 }
 
 /**
- * Find the latest git-modified date for any file under a directory.
+ * 尋找目錄下任何檔案的最新 git 修改日期。
  */
 function getDirectoryLastUpdated(gitDates, relativeDirPath) {
   const prefix = `${relativeDirPath}/`;
@@ -171,7 +171,7 @@ function getDirectoryLastUpdated(gitDates, relativeDirPath) {
 }
 
 /**
- * Get the current commit SHA for the checked-out repository.
+ * 取得已簽出存放庫的當前 commit SHA。
  */
 function getCurrentCommitSha() {
   return execSync("git --no-pager rev-parse HEAD", {
@@ -182,7 +182,7 @@ function getCurrentCommitSha() {
 }
 
 /**
- * Generate agents metadata
+ * 產生 agents metadata
  */
 function generateAgentsData(gitDates) {
   const agents = [];
@@ -190,7 +190,7 @@ function generateAgentsData(gitDates) {
     .readdirSync(AGENTS_DIR)
     .filter((f) => f.endsWith(".agent.md"));
 
-  // Track all unique values for filters
+  // 追蹤所有篩選條件的唯一值
   const allModels = new Set();
   const allTools = new Set();
 
@@ -205,7 +205,7 @@ function generateAgentsData(gitDates) {
     const tools = frontmatter?.tools || [];
     const handoffs = frontmatter?.handoffs || [];
 
-    // Track unique values
+    // 追蹤唯一值
     if (model) allModels.add(model);
     tools.forEach((t) => allTools.add(t));
 
@@ -229,7 +229,7 @@ function generateAgentsData(gitDates) {
     });
   }
 
-  // Sort and return with filter metadata
+  // 排序並傳回包含篩選條件 metadata 的結果
   const sortedAgents = agents.sort((a, b) => a.title.localeCompare(b.title));
 
   return {
@@ -242,17 +242,17 @@ function generateAgentsData(gitDates) {
 }
 
 /**
- * Parse applyTo field into an array of patterns
+ * 將 applyTo 欄位解析為模式陣列
  */
 function parseApplyToPatterns(applyTo) {
   if (!applyTo) return [];
 
-  // Handle array format
+  // 處理陣列格式
   if (Array.isArray(applyTo)) {
     return applyTo.map((p) => p.trim()).filter((p) => p.length > 0);
   }
 
-  // Handle string format (comma-separated)
+  // 處理字串格式 (逗號分隔)
   if (typeof applyTo === "string") {
     return applyTo
       .split(",")
@@ -264,14 +264,14 @@ function parseApplyToPatterns(applyTo) {
 }
 
 /**
- * Extract file extension from a glob pattern
+ * 從 glob 模式中擷取副檔名
  */
 function extractExtensionFromPattern(pattern) {
-  // Match patterns like **.ts, **/*.js, *.py, etc.
+  // 比對如 **.ts, **/*.js, *.py 等模式
   const match = pattern.match(/\*\.(\w+)$/);
   if (match) return `.${match[1]}`;
 
-  // Match patterns like **/*.{ts,tsx}
+  // 比對如 **/*.{ts,tsx} 等模式
   const braceMatch = pattern.match(/\*\.\{([^}]+)\}$/);
   if (braceMatch) {
     return braceMatch[1].split(",").map((ext) => `.${ext.trim()}`);
@@ -281,7 +281,7 @@ function extractExtensionFromPattern(pattern) {
 }
 
 /**
- * Generate instructions metadata
+ * 產生 instructions metadata
  */
 function generateInstructionsData(gitDates) {
   const instructions = [];
@@ -289,7 +289,7 @@ function generateInstructionsData(gitDates) {
     .readdirSync(INSTRUCTIONS_DIR)
     .filter((f) => f.endsWith(".instructions.md"));
 
-  // Track all unique patterns and extensions for filters
+  // 追蹤所有用於篩選的唯一模式與副檔名
   const allPatterns = new Set();
   const allExtensions = new Set();
 
@@ -303,7 +303,7 @@ function generateInstructionsData(gitDates) {
     const applyToRaw = frontmatter?.applyTo || null;
     const applyToPatterns = parseApplyToPatterns(applyToRaw);
 
-    // Extract extensions from patterns
+    // 從模式中擷取副檔名
     const extensions = [];
     for (const pattern of applyToPatterns) {
       allPatterns.add(pattern);
@@ -348,7 +348,7 @@ function generateInstructionsData(gitDates) {
 }
 
 /**
- * Generate skills metadata
+ * 產生 skills metadata
  */
 function generateSkillsData(gitDates) {
   const skills = [];
@@ -370,10 +370,10 @@ function generateSkillsData(gitDates) {
         .relative(ROOT_FOLDER, skillPath)
         .replace(/\\/g, "/");
 
-      // Get all files in the skill folder recursively
+      // 遞迴取得技能資料夾中的所有檔案
       const files = getFolderFiles(skillPath, relativePath);
 
-      // Get last updated from SKILL.md file
+      // 從 SKILL.md 檔案取得最後更新時間
       const skillFilePath = `${relativePath}/SKILL.md`;
       const title = metadata.name
         .split("-")
@@ -417,7 +417,7 @@ function generateSkillsData(gitDates) {
 }
 
 /**
- * Get all files in a resource folder (skill or hook) recursively.
+ * 遞迴取得資源資料夾 (skill 或 hook) 中的所有檔案。
  */
 function getFolderFiles(skillPath, relativePath) {
   const files = [];
@@ -431,7 +431,7 @@ function getFolderFiles(skillPath, relativePath) {
       if (entry.isDirectory()) {
         walkDir(fullPath, relPath);
       } else {
-        // Get file size
+        // 取得檔案大小
         const stats = fs.statSync(fullPath);
         files.push({
           path: `${relativePath}/${relPath}`,
@@ -447,7 +447,7 @@ function getFolderFiles(skillPath, relativePath) {
 }
 
 /**
- * Get all agent markdown files from a folder
+ * 從資料夾取得所有 agent markdown 檔案
  */
 function getAgentFiles(agentDir, pluginRootPath) {
   if (!fs.existsSync(agentDir)) return [];
@@ -462,8 +462,8 @@ function getAgentFiles(agentDir, pluginRootPath) {
 }
 
 /**
- * Build a lookup index of resource id -> { title, url } for the kinds that have
- * dedicated detail pages, so plugin items can deep-link to them.
+ * 為具有專屬詳細資料頁面的類型建構 resource id -> { title, url } 查詢索引，
+ * 以便外掛程式項目可以深入連結到這些頁面。
  */
 function buildResourceIndex({ agents, skills, instructions, extensions }) {
   const toMap = (items, urlPrefix) => {
@@ -507,9 +507,9 @@ function buildResourceIndex({ agents, skills, instructions, extensions }) {
 }
 
 /**
- * Derive the candidate resource id for a plugin item path (basename without a
- * known resource extension), e.g. "./skills/foo/" -> "foo",
- * "plugins/x/agents/bar.md" -> "bar".
+ * 從外掛程式項目路徑衍生候選資源 ID (不含已知資源副檔名的基底名稱)，
+ * 例如 "./skills/foo/" -> "foo"、
+ * "plugins/x/agents/bar.md" -> "bar"。
  */
 function pluginItemCandidateId(itemPath) {
   const trimmed = String(itemPath || "")
@@ -524,8 +524,8 @@ function pluginItemCandidateId(itemPath) {
 }
 
 /**
- * Enrich a plugin item ({ kind, path }) with a display title and, when the item
- * resolves to a known resource with a detail page, a detailUrl.
+ * 為外掛程式項目 ({ kind, path }) 補充顯示標題，當該項目解析為具有詳細資料頁面的已知資源時，
+ * 也會為其補充 detailUrl。
  */
 function resolvePluginItem(item, resourceIndex) {
   const candidateId = pluginItemCandidateId(item.path);
@@ -540,7 +540,7 @@ function resolvePluginItem(item, resourceIndex) {
 }
 
 /**
- * Generate plugins metadata
+ * 產生 plugins metadata
  */
 function generatePluginsData(gitDates, resourceIndex = {}) {
   const plugins = [];
@@ -591,34 +591,24 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
         ];
       });
 
-      // Parse mcpServers: supports a path to a .mcp.json file or an inline object
+      // 從外掛程式根目錄中規格要求的 mcp.json 探索 MCP 伺服器。
       const mcpItems = [];
-      if (composition.mcpServers) {
-        let mcpServersObj = null;
-        let mcpConfigPath = relPath;
-        if (typeof composition.mcpServers === "string") {
-          const manifestMcpPath = composition.mcpServers.replace(/^\.\//, "");
-          mcpConfigPath = manifestMcpPath ? `${relPath}/${manifestMcpPath}` : relPath;
-          const mcpJsonPath = path.join(pluginDir, manifestMcpPath);
-          if (fs.existsSync(mcpJsonPath)) {
-            try {
-              const mcpJson = JSON.parse(fs.readFileSync(mcpJsonPath, "utf-8"));
-              mcpServersObj = mcpJson.mcpServers || mcpJson;
-            } catch {
-              // ignore parse errors
+      const mcpJsonPath = path.join(pluginDir, "mcp.json");
+      if (fs.existsSync(mcpJsonPath) && fs.statSync(mcpJsonPath).isFile()) {
+        try {
+          const mcpJson = JSON.parse(fs.readFileSync(mcpJsonPath, "utf-8"));
+          const mcpServers = mcpJson.mcpServers;
+          if (mcpServers && typeof mcpServers === "object") {
+            for (const serverName of Object.keys(mcpServers)) {
+              mcpItems.push({ kind: "mcp", path: `${relPath}/mcp.json`, title: serverName });
             }
           }
-        } else if (typeof composition.mcpServers === "object") {
-          mcpServersObj = composition.mcpServers;
-        }
-        if (mcpServersObj) {
-          for (const serverName of Object.keys(mcpServersObj)) {
-            mcpItems.push({ kind: "mcp", path: mcpConfigPath, title: serverName });
-          }
+        } catch {
+          // 略過解析錯誤
         }
       }
 
-      // Build items list from supported composition fields.
+      // 從支援的組合欄位建構項目清單。
       const items = [
         ...agentItems,
         ...(composition.skills || []).map((p) => ({ kind: "skill", path: p })),
@@ -653,7 +643,7 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
     }
   }
 
-  // Load external plugins from plugins/external.json
+  // 從 plugins/external.json 載入外部外掛程式
   const externalJsonPath = path.join(PLUGINS_DIR, "external.json");
   if (fs.existsSync(externalJsonPath)) {
     try {
@@ -670,7 +660,7 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
             continue;
           }
 
-          // Skip if a local plugin with the same name already exists
+          // 若已存在同名的本地端外掛程式則略過
           if (plugins.some((p) => p.id === ext.name)) {
             console.warn(
               `Skipping external plugin "${ext.name}" — local plugin with same name exists`
@@ -711,7 +701,7 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
     }
   }
 
-  // Collect all unique tags
+  // 收集所有唯一標籤
   const allTags = [...new Set(plugins.flatMap((p) => p.tags))].sort();
 
   const sortedPlugins = plugins.sort((a, b) => a.name.localeCompare(b.name));
@@ -723,7 +713,7 @@ function generatePluginsData(gitDates, resourceIndex = {}) {
 }
 
 /**
- * Generate canvas extensions metadata
+ * 產生 canvas extensions metadata
  */
 function getImageMimeType(filePath) {
   const extension = path.extname(filePath).toLowerCase();
@@ -1467,7 +1457,7 @@ function generateExtensionsData(extensionManifestData) {
 }
 
 /**
- * Generate a combined index for search
+ * 產生用於搜尋的合併索引
  */
 function generateSearchIndex(
   agents,
@@ -1533,7 +1523,7 @@ function generateSearchIndex(
 }
 
 /**
- * Generate samples/cookbook data from cookbook.yml
+ * 從 cookbook.yml 產生範例/cookbook 資料
  */
 function generateSamplesData() {
   const cookbookYamlPath = path.join(COOKBOOK_DIR, "cookbook.yml");
@@ -1565,23 +1555,23 @@ function generateSamplesData() {
   const allTags = new Set();
   let totalRecipes = 0;
 
-  // First pass: collect all known language IDs across cookbooks
+  // 第一輪：收集所有 cookbook 中的已知語言 ID
   cookbookManifest.cookbooks.forEach((cookbook) => {
     cookbook.languages.forEach((lang) => allLanguages.add(lang.id));
   });
 
   const cookbooks = cookbookManifest.cookbooks.map((cookbook) => {
 
-    // Process recipes and add file paths
+    // 處理 recipe 並新增檔案路徑
     const recipes = cookbook.recipes.map((recipe) => {
-      // Collect tags
+      // 收集標籤
       if (recipe.tags) {
         recipe.tags.forEach((tag) => allTags.add(tag));
       }
 
       totalRecipes++;
 
-      // External recipes link to an external URL — skip local file resolution
+      // 外部 recipe 連結至外部 URL — 略過本地檔案解析
       if (recipe.external) {
         if (recipe.url) {
           try {
@@ -1593,7 +1583,7 @@ function generateSamplesData() {
           console.warn(`Warning: External recipe "${recipe.id}" is missing a url`);
         }
 
-        // Derive languages from tags that match known language IDs
+        // 從符合已知語言 ID 的標籤中衍生語言
         const recipeLanguages = (recipe.tags || []).filter((tag) => allLanguages.has(tag));
 
         return {
@@ -1609,13 +1599,13 @@ function generateSamplesData() {
         };
       }
 
-      // Build variants with file paths for each language
+      // 為每種語言建構包含檔案路徑的變體 (variants)
       const variants = {};
       cookbook.languages.forEach((lang) => {
         const docPath = `${cookbook.path}/${lang.id}/${recipe.id}.md`;
         const examplePath = `${cookbook.path}/${lang.id}/recipe/${recipe.id}${lang.extension}`;
 
-        // Check if files exist
+        // 檢查檔案是否存在
         const docFullPath = path.join(ROOT_FOLDER, docPath);
         const exampleFullPath = path.join(ROOT_FOLDER, examplePath);
 
@@ -1660,14 +1650,14 @@ function generateSamplesData() {
 }
 
 /**
- * Main function
+ * 主要函式
  */
 async function main() {
   console.log("Generating website data...\n");
 
   ensureDataDir();
 
-  // Load git dates for all resource files (single efficient git command)
+  // 載入所有資源檔案的 git 日期 (單一高效的 git 指令)
   console.log("Loading git history for last updated dates...");
   const gitDates = getGitFileDates(
     [
@@ -1681,7 +1671,7 @@ async function main() {
   );
   console.log(`✓ Loaded dates for ${gitDates.size} files\n`);
 
-  // Generate all data
+  // 產生所有資料
   const commitSha = getCurrentCommitSha();
 
   const agentsData = generateAgentsData(gitDates);
@@ -1724,7 +1714,7 @@ async function main() {
     `✓ Generated ${samplesData.totalRecipes} recipes in ${samplesData.totalCookbooks} cookbooks (${samplesData.filters.languages.length} languages, ${samplesData.filters.tags.length} tags)`
   );
 
-  // Count contributors from .all-contributorsrc for manifest stats
+  // 從 .all-contributorsrc 計算貢獻者數量以用於清單統計
   const contributorsRcPath = path.join(ROOT_FOLDER, ".all-contributorsrc");
   const contributorCount = fs.existsSync(contributorsRcPath)
     ? (JSON.parse(fs.readFileSync(contributorsRcPath, "utf-8")).contributors || []).length
@@ -1738,7 +1728,7 @@ async function main() {
   );
   console.log(`✓ Generated search index with ${searchIndex.length} items`);
 
-  // Write JSON files
+  // 寫入 JSON 檔案
   fs.writeFileSync(
     path.join(WEBSITE_DATA_DIR, "agents.json"),
     JSON.stringify(agentsData, null, 2)
@@ -1775,7 +1765,7 @@ async function main() {
     JSON.stringify(searchIndex, null, 2)
   );
 
-  // Generate a manifest with counts and timestamps
+  // 產生包含計數與時間戳記的 manifest
   const manifest = {
     generated: new Date().toISOString(),
     counts: {

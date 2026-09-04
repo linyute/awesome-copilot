@@ -353,7 +353,7 @@ if runs:
     print(result)   # {"resubmitted": true, "triggerName": "..."}
 ```
 
-### HTTP 觸發流程 — 自定義測試承載資料
+### HTTP、按鈕和 PowerApps 流程 — 自訂測試承載資料
 
 僅當您需要傳送與原始執行 **不同** 的承載資料時才使用 `trigger_live_flow`。若要驗證修復，`resubmit_live_flow_run` 會更好，因為它使用的是導致失敗的確切資料。
 
@@ -366,7 +366,8 @@ print("預期本文：", manual.get("inputs", {}).get("schema"))
 result = mcp("trigger_live_flow",
     environmentName=ENV, flowName=FLOW_ID,
     body={"name": "Test", "value": 1})
-print(f"狀態：{result['responseStatus']}")
+print(f"狀態：{result['responseStatus']}, via: {result['invocation']}")
+print(result.get("warning"))   # 當缺少必要輸入時設定：流程仍會執行，但值為 null
 ```
 
 ### 全新的非 HTTP 流程（定期執行、連接器觸發器等）
@@ -422,7 +423,7 @@ mcp("update_live_flow",
 | 流程已部署但狀態為 "Stopped" | 流程不會按排程執行 | 呼叫 `set_live_flow_state` 並設定 `state: "Started"` — 不要使用 `update_live_flow` 進行狀態變更 |
 | Teams「與流程機器人聊天」收件者為物件 | 400 `GraphUserDetailNotFound` | 使用帶有結尾分號的純字串（見下文） |
 | Copilot/技能流程不在解決方案中 | Copilot Studio 可能無法將其識別為代理程式工具 | 部署後，使用目標 `solutionId` 呼叫 `add_live_flow_to_solution` |
-| 針對 MCP 測試使用按鈕/技能觸發器 | MCP 無法直接觸發生產環境觸發器 | 透過臨時 HTTP 孿生流程測試相同的動作，然後將觸發器切換回來 |
+| 使用 Button/Skills 觸發器進行 MCP 測試 | 即使缺少必要輸入（null），仍會執行 | 將輸入傳入 `trigger_live_flow` 的 `body`；收到 `warning` 時取消，並使用完整的本文重試 |
 | 連接器動作缺少 `metadata.operationMetadataId` | 設計器/僅限執行 UI 的行為可能不一致 | 保留現有的 ID；為新的連接器動作新增穩定的 GUID |
 | 佔位符 Excel `scriptId` | 儲存時動態驗證失敗 | 部署前解析實際的 Office 指令碼 ID |
 | SharePoint `PatchItem` 省略必要欄位 | 即使欄位沒有變更，儲存仍可能失敗 | 重複傳送未變更的必要欄位，例如 `item/Title` |

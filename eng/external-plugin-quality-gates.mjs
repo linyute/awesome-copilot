@@ -25,6 +25,8 @@ const AGENT_PLUGIN_ALLOWED_TOP_LEVEL_FIELDS = new Set([
 ]);
 const AGENT_PLUGIN_NAME_PATTERN = /^(?!.*(?:--|\.\.))[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/;
 const EXTERNAL_CANVAS_KEYWORD = "canvas";
+const COPILOT_CLIENT_NAMESPACE = "com.github.copilot";
+const COPILOT_EXTENSIONS_DIRECTORY = "extensions";
 
 const INFRA_ERROR_PATTERNS = [
   /\b401\b/,
@@ -159,11 +161,11 @@ function cloneSubmissionRepository(workDir, plugin) {
   };
 }
 
-// Ordered list of candidate locations for plugin.json, from most to least specific.
-// Both the Copilot CLI and many external repos use nested conventions. We read the
-// manifest ourselves so skill paths can be resolved from the plugin root consistently,
-// regardless of where the manifest lives.
-// NOTE: Keep in sync with EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS in external-plugin-validation.mjs
+// plugin.json 候選位置的排序清單，從最具體到最不具體。
+// Copilot CLI 與許多外部存放庫皆採用巢狀慣例。
+// 我們自行讀取清單，以便無論清單位於何處，
+// 技能路徑都能從外掛程式根目錄一致解析。
+// 注意：請與 external-plugin-validation.mjs 中的 EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS 保持同步
 const PLUGIN_JSON_CANDIDATES = [
   [".github", "plugin", "plugin.json"],
   [".plugin", "plugin.json"],
@@ -311,8 +313,8 @@ function inspectAgentPluginSpecCompliance(pluginRoot) {
 function buildVallyLintArgs(pluginRoot) {
   const pluginJsonPath = findPluginJson(pluginRoot);
   if (!pluginJsonPath) {
-    // No recognised plugin.json location — lint the whole plugin root and let
-    // vally surface the real error to the submitter.
+    // 沒有可識別的 plugin.json 位置 — 對整個外掛程式根目錄執行 lint，
+    // 讓 vally 向提交者呈現真正的錯誤。
     return [pluginRoot];
   }
 
@@ -320,11 +322,11 @@ function buildVallyLintArgs(pluginRoot) {
   try {
     pluginJson = JSON.parse(fs.readFileSync(pluginJsonPath, "utf8"));
   } catch {
-    // Malformed plugin.json — fall back to linting the full root.
+    // 格式錯誤的 plugin.json — 回退至對整個根目錄執行 lint。
     return [pluginRoot];
   }
 
-  // Collect skill directory paths from plugin.json.
+  // 從 plugin.json 收集技能目錄路徑。
   const skillPaths = [].concat(pluginJson.skills ?? [])
     .map((s) => path.resolve(pluginRoot, s))
     .filter((p) => fs.existsSync(p) && fs.statSync(p).isDirectory());
@@ -333,8 +335,8 @@ function buildVallyLintArgs(pluginRoot) {
     return skillPaths;
   }
 
-  // No resolvable skill directories — lint the full plugin root so vally can
-  // surface the specific validation error to the submitter.
+  // 沒有可解析的技能目錄 — 對整個外掛程式根目錄執行 lint，
+  // 讓 vally 能夠向提交者呈現具體的驗證錯誤。
   return [pluginRoot];
 }
 
@@ -467,25 +469,25 @@ function isMissingPathAtLocator(output) {
   );
 }
 
-// Resolves the git object a locator's content should be read from.
+// 解析應從中讀取定位項內容的 git 物件。
 //
-// A locator can be a commit SHA, a short tag name (e.g. "v1.1.247"), or a
-// fully-qualified tag ref. `git fetch origin <locator>` only updates FETCH_HEAD;
-// it does NOT create a local `refs/tags/<name>`, so `git show <tag>:...` dies with
-// "invalid object name". Reading through FETCH_HEAD (or HEAD for the already
-// checked-out primary) sidesteps that without having to classify the locator.
+// 定位項可以是 commit SHA、簡短 tag 名稱 (例如 "v1.1.247") 或
+// 完整限定的 tag ref。`git fetch origin <locator>` 僅更新 FETCH_HEAD；
+// 它不會在本地建立 `refs/tags/<name>`，因此 `git show <tag>:...` 會因
+// "invalid object name" 終止。透過 FETCH_HEAD (或針對已簽出的主要分支使用 HEAD) 讀取
+// 可規避此問題，而無需對定位項進行分類。
 function resolveLocatorReadRef(repoDir, locator, primaryFetchSpec) {
   if (locator === primaryFetchSpec) {
-    // The primary locator was fetched and checked out at HEAD when the submission
-    // was cloned, so its content is readable via HEAD without another fetch.
+    // 複製提交時已在 HEAD 擷取並簽出主要定位項，
+    // 因此其內容可直接透過 HEAD 讀取，無需再次擷取。
     return { status: "pass", readRef: "HEAD", output: "" };
   }
 
   const result = runCommand("git", ["fetch", "--depth=1", "origin", locator], { cwd: repoDir });
   if (result.exitCode === 0) {
-    // FETCH_HEAD points at whatever was just fetched. At most one non-primary
-    // locator is fetched per gate and it is read immediately below, so FETCH_HEAD
-    // is not clobbered before use.
+    // FETCH_HEAD 指向剛剛擷取的內容。每個關卡最多擷取一個非主要
+    // 定位項，並在下方立即讀取，因此 FETCH_HEAD
+    // 在使用前不會被覆蓋。
     return { status: "pass", readRef: "FETCH_HEAD", output: "" };
   }
 
@@ -749,11 +751,11 @@ function checkPathExistsAtLocator(repoDir, readRef, locator, repoPath, expectedT
 }
 
 function listTreeEntries(repoDir, readRef, locator, treePath, { recursive = false } = {}) {
-  // Parse the full, untruncated tree listing directly. runCommand()/truncateOutput()
-  // would cap stdout at MAX_OUTPUT_LENGTH and silently drop later entries, and the
-  // default (non-"-z") output quotes unusual names; "-z" gives raw, NUL-delimited records.
-  // "-r -t" recurses in a single process and still lists intermediate tree objects, so a
-  // whole subtree can be inspected without spawning one git process per candidate path.
+  // 直接解析完整且未截斷的 tree 列表。runCommand()/truncateOutput()
+  // 會將 stdout 限制在 MAX_OUTPUT_LENGTH 並靜默丟棄後續項目，且
+  // 預設 (非 "-z") 輸出會用引號包裹特殊名稱；"-z" 提供原始的 NUL 分隔記錄。
+  // "-r -t" 在單一程序中遞迴並列出中間 tree 物件，因此可檢查
+  // 整個子樹狀結構，而無需為每個候選路徑繁衍一個 git 程序。
   const args = recursive
     ? ["ls-tree", "-r", "-t", "-z", `${readRef}:${treePath}`]
     : ["ls-tree", "-z", `${readRef}:${treePath}`];
@@ -795,42 +797,33 @@ function listTreeEntries(repoDir, readRef, locator, treePath, { recursive = fals
 }
 
 function locateCanvasEntryPoint(repoDir, readRef, locator, extensionsDir) {
-  // Enumerate the extensions subtree with a single recursive git process rather than
-  // spawning a git cat-file per candidate directory, so discovery stays bounded no matter
-  // how many folders an untrusted repository packs under "extensions/". "-r" yields paths
-  // relative to extensionsDir, so nested entry points appear as "<name>/extension.mjs".
+  // 使用單一遞迴 git 程序列舉 extensions 子樹狀結構，而不是
+  // 為每個候選目錄繁衍一個 git cat-file，因此無論不受信任的存放庫在
+  // "extensions/" 下放置多少資料夾，探索都保持有界。"-r" 產生相對於
+  // extensionsDir 的路徑，因此巢狀進入點會顯示為 "<name>/extension.mjs"。
   const listing = listTreeEntries(repoDir, readRef, locator, extensionsDir, { recursive: true });
   if (listing.output) {
     return { entryPoint: null, output: listing.output };
   }
 
-  let flatIsBlob = false;
-  let flatIsTree = false;
   let nestedEntryPoint = null;
+  let nestedEntryIsNotFile = false;
   for (const entry of listing.entries) {
-    if (entry.name === "extension.mjs") {
-      if (entry.type === "blob") {
-        flatIsBlob = true;
-      } else if (entry.type === "tree") {
-        flatIsTree = true;
-      }
-      continue;
-    }
-
     const segments = entry.name.split("/");
-    if (segments.length === 2 && segments[1] === "extension.mjs" && entry.type === "blob" && !nestedEntryPoint) {
-      nestedEntryPoint = toPosixPath(extensionsDir, segments[0], "extension.mjs");
+    if (segments.length === 2 && segments[1] === "extension.mjs" && !nestedEntryPoint) {
+      if (entry.type === "blob") {
+        nestedEntryPoint = toPosixPath(extensionsDir, segments[0], "extension.mjs");
+      } else {
+        nestedEntryIsNotFile = true;
+      }
     }
   }
 
-  if (flatIsBlob) {
-    return { entryPoint: toPosixPath(extensionsDir, "extension.mjs"), output: "" };
-  }
   if (nestedEntryPoint) {
     return { entryPoint: nestedEntryPoint, output: "" };
   }
 
-  return { entryPoint: null, output: "", flatKindMismatch: flatIsTree };
+  return { entryPoint: null, output: "", kindMismatch: nestedEntryIsNotFile };
 }
 
 export function runCanvasStructureGate(repoDir, plugin, primaryFetchSpec) {
@@ -854,8 +847,8 @@ export function runCanvasStructureGate(repoDir, plugin, primaryFetchSpec) {
     };
   }
 
-  const extensionsDir = toPosixPath(normalizedPluginPath, "extensions");
-  const extensionEntryPoint = toPosixPath(extensionsDir, "extension.mjs");
+  const namespaceDir = toPosixPath(normalizedPluginPath, COPILOT_CLIENT_NAMESPACE);
+  const extensionsDir = toPosixPath(namespaceDir, COPILOT_EXTENSIONS_DIRECTORY);
 
   let hasFailure = false;
   let hasInfraError = false;
@@ -901,11 +894,13 @@ export function runCanvasStructureGate(repoDir, plugin, primaryFetchSpec) {
     }
     if (!extensionEntryCheck.entryPoint) {
       hasFailure = true;
-      if (extensionEntryCheck.flatKindMismatch) {
-        messages.push(`- ${locator}: "${extensionEntryPoint}" must be a file.`);
+      if (extensionEntryCheck.kindMismatch) {
+        messages.push(
+          `- ${locator}: "${extensionsDir}/<extension>/extension.mjs" must be a file.`,
+        );
       } else {
         messages.push(
-          `- ${locator}: missing required canvas extension entry point "${extensionEntryPoint}" (or a nested "${extensionsDir}/<extension>/extension.mjs").`,
+          `- ${locator}: missing required canvas extension entry point "${extensionsDir}/<extension>/extension.mjs".`,
         );
       }
       continue;

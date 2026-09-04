@@ -23,6 +23,7 @@ copilot plugin install csharp-dotnet-development@awesome-copilot
 | `/csharp-dotnet-development:csharp-tunit` | 取得 TUnit 單元測試的最佳做法，包含資料驅動測試 |
 | `/csharp-dotnet-development:dotnet-best-practices` | 確保 .NET/C# 程式碼符合方案/專案的最佳做法。 |
 | `/csharp-dotnet-development:dotnet-upgrade` | 隨即可用的提示詞，用於全面的 .NET 架構升級分析與執行 |
+| `/csharp-dotnet-development:resx-source-generator-migration` | 將使用已簽入 .designer.cs 檔案搭配 .resx 的專案遷移至改用原始碼產生器 |
 
 ### 代理人
 

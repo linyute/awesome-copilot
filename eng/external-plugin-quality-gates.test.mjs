@@ -38,10 +38,13 @@ function commitAll(repoDir, message) {
   return runGit(repoDir, "rev-parse", "HEAD");
 }
 
-test("runCanvasStructureGate passes when extensions/extension.mjs exists", () => {
+test("runCanvasStructureGate passes when a named extension exists", () => {
   const repoDir = createTempRepo();
-  fs.mkdirSync(path.join(repoDir, "extensions"), { recursive: true });
-  fs.writeFileSync(path.join(repoDir, "extensions", "extension.mjs"), "export default {};\n");
+  fs.mkdirSync(path.join(repoDir, "com.github.copilot", "extensions", "canvas-plugin"), { recursive: true });
+  fs.writeFileSync(
+    path.join(repoDir, "com.github.copilot", "extensions", "canvas-plugin", "extension.mjs"),
+    "export default {};\n",
+  );
   const sha = commitAll(repoDir, "Add canvas extension container");
 
   const plugin = {
@@ -56,7 +59,7 @@ test("runCanvasStructureGate passes when extensions/extension.mjs exists", () =>
 
   const result = runCanvasStructureGate(repoDir, plugin, sha);
   assert.equal(result.status, "pass");
-  assert.match(result.output, /found "extensions"/);
+  assert.match(result.output, /found "com\.github\.copilot\/extensions"/);
 });
 
 test("runCanvasStructureGate fails when extension entrypoint is only at repo root", () => {
@@ -76,13 +79,16 @@ test("runCanvasStructureGate fails when extension entrypoint is only at repo roo
 
   const result = runCanvasStructureGate(repoDir, plugin, sha);
   assert.equal(result.status, "fail");
-  assert.match(result.output, /missing required canvas extension directory "extensions"/);
+  assert.match(result.output, /missing required canvas extension directory "com\.github\.copilot\/extensions"/);
 });
 
-test("runCanvasStructureGate fails when extension entrypoint path is a directory", () => {
+test("runCanvasStructureGate fails when the named extension entrypoint path is a directory", () => {
   const repoDir = createTempRepo();
-  fs.mkdirSync(path.join(repoDir, "extensions", "extension.mjs"), { recursive: true });
-  fs.writeFileSync(path.join(repoDir, "extensions", "extension.mjs", "placeholder.txt"), "not-a-module\n");
+  fs.mkdirSync(path.join(repoDir, "com.github.copilot", "extensions", "canvas-plugin", "extension.mjs"), { recursive: true });
+  fs.writeFileSync(
+    path.join(repoDir, "com.github.copilot", "extensions", "canvas-plugin", "extension.mjs", "placeholder.txt"),
+    "not-a-module\n",
+  );
   const sha = commitAll(repoDir, "Add invalid extension entrypoint directory");
 
   const plugin = {
@@ -97,17 +103,14 @@ test("runCanvasStructureGate fails when extension entrypoint path is a directory
 
   const result = runCanvasStructureGate(repoDir, plugin, sha);
   assert.equal(result.status, "fail");
-  assert.match(result.output, /"extensions\/extension\.mjs" must be a file/);
+  assert.match(result.output, /"com\.github\.copilot\/extensions\/<extension>\/extension\.mjs" must be a file/);
 });
 
-test("runCanvasStructureGate passes when extension lives in a nested subfolder", () => {
+test("runCanvasStructureGate fails when the Copilot namespace is missing", () => {
   const repoDir = createTempRepo();
   fs.mkdirSync(path.join(repoDir, "extensions", "modernize-dashboard"), { recursive: true });
-  fs.writeFileSync(
-    path.join(repoDir, "extensions", "modernize-dashboard", "extension.mjs"),
-    "export default {};\n",
-  );
-  const sha = commitAll(repoDir, "Add nested canvas extension");
+  fs.writeFileSync(path.join(repoDir, "extensions", "modernize-dashboard", "extension.mjs"), "export default {};\n");
+  const sha = commitAll(repoDir, "Add extension outside Copilot namespace");
 
   const plugin = {
     name: "canvas-plugin",
@@ -120,15 +123,15 @@ test("runCanvasStructureGate passes when extension lives in a nested subfolder",
   };
 
   const result = runCanvasStructureGate(repoDir, plugin, sha);
-  assert.equal(result.status, "pass");
-  assert.match(result.output, /entry point "extensions\/modernize-dashboard\/extension\.mjs"/);
+  assert.equal(result.status, "fail");
+  assert.match(result.output, /missing required canvas extension directory "com\.github\.copilot\/extensions"/);
 });
 
-test("runCanvasStructureGate fails when no extension.mjs exists flat or nested", () => {
+test("runCanvasStructureGate fails when no extension.mjs exists in a named directory", () => {
   const repoDir = createTempRepo();
-  fs.mkdirSync(path.join(repoDir, "extensions", "modernize-dashboard"), { recursive: true });
+  fs.mkdirSync(path.join(repoDir, "com.github.copilot", "extensions", "modernize-dashboard"), { recursive: true });
   fs.writeFileSync(
-    path.join(repoDir, "extensions", "modernize-dashboard", "index.mjs"),
+    path.join(repoDir, "com.github.copilot", "extensions", "modernize-dashboard", "index.mjs"),
     "export default {};\n",
   );
   const sha = commitAll(repoDir, "Add extensions directory without entry point");
@@ -150,21 +153,22 @@ test("runCanvasStructureGate fails when no extension.mjs exists flat or nested",
 
 test("runCanvasStructureGate finds a nested extension listed past the legacy output cap", () => {
   const repoDir = createTempRepo();
-  // Many sibling directories push the real extension past the ~12 KB stdout cap that the
-  // previous truncating implementation applied, which would silently drop it from the listing.
-  // Long names inflate each git ls-tree record so fewer directories are needed to exceed the cap.
+  // 眾多同層目錄會將真正的 extension 推移超出先前截斷實作所套用的約 12 KB stdout 上限，
+  // 導致其從列表中被無聲無息地丟棄。
+  // 長名稱會放大每筆 git ls-tree 記錄，因此只需較少目錄即可超出上限。
   for (let index = 0; index < 160; index += 1) {
     const filler = path.join(
       repoDir,
+      "com.github.copilot",
       "extensions",
       `filler-directory-that-pads-the-tree-listing-${String(index).padStart(4, "0")}`,
     );
     fs.mkdirSync(filler, { recursive: true });
     fs.writeFileSync(path.join(filler, "readme.txt"), "filler\n");
   }
-  fs.mkdirSync(path.join(repoDir, "extensions", "zzz-real-extension"), { recursive: true });
+  fs.mkdirSync(path.join(repoDir, "com.github.copilot", "extensions", "zzz-real-extension"), { recursive: true });
   fs.writeFileSync(
-    path.join(repoDir, "extensions", "zzz-real-extension", "extension.mjs"),
+    path.join(repoDir, "com.github.copilot", "extensions", "zzz-real-extension", "extension.mjs"),
     "export default {};\n",
   );
   const sha = commitAll(repoDir, "Add nested extension after many siblings");
@@ -181,14 +185,14 @@ test("runCanvasStructureGate finds a nested extension listed past the legacy out
 
   const result = runCanvasStructureGate(repoDir, plugin, sha);
   assert.equal(result.status, "pass");
-  assert.match(result.output, /entry point "extensions\/zzz-real-extension\/extension\.mjs"/);
+  assert.match(result.output, /entry point "com\.github\.copilot\/extensions\/zzz-real-extension\/extension\.mjs"/);
 });
 
-// Regression tests for issue #2397: a tag-name locator (e.g. "v1.0.0") must be
-// readable by the version-match and canvas-structure gates. `git fetch origin <tag>`
-// only updates FETCH_HEAD and never creates a local `refs/tags/<tag>`, so reading via
-// `git show <tag>:...` used to die with "fatal: invalid object name" and roll up to a
-// bogus infra_error/fail even though the referenced content was valid.
+// Issue #2397 的迴歸測試：tag 名稱定位項 (例如 "v1.0.0") 必須可被
+// version-match 與 canvas-structure 關卡讀取。`git fetch origin <tag>`
+// 僅會更新 FETCH_HEAD，絕不會在本地建立 `refs/tags/<tag>`，因此透過
+// `git show <tag>:...` 讀取過去會因 "fatal: invalid object name" 而終止，並累積成
+// 虛假的 infra_error/fail，即使引用的內容是有效的。
 
 function initRemoteRepo() {
   const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), "external-plugin-quality-remote-"));
@@ -196,7 +200,7 @@ function initRemoteRepo() {
   runGit(repoDir, "init", "-q");
   runGit(repoDir, "config", "user.name", "Copilot Test");
   runGit(repoDir, "config", "user.email", "copilot@example.com");
-  // Mirror github.com: allow the submission repo to shallow-fetch an arbitrary SHA.
+  // 鏡像 github.com：允許提交存放庫 shallow-fetch 任意 SHA。
   runGit(repoDir, "config", "uploadpack.allowAnySHA1InWant", "true");
   return repoDir;
 }
@@ -207,13 +211,16 @@ function writeValidPluginContent(repoDir) {
     path.join(repoDir, ".github", "plugin", "plugin.json"),
     `${JSON.stringify({ name: "tag-plugin", version: "1.0.0" }, null, 2)}\n`,
   );
-  fs.mkdirSync(path.join(repoDir, "extensions"), { recursive: true });
-  fs.writeFileSync(path.join(repoDir, "extensions", "extension.mjs"), "export default {};\n");
+  fs.mkdirSync(path.join(repoDir, "com.github.copilot", "extensions", "tag-plugin"), { recursive: true });
+  fs.writeFileSync(
+    path.join(repoDir, "com.github.copilot", "extensions", "tag-plugin", "extension.mjs"),
+    "export default {};\n",
+  );
 }
 
-// Mirrors cloneSubmissionRepository in external-plugin-quality-gates.mjs: fetch only the
-// primary locator and detach HEAD onto it. The tag ref is deliberately never created
-// locally, reproducing the CI environment where `git show <tag>:...` fails.
+// 鏡像 external-plugin-quality-gates.mjs 中的 cloneSubmissionRepository：僅擷取主要定位項
+// 並將 HEAD detach 到其上。刻意不在本地建立 tag ref，
+// 重現 `git show <tag>:...` 失敗的 CI 環境。
 function cloneSubmissionRepo(remoteDir, primaryFetchSpec) {
   const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), "external-plugin-quality-sub-"));
   tempDirs.push(repoDir);
@@ -239,7 +246,7 @@ test("runVersionMatchGate passes for a tag ref alongside a sha", () => {
 
   const result = runVersionMatchGate(repoDir, plugin, sha);
   assert.equal(result.status, "pass", result.output);
-  // Both the tag ref and the sha must be verified.
+  // tag ref 與 sha 皆必須通過驗證。
   assert.match(result.output, /- v1\.0\.0: matched version "1\.0\.0"/);
   assert.match(result.output, new RegExp(`- ${sha}: matched version "1\\.0\\.0"`));
 });
@@ -259,8 +266,8 @@ test("runCanvasStructureGate passes for a tag ref alongside a sha", () => {
 
   const result = runCanvasStructureGate(repoDir, plugin, sha);
   assert.equal(result.status, "pass", result.output);
-  assert.match(result.output, /- v1\.0\.0: found "extensions"/);
-  assert.match(result.output, new RegExp(`- ${sha}: found "extensions"`));
+  assert.match(result.output, /- v1\.0\.0: found "com\.github\.copilot\/extensions"/);
+  assert.match(result.output, new RegExp(`- ${sha}: found "com\\.github\\.copilot/extensions"`));
 });
 
 test("runVersionMatchGate passes when the primary locator is a tag ref", () => {
@@ -296,7 +303,7 @@ test("runCanvasStructureGate passes when the primary locator is a tag ref", () =
 
   const result = runCanvasStructureGate(repoDir, plugin, "v1.0.0");
   assert.equal(result.status, "pass", result.output);
-  assert.match(result.output, /- v1\.0\.0: found "extensions"/);
+  assert.match(result.output, /- v1\.0\.0: found "com\.github\.copilot\/extensions"/);
 });
 
 test("runRefShaConsistencyGate fails when ref and sha point to different commits", () => {

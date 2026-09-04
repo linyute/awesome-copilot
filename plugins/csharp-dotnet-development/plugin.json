@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "csharp-dotnet-development",
   "description": "適用於 C# 與 .NET 開發的基本提示詞、指示與聊天模式，包含測試、文件與最佳做法。",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "Awesome Copilot Community"
   },
@@ -27,7 +27,8 @@
         "./skills/csharp-tunit/",
         "./skills/csharp-xunit/",
         "./skills/dotnet-best-practices/",
-        "./skills/dotnet-upgrade/"
+        "./skills/dotnet-upgrade/",
+        "./skills/resx-source-generator-migration/"
       ]
     }
   }

@@ -279,6 +279,15 @@ app.post('/api/auth/login', loginHandler);
 import rateLimit from 'express-rate-limit';
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 5 });
 app.post('/api/auth/login', authLimiter, loginHandler);
+
+// 良好 (GOOD) — 無伺服器 / 多執行個體：預設的記憶體內儲存區是每個程序獨立的，
+// 因此應使用共用儲存區來維護計數器（例如 Express 的 rate-limit-redis，
+// 或在 edge / 無伺服器處理常式中使用 @upstash/ratelimit 等 Redis 支援的限制器）
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+const loginLimiter = new Ratelimit({ redis: Redis.fromEnv(), limiter: Ratelimit.slidingWindow(5, '15 m'), prefix: 'auth:login' });
+const { success } = await loginLimiter.limit(`login:${clientIp}`);
+if (!success) return new Response('Too Many Requests', { status: 429 });
 ```
 
 ### AU6: 登入時缺乏會話重新產生 (會話固定)
@@ -672,6 +681,28 @@ if (redirect?.startsWith('/') && !redirect.startsWith('//')) {
 
 - **嚴重程度**: 重要 (IMPORTANT)
 - **OWASP**: A05
+
+```typescript
+// 不佳 — 新端點上線時未設定限流器
+app.post('/api/export', exportHandler);
+
+// 良好 — Express：依端點成本設定適當的路由限流器
+import rateLimit from 'express-rate-limit';
+const exportLimiter = rateLimit({ windowMs: 60 * 1000, max: 10 });
+app.post('/api/export', exportLimiter, exportHandler);
+
+// 良好 — Next.js 路由處理常式／無伺服器或邊緣環境：使用跨執行個體共用的儲存區
+// （例如 Express 搭配 rate-limit-redis，或如下所示的 @upstash/ratelimit）
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+const limiter = new Ratelimit({ redis: Redis.fromEnv(), limiter: Ratelimit.slidingWindow(10, '1 m') });
+export async function POST(req: Request) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'anonymous';
+  const { success } = await limiter.limit(ip);
+  if (!success) return new Response('Too Many Requests', { status: 429 });
+  // ...
+}
+```
 
 ### AP2: 不具備深度限制的 GraphQL
 

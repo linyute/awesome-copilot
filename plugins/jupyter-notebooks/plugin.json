@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "jupyter-notebooks",
+  "description": "在互動式 Copilot 畫布中建立、編輯、執行、儲存及設定檢查點 Jupyter 筆記本。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Pierce Boggan",
+    "url": "https://github.com/pierceboggan"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "data-analysis",
+    "interactive-notebooks",
+    "jupyter",
+    "python"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/jupyter-notebooks"
+      ]
+    }
+  }
+}

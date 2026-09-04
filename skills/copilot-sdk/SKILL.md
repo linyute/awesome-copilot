@@ -1,24 +1,25 @@
 ---
-name: 'copilot-sdk'
-description: '使用 GitHub Copilot SDK 建構 Agentic 應用程式。當在應用程式中嵌入 AI 代理、建立自訂工具、實作串流回應、管理工作階段、連線至 MCP 伺服器或建立自訂代理時使用。觸發於 Copilot SDK、GitHub SDK、Agentic 應用程式、嵌入 Copilot、可程式化代理、MCP 伺服器、自訂代理。'
+name: copilot-sdk
+description: '使用 GitHub Copilot SDK 建構代理型應用程式。在應用程式中嵌入 AI 代理人、建立自訂工具、實作串流回應、管理工作階段、連線至 MCP 伺服器或建立自訂代理人時使用。可由 Copilot SDK、GitHub SDK、agentic app、embed Copilot、programmable agent、MCP server、custom agent 等關鍵字觸發。'
 ---
 
 # GitHub Copilot SDK
 
-使用 Python、TypeScript、Go 或 .NET 將 Copilot 的 Agentic 工作流程嵌入任何應用程式中。
+使用 Python、TypeScript、Go 或 .NET 將 Copilot 的代理型工作流程嵌入至任何應用程式中。
 
-## 概觀 (Overview)
+## 概觀
 
-GitHub Copilot SDK 公開了與 Copilot CLI 背後相同的引擎：一個您可以透過程式化方式呼叫且經過生產測試的代理執行階段 (agent runtime)。無需建立您自己的編排 (orchestration) — 您只需定義代理行為，Copilot 會處理規劃、工具呼叫、檔案編輯等工作。
+GitHub Copilot SDK 公開了 Copilot CLI 背後的相同引擎：一個經過正式環境考驗的代理人執行階段，可透過程式設計方式呼叫。無需建構自己的協調機制 — 由你定義代理人行為，Copilot 負責規劃、工具呼叫、檔案編輯等作業。
 
-## 先決條件 (Prerequisites)
+## 先決條件
 
-1. 已安裝並通過身分驗證的 **GitHub Copilot CLI** ([安裝指南](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli))
-2. **語言執行階段**：Node.js 18+、Python 3.8+、Go 1.21+ 或 .NET 8.0+
+1. **GitHub Copilot 存取權限** 與通過驗證的環境
+2. **語言執行階段**：Node.js ^20.19.0 或 >=22.12.0、Python 3.11+、Go 1.24+，或相容於 .NET Standard 2.0 的實作
+3. **Go**：已安裝並驗證 GitHub Copilot CLI（[安裝指南](https://docs.github.com/en/copilot/how-tos/set-up/install-copilot-cli)）
 
-驗證 CLI：`copilot --version`
+TypeScript、Python 與 .NET 套件預設使用隨附的 Copilot 執行階段，因此不需要個別安裝 CLI。
 
-## 安裝 (Installation)
+## 安裝
 
 ### Node.js/TypeScript
 ```bash
@@ -30,7 +31,12 @@ npm install @github/copilot-sdk tsx
 ### Python
 ```bash
 pip install github-copilot-sdk
+
+# 選用：預先下載隨附的執行階段，而非在首次使用時下載
+python -m copilot download-runtime
 ```
+
+已發布的 Python wheel 包含固定的執行階段版本。預先下載命令會在本地快取該執行階段；若略過，SDK 會在首次使用時嘗試自動下載。
 
 ### Go
 ```bash
@@ -45,7 +51,7 @@ dotnet new console -n CopilotDemo && cd CopilotDemo
 dotnet add package GitHub.Copilot.SDK
 ```
 
-## 快速入門 (Quick Start)
+## 快速入門
 
 ### TypeScript
 ```typescript
@@ -72,17 +78,13 @@ import asyncio
 from copilot import CopilotClient, PermissionHandler
 
 async def main():
-    client = CopilotClient()
-    await client.start()
-
-    session = await client.create_session({
-        "on_permission_request": PermissionHandler.approve_all,
-        "model": "gpt-4.1",
-    })
-    response = await session.send_and_wait({"prompt": "What is 2 + 2?"})
-
-    print(response.data.content)
-    await client.stop()
+    async with CopilotClient() as client:
+        async with await client.create_session(
+            on_permission_request=PermissionHandler.approve_all,
+            model="gpt-4.1",
+        ) as session:
+            response = await session.send_and_wait("What is 2 + 2?")
+            print(response.data.content)
 
 asyncio.run(main())
 ```
@@ -140,9 +142,9 @@ Console.WriteLine(response?.Data.Content);
 
 執行：`dotnet run`
 
-## 串流回應 (Streaming Responses)
+## 串流回應
 
-啟用即時輸出以提供更好的使用者體驗 (UX)：
+啟用即時輸出以提供更佳的使用者體驗：
 
 ### TypeScript
 ```typescript
@@ -160,7 +162,7 @@ session.on((event: SessionEvent) => {
         process.stdout.write(event.data.deltaContent);
     }
     if (event.type === "session.idle") {
-        console.log(); // 完成後換行
+        console.log(); // 完成時換行
     }
 });
 
@@ -178,25 +180,21 @@ from copilot import CopilotClient, PermissionHandler
 from copilot.generated.session_events import SessionEventType
 
 async def main():
-    client = CopilotClient()
-    await client.start()
+    async with CopilotClient() as client:
+        async with await client.create_session(
+            on_permission_request=PermissionHandler.approve_all,
+            model="gpt-4.1",
+            streaming=True,
+        ) as session:
+            def handle_event(event):
+                if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
+                    sys.stdout.write(event.data.delta_content)
+                    sys.stdout.flush()
+                if event.type == SessionEventType.SESSION_IDLE:
+                    print()
 
-    session = await client.create_session({
-        "on_permission_request": PermissionHandler.approve_all,
-        "model": "gpt-4.1",
-        "streaming": True,
-    })
-
-    def handle_event(event):
-        if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
-            sys.stdout.write(event.data.delta_content)
-            sys.stdout.flush()
-        if event.type == SessionEventType.SESSION_IDLE:
-            print()
-
-    session.on(handle_event)
-    await session.send_and_wait({"prompt": "Tell me a short joke"})
-    await client.stop()
+            session.on(handle_event)
+            await session.send_and_wait("Tell me a short joke")
 
 asyncio.run(main())
 ```
@@ -241,30 +239,30 @@ session.On(ev =>
 await session.SendAndWaitAsync(new MessageOptions { Prompt = "Tell me a short joke" });
 ```
 
-## 自訂工具 (Custom Tools)
+## 自訂工具
 
-定義 Copilot 在推論過程中可以呼叫的工具。當您定義工具時，您會告訴 Copilot：
-1. **工具的作用** (說明)
-2. **所需的參數** (結構定義 Schema)
-3. **要執行的程式碼** (處理常式 handler)
+定義 Copilot 在推理過程中可呼叫的工具。當你定義工具時，需要告訴 Copilot：
+1. **工具的功能**（描述）
+2. **需要哪些參數**（結構描述）
+3. **要執行什麼程式碼**（處理常式）
 
-### TypeScript (JSON 結構定義)
+### TypeScript (JSON 結構描述)
 ```typescript
 import { CopilotClient, approveAll, defineTool, SessionEvent } from "@github/copilot-sdk";
 
 const getWeather = defineTool("get_weather", {
-    description: "取得特定城市的目前天氣",
+    description: "Get the current weather for a city",
     parameters: {
         type: "object",
         properties: {
-            city: { type: "string", description: "城市名稱" },
+            city: { type: "string", description: "The city name" },
         },
         required: ["city"],
     },
     handler: async (args: { city: string }) => {
         const { city } = args;
         // 在真實應用程式中，在此呼叫天氣 API
-        const conditions = ["晴天", "多雲", "雨天", "局部多雲"];
+        const conditions = ["sunny", "cloudy", "rainy", "partly cloudy"];
         const temp = Math.floor(Math.random() * 30) + 50;
         const condition = conditions[Math.floor(Math.random() * conditions.length)];
         return { city, temperature: `${temp}°F`, condition };
@@ -286,7 +284,7 @@ session.on((event: SessionEvent) => {
 });
 
 await session.sendAndWait({
-    prompt: "西雅圖和東京的天氣如何？",
+    prompt: "What's the weather like in Seattle and Tokyo?",
 });
 
 await client.stop();
@@ -304,39 +302,33 @@ from copilot.generated.session_events import SessionEventType
 from pydantic import BaseModel, Field
 
 class GetWeatherParams(BaseModel):
-    city: str = Field(description="要取得天氣的城市名稱")
+    city: str = Field(description="The name of the city to get weather for")
 
-@define_tool(description="取得特定城市的目前天氣")
+@define_tool(description="Get the current weather for a city")
 async def get_weather(params: GetWeatherParams) -> dict:
     city = params.city
-    conditions = ["晴天", "多雲", "雨天", "局部多雲"]
+    conditions = ["sunny", "cloudy", "rainy", "partly cloudy"]
     temp = random.randint(50, 80)
     condition = random.choice(conditions)
     return {"city": city, "temperature": f"{temp}°F", "condition": condition}
 
 async def main():
-    client = CopilotClient()
-    await client.start()
+    async with CopilotClient() as client:
+        async with await client.create_session(
+            on_permission_request=PermissionHandler.approve_all,
+            model="gpt-4.1",
+            streaming=True,
+            tools=[get_weather],
+        ) as session:
+            def handle_event(event):
+                if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
+                    sys.stdout.write(event.data.delta_content)
+                    sys.stdout.flush()
 
-    session = await client.create_session({
-        "on_permission_request": PermissionHandler.approve_all,
-        "model": "gpt-4.1",
-        "streaming": True,
-        "tools": [get_weather],
-    })
-
-    def handle_event(event):
-        if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
-            sys.stdout.write(event.data.delta_content)
-            sys.stdout.flush()
-
-    session.on(handle_event)
-
-    await session.send_and_wait({
-        "prompt": "西雅圖和東京的天氣如何？"
-    })
-
-    await client.stop()
+            session.on(handle_event)
+            await session.send_and_wait(
+                "What's the weather like in Seattle and Tokyo?"
+            )
 
 asyncio.run(main())
 ```
@@ -344,7 +336,7 @@ asyncio.run(main())
 ### Go
 ```go
 type WeatherParams struct {
-    City string `json:"city" jsonschema:"城市名稱"`
+    City string `json:"city" jsonschema:"The city name"`
 }
 
 type WeatherResult struct {
@@ -355,9 +347,9 @@ type WeatherResult struct {
 
 getWeather := copilot.DefineTool(
     "get_weather",
-    "取得特定城市的目前天氣",
+    "Get the current weather for a city",
     func(params WeatherParams, inv copilot.ToolInvocation) (WeatherResult, error) {
-        conditions := []string{"晴天", "多雲", "雨天", "局部多雲"}
+        conditions := []string{"sunny", "cloudy", "rainy", "partly cloudy"}
         temp := rand.Intn(30) + 50
         condition := conditions[rand.Intn(len(conditions))]
         return WeatherResult{
@@ -383,15 +375,15 @@ using Microsoft.Extensions.AI;
 using System.ComponentModel;
 
 var getWeather = AIFunctionFactory.Create(
-    ([Description("城市名稱")] string city) =>
+    ([Description("The city name")] string city) =>
     {
-        var conditions = new[] { "晴天", "多雲", "雨天", "局部多雲" };
+        var conditions = new[] { "sunny", "cloudy", "rainy", "partly cloudy" };
         var temp = Random.Shared.Next(50, 80);
         var condition = conditions[Random.Shared.Next(conditions.Length)];
         return new { city, temperature = $"{temp}°F", condition };
     },
     "get_weather",
-    "取得特定城市的目前天氣"
+    "Get the current weather for a city"
 );
 
 await using var session = await client.CreateSessionAsync(new SessionConfig
@@ -403,19 +395,19 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
 });
 ```
 
-## 工具如何運作 (How Tools Work)
+## 工具運作方式
 
-當 Copilot 決定呼叫您的工具時：
-1. Copilot 會傳送包含參數的工具呼叫請求
-2. SDK 會執行您的處理常式函式
-3. 結果會傳回給 Copilot
+當 Copilot 決定呼叫你的工具時：
+1. Copilot 傳送包含參數的工具呼叫請求
+2. SDK 執行你的處理常式函式
+3. 結果傳回給 Copilot
 4. Copilot 將結果納入其回應中
 
-Copilot 會根據使用者的問題和您的工具說明，決定何時呼叫您的工具。
+Copilot 會根據使用者的問題與你的工具描述，決定何時呼叫該工具。
 
-## 互動式 CLI 助手 (Interactive CLI Assistant)
+## 互動式 CLI 助理
 
-建構一個完整的互動式助手：
+建構完整的互動式助理：
 
 ### TypeScript
 ```typescript
@@ -423,16 +415,16 @@ import { CopilotClient, approveAll, defineTool, SessionEvent } from "@github/cop
 import * as readline from "readline";
 
 const getWeather = defineTool("get_weather", {
-    description: "取得特定城市的目前天氣",
+    description: "Get the current weather for a city",
     parameters: {
         type: "object",
         properties: {
-            city: { type: "string", description: "城市名稱" },
+            city: { type: "string", description: "The city name" },
         },
         required: ["city"],
     },
     handler: async ({ city }) => {
-        const conditions = ["晴天", "多雲", "雨天", "局部多雲"];
+        const conditions = ["sunny", "cloudy", "rainy", "partly cloudy"];
         const temp = Math.floor(Math.random() * 30) + 50;
         const condition = conditions[Math.floor(Math.random() * conditions.length)];
         return { city, temperature: `${temp}°F`, condition };
@@ -458,18 +450,18 @@ const rl = readline.createInterface({
     output: process.stdout,
 });
 
-console.log("天氣助手 (輸入 'exit' 結束)");
-console.log("嘗試：'巴黎的天氣如何？'\n");
+console.log("Weather Assistant (type 'exit' to quit)");
+console.log("Try: 'What's the weather in Paris?'\n");
 
 const prompt = () => {
-    rl.question("您：", async (input) => {
+    rl.question("You: ", async (input) => {
         if (input.toLowerCase() === "exit") {
             await client.stop();
             rl.close();
             return;
         }
 
-        process.stdout.write("助手：");
+        process.stdout.write("Assistant: ");
         await session.sendAndWait({ prompt: input });
         console.log("\n");
         prompt();
@@ -490,57 +482,52 @@ from copilot.generated.session_events import SessionEventType
 from pydantic import BaseModel, Field
 
 class GetWeatherParams(BaseModel):
-    city: str = Field(description="要取得天氣的城市名稱")
+    city: str = Field(description="The name of the city to get weather for")
 
-@define_tool(description="取得特定城市的目前天氣")
+@define_tool(description="Get the current weather for a city")
 async def get_weather(params: GetWeatherParams) -> dict:
-    conditions = ["晴天", "多雲", "雨天", "局部多雲"]
+    conditions = ["sunny", "cloudy", "rainy", "partly cloudy"]
     temp = random.randint(50, 80)
     condition = random.choice(conditions)
     return {"city": params.city, "temperature": f"{temp}°F", "condition": condition}
 
 async def main():
-    client = CopilotClient()
-    await client.start()
+    async with CopilotClient() as client:
+        async with await client.create_session(
+            on_permission_request=PermissionHandler.approve_all,
+            model="gpt-4.1",
+            streaming=True,
+            tools=[get_weather],
+        ) as session:
+            def handle_event(event):
+                if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
+                    sys.stdout.write(event.data.delta_content)
+                    sys.stdout.flush()
 
-    session = await client.create_session({
-        "on_permission_request": PermissionHandler.approve_all,
-        "model": "gpt-4.1",
-        "streaming": True,
-        "tools": [get_weather],
-    })
+            session.on(handle_event)
 
-    def handle_event(event):
-        if event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
-            sys.stdout.write(event.data.delta_content)
-            sys.stdout.flush()
+            print("Weather Assistant (type 'exit' to quit)")
+            print("Try: 'What's the weather in Paris?'\n")
 
-    session.on(handle_event)
+            while True:
+                try:
+                    user_input = input("You: ")
+                except EOFError:
+                    break
 
-    print("天氣助手 (輸入 'exit' 結束)")
-    print("嘗試：'巴黎的天氣如何？'\n")
+                if user_input.lower() == "exit":
+                    break
 
-    while True:
-        try:
-            user_input = input("您：")
-        except EOFError:
-            break
-
-        if user_input.lower() == "exit":
-            break
-
-        sys.stdout.write("助手：")
-        await session.send_and_wait({"prompt": user_input})
-        print("\n")
-
-    await client.stop()
+                sys.stdout.write("Assistant: ")
+                await session.send_and_wait(user_input)
+                print("\n")
 
 asyncio.run(main())
 ```
 
-## MCP 伺服器整合 (MCP Server Integration)
+## MCP 伺服器整合
 
-連線至 MCP (Model Context Protocol) 伺服器以取得預建工具。連線至 GitHub 的 MCP 伺服器以存取存放庫、Issue 和 PR：
+連線至 MCP (Model Context Protocol) 伺服器以取得預先建置的工具。連線至 GitHub 的 MCP 伺服器以存取儲存庫、Issue 與 PR：
 
 ### TypeScript
 ```typescript
@@ -558,16 +545,17 @@ const session = await client.createSession({
 
 ### Python
 ```python
-session = await client.create_session({
-    "on_permission_request": PermissionHandler.approve_all,
-    "model": "gpt-4.1",
-    "mcp_servers": {
+async with await client.create_session(
+    on_permission_request=PermissionHandler.approve_all,
+    model="gpt-4.1",
+    mcp_servers={
         "github": {
             "type": "http",
             "url": "https://api.githubcopilot.com/mcp/",
         },
     },
-})
+) as session:
+    ...
 ```
 
 ### Go
@@ -601,9 +589,9 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
 });
 ```
 
-## 自訂代理 (Custom Agents)
+## 自訂代理人
 
-為特定工作定義專門的 AI 人格：
+針對特定任務定義特化的 AI 角色：
 
 ### TypeScript
 ```typescript
@@ -612,30 +600,31 @@ const session = await client.createSession({
     model: "gpt-4.1",
     customAgents: [{
         name: "pr-reviewer",
-        displayName: "PR 審查員",
-        description: "審查 Pull Request 是否符合最佳實踐",
-        prompt: "您是一位專業的程式碼審查員。請專注於安全性、效能和可維護性。",
+        displayName: "PR Reviewer",
+        description: "Reviews pull requests for best practices",
+        prompt: "You are an expert code reviewer. Focus on security, performance, and maintainability.",
     }],
 });
 ```
 
 ### Python
 ```python
-session = await client.create_session({
-    "on_permission_request": PermissionHandler.approve_all,
-    "model": "gpt-4.1",
-    "custom_agents": [{
+async with await client.create_session(
+    on_permission_request=PermissionHandler.approve_all,
+    model="gpt-4.1",
+    custom_agents=[{
         "name": "pr-reviewer",
-        "display_name": "PR 審查員",
-        "description": "審查 Pull Request 是否符合最佳實踐",
-        "prompt": "您是一位專業的程式碼審查員。請專注於安全性、效能和可維護性。",
+        "display_name": "PR Reviewer",
+        "description": "Reviews pull requests for best practices",
+        "prompt": "You are an expert code reviewer. Focus on security, performance, and maintainability.",
     }],
-})
+) as session:
+    ...
 ```
 
-## 系統訊息 (System Message)
+## 系統訊息
 
-自訂 AI 的行為和個性：
+自訂 AI 的行為與個性：
 
 ### TypeScript
 ```typescript
@@ -643,25 +632,26 @@ const session = await client.createSession({
     onPermissionRequest: approveAll,
     model: "gpt-4.1",
     systemMessage: {
-        content: "您是我們工程團隊的實用助手。請務必保持簡潔。",
+        content: "You are a helpful assistant for our engineering team. Always be concise.",
     },
 });
 ```
 
 ### Python
 ```python
-session = await client.create_session({
-    "on_permission_request": PermissionHandler.approve_all,
-    "model": "gpt-4.1",
-    "system_message": {
-        "content": "您是我們工程團隊的實用助手。請務必保持簡潔。",
+async with await client.create_session(
+    on_permission_request=PermissionHandler.approve_all,
+    model="gpt-4.1",
+    system_message={
+        "content": "You are a helpful assistant for our engineering team. Always be concise.",
     },
-})
+) as session:
+    ...
 ```
 
-## 外部 CLI 伺服器 (External CLI Server)
+## 外部 CLI 伺服器
 
-分開執行伺服器模式下的 CLI，並將 SDK 連線至該伺服器。對於偵錯、資源共享或自訂環境非常有用。
+獨立以伺服器模式執行 CLI，並將 SDK 連線至該伺服器。這對於除錯、資源共用或自訂環境特別有用。
 
 ### 以伺服器模式啟動 CLI
 ```bash
@@ -684,15 +674,16 @@ const session = await client.createSession({
 
 #### Python
 ```python
-client = CopilotClient({
-    "cli_url": "localhost:4321"
-})
-await client.start()
+from copilot import CopilotClient, PermissionHandler, RuntimeConnection
 
-session = await client.create_session({
-    "on_permission_request": PermissionHandler.approve_all,
-    "model": "gpt-4.1",
-})
+async with CopilotClient(
+    connection=RuntimeConnection.for_uri("localhost:4321")
+) as client:
+    async with await client.create_session(
+        on_permission_request=PermissionHandler.approve_all,
+        model="gpt-4.1",
+    ) as session:
+        ...
 ```
 
 #### Go
@@ -725,54 +716,54 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
 });
 ```
 
-**注意：** 當提供 `cliUrl` 時，SDK 不會產生或管理 CLI 處理程序 — 它只會連線至現有的伺服器。
+**注意：** 當設定使用外部伺服器時，SDK 僅管理其連線，而不管理該外部處理程序。
 
-## 事件類型 (Event Types)
+## 事件類型
 
-| 事件 (Event) | 說明 (Description) |
+| 事件 | 描述 |
 |-------|-------------|
-| `user.message` | 已新增使用者輸入 |
-| `assistant.message` | 完整的模型回應 |
+| `user.message` | 使用者輸入已新增 |
+| `assistant.message` | 完整模型回應 |
 | `assistant.message_delta` | 串流回應區塊 |
-| `assistant.reasoning` | 模型推論 (取決於模型) |
-| `assistant.reasoning_delta` | 串流推論區塊 |
+| `assistant.reasoning` | 模型推理（取決於模型） |
+| `assistant.reasoning_delta` | 串流推理區塊 |
 | `tool.execution_start` | 工具呼叫已開始 |
-| `tool.execution_complete` | 工具執行已完成 |
+| `tool.execution_complete` | 工具執行完成 |
 | `session.idle` | 無進行中的處理 |
 | `session.error` | 發生錯誤 |
 
-## 用戶端設定 (Client Configuration)
+## 用戶端設定
 
-| 選項 (Option) | 說明 (Description) | 預設值 (Default) |
+| 選項 | 描述 | 預設值 |
 |--------|-------------|---------|
-| `cliPath` | Copilot CLI 執行檔路徑 | 系統 PATH |
-| `cliUrl` | 連線至現有伺服器 (例如 "localhost:4321") | 無 |
-| `port` | 伺服器通訊埠 | 隨機 |
+| `cliPath` | Copilot CLI 可執行檔路徑 | 系統 PATH |
+| `cliUrl` | 連線至現有伺服器（例如 "localhost:4321"） | 無 |
+| `port` | 伺服器通訊連接埠 | 隨機 |
 | `useStdio` | 使用 stdio 傳輸而非 TCP | true |
 | `logLevel` | 記錄詳細程度 | "info" |
 | `autoStart` | 自動啟動伺服器 | true |
-| `autoRestart` | 當機時自動重新啟動 | true |
+| `autoRestart` | 當機時重新啟動 | true |
 | `cwd` | CLI 處理程序的工作目錄 | 繼承 |
 
-## 工作階段設定 (Session Configuration)
+## 工作階段設定
 
-| 選項 (Option) | 說明 (Description) |
+| 選項 | 描述 |
 |--------|-------------|
-| `model` | 要使用的 LLM ("gpt-4.1"、"claude-sonnet-4.5" 等) |
+| `model` | 要使用的 LLM（"gpt-4.1"、"claude-sonnet-4.5" 等） |
 | `sessionId` | 自訂工作階段識別碼 |
 | `tools` | 自訂工具定義 |
 | `mcpServers` | MCP 伺服器連線 |
-| `customAgents` | 自訂代理人格 |
-| `systemMessage` | 覆寫預設系統提示字元 |
+| `customAgents` | 自訂代理人角色 |
+| `systemMessage` | 覆寫預設系統提示詞 |
 | `streaming` | 啟用增量回應區塊 |
-| `availableTools` | 允許的工具白名單 |
+| `availableTools` | 允許使用的工具白名單 |
 | `excludedTools` | 停用的工具黑名單 |
 
-## 工作階段持續性 (Session Persistence)
+## 工作階段持續性
 
-在重新啟動後儲存並恢復對話：
+跨重新啟動儲存並繼續對話：
 
-### 使用自訂識別碼建立
+### 使用自訂 ID 建立
 ```typescript
 const session = await client.createSession({
     onPermissionRequest: approveAll,
@@ -781,19 +772,19 @@ const session = await client.createSession({
 });
 ```
 
-### 恢復工作階段
+### 繼續工作階段
 ```typescript
 const session = await client.resumeSession("user-123-conversation", { onPermissionRequest: approveAll });
-await session.send({ prompt: "我們之前討論了什麼？" });
+await session.send({ prompt: "What did we discuss earlier?" });
 ```
 
-### 列出並刪除工作階段
+### 列出與刪除工作階段
 ```typescript
 const sessions = await client.listSessions();
 await client.deleteSession("old-session-id");
 ```
 
-## 錯誤處理 (Error Handling)
+## 錯誤處理
 
 ```typescript
 try {
@@ -803,33 +794,33 @@ try {
         model: "gpt-4.1",
     });
     const response = await session.sendAndWait(
-        { prompt: "您好！" },
-        30000 // 逾時 (毫秒)
+        { prompt: "Hello!" },
+        30000 // 逾時毫秒數
     );
 } catch (error) {
     if (error.code === "ENOENT") {
-        console.error("未安裝 Copilot CLI");
+        console.error("Copilot CLI not installed");
     } else if (error.code === "ECONNREFUSED") {
-        console.error("無法連線至 Copilot 伺服器");
+        console.error("Cannot connect to Copilot server");
     } else {
-        console.error("錯誤：", error.message);
+        console.error("Error:", error.message);
     }
 } finally {
     await client.stop();
 }
 ```
 
-## 優雅關閉 (Graceful Shutdown)
+## 平順關閉
 
 ```typescript
 process.on("SIGINT", async () => {
-    console.log("正在關閉...");
+    console.log("Shutting down...");
     await client.stop();
     process.exit(0);
 });
 ```
 
-## 常見模式 (Common Patterns)
+## 常見模式
 
 ### 多輪對話
 ```typescript
@@ -838,24 +829,24 @@ const session = await client.createSession({
     model: "gpt-4.1",
 });
 
-await session.sendAndWait({ prompt: "我的名字是 Alice" });
-await session.sendAndWait({ prompt: "我的名字是什麼？" });
-// 回應："您的名字是 Alice"
+await session.sendAndWait({ prompt: "My name is Alice" });
+await session.sendAndWait({ prompt: "What's my name?" });
+// 回應："Your name is Alice"
 ```
 
 ### 檔案附件
 ```typescript
 await session.send({
-    prompt: "分析此檔案",
+    prompt: "Analyze this file",
     attachments: [{
         type: "file",
         path: "./data.csv",
-        displayName: "銷售資料"
+        displayName: "Sales Data"
     }]
 });
 ```
 
-### 中止長時間的操作
+### 中止長時間執行的操作
 ```typescript
 const timeoutId = setTimeout(() => {
     session.abort();
@@ -868,7 +859,7 @@ session.on((event) => {
 });
 ```
 
-## 可用模型 (Available Models)
+## 可用模型
 
 在執行階段查詢可用模型：
 
@@ -877,38 +868,38 @@ const models = await client.getModels();
 // 傳回：["gpt-4.1", "gpt-4o", "claude-sonnet-4.5", ...]
 ```
 
-## 最佳實踐 (Best Practices)
+## 最佳實踐
 
-1. **務必清理**：使用 `try-finally` 或 `defer` 以確保呼叫 `client.stop()`
-2. **設定逾時**：針對長時間操作使用帶有逾時設定的 `sendAndWait`
-3. **處理事件**：訂閱錯誤事件以進行強固的錯誤處理
-4. **使用串流**：針對長回應啟用串流以提供更好的 UX
-5. **保存工作階段**：針對多輪對話使用自訂工作階段識別碼
-6. **定義明確的工具**：撰寫具有描述性的工具名稱和說明
+1. **一律進行清理**：使用語言原生的上下文管理員或處置機制，或明確中斷工作階段連線並停止用戶端
+2. **設定逾時**：針對長時間執行的操作，使用帶有逾時設定的 `sendAndWait`
+3. **處理事件**：訂閱錯誤事件以取得穩健的錯誤處理機制
+4. **使用串流**：針對長回應啟用串流以提供更佳的使用者體驗
+5. **保存工作階段**：在多輪對話中使用自訂工作階段 ID
+6. **定義清楚的工具**：撰寫具描述性的工具名稱與描述
 
-## 架構 (Architecture)
+## 架構
 
 ```
-您的應用程式
+你的應用程式
        |
-  SDK 用戶端
+   SDK 用戶端
        | JSON-RPC
-  Copilot CLI (伺服器模式)
+   Copilot CLI（伺服器模式）
        |
-  GitHub (模型、身分驗證)
+   GitHub（模型、身分驗證）
 ```
 
-SDK 會自動管理 CLI 處理程序的生命週期。所有通訊都透過 stdio 或 TCP 上的 JSON-RPC 進行。
+SDK 會自動管理 CLI 處理程序的生命週期。所有通訊皆透過 stdio 或 TCP 上的 JSON-RPC 進行。
 
-## 資源 (Resources)
+## 資源
 
-- **GitHub 存放庫**：https://github.com/github/copilot-sdk
+- **GitHub 儲存庫**：https://github.com/github/copilot-sdk
 - **入門教學**：https://github.com/github/copilot-sdk/blob/main/docs/tutorials/first-app.md
 - **GitHub MCP 伺服器**：https://github.com/github/github-mcp-server
 - **MCP 伺服器目錄**：https://github.com/modelcontextprotocol/servers
 - **Cookbook**：https://github.com/github/copilot-sdk/tree/main/cookbook
 - **範例**：https://github.com/github/copilot-sdk/tree/main/samples
 
-## 狀態 (Status)
+## 狀態
 
-此 SDK 目前處於 **技術預覽 (Technical Preview)** 階段，可能會有重大變更。尚不建議用於生產環境。
+本 SDK 目前處於**技術預覽 (Technical Preview)** 階段，可能會發生重大變更 (breaking changes)。目前不建議用於正式生產環境。

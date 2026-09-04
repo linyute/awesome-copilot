@@ -99,7 +99,7 @@ RUN_ID = next(r["name"] for r in runs if r["status"] == "Failed")
 
 > **關鍵**：`get_live_flow_run_error` 會告訴您 **哪個** 動作失敗了。
 > `get_live_flow_run_action_outputs` 則會告訴您 **原因**。您必須兩者都呼叫。
-> 絕不要僅止步於錯誤本身 — `ActionFailed`、`NotSpecified` 和 `InternalServerError` 
+> 絕不要僅止步於錯誤本身 — `ActionFailed`、`NotSpecified` 和 `InternalServerError`
 > 等錯誤代碼只是通用的包裝。真正的根本原因（錯誤的欄位、null 值、HTTP 500 本文、
 > 堆疊追蹤）只有在動作的輸入和輸出中才可見。
 
@@ -136,7 +136,7 @@ print(f"根本動作：{root['actionName']} → 代碼：{root.get('code')}")
 ## 第 4 步 — 檢查失敗動作的輸入與輸出
 
 > **這是最重要的步驟。** `get_live_flow_run_error` 僅提供通用的錯誤代碼。
-> 實際的錯誤詳細資訊 — HTTP 狀態碼、回應本文、堆疊追蹤、null 值 — 
+> 實際的錯誤詳細資訊 — HTTP 狀態碼、回應本文、堆疊追蹤、null 值 —
 > 都包含在動作的執行階段輸入和輸出中。**在識別出失敗的動作後，請務必立即檢查它。**
 
 ```python
@@ -373,12 +373,14 @@ print(new_runs[0]["status"])   # Succeeded = 完成
 | **在任何流程上測試修復** | `resubmit_live_flow_run` | 重播導致失敗的確切觸發承載資料 — 驗證修復的最佳方法 |
 | 定期執行 / 排程流程 | `resubmit_live_flow_run` | 除此之外，無法依需求觸發 |
 | SharePoint / 連接器觸發器 | `resubmit_live_flow_run` | 如果不建立實際的 SP 項目就無法觸發 |
-| 帶有 **自定義** 測試承載資料的 HTTP 觸發器 | `trigger_live_flow` | 當您需要傳送與原始執行不同的資料時 |
-| 全新的流程，從未執行過 | `trigger_live_flow` (僅限 HTTP) | 不存在先前的執行記錄可供重新提交 |
+| HTTP、Button 或 PowerApps 觸發器，使用**自訂**測試承載資料 | `trigger_live_flow` | 需要傳送不同於原始執行資料的內容 |
+| 全新流程，從未執行過 | `trigger_live_flow`（HTTP、Button、PowerApps） | 沒有先前的執行記錄可供重新提交 |
 
-### 使用自定義承載資料測試 HTTP 觸發的流程
+### 使用自訂承載資料測試 HTTP、Button 和 PowerApps 流程
 
-對於具有 `Request` (HTTP) 觸發器的流程，當您需要傳送與原始執行 **不同** 的承載資料時，請使用 `trigger_live_flow`：
+對於具有 `Request` 觸發器的流程（HTTP 要求、手動 Button 或 PowerApps），
+當您需要傳送與原始執行**不同**的承載資料時，請使用 `trigger_live_flow`。
+所有類型都將觸發器輸入作為 `body` 傳入：
 
 ```python
 # 首先檢查觸發器預期的內容 — 直接從流程定義中讀取
@@ -399,10 +401,25 @@ result = mcp("trigger_live_flow",
     flowName=FLOW_ID,
     body={"name": "測試使用者", "value": 42})
 print(f"狀態：{result['responseStatus']}, 本文：{result.get('responseBody')}")
+print(f"類型：{result['triggerKind']}，方式：{result['invocation']}，執行：{result.get('runName')}")
+if result.get("warning"):
+    print(result["warning"])   # 您遺漏的必要觸發器輸入
 ```
 
 > `trigger_live_flow` 會自動處理 AAD 通過驗證的觸發器。
-> 僅適用於 `Request` (HTTP) 觸發器類型的流程。
+> 僅適用於 `Request` 觸發器：HTTP 要求、Button 和 PowerApps。
+> 排程和連接器觸發器無法透過此方式執行。
+>
+> Power Automate 不會強制要求觸發器的 `required` 輸入。如果遺漏其中一項，
+> 執行仍會啟動，該輸入會是 null，且結果會包含列出遺漏索引鍵的 `warning`。
+> 如果這點很重要，請取消執行，並使用完整的本文再次呼叫。
+>
+> `runName` 僅會在 Button 和 PowerApps 執行中傳回。對於 HTTP 觸發器，
+> 請使用 `get_live_flow_runs` 尋找執行記錄。
+>
+> 使用瀏覽器擴充功能金鑰時，Button 和 PowerApps 觸發器只能以空本文執行。
+> 工具會說明這一點，並列出解決方法：重新提交過去的執行記錄、在流程內使用
+> `coalesce(triggerBody()?['x'], 'value')` 為輸入設定預設值，或使用標準 API 金鑰。
 
 ---
 
@@ -418,7 +435,7 @@ print(f"狀態：{result['responseStatus']}, 本文：{result.get('responseBody'
 | 動作傳回錯誤的資料 | `get_live_flow_run_action_outputs` | — | 實際的輸出本文 vs 預期值 |
 | 已套用修復但仍然失敗 | 重新提交後執行 `get_live_flow_runs` | — | 新執行的 `status` 欄位 |
 
-> **規則：絕不要僅根據錯誤代碼進行診斷。** `get_live_flow_run_error` 
+> **規則：絕不要僅根據錯誤代碼進行診斷。** `get_live_flow_run_error`
 > 會識別失敗的動作。`get_live_flow_run_action_outputs` 則會揭示
 > 實際原因。請務必兩者都呼叫。
 

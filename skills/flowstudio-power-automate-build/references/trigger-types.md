@@ -114,7 +114,11 @@
 }
 ```
 
-部署生產環境的技能觸發流程後，使用目標 `solutionId` 呼叫 `add_live_flow_to_solution`；Copilot Studio 代理程式工具發現程序預期流程必須具備方案感知能力。對於 MCP 驅動的測試，請使用具有相同動作和承載資料形狀的臨時 HTTP 孿生流程，在驗證動作後再恢復技能觸發器。
+部署正式環境的技能觸發流程後，請以目標 `solutionId` 呼叫
+`add_live_flow_to_solution`；Copilot Studio 代理程式的工具探索功能要求流程
+具備解決方案關聯。若要從 MCP 進行測試，請在 `body` 中提供輸入並呼叫
+`trigger_live_flow` — 技能觸發器會與按鈕和 Power Apps 觸發器相同，
+透過連接器執行階段執行。
 
 ---
 

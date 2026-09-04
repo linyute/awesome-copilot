@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 討論區
+    url: https://github.com/OWNER/REPO/discussions
+    about: 在此提出問題並分享想法
+  - name: 安全性
+    url: https://github.com/OWNER/REPO/security/policy
+    about: 請在此回報安全性弱點

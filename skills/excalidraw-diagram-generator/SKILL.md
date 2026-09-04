@@ -311,17 +311,17 @@ const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
 
    ```
    若要使用 [AWS/GCP/Azure/等] 架構圖示，請遵循以下步驟：
-   
+
    1. 造訪 https://libraries.excalidraw.com/
    2. 搜尋 "[AWS Architecture Icons/等]" 並下載 .excalidrawlib 檔案
    3. 建立目錄：skills/excalidraw-diagram-generator/libraries/[icon-set-name]/
    4. 將下載的檔案放入該目錄
    5. 執行分割指令碼：
       python skills/excalidraw-diagram-generator/scripts/split-excalidraw-library.py skills/excalidraw-diagram-generator/libraries/[icon-set-name]/
-   
+
    這會將函式庫分割為個別圖示檔案以實現高效率使用。
    設定完成後，我可以使用實際的 AWS/雲端圖示建立您的圖表。
-   
+
    或者，我現在可以使用簡單形狀 (矩形、橢圓) 建立圖表，之後您可以手動在 Excalidraw 中將其替換為圖示。
    ```
 
@@ -379,39 +379,39 @@ skills/excalidraw-diagram-generator/libraries/aws-architecture-icons/
 
 2. **使用 Python 指令碼新增圖示**：
    ```bash
-   python skills/excalidraw-diagram-generator/scripts/add-icon-to-diagram.py 
+   python skills/excalidraw-diagram-generator/scripts/add-icon-to-diagram.py
      <diagram-path> <icon-name> <x> <y> [--label "文字"] [--library-path 路徑]
    ```
    - 預設啟用經由 `.excalidraw.edit` 進行編輯以避免覆寫問題；傳遞 `--no-use-edit-suffix` 以停用。
-   
+
    **範例**：
    ```bash
    # 在位置 (400, 300) 新增帶有標籤的 EC2 圖示
    python scripts/add-icon-to-diagram.py diagram.excalidraw EC2 400 300 --label "Web Server"
-   
+
    # 在位置 (200, 150) 新增 VPC 圖示
    python scripts/add-icon-to-diagram.py diagram.excalidraw VPC 200 150
-   
+
    # 從不同的函式庫新增圖示
-   python scripts/add-icon-to-diagram.py diagram.excalidraw Compute-Engine 500 200 
+   python scripts/add-icon-to-diagram.py diagram.excalidraw Compute-Engine 500 200
      --library-path libraries/gcp-icons --label "API Server"
    ```
 
 3. **新增連接箭頭**：
    ```bash
-   python skills/excalidraw-diagram-generator/scripts/add-arrow.py 
+   python skills/excalidraw-diagram-generator/scripts/add-arrow.py
      <diagram-path> <from-x> <from-y> <to-x> <to-y> [--label "文字"] [--style solid|dashed|dotted] [--color 十六進位]
    ```
    - 預設啟用經由 `.excalidraw.edit` 進行編輯以避免覆寫問題；傳遞 `--no-use-edit-suffix` 以停用。
-   
+
    **範例**：
    ```bash
    # 從 (300, 250) 到 (500, 300) 的簡單箭頭
    python scripts/add-arrow.py diagram.excalidraw 300 250 500 300
-   
+
    # 帶有標籤的箭頭
    python scripts/add-arrow.py diagram.excalidraw 300 250 500 300 --label "HTTPS"
-   
+
    # 帶有自訂顏色的虛線箭頭
    python scripts/add-arrow.py diagram.excalidraw 400 350 600 400 --style dashed --color "#7950f2"
    ```
@@ -420,14 +420,14 @@ skills/excalidraw-diagram-generator/libraries/aws-architecture-icons/
    ```bash
    # 步驟 1：建立具有標題和結構的基礎圖表
    # (建立具有初始元素的 .excalidraw 檔案)
-   
+
    # 步驟 2：新增帶有標籤的圖示
    python scripts/add-icon-to-diagram.py my-diagram.excalidraw "Internet-gateway" 200 150 --label "Internet Gateway"
    python scripts/add-icon-to-diagram.py my-diagram.excalidraw VPC 250 250
    python scripts/add-icon-to-diagram.py my-diagram.excalidraw ELB 350 300 --label "Load Balancer"
    python scripts/add-icon-to-diagram.py my-diagram.excalidraw EC2 450 350 --label "EC2 Instance"
    python scripts/add-icon-to-diagram.py my-diagram.excalidraw RDS 550 400 --label "Database"
-   
+
    # 步驟 3：新增連接箭頭
    python scripts/add-arrow.py my-diagram.excalidraw 250 200 300 250  # Internet → VPC
    python scripts/add-arrow.py my-diagram.excalidraw 300 300 400 300  # VPC → ELB
@@ -539,7 +539,7 @@ python scripts/add-arrow.py my-aws-diagram.excalidraw 565 330 650 350 --label "S
    - `icons/Internet-gateway.json` (298 行)
    - `icons/VPC.json` (550 行)
    - `icons/ELB.json` (363 行)
-   - `icons/EC2.json` (231 行) 
+   - `icons/EC2.json` (231 行)
    - `icons/RDS.json` (類似大小)
    **總計：約 2000+ 行 JSON 需要處理**
 4. 從每個 JSON 提取元素
@@ -579,12 +579,19 @@ python scripts/add-arrow.py my-aws-diagram.excalidraw 565 330 650 350 --label "S
 請參閱隨附的參考資料：
 - `references/excalidraw-schema.md` - 完整的 Excalidraw JSON 結構描述
 - `references/element-types.md` - 詳細的元素類型規格
-- `templates/flowchart-template.json` - 基本流程圖入門範本
-- `templates/relationship-template.json` - 關聯圖入門範本
-- `templates/mindmap-template.json` - 心智圖入門範本
-- `scripts/split-excalidraw-library.py` - 用於分割 `.excalidrawlib` 檔案的工具
-- `scripts/README.md` - 函式庫工具文件
-- `scripts/.gitignore` - 防止本機 Python 產出物被提交
+- `templates/flowchart-template.excalidraw` - 基本流程圖範本
+- `templates/relationship-template.excalidraw` - 關係圖範本
+- `templates/mindmap-template.excalidraw` - 心智圖範本
+- `templates/business-flow-swimlane-template.excalidraw` - 業務流程泳道圖範本
+- `templates/class-diagram-template.excalidraw` - 類別圖範本
+- `templates/data-flow-diagram-template.excalidraw` - 資料流程圖範本
+- `templates/er-diagram-template.excalidraw` - 實體關係圖範本
+- `templates/sequence-diagram-template.excalidraw` - 循序圖範本
+- `scripts/add-icon-to-diagram.py` - 將 Excalidraw 函式庫中的圖示新增至圖表
+- `scripts/add-arrow.py` - 在圖表中的元素之間新增箭頭（連線）
+- `scripts/split-excalidraw-library.py` - 分割 `.excalidrawlib` 檔案的工具
+- `scripts/README.md` - 函式庫工具說明文件
+- `scripts/.gitignore` - 防止本機 Python 產物遭提交
 
 ## 限制
 

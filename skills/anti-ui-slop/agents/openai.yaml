@@ -1,0 +1,4 @@
+interface:
+  display_name: "Uizze Anti UI Slop"
+  short_description: "具備沉靜視覺實證的設計指引"
+  default_prompt: "使用 Uizze 進行設計判斷。僅針對一個具體且尚未解決的需求，取得相關證據或素材。"

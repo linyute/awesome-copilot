@@ -1,0 +1,22 @@
+{
+  "bug": {"color": "d73a4a", "description": "非預期的運作狀況"},
+  "enhancement": {"color": "a2eeef", "description": "新功能或需求建議"},
+  "documentation": {"color": "0075ca", "description": "文件的改進或補充"},
+  "question": {"color": "d876e3", "description": "需要進一步的資訊"},
+  "help wanted": {"color": "008672", "description": "需要額外關注；歡迎貢獻"},
+  "good first issue": {"color": "7057ff", "description": "適合新手入門"},
+  "P0": {"color": "b60205", "description": "緊急：資料遺失、安全防護繞過、當機迴圈或核心無法使用"},
+  "P1": {"color": "d93f0b", "description": "高：阻礙已規劃的工作，需盡快處理"},
+  "P2": {"color": "fbca04", "description": "中：一般優先順序"},
+  "P3": {"color": "1a7f37", "description": "低：有則更好（nice to have）"},
+  "status: blocked": {"color": "5319e7", "description": "受其他項目阻礙"},
+  "status: in progress": {"color": "1d76db", "description": "工作進行中"},
+  "status: ready to merge": {"color": "0e8a16", "description": "已核准且已準備好合併 — 綠燈代表可執行"},
+  "status: merged": {"color": "2da44e", "description": "已合併"},
+  "status: wontfix": {"color": "d4d4d4", "description": "不予處理"},
+  "impact: security": {"color": "b60205", "description": "安全性邊界、認證資訊、授權、沙箱或機敏資料風險"},
+  "impact: data-loss": {"color": "d93f0b", "description": "可能遺失、損毀或無意間捨棄使用者/工作階段/設定資料"},
+  "impact: availability": {"color": "fbca04", "description": "當機、卡住、重新啟動迴圈或處理程序層級的中斷"},
+  "dependencies": {"color": "0366d6", "description": "更新相依套件的 Pull Request"},
+  "security": {"color": "ff0000", "description": "安全性相關問題"}
+}

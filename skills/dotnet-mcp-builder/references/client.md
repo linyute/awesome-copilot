@@ -7,9 +7,9 @@
 ## 套件
 
 ```bash
-dotnet add package ModelContextProtocol.Core   # 最小化：僅包含用戶端 + 傳輸
+dotnet add package ModelContextProtocol.Core --version 2.2.0   # 最小化：僅包含用戶端 + 傳輸
 # 或
-dotnet add package ModelContextProtocol         # 新增 DI/代管協助程式
+dotnet add package ModelContextProtocol --version 2.2.0         # 新增 DI/代管協助程式
 ```
 
 ## 透過 STDIO 連線（啟動伺服器處理序）

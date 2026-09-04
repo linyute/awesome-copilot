@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 import { ROOT_FOLDER } from "./constants.mjs";
 import { readExternalPlugins } from "./external-plugin-validation.mjs";
 import { validateLicenseField } from "./lib/license.mjs";
-import { AGENT_PLUGIN_SCHEMA_URL, validateAgentPluginManifest } from "./agent-plugin-schema.mjs";
+import { AGENT_PLUGIN_SCHEMA_URL, validateAgentPluginManifest, validateAgentPluginMcpConfig } from "./agent-plugin-schema.mjs";
 
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
 const EXTENSIONS_DIR = path.join(ROOT_FOLDER, "extensions");
@@ -155,7 +155,7 @@ function validateSpecPaths(plugin) {
         errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}[${i}] must end with "${spec.suffix}"`);
         continue;
       }
-      // 驗證來源檔案存在於存放庫根目錄
+      // 驗證來源檔案是否存在於存放庫根目錄
       const basename = p.slice(spec.prefix.length, p.length - spec.suffix.length);
       if (field === "skills") {
         const skillDir = path.join(ROOT_FOLDER, spec.repoDir, basename);
@@ -212,9 +212,77 @@ function validateExtensionReferences(plugin, pluginDir) {
   return errors;
 }
 
-function validateCompositionNamespace(plugin) {
+export function validateMcpConfig(pluginDir) {
   const errors = [];
-  const compositionFields = ["agents", "hooks", "mcpServers", "skills"];
+  const legacyPath = path.join(pluginDir, ".mcp.json");
+  if (fs.existsSync(legacyPath)) {
+    errors.push("MCP configuration must live at mcp.json in the plugin root, not .mcp.json");
+  }
+
+  const mcpJsonPath = path.join(pluginDir, "mcp.json");
+  let mcpStat;
+  try {
+    mcpStat = fs.lstatSync(mcpJsonPath);
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      try {
+        fs.readlinkSync(mcpJsonPath);
+        errors.push("mcp.json is a dangling symbolic link");
+      } catch (readlinkError) {
+        if (readlinkError.code !== "EINVAL" && readlinkError.code !== "ENOENT") {
+          errors.push(`mcp.json could not be inspected: ${readlinkError.message}`);
+        }
+      }
+      return errors;
+    }
+    errors.push(`mcp.json could not be inspected: ${error.message}`);
+    return errors;
+  }
+
+  let pluginRoot;
+  let resolvedMcpJsonPath;
+  try {
+    pluginRoot = fs.realpathSync.native(pluginDir);
+    resolvedMcpJsonPath = fs.realpathSync.native(mcpJsonPath);
+  } catch (error) {
+    if (mcpStat.isSymbolicLink() && error.code === "ENOENT") {
+      errors.push("mcp.json is a dangling symbolic link");
+    } else {
+      errors.push(`mcp.json could not be resolved: ${error.message}`);
+    }
+    return errors;
+  }
+
+  const relativeMcpPath = path.relative(pluginRoot, resolvedMcpJsonPath);
+  if (relativeMcpPath === ".." ||
+      relativeMcpPath.startsWith(`..${path.sep}`) ||
+      path.isAbsolute(relativeMcpPath)) {
+    errors.push("mcp.json must resolve to a file inside the plugin root");
+    return errors;
+  }
+
+  if (!fs.statSync(resolvedMcpJsonPath).isFile()) {
+    errors.push("mcp.json must be a regular file");
+    return errors;
+  }
+
+  const parsed = parseJsonFile(resolvedMcpJsonPath);
+  if (parsed.parseError) {
+    errors.push(`failed to parse mcp.json: ${parsed.parseError}`);
+    return errors;
+  }
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    errors.push("mcp.json must contain a top-level object");
+    return errors;
+  }
+  errors.push(...validateAgentPluginMcpConfig(parsed, pluginDir).map((message) => `mcp.json ${message}`));
+
+  return errors;
+}
+
+export function validateCompositionNamespace(plugin) {
+  const errors = [];
+  const compositionFields = ["agents", "hooks", "skills"];
   const extensions = plugin.extensions;
   const composition = extensions?.[AWESOME_COPILOT_NAMESPACE];
 
@@ -228,6 +296,17 @@ function validateCompositionNamespace(plugin) {
       (typeof composition !== "object" || composition === null || Array.isArray(composition))) {
     errors.push(`extensions["${AWESOME_COPILOT_NAMESPACE}"] must be an object`);
     return errors;
+  }
+
+  if (extensions && typeof extensions === "object" && !Array.isArray(extensions)) {
+    for (const [namespace, value] of Object.entries(extensions)) {
+      if (value && typeof value === "object" && !Array.isArray(value) && value.mcpServers !== undefined) {
+        errors.push(`extensions["${namespace}"].mcpServers is not supported; declare MCP servers in mcp.json at the plugin root`);
+      }
+    }
+    if (extensions.mcpServers !== undefined) {
+      errors.push("extensions.mcpServers is not supported; declare MCP servers in mcp.json at the plugin root");
+    }
   }
 
   for (const field of compositionFields) {
@@ -259,7 +338,7 @@ function validatePlugin(folderName) {
     errors.push("missing required file: README.md");
   }
 
-  // 剖析 plugin.json
+  // 解析 plugin.json
   let plugin;
   try {
     const raw = fs.readFileSync(pluginJsonPath, "utf-8");
@@ -270,11 +349,11 @@ function validatePlugin(folderName) {
     return { errors, plugin: parsedPlugin };
   }
 
-  // 規則 3：$schema 為必要項目
+  // 規則 3：需要 $schema
   const schemaError = validateSchema(plugin);
   if (schemaError) errors.push(schemaError);
 
-  // 規則 4 & 5：name, description, version
+  // 規則 4 與 5：name, description, version
   const nameErrors = validateName(plugin.name, folderName);
   errors.push(...nameErrors);
 
@@ -284,23 +363,27 @@ function validatePlugin(folderName) {
   const versionError = validateVersion(plugin.version);
   if (versionError) errors.push(versionError);
 
-  // 規則 6：keywords（或向後相容的 tags）
+  // 規則 6：keywords (或用於向後相容的 tags)
   const keywordsError = validateKeywords(plugin.keywords ?? plugin.tags);
   if (keywordsError) errors.push(keywordsError);
 
-  // 規則 5b：license（與外部外掛程式共用）。非 SPDX 為警告而非錯誤。
+  // 規則 5b：license (與外部外掛程式共用)。非 SPDX 屬於警告而非錯誤。
   const warnings = [];
-  for (const field of ["agents", "hooks", "mcpServers", "skills"]) {
+  if (plugin.mcpServers !== undefined) {
+    errors.push("mcpServers must be declared in mcp.json at the plugin root, not in plugin.json");
+  }
+  for (const field of ["agents", "hooks", "skills"]) {
     if (plugin[field] !== undefined) {
       errors.push(`${field} must be moved to extensions["${AWESOME_COPILOT_NAMESPACE}"].${field}`);
     }
   }
   errors.push(...validateCompositionNamespace(plugin));
+  errors.push(...validateMcpConfig(pluginDir));
   const licenseResult = validateLicenseField(plugin.license, { required: false });
   errors.push(...licenseResult.errors);
   warnings.push(...licenseResult.warnings);
 
-  // 規則 6：agents, hooks, 和 skills 路徑
+  // 規則 6：agents、hooks 與 skills 路徑
   const specErrors = validateSpecPaths(plugin);
   errors.push(...specErrors);
 
@@ -333,7 +416,7 @@ function validateExtensionScreenshotPath(extensionDir, pathValue, fieldName, err
   }
 }
 
-// 主驗證函式
+// 主要驗證函式
 export function isReusableExtensionRegistered(extensionName, pluginDirectoryNames, referencedExtensionNames) {
   return pluginDirectoryNames.has(extensionName) || referencedExtensionNames.has(extensionName);
 }

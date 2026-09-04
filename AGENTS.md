@@ -121,6 +121,7 @@ npm run skill:create -- --name <skill-name>
 - plugin.json 必須具有 `description` 欄位 (描述外掛程式的用途)
 - plugin.json 必須具有 `version` 欄位 (語意化版本，例如 "1.0.0")
 - 外掛程式內容在 plugin.json 中以宣告方式定義於 `extensions.com.github.awesome-copilot` 下，使用僅限原始碼的組合欄位 (`agents`、`hooks`、`skills` 與 `extensions`)。原始碼檔案位於最上層目錄，並由 CI 具體化為外掛程式。此命名空間會從提供的資訊清單中移除 — 技能使用標準的 `skills/` 目錄，而 Copilot 專用內容使用 `com.github.copilot/`。
+- MCP 伺服器**不是**組合欄位。根據 Agent Plugins 規範，MCP 伺服器應在外掛程式根目錄的 `mcp.json` 檔案中宣告，並與 `plugin.json` 一同提交及原樣發佈。請勿將 `mcpServers` 新增至 `plugin.json`，也不要使用舊版的 `.mcp.json` 檔案名稱。
 - `marketplace.json` 檔案在建置期間由所有外掛程式自動產生
 - 外掛程式可透過 GitHub Copilot CLI 探索與安裝
 
@@ -331,6 +332,7 @@ bash eng/fix-line-endings.sh
 - [ ] 目錄名稱為小寫帶連字號
 - [ ] 若存在 `keywords`，它是一個由小寫帶連字號字串組成的陣列
 - [ ] 若 `extensions.com.github.awesome-copilot` 下存在組合陣列，每個項目都是有效的相對路徑
+- [ ] 若外掛程式包含 MCP 伺服器，則必須在外掛程式根目錄的 `mcp.json` 中宣告 (包含 `mcp.schema.json` 的 `$schema`)，而非在 `plugin.json` 或 `.mcp.json` 中宣告
 - [ ] 外掛程式未參照不存在的檔案
 - [ ] 執行 `npm run plugin:validate` 與 `npm run build` 驗證外掛程式通過所有檢查
 

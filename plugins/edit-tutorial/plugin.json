@@ -1,0 +1,30 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "edit-tutorial",
+  "description": "將 Copilot 在工作階段中所做的程式碼編輯轉化為互動式課程：透過變更前後檢視與測驗，逐步引導瀏覽每項變更，接著進行實作練習以變化這些編輯內容，讓您親自完成變更。",
+  "version": "1.0.0",
+  "author": {
+    "name": "John Haugabook",
+    "url": "https://github.com/jhauga"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "agent-edits",
+    "code-walkthrough",
+    "guided-exercise",
+    "interactive-tutorial",
+    "learning",
+    "onboarding"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/edit-tutorial"
+      ]
+    }
+  }
+}
