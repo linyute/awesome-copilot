@@ -26,14 +26,14 @@ description: >-
 
 ## 監控如何運作
 
-Flow Studio 每天會為每個訂閱者掃描 Power Automate API 並快取結果。掃描分為兩個層級：
+FlowStudio 每天會為每個訂閱者掃描 Power Automate API 並快取結果。掃描分為兩個層級：
 
 - **所有流程**：掃描其 Metadata，包含定義、連線、擁有者、觸發器類型和彙總的執行統計資料 (`runPeriodTotal`、`runPeriodFailRate` 等)。環境、應用程式、連線和製作者也會被掃描。
 - **受監控流程** (`monitor: true`)：額外獲取每次執行的詳細資訊：包含狀態、持續時間、失敗動作名稱和補救提示的個別執行記錄。這就是填充 `get_store_flow_runs` 和 `get_store_flow_summary` 資料來源。
 
 **資料新鮮度：** 檢查 `get_store_flow` 上的 `scanned` 欄位，以查看流程最後一次掃描的時間。如果資料已過期，掃描管線可能未在執行中。
 
-**啟用監控：** 透過 `update_store_flow` 或 Flow Studio for Teams 應用程式將 `monitor` 設定為 `true`
+**啟用監控：** 透過 `update_store_flow` 或 FlowStudio for Teams 應用程式將 `monitor` 設定為 `true`
 ([如何選取流程](https://learn.flowstudio.app/teams-monitoring))。
 
 **指定關鍵流程：** 對於業務關鍵流程，請使用 `update_store_flow` 並將其 `critical` 屬性設定為 `true`。這將啟用治理技能的通知規則管理功能，以便在關鍵流程上自動設定失敗警示。

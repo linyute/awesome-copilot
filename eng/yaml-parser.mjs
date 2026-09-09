@@ -168,8 +168,14 @@ function parseSkillMetadata(skillPath) {
         entries.forEach((entry) => {
           const filePath = path.join(dirPath, entry.name);
           if (entry.isDirectory()) {
+            if (entry.name === "bin" || entry.name === "obj") {
+              return; // Skip bin and obj directories as they are .NET project output folders and not part of the skill assets
+            }
             arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
-          } else if (!entry.isSymbolicLink() || !skipsAsBundledAsset(filePath)) {
+          } else if (
+            !entry.isSymbolicLink() ||
+            !skipsAsBundledAsset(filePath)
+          ) {
             const relativePath = path.relative(skillPath, filePath);
             if (relativePath !== "SKILL.md") {
               // 將路徑分隔符正規化為正斜線以確保跨平台一致性
@@ -245,7 +251,10 @@ function parseHookMetadata(hookPath) {
           const filePath = path.join(dirPath, entry.name);
           if (entry.isDirectory()) {
             arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
-          } else if (!entry.isSymbolicLink() || !skipsAsBundledAsset(filePath)) {
+          } else if (
+            !entry.isSymbolicLink() ||
+            !skipsAsBundledAsset(filePath)
+          ) {
             const relativePath = path.relative(hookPath, filePath);
             if (relativePath !== "README.md") {
               // 將路徑分隔符正規化為正斜線以確保跨平台一致性
@@ -337,8 +346,8 @@ export {
   extractMcpServerConfigs,
   extractMcpServers,
   parseFrontmatter,
-  parseSkillMetadata,
   parseHookMetadata,
+  parseSkillMetadata,
   parseWorkflowMetadata,
   parseYamlFile,
   safeFileOperation,

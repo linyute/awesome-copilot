@@ -29,7 +29,7 @@
   {
     "name": "ai-ready",
     "description": "分析任何儲存庫並產生 AI 整備組態 — AGENTS.md、copilot-instructions.md、CI 工作流程、議題範本等。探勘您的 PR 檢閱模式並建立為您的技術堆疊量身打造的檔案。",
-    "version": "1.1.0",
+    "version": "1.3.0",
     "author": {
       "name": "John Papa",
       "url": "https://github.com/johnpapa"
@@ -50,7 +50,7 @@
       "source": "github",
       "repo": "johnpapa/ai-ready",
       "path": ".github/plugin",
-      "ref": "v1.1.0"
+      "ref": "v1.3.0"
     }
   },
   {
@@ -102,6 +102,35 @@
       "repo": "apify/apify-github-copilot-plugin",
       "path": "apify",
       "sha": "84136d82da104af9792040e91392daff098e6ff9"
+    }
+  },
+  {
+    "name": "atlassian-twg-cli",
+    "description": "安裝並設定 Atlassian Teamwork Graph CLI（`twg`），以便搭配 GitHub Copilot 使用。設定完成後，CLI 可存取 Jira、Confluence、Bitbucket 及已連線工具中經授權的工作情境。",
+    "version": "1.0.10",
+    "author": {
+      "name": "Atlassian",
+      "url": "https://www.atlassian.com"
+    },
+    "repository": "https://github.com/atlassian-labs/twg-plugins",
+    "homepage": "https://developer.atlassian.com/cloud/twg-cli/",
+    "license": "Apache-2.0",
+    "keywords": [
+      "atlassian",
+      "teamwork-graph",
+      "twg",
+      "jira",
+      "confluence",
+      "bitbucket",
+      "jsm",
+      "rovo",
+      "work-context",
+      "project-management"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "atlassian-labs/twg-plugins",
+      "sha": "49f3a6f9c3fbcd4cd9edb5fd3282bb878322e447"
     }
   },
   {
@@ -687,7 +716,7 @@
   {
     "name": "keep-the-why",
     "description": "保留或復原程式碼庫背後的決策理由 — 架構決策、否決的替代方案、因應措施、事件學習、維運限制，以及程式碼本身無法解釋的歷史語境。",
-    "version": "0.10.1",
+    "version": "0.13.3",
     "author": {
       "name": "Oliver Zehentleitner",
       "url": "https://github.com/oliver-zehentleitner"
@@ -706,7 +735,7 @@
     "source": {
       "source": "github",
       "repo": "oliver-zehentleitner/keep-the-why",
-      "ref": "v0.10.1"
+      "ref": "v0.13.3"
     }
   },
   {
@@ -764,7 +793,7 @@
   {
     "name": "microsoft-foundry",
     "description": "用於向 Microsoft Foundry 設計、設定、測試與部署 Agent 的技能與互動式 Copilot 畫布。",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -785,7 +814,7 @@
       "source": "github",
       "repo": "microsoft/foundry-dev-tools",
       "path": "microsoft-foundry",
-      "sha": "553365e9b0193a740daa293e6716415939f804e7"
+      "sha": "c6e140164b4c2d3d6c6baa5b63c65120fd994278"
     }
   },
   {
@@ -1022,6 +1051,26 @@
     }
   },
   {
+    "name": "remotion",
+    "description": "以代理方式製作影片。",
+    "version": "4.0.519",
+    "author": {
+      "name": "Jonny Burger"
+    },
+    "repository": "https://github.com/remotion-dev/agent-plugin",
+    "homepage": "https://remotion.dev/plugins",
+    "license": "Remotion License",
+    "keywords": [
+      "video",
+      "motion-graphics"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "remotion-dev/agent-plugin",
+      "sha": "ef892905120340970357997f20bcb8ce9bb341da"
+    }
+  },
+  {
     "name": "skills-for-copilot-studio",
     "description": "適用於 AI 撰寫程式碼 Agent 的 Microsoft Copilot Studio 外掛程式",
     "version": "1.0.3",
@@ -1229,7 +1278,7 @@
   {
     "name": "upgrade-agent",
     "description": "採用 AI 技術的升級小幫手，用於升級與移轉應用程式。協助現代化舊版程式碼並將 .NET 應用程式升級至目前的架構。",
-    "version": "1.1.441",
+    "version": "1.1.485",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -1248,8 +1297,8 @@
       "source": "github",
       "repo": "microsoft/upgrade-agent-plugins",
       "path": "plugins/upgrade-agent",
-      "ref": "v1.1.441",
-      "sha": "f8abab778cfb5b57a3c745d540631b7aab15d5b3"
+      "ref": "v1.1.485",
+      "sha": "de2dd654a288726652de81998fbaff7a849891dc"
     }
   },
   {

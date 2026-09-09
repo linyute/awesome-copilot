@@ -202,7 +202,7 @@ npm run skill:create -- --name <skill-name>
 3. 在 v1 中，僅接受託管於 GitHub 上的外掛程式進行公開提交，使用公開儲存機制加上不可變的 `ref`、`sha` 或兩者
 4. `eng/external-plugin-validation.mjs` 中的共用驗證器是外部外掛程式資料規則的權威事實來源；請重複使用它，而非在指令碼或工作流程中重複檢查
 5. 提交 Issue 依序經過 `external-plugin` + `awaiting-review`，然後根據自動化品質關卡轉為 `ready-for-review` 或 `requires-submitter-fixes`
-6. 編輯 Issue 後，Issue 作者或維護者可留言 `/rerun-intake` 以重新執行自動化攝取與品質關卡，無需開啟新的提交 Issue
+6. 提交 Issue 開啟期間，Issue 作者或維護者可以留言 `/rerun-intake`，重新執行自動接收流程與品質關卡。遭維護者拒絕的 Issue 為終止狀態；處理拒絕回饋的貢獻者必須開啟新的提交 Issue
 7. 維護者可以使用 `/mark-ready-for-review [optional reason]` 明確覆寫品質關卡阻礙，將 Issue 移至 `ready-for-review`
 8. 一旦 Issue 處於 `ready-for-review` 狀態，維護者可透過 `/approve` 或 `/reject <reason>` 的 Issue 留言做出決定；核准的 Issue 會被關閉並作為六個月重新審查的基準錨點
 9. 核准自動化會建立或更新針對 `main` 的 PR、更新 `plugins/external.json` 並重新產生 marketplace 輸出

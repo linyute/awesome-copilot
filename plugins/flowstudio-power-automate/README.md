@@ -1,6 +1,6 @@
 # FlowStudio Power Automate 外掛模組
 
-賦予您的 AI 代理人與您在 Power Automate 入口網站中相同的能見度。Graph API 僅傳回最上層的執行狀態 — 代理人無法看到動作輸入、迴圈反覆運算、巢狀失敗或流程的擁有者。Flow Studio MCP 公開了這一切。
+賦予您的 AI 代理人與您在 Power Automate 入口網站中相同的能見度。Graph API 僅傳回最上層的執行狀態 — 代理人無法看到動作輸入、迴圈反覆運算、巢狀失敗或流程的擁有者。FlowStudio MCP 公開了這一切。
 
 此外掛模組包含涵蓋完整生命週期的五個技能：連線、除錯、建構、監視與管理 Power Automate 雲端流程。
 
@@ -16,7 +16,7 @@
 | 流程健全狀況與失敗率 | 無 |
 | 誰建立了流程、使用哪些連接器 | 無 |
 
-Flow Studio MCP 填補了這些差距。
+FlowStudio MCP 填補了這些差距。
 
 ## 安裝
 

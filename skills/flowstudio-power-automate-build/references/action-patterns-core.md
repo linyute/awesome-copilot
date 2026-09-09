@@ -1,16 +1,16 @@
 # FlowStudio MCP — 動作模式：核心
 
-Power Automate 流程定義的變數、控制流程和運算式模式。
+適用於 Power Automate 流程定義的變數、控制流程與運算式模式。
 
-> 所有範例皆假設已適當設定 `"runAfter"`。
-> 將 `<connectionName>` 替換為您在 `connectionReferences` 對應表中使用 的 **鍵**
-> (例如 `shared_teams`, `shared_office365`) — 而不是連線的 GUID。
+> 所有範例皆假定已適當設定 `"runAfter"`。
+> 將 `<connectionName>` 替換為您在 `connectionReferences` 對應中所使用的**金鑰**
+> （例如 `shared_teams`、`shared_office365`）— 而不是連線 GUID。
 
 ---
 
 ## 資料與變數
 
-### 撰寫 (Compose) (儲存值)
+### Compose（儲存值）
 
 ```json
 "Compose_My_Value": {
@@ -24,7 +24,7 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 
 ---
 
-### 初始化變數 (Initialize Variable)
+### Initialize Variable
 
 ```json
 "Init_Counter": {
@@ -40,11 +40,11 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-類型：`"Integer"`, `"Float"`, `"Boolean"`, `"String"`, `"Array"`, `"Object"`
+類型：`"Integer"`、`"Float"`、`"Boolean"`、`"String"`、`"Array"`、`"Object"`
 
 ---
 
-### 設定變數 (Set Variable)
+### Set Variable
 
 ```json
 "Set_Counter": {
@@ -59,7 +59,7 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 
 ---
 
-### 附加到陣列變數 (Append to Array Variable)
+### Append to Array Variable
 
 ```json
 "Collect_Item": {
@@ -74,7 +74,7 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 
 ---
 
-### 累加變數 (Increment Variable)
+### Increment Variable
 
 ```json
 "Increment_Counter": {
@@ -87,13 +87,16 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-> 對於迴圈內部的計數器，請使用 `IncrementVariable`（而不是配合 `add()` 使用 `SetVariable`） — 它是不可分割的 (atomic)，可避免在同一次反覆運算中的其他地方使用變數時發生運算式錯誤。`value` 可以是任何整數或運算式，例如 `@mul(item()?['Interval'], 60)`，將 Unix 時間戳記游標前進 N 分鐘。
+> 在迴圈內的計數器請使用 `IncrementVariable`（而非搭配 `add()` 的 `SetVariable`）—
+> 它是不可部分完成的（atomic），並可避免在同一次反覆運算中的其他位置使用該變數時發生運算式錯誤。
+> `value` 可以是任何整數或運算式，例如 `@mul(item()?['Interval'], 60)`
+> 以將 Unix 時間戳記游標推進 N 分鐘。
 
 ---
 
 ## 控制流程
 
-### 條件 (Condition) (If/Else)
+### Condition（If/Else）
 
 ```json
 "Check_Status": {
@@ -121,12 +124,12 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-比較運算子：`equals`, `not`, `greater`, `greaterOrEquals`, `less`, `lessOrEquals`, `contains`  
-邏輯運算子：`and: [...]`, `or: [...]`
+比較運算子：`equals`、`not`、`greater`、`greaterOrEquals`、`less`、`lessOrEquals`、`contains`  
+邏輯：`and: [...]`、`or: [...]`
 
 ---
 
-### 切換 (Switch)
+### Switch
 
 ```json
 "Route_By_Type": {
@@ -151,9 +154,10 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 
 ---
 
-### 範圍 (Scope) (分組 / Try-Catch)
+### Scope（群組 / Try-Catch）
 
-將相關動作包裝在一個範圍內，為它們提供一個共享名稱，在設計器中將其摺疊，最重要的是 — 將它們的錯誤當作一個整體來處理。
+在 Scope 中包裝相關動作，為它們賦予共用名稱、在設計工具中將其收合，
+且—最重要的是—將它們的錯誤作為一個整體單元來處理。
 
 ```json
 "Scope_Get_Customer": {
@@ -182,11 +186,13 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-> 參考範圍結果：`@result('Scope_Get_Customer')` 傳回一個動作結果陣列。在後續動作上使用 `runAfter: {"MyScope": ["Failed", "TimedOut"]}` 來建立 try/catch 語意，而無需使用「終止」動作。
+> 參考 scope 結果：`@result('Scope_Get_Customer')` 會傳回動作結果的陣列。
+> 在後續動作上使用 `runAfter: {"MyScope": ["Failed", "TimedOut"]}`
+> 即可建立 try/catch 語意，而不需要 Terminate。
 
 ---
 
-### Foreach (循序)
+### Foreach（循序）
 
 ```json
 "Process_Each_Item": {
@@ -204,11 +210,11 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-> 除非是有意進行平行處理，否則請始終包含 `"operationOptions": "Sequential"`。
+> 除非刻意平行處理，否則請一律包含 `"operationOptions": "Sequential"`。
 
 ---
 
-### Foreach (限制並行程度的平行處理)
+### Foreach（具並行限制的平行）
 
 ```json
 "Process_Each_Item_Parallel": {
@@ -233,11 +239,15 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-> 設定 `repetitions` 以控制同時處理的項目數量。實用值：針對外部 API 呼叫設定為 `5–10`（遵守頻率限制），針對內部/快速操作設定為 `20–50`。完全省略 `runtimeConfiguration.concurrency` 則使用平台預設值（目前為 50）。請勿同時使用 `"operationOptions": "Sequential"` 和並行設定。
+> 設定 `repetitions` 以控制同時處理的項目數量。
+> 實用數值：外部 API 呼叫為 `5–10`（遵守速率限制），
+> 內部/快速作業為 `20–50`。
+> 若要使用平台預設值（目前為 50），請完全省略 `runtimeConfiguration.concurrency`。
+> 切勿同時使用 `"operationOptions": "Sequential"` 與 concurrency。
 
 ---
 
-### 等待 (Wait) (延遲)
+### Wait（延遲）
 
 ```json
 "Delay_10_Minutes": {
@@ -252,13 +262,15 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-有效的 `unit` 值：`"Second"`, `"Minute"`, `"Hour"`, `"Day"`
+有效的 `unit` 值：`"Second"`、`"Minute"`、`"Hour"`、`"Day"`
 
-> 使用延遲 + 重新擷取作為去重複護欄：等待任何競爭程序完成，然後在採取行動前重新讀取記錄。這可避免多個觸發器或手動編輯在同一個項目上發生競爭時出現重複處理。
+> 使用延遲 + 重新擷取作為去重複防護機制：等待任何競爭處理程序完成，
+> 然後在採取動作之前重新讀取該記錄。這可避免在多個觸發程序或手動編輯可能對
+> 同一項目產生競爭情況時發生重複處理。
 
 ---
 
-### 終止 (Terminate) (成功或失敗)
+### Terminate（成功或失敗）
 
 ```json
 "Terminate_Success": {
@@ -283,10 +295,11 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 
 ---
 
-### Do Until (直到條件成立前重複執行迴圈)
+### Do Until（迴圈直到符合條件）
 
-重複一組動作，直到結束條件變為 true。
-當事先不知道反覆運算次數時使用（例如對 API 進行分頁、查閱時間範圍、輪詢直到狀態變更）。
+重複執行一組動作區塊，直到結束條件為 true 為止。
+適用於事先未知反覆運算次數的情況（例如分頁 API、
+遍歷時間範圍、輪詢直到狀態變更）。
 
 ```json
 "Do_Until_Done": {
@@ -315,26 +328,37 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-> 始終明確設定 `limit.count` 和 `limit.timeout` — 平台預設值很低（60 次反覆運算，1 小時）。對於時間範圍查閱，請使用 `limit.count: 5000` 和 `limit.timeout: "PT5H"` (ISO 8601 持續時間)。
+> 請一律明確設定 `limit.count` 與 `limit.timeout` — 平台預設值較低
+> （60 次反覆運算，1 小時）。對於時間範圍遍歷程式，請使用 `limit.count: 5000` 與
+> `limit.timeout: "PT5H"`（ISO 8601 持續時間）。
 >
-> 結束條件是在 **每次** 反覆運算前進行評估的。在迴圈前初始化您的游標變數，以便條件可以在第一次執行時正確評估。
+> 結束條件會在每次反覆運算**之前**進行評估。在迴圈之前初始化您的游標變數，
+> 讓條件在第一次執行時就能正確評估。
 
 ---
 
-### 代理程式重試迴圈 (Agent Retry Loop)
+### Agent 重試迴圈
 
-當流程呼叫 AI 或 Copilot 樣式的代理程式，直到達到終止結果時，請保持迴圈狀態明確：
+當流程呼叫 AI 或 Copilot 樣式的 Agent 直到其達到終端
+結果時，請保持迴圈狀態明確：
 
-- 在 `Until` 之前初始化變數，例如 `agentStatus`、`attempt` 和 `finalPayload`。
-- 在迴圈內部呼叫代理程式、驗證回應、更新狀態，且僅在狀態為非終止時延遲/重試。
-- 將最終的發送動作（例如電子郵件、SharePoint 更新或 Teams 張貼）放在迴圈之後，以便重試不會產生重複的副作用。
-- 如果平台拒絕巢狀在 `Until` 內部的複雜 `Switch`，請讓迴圈主體保持簡單的驗證和狀態更新，然後在迴圈之後使用 `Switch` 進行路由。
+- 在 `Until` 之前初始化如 `agentStatus`、`attempt` 和 `finalPayload`
+  等變數。
+- 在迴圈內部呼叫 Agent、驗證回應、更新狀態，並僅在
+  狀態為非終端時進行延遲/重試。
+- 將最終發送動作（例如電子郵件、SharePoint 更新或 Teams 貼文）放在
+  迴圈之後，讓重試不會產生重複的副作用。
+- 如果平台拒絕巢狀在 `Until` 內的複雜 `Switch`，請讓
+  迴圈主體保持簡單的驗證與狀態更新，然後在迴圈之後使用 `Switch`
+  進行路由。
 
 ---
 
-### 搭配 RequestId 關聯的非同步輪詢
+### 具 RequestId 相互關聯的非同步輪詢
 
-當 API 非同步啟動長時間執行的作業（例如 Power BI 資料集重新整理、報告產生、批次匯出）時，觸發呼叫會傳回一個要求 ID。從 **回應標頭** 中擷取它，然後透過該確切 ID 篩選來輪詢狀態端點：
+當 API 以非同步方式啟動長時間執行的作業時（例如 Power BI 資料集重新整理、
+報表產生、批次匯出），觸發程序呼叫會傳回要求識別碼。請從
+**回應標頭**擷取該識別碼，然後輪詢依該精確識別碼篩選的狀態端點：
 
 ```json
 "Start_Job": {
@@ -390,15 +414,21 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 
 存取回應標頭：`@outputs('Start_Job')?['headers/X-Request-Id']`
 
-> **狀態變數初始化**：在迴圈前設定一個哨兵值 (`"Running"`, `"Unknown"`)。結束條件測試除了哨兵值以外的任何值。這樣一來，空的輪詢結果（作業尚未進入記錄中）將保持變數不變，且迴圈會繼續 — 不會意外因 null 而退出。
+> **狀態變數初始化**：在迴圈之前設定哨兵值（`"Running"`、`"Unknown"`）。
+> 結束條件會測試哨兵值以外的任何值。
+> 如此一來，空的輪詢結果（作業尚未出現在歷程記錄中）會讓變數保持不變，
+> 且迴圈會繼續執行 — 不會在 null 時意外結束。
 >
-> **擷取前先篩選**：在呼叫 `first()` 之前，務必先將歷史記錄 `Filter Array` 篩選為您的特定要求 ID。歷程記錄端點會傳回所有作業；如果不進行篩選，來自另一個並行作業的狀態可能會損壞您的輪詢。
+> **擷取前先篩選**：在呼叫 `first()` 之前，一律將歷程記錄 `Filter Array` 為您特定的
+> 要求識別碼。歷程端點會傳回所有作業；若不進行篩選，
+> 來自其他並行作業的狀態可能會損毀您的輪詢。
 
 ---
 
-### runAfter 後備方案 (失敗 → 替代動作)
+### runAfter 遞補（Failed → 替代動作）
 
-當主要動作失敗時，路由到後備動作 — 無需使用條件區塊。只需在後備動作上設定 `runAfter` 以接受來自主要動作的 `["Failed"]` 即可：
+當主要動作失敗時路由至遞補動作 — 不需要 Condition 區塊。
+只需在遞補動作上設定 `runAfter` 以接受來自主要動作的 `["Failed"]`：
 
 ```json
 "HTTP_Get_Hi_Res": {
@@ -413,13 +443,16 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-> 後續動作可以使用同時接受 `["Succeeded", "Skipped"]` 的 `runAfter` 來處理任一路徑 — 參見下文的 **收斂彙總閘道 (Fan-In Join Gate)**。
+> 後續動作可以使用同時接受 `["Succeeded", "Skipped"]` 的 `runAfter` 來
+> 處理任一路徑 — 請參閱下方的**扇入結合閘（Fan-In Join Gate）**。
 
 ---
 
-### 收斂彙總閘道 (Fan-In Join Gate) (合併兩個互斥的分支)
+### 扇入結合閘（合併兩個互斥分支）
 
-當兩個分支互斥時（每次執行只能有一個成功），請使用單個下游動作，該動作接受來自 **兩個** 分支的 `["Succeeded", "Skipped"]`。無論執行了哪個分支，閘道都會確切觸發一次：
+當兩個分支互斥時（每次執行只能有一個成功），請使用單一
+下游動作，接受來自**這兩個**分支的 `["Succeeded", "Skipped"]`。
+無論哪一個分支執行，該閘門皆恰好引發一次：
 
 ```json
 "Increment_Count": {
@@ -432,7 +465,10 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 }
 ```
 
-> 這可避免在每個分支中重複下游動作。關鍵洞察：被跳過的分支會報告 `Skipped` — 閘道接受該狀態並觸發一次。僅在兩個分支真正互斥（例如其中一個是另一個的 `runAfter: [...Failed]`）時，此方法才奏效。
+> 這可避免在每個分支中重複下游動作。關鍵概念：
+> 無論哪一個分支被略過都會回報 `Skipped` — 該閘門接受該狀態並
+> 引發一次。僅在兩個分支確實互斥時才能俐落運作
+> （例如其中一個是另一個的 `runAfter: [...Failed]`）。
 
 ---
 
@@ -441,55 +477,59 @@ Power Automate 流程定義的變數、控制流程和運算式模式。
 ### 常見運算式模式
 
 ```
-Null 安全欄位存取：       @item()?['FieldName']
-Null 保護：                @coalesce(item()?['Name'], 'Unknown')
-字串格式：                 @{variables('firstName')} @{variables('lastName')}
-今天的日期：               @utcNow()
-格式化日期：               @formatDateTime(utcNow(), 'dd/MM/yyyy')
-加天數：                   @addDays(utcNow(), 7)
-陣列長度：                 @length(variables('myArray'))
-篩選陣列：                 使用 "Filter array" 動作 (PA 中不存在行內篩選運算式)
-聯集 (新值勝出)：          @union(body('New_Data'), outputs('Old_Data'))
-排序：                     @sort(variables('myArray'), 'Date')
-Unix 時間戳記 → 日期：     @formatDateTime(addseconds('1970-1-1', triggerBody()?['created']), 'yyyy-MM-dd')
-日期 → Unix 毫秒：         @div(sub(ticks(startOfDay(item()?['Created'])), ticks(formatDateTime('1970-01-01Z','o'))), 10000)
-日期 → Unix 秒：           @div(sub(ticks(item()?['Start']), ticks('1970-01-01T00:00:00Z')), 10000000)
-Unix 秒 → 日期時間：       @addSeconds('1970-01-01T00:00:00Z', int(variables('Unix')))
-Coalesce 作為 no-else：    @coalesce(outputs('Optional_Step'), outputs('Default_Step'))
-流程經過的分鐘數：         @div(float(sub(ticks(utcNow()), ticks(outputs('Flow_Start')))), 600000000)
-HH:mm 時間字串：           @formatDateTime(outputs('Local_Datetime'), 'HH:mm')
-回應標頭：                 @outputs('HTTP_Action')?['headers/X-Request-Id']
-陣列最大值 (依欄位)：      @reverse(sort(body('Select_Items'), 'Date'))[0]
-整數天數跨度：             @int(split(dateDifference(outputs('Start'), outputs('End')), '.')[0])
-ISO 週數：                 @div(add(dayofyear(addDays(subtractFromTime(date, sub(dayofweek(date),1), 'Day'), 3)), 6), 7)
-將錯誤加入字串：           @if(equals(length(variables('Errors')),0), null, concat(join(variables('Errors'),', '),' not found.'))
-比較前標準化：             @replace(coalesce(outputs('Value'),''),'_',' ')
-強健的非空值檢查：         @greater(length(trim(coalesce(string(outputs('Val')), ''))), 0)
+Null-safe field access:    @item()?['FieldName']
+Null guard:                @coalesce(item()?['Name'], 'Unknown')
+String format:             @{variables('firstName')} @{variables('lastName')}
+Date today:                @utcNow()
+Formatted date:            @formatDateTime(utcNow(), 'dd/MM/yyyy')
+Add days:                  @addDays(utcNow(), 7)
+Array length:              @length(variables('myArray'))
+Filter array:              Use the "Filter array" action (no inline filter expression exists in PA)
+Union (new wins):          @union(body('New_Data'), outputs('Old_Data'))
+Sort:                      @sort(variables('myArray'), 'Date')
+Unix timestamp → date:     @formatDateTime(addseconds('1970-1-1', triggerBody()?['created']), 'yyyy-MM-dd')
+Date → Unix milliseconds:  @div(sub(ticks(startOfDay(item()?['Created'])), ticks(formatDateTime('1970-01-01Z','o'))), 10000)
+Date → Unix seconds:       @div(sub(ticks(item()?['Start']), ticks('1970-01-01T00:00:00Z')), 10000000)
+Unix seconds → datetime:   @addSeconds('1970-01-01T00:00:00Z', int(variables('Unix')))
+Coalesce as no-else:       @coalesce(outputs('Optional_Step'), outputs('Default_Step'))
+Flow elapsed minutes:      @div(float(sub(ticks(utcNow()), ticks(outputs('Flow_Start')))), 600000000)
+HH:mm time string:         @formatDateTime(outputs('Local_Datetime'), 'HH:mm')
+Response header:           @outputs('HTTP_Action')?['headers/X-Request-Id']
+Array max (by field):      @reverse(sort(body('Select_Items'), 'Date'))[0]
+Integer day span:          @int(split(dateDifference(outputs('Start'), outputs('End')), '.')[0])
+ISO week number:           @div(add(dayofyear(addDays(subtractFromTime(date, sub(dayofweek(date),1), 'Day'), 3)), 6), 7)
+Join errors to string:     @if(equals(length(variables('Errors')),0), null, concat(join(variables('Errors'),', '),' not found.'))
+Normalize before compare:  @replace(coalesce(outputs('Value'),''),'_',' ')
+Robust non-empty check:    @greater(length(trim(coalesce(string(outputs('Val')), ''))), 0)
 ```
 
-### 不支援 / 有風險的運算式假設
+### 不受支援 / 具風險的運算式假設
 
-Power Automate 運算式是工作流程定義語言，而不是 JavaScript。這些模式通常看起來很合理，但無法部署或行為不如代理程式預期：
+Power Automate 運算式為工作流程定義語言（Workflow Definition Language），而非 JavaScript。
+這些模式通常看起來合理，但無法部署或無法如 Agent
+預期般運作：
 
-| 目標 | 避免使用 | 請改用 |
+| 目標 | 避免 | 改用 |
 |---|---|---|
-| 行內建構物件 | `createObject(...)` | 帶有 JSON 物件常值的撰寫動作 |
-| 行內轉換陣列 | 在運算式內使用 `select(...)` | 資料作業的 `Select` 動作 |
-| 行內篩選陣列 | 在運算式內使用 `filter(...)` | 資料作業的 `Filter array` 動作 |
-| 尋找陣列項目索引 | `indexOf(array, item)` | 帶有計數器變數的 Foreach，或建構具索引鍵的物件對應表 |
+| 內嵌建構物件 | `createObject(...)` | 含有 JSON 物件常值的 Compose 動作 |
+| 內嵌轉換陣列 | 運算式內的 `select(...)` | 資料作業 `Select` 動作 |
+| 內嵌篩選陣列 | 運算式內的 `filter(...)` | 資料作業 `Filter array` 動作 |
+| 尋找陣列項目索引 | `indexOf(array, item)` | 搭配計數器變數的 Foreach，或建構具索引鍵的物件對應 |
 
-### 運算式中的換行符
+### 運算式中的換行字元
 
-> **`\n` 不會在 Power Automate 運算式內部產生換行符。** 它會被視為常值反斜線 + `n`，並且會逐字出現或導致驗證錯誤。
+> **`\n` 不會在 Power Automate 運算式內部產生換行。** 它會被
+> 視為逐字反斜線 + `n`，且會以原樣顯示或導致
+> 驗證錯誤。
 
-在任何需要換行符的地方使用 `decodeUriComponent('%0a')`：
+在需要換行字元的任何位置，請使用 `decodeUriComponent('%0a')`：
 
 ```
-換行 (LF)：   decodeUriComponent('%0a')
-CRLF：        decodeUriComponent('%0d%0a')
+換行 (LF)：      decodeUriComponent('%0a')
+CRLF:           decodeUriComponent('%0d%0a')
 ```
 
-範例 — 透過 `concat()` 建立多行 Teams 或電子郵件本文：
+範例 — 透過 `concat()` 的多行 Teams 或電子郵件本文：
 ```json
 "Compose_Message": {
   "type": "Compose",
@@ -497,7 +537,7 @@ CRLF：        decodeUriComponent('%0d%0a')
 }
 ```
 
-範例 — 使用換行符分隔的 `join()`：
+範例 — 搭配換行分隔符號的 `join()`：
 ```json
 "Compose_List": {
   "type": "Compose",
@@ -505,13 +545,14 @@ CRLF：        decodeUriComponent('%0d%0a')
 }
 ```
 
-> 這是 Power Automate 流程定義中動態建構字串時嵌入換行符唯一可靠的方法（已對 Logic Apps 執行階段進行驗證）。
+> 這是 Power Automate 流程定義中，在動態建構字串裡嵌入換行字元
+> 唯一可靠的方式（已對照 Logic Apps 執行階段確認）。
 
 ---
 
-### 陣列加總 (XPath 技巧)
+### 加總陣列（XPath 技巧）
 
-Power Automate 沒有原生的 `sum()` 函式。請對 XML 使用 XPath：
+Power Automate 沒有原生 `sum()` 函式。請改對 XML 使用 XPath：
 
 ```json
 "Prepare_For_Sum": {
@@ -526,6 +567,6 @@ Power Automate 沒有原生的 `sum()` 函式。請對 XML 使用 XPath：
 }
 ```
 
-`Select_Amounts` 必須輸出純數字陣列（先使用 **Select** 動作擷取單一數字欄位）。結果是一個您可以直接在條件或計算中使用的數字。
+`Select_Amounts` 必須輸出數值的扁平陣列（請先使用 **Select** 動作擷取單一數值欄位）。其結果為可直接用於條件或計算中的數值。
 
-> 這是 Power Automate 中唯一無需迴圈即可對陣列進行彙總（加總/最小值/最大值）的方法。
+> 這是 Power Automate 中唯一不需要迴圈即可彙總（sum/min/max）陣列的方法。

@@ -1,12 +1,12 @@
-# FlowStudio MCP — 觸發器類型
+# FlowStudio MCP — 觸發程序類型
 
-供 Power Automate 流程定義使用的觸發器定義複製貼上範本。
+適用於 Power Automate 流程定義的複製貼上觸發程序定義。
 
 ---
 
-## 定期執行 (Recurrence)
+## 週期性 (Recurrence)
 
-按排程執行。
+依排程執行。
 
 ```json
 "Recurrence": {
@@ -20,7 +20,7 @@
 }
 ```
 
-每週在特定幾天執行：
+每週在特定日期執行：
 ```json
 "Recurrence": {
   "type": "Recurrence",
@@ -38,7 +38,7 @@
 
 常見的 `timeZone` 值：
 - `"AUS Eastern Standard Time"` — 雪梨/墨爾本 (UTC+10/+11)
-- `"UTC"` — 通用協調時間
+- `"UTC"` — 通用時間
 - `"E. Australia Standard Time"` — 布里斯本 (UTC+10 無日光節約時間)
 - `"New Zealand Standard Time"` — 奧克蘭 (UTC+12/+13)
 - `"Pacific Standard Time"` — 洛杉磯 (UTC-8/-7)
@@ -46,7 +46,7 @@
 
 ---
 
-## 手動 (Manual) (HTTP 要求 / Power Apps)
+## 手動 (HTTP 要求 / Power Apps)
 
 接收包含 JSON 本文的 HTTP POST。
 
@@ -68,11 +68,12 @@
 ```
 
 存取值：`@triggerBody()?['name']`  
-儲存後可取得觸發 URL：`@listCallbackUrl()`
+儲存後可用的觸發程序 URL：`@listCallbackUrl()`
 
 #### 無結構描述變體 (接受任意 JSON)
 
-當傳入的承載資料結構未知或各異時，省略結構描述即可接受任何有效的 JSON 本文，而不進行驗證：
+當傳入的承載結構未知或有所變化時，省略結構描述
+即可接受任何有效的 JSON 本文而不進行驗證：
 
 ```json
 "manual": {
@@ -86,13 +87,17 @@
 
 動態存取任何欄位：`@triggerBody()?['anyField']`
 
-> 用於外部 Webhook（Stripe, GitHub, Employment Hero 等），其承載資料形狀可能會變更或未完全記錄。流程會接受任何 JSON，而不會對未預期的屬性傳回 400 錯誤。
+> 將此用於外部 Webhook（Stripe、GitHub、Employment Hero 等），其中
+> 承載外觀可能會變更或未完整記錄。流程接受任何
+> JSON，而不會因為非預期的屬性傳回 400。
 
 ---
 
-## 手動 (Manual) (Copilot Studio 技能)
+## 手動 (Copilot Studio Skills)
 
-當流程旨在供 Copilot Studio 代理程式工具呼叫時，請使用技能觸發器。保持觸發器結構描述明確，以便代理程式接收可預測的輸入名稱和類型。
+當流程預期由 Copilot Studio 代理工具呼叫時，
+使用 Skills 觸發程序。保持觸發程序結構描述明確，讓代理能收到可預測的
+輸入名稱與類型。
 
 ```json
 "manual": {
@@ -114,15 +119,15 @@
 }
 ```
 
-部署正式環境的技能觸發流程後，請以目標 `solutionId` 呼叫
-`add_live_flow_to_solution`；Copilot Studio 代理程式的工具探索功能要求流程
-具備解決方案關聯。若要從 MCP 進行測試，請在 `body` 中提供輸入並呼叫
-`trigger_live_flow` — 技能觸發器會與按鈕和 Power Apps 觸發器相同，
-透過連接器執行階段執行。
+在部署生產環境的 Skills 觸發流程後，以目標
+`solutionId` 呼叫 `add_live_flow_to_solution`；Copilot Studio 代理
+工具探索預期該流程具有解決方案感知能力。若要從 MCP 進行測試，請以
+`body` 中的輸入呼叫 `trigger_live_flow` — Skills 觸發程序會像
+按鈕和 PowerApps 觸發程序一樣透過連接器執行階段執行。
 
 ---
 
-## 自動化 (Automated) (建立 SharePoint 項目時)
+## 自動化 (SharePoint 建立項目)
 
 ```json
 "When_an_item_is_created": {
@@ -148,11 +153,11 @@
 }
 ```
 
-存取觸發資料：`@triggerBody()?['ID']`, `@triggerBody()?['Title']` 等。
+存取觸發程序資料：`@triggerBody()?['ID']`、`@triggerBody()?['Title']` 等。
 
 ---
 
-## 自動化 (Automated) (修改現有 SharePoint 項目時)
+## 自動化 (SharePoint 修改項目)
 
 ```json
 "When_an_existing_item_is_modified": {
@@ -180,7 +185,7 @@
 
 ---
 
-## 自動化 (Automated) (Outlook：新郵件抵達時)
+## 自動化 (Outlook：收到新電子郵件時)
 
 ```json
 "When_a_new_email_arrives": {
@@ -227,7 +232,7 @@
 
 存取父流程提供的資料：`@triggerBody()?['items']`
 
-要將資料傳回給父流程，請新增「回應」動作：
+若要將資料傳回父流程，請新增 `Response` 動作：
 ```json
 "Respond_to_Parent": {
   "type": "Response",
