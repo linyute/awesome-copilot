@@ -716,7 +716,7 @@
   {
     "name": "keep-the-why",
     "description": "保留或復原程式碼庫背後的決策理由 — 架構決策、否決的替代方案、因應措施、事件學習、維運限制，以及程式碼本身無法解釋的歷史語境。",
-    "version": "0.13.3",
+    "version": "0.15.0",
     "author": {
       "name": "Oliver Zehentleitner",
       "url": "https://github.com/oliver-zehentleitner"
@@ -735,7 +735,7 @@
     "source": {
       "source": "github",
       "repo": "oliver-zehentleitner/keep-the-why",
-      "ref": "v0.13.3"
+      "ref": "v0.15.0"
     }
   },
   {

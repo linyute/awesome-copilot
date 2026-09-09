@@ -227,7 +227,7 @@ handoff:
 
 - [文件](https://mubaidr.github.io/gem-team/)
 - [貢獻](https://mubaidr.github.io/gem-team/5.resources/2.contributing.html)
-- [授權條款](LICENSE)
+- [授權條款](https://github.com/mubaidr/gem-team/blob/main/LICENSE)
 
 ## 支援
 
