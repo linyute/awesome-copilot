@@ -21,9 +21,13 @@ const TEMPLATES = {
 - 下載 \`*.instructions.md\` 檔案並手動將其加入您專案的指引集合中
 
 **使用/套用方式：**
-- 將這些指引複製到工作區中的 \`.github/copilot-instructions.md\` 檔案中
-- 在工作區的 \`.github/instructions/\` 資料夾中建立特定任務的 \`*.instructions.md\` 檔案 (例如：\`.github/instructions/my-csharp-rules.instructions.md\`)
-- 一旦安裝到您的工作區中，指引將自動套用於 Copilot 的行為`,
+- 若要提供整個存放區的指引，請將資源的 Markdown 內文合併至您的 \.github/copilot-instructions.md\` 檔案中，保留現有指引並省略 YAML Front Matter
+- 在 VS Code 中，保留完整的 \`*.instructions.md\` 檔案（包括其 YAML Front Matter），並將其放置於工作區的 \.github/instructions/\` 資料夾中，以提供特定路徑的指引
+- 指引安裝至工作區後，會自動套用至 Copilot 的行為
+
+**IntelliJ IDEA 與其他 JetBrains IDE：**
+
+[在 IntelliJ 中設定](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions-in-your-ide/add-repository-instructions-in-your-ide?tool=jetbrains)時，請使用手動設定指南，而非一鍵安裝程式。請使用上述整個存放區的 \.github/copilot-instructions.md\` 工作流程。此檔案不會強制套用資源的 \`applyTo\` 模式，因此請僅納入適用於整個存放區的指引。`,
 
   pluginsSection: `## 🔌 外掛程式 (Plugins)
 

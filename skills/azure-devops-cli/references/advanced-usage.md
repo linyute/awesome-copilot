@@ -136,7 +136,7 @@ az pipelines build list --query "sort_by([?result=='succeeded'], &queueTime) | r
 az repos pr list --query "groupBy([], &reviewers[].displayName) | [].{Reviewer:@.key, Count:length(@)}"
 
 # 尋找具有多個子項目的工作項目
-az boards work-item relation list --id $PARENT_ID --query "[?rel=='System.LinkTypes.Hierarchy-Forward'] | [].{ChildID:url | split('/', @) | [-1]}"
+az boards work-item relation show --id $PARENT_ID --query "[?rel=='System.LinkTypes.Hierarchy-Forward'] | [].{ChildID:url | split('/', @) | [-1]}"
 ```
 
 ## 全域引數 (Global Arguments)

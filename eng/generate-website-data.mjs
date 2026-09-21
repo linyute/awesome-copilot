@@ -1312,7 +1312,7 @@ function generateCanvasManifest(gitDates, commitSha) {
             canvasId,
             extensionId: id,
             extensionName: name,
-            pluginName: null,
+            pluginName: name,
             name,
             version: normalizeText(ext?.version, "1.0.0"),
             readmeFile: null,
@@ -1324,7 +1324,9 @@ function generateCanvasManifest(gitDates, commitSha) {
             imageUrl,
             assetPath,
             installUrl,
-            installCommand: null,
+            // 已註冊於 plugins/external.json，因此即使託管於外部，
+            // 仍可透過外掛程式名稱從 awesome-copilot 市集安裝。
+            installCommand: `copilot plugin install ${name}@awesome-copilot`,
             sourceUrl: sourceUrl || null,
             external: true,
             author: normalizeAuthor(ext?.author),
@@ -1463,7 +1465,8 @@ function generateSearchIndex(
   agents,
   instructions,
   skills,
-  plugins
+  plugins,
+  extensions
 ) {
   const index = [];
 
@@ -1516,6 +1519,20 @@ function generateSearchIndex(
       tags: plugin.tags,
       lastUpdated: plugin.lastUpdated,
       searchText: plugin.searchText,
+    });
+  }
+
+  for (const extension of extensions) {
+    index.push({
+      type: "extension",
+      id: extension.id,
+      title: extension.name || extension.title || extension.id,
+      description: extension.description || "",
+      path: extension.path,
+      lastUpdated: extension.lastUpdated,
+      searchText:
+        extension.searchText ||
+        `${extension.name || extension.title || extension.id} ${extension.description || ""}`.toLowerCase(),
     });
   }
 
@@ -1724,7 +1741,8 @@ async function main() {
     agents,
     instructions,
     skills,
-    plugins
+    plugins,
+    extensions
   );
   console.log(`✓ Generated search index with ${searchIndex.length} items`);
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI 代理架構"
+  short_description: "訪談、設計及稽核代理架構"
+  default_prompt: "使用 $agent-architecture：根據我的需求，逐步協助我設計 AI 代理架構，或在不撰寫程式碼的情況下，檢視現有代理的設計缺陷。"

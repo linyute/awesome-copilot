@@ -117,7 +117,7 @@ az boards work-item delete --id {work-item-id} --destroy --yes
 
 ```bash
 # 列出關聯
-az boards work-item relation list --id {work-item-id}
+az boards work-item relation show --id {work-item-id}
 
 # 列出支援的關聯類型
 az boards work-item relation list-type

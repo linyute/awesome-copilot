@@ -157,7 +157,6 @@ argument-hint: '選用：要關注的特定區域，例如「僅架構」、「�
 | 資產 | 何時載入 |
 |-------|-------------|
 | [`scripts/scan.py`](scripts/scan.py) | 第 1 階段 — 在閱讀任何程式碼前先執行 (需要 Python 3.8+) |
-
 | [`references/inquiry-checkpoints.md`](references/inquiry-checkpoints.md) | 第 2 階段 — 載入各個範本的調查問題 |
 | [`references/stack-detection.md`](references/stack-detection.md) | 第 2 階段 — 僅當堆疊模糊時載入 |
 | [`assets/templates/STACK.md`](assets/templates/STACK.md) | 第 3 階段 步驟 1 |

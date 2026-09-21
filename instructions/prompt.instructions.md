@@ -83,6 +83,5 @@ applyTo: '**/*.prompt.md'
 - 與其他儲存庫協調：當某個 Prompt 被證明具有廣泛用途時，將通用的指南提取到指示檔案或共享的 Prompt 包中。
 
 ## 額外資源
-- [Prompt 檔案文件](https://code.visualstudio.com/docs/copilot/customization/prompt-files#_prompt-file-format)
-- [Awesome Copilot Prompt Files](https://github.com/github/awesome-copilot/tree/main/prompts)
-- [工具配置](https://code.visualstudio.com/docs/copilot/chat/chat-agent-mode#_agent-mode-tools)
+- [Prompt 檔案文件](https://code.visualstudio.com/docs/agent-customization/prompt-files#_prompt-file-format)
+- [工具配置](https://code.visualstudio.com/docs/agents/run/tools)
