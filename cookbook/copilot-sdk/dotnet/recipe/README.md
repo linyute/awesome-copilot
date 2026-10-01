@@ -26,6 +26,7 @@ dotnet run <filename>.cs
 | 持久化會話 (Persisting Sessions) | `dotnet run persisting-sessions.cs` | 在重啟後保存並恢復會話 |
 | 無障礙報告 (Accessibility Report) ℹ️ | `dotnet run accessibility-report.cs` | 分析網頁無障礙性 |
 | Ralph 循環 (Ralph Loop) ⚠️ | `dotnet run ralph-loop.cs` | 自主開發循環 |
+| 程序內執行階段 (In-Process Runtime) | `dotnet run in-process-runtime.cs` | 在程序內運行 Copilot 執行階段 |
 
 ### 帶參數的範例 (Examples with Arguments)
 

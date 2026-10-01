@@ -1,5 +1,7 @@
 以下說明僅在進行程式碼審查時套用。
 
+使用 `.github/skills/code-review/SKILL.md` 作為倉庫適配性、差異化、來源、驗證與編輯品質的審查標準。同時套用以下確定性的檔案格式檢查。
+
 ## README 更新
 
 - [ ] 新檔案應新增至 `docs/README.<type>.md`。

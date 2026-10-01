@@ -31,7 +31,7 @@
 - 回應問題與 PR 中的斜線命令
 - 編排多步驟的存放區自動化
 
-| 名稱 | 說明 | 觸發條件 |
+| 名稱 | 描述 | 觸發器 |
 | ---- | ----------- | -------- |
 | [OSPO 組織健康報告](../workflows/ospo-org-health.md) | GitHub 組織的每週全面健康報告。突顯過期 Issue/PR、合併時間分析、貢獻者排行榜，以及需要人員關注的可執行項目。 | schedule, workflow_dispatch |
 | [OSPO 貢獻者報告](../workflows/ospo-contributors-report.md) | 組織儲存庫中的每月貢獻者活動指標。 | schedule, workflow_dispatch |

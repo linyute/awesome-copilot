@@ -17,6 +17,7 @@ description: '建構、審查、偵錯、封裝及測試 Roslyn 診斷分析器�
 - 在 API 公開語彙基元 (token) 之處遵守取消作業。不要在靜態狀態中保留編譯、作業、語法樹狀結構、符號或語意模型。
 - 避免使用 `InternalsVisibleTo`。透過分析器的公用 `DiagnosticAnalyzer` 和 `CodeFixProvider` API 以及 Roslyn 測試載具來測試分析器。當直接測試確實有用時，小型分析器協助程式可以是 public，但大多數行為應該進行端對端測試。
 - 集中管理 metadata 名稱和成員名稱，而不是散播神奇字串 (magic strings)。對完整限定型別名稱、命名空間和 API 成員名稱使用單一共用靜態目錄。
+- 絕不要透過呼叫 `ToDisplayString()` 並將結果與字串常值比較來識別符號（包括屬性類別）。從 `Compilation` 中依 metadata 名稱解析一次預期的具名型別。要解析方法、屬性、欄位或事件，請先解析其包含型別，然後依名稱與特徵標記選取預期的成員。使用 `SymbolEqualityComparer.Default.Equals(actual, expected)` 比較遇到的符號。當泛型取代不相關時，以 `OriginalDefinition` 比較具名型別、屬性、欄位和事件；比較方法時，先以 `ReducedFrom ?? method` 取代已簡化的延伸方法，再取 `OriginalDefinition`。正規化預期的與遇到的符號，並在型別引數是比對的一部分時，單獨檢查型別引數。顯示字串是用於呈現而非識別，且可能因格式化、別名、限定、可為 null 性及其他上下文而異。
 - 記載每個診斷識別碼。當儲存機制使用 Docfx 時，請將分析器文件放在其 Docfx 樹狀結構下（通常是 `docfx/analyzers`），並將每個頁面納入相關的目錄中。
 - 將每個分析器組件的版本設定得足夠精確，使每次認可 (commit) 都產生唯一的組件版本。使用 Nerdbank.GitVersioning 時，請給予每個分析器專案自己的 `version.json`，並將 `assemblyVersion.precision` 設定為 `revision`，同時確保全儲存機制範圍的 MSBuild 屬性不會阻止搜尋到該檔案。
 - 原始程式碼產生器必須實作 `IIncrementalGenerator`，而非 `ISourceGenerator`。設計提供者圖形，使未變更的輸入保持快取，且不會重新產生輸出。
@@ -26,7 +27,7 @@ description: '建構、審查、偵錯、封裝及測試 Roslyn 診斷分析器�
 
 1. 寫下必須回報的範例以及不得回報的擦身而過情況。在實作前確定確切的診斷範圍與訊息引數。
 2. 判斷規則是否為語意規則。依序優先選擇：作業動作、作業區塊動作、符號動作、註冊上述動作之一的編譯開始動作，最後才是語法動作。
-3. 需要時在編譯開始動作中解析已知型別一次。若缺少必要型別，則不註冊內部動作。適當地使用 `SymbolEqualityComparer.Default`、metadata 名稱、arity、包含型別及特徵標記 (signature) 來比較符號；不要單憑簡單的方法名稱來識別 API。
+3. 在編譯開始動作中，使用 `Compilation.GetTypeByMetadataName` 一次性解析已知的具名型別。從結果的包含型別中，依名稱與完整特徵標記解析預期的成員；`GetTypeByMetadataName` 不會解析方法、屬性、欄位或事件。若所需的型別或成員不存在，則不註冊任何內部動作。在已註冊的回呼中擷取已解析的 `ISymbol`，並使用 `SymbolEqualityComparer.Default.Equals` 比較遇到的符號。當泛型取代不相關時，在比較之前，使用 `OriginalDefinition` 正規化預期的與遇到的具名型別、屬性、欄位和事件；這包括將 `AttributeData.AttributeClass` 與已解析的泛型屬性定義進行比較。對於方法，使用 `(method.ReducedFrom ?? method).OriginalDefinition` 正規化每個 `IMethodSymbol`，使已建構的泛型方法和已簡化的延伸方法與其宣告相符。當型別引數重要時，單獨檢查它們。絕不要使用 `ToDisplayString()` 加上字串常值作為符號識別的替代。在選取成員時，依適當情況檢查 metadata 名稱、參數數、包含型別和特徵標記；不要僅憑簡單的方法名稱來識別 API。
 4. 定義穩定的診斷識別碼與描述項。遵循儲存機制在分類、嚴重性、本地化、說明連結、遙測標籤和發行追蹤方面的做法。
 5. 新增或更新診斷的文件頁面，並將描述項的 `HelpLinkUri` 連接至其發佈的 URL。
 6. 回報最小且有用的原始程式碼位置。除非是有意為之，否則避免在產生的程式碼上產生診斷。
@@ -467,6 +468,7 @@ using Verify = CSharpCodeFixVerifier<AvoidBlockingAnalyzer, EmptyCodeFixProvider
 - 發佈的分析器、原始程式碼產生器和程式碼修正專案設定了 `IsAnalyzerCompatibilityProject`，有條件地匯入專用的 `Directory.Packages.Analyzers.props`，並保留說明相容性基準與覆寫機制的 XML 註解。
 - Renovate 或 Dependabot 無法在任何 SemVer 層級（修補程式、次要或主要）自動推進該基準。
 - API/型別/成員名稱來自共用目錄，而非散佈的常值。
+- 符號與屬性比對會從編譯中解析預期的命名型別，並從其包含型別中依名稱與簽章解析預期的成員。當泛型取代不相關時，使用 `OriginalDefinition` 正規化預期與實際遇到的命名型別、屬性、欄位和事件，使用 `(method.ReducedFrom ?? method).OriginalDefinition` 正規化方法，然後使用 `SymbolEqualityComparer.Default`；它會單獨檢查相關的型別引數，且從不以字面值比較 `ToDisplayString()` 的輸出。
 - 每個診斷識別碼都有文件頁面、存在於網站導覽中，且具有與發佈 URL 相符的 `HelpLinkUri`。
 - 每個分析器專案在每次認可時產生唯一的組件版本；使用 Nerdbank.GitVersioning 時，其本地 `version.json` 使用修訂版本精度，且任何共用的 `GitVersionBaseDirectory` 均已正確覆寫。
 - 測試盡可能使用行內標記，並涵蓋正向與反向行為。

@@ -29,7 +29,7 @@
 - 與外部工具和服務整合
 - 自定義工作階段工作流程
 
-| 名稱 | 說明 | 事件 | 隨附資產 |
+| 名稱 | 描述 | 事件 | 內建資產 |
 | ---- | ----------- | ------ | -------------- |
 | [Attester Import Check](../hooks/attester-import-check/README.md) | 在 Copilot 編碼代理將 PyPI 和 npm 套件名稱寫入程式碼之前，對照 attester.dev 存在預言機進行驗證，以封鎖幻覺產生的相依性 | preToolUse | `check-imports.py`<br />`hooks.json` |
 | [Dependency License Checker](../hooks/dependency-license-checker/README.md) | 在工作階段結束時掃描新增加的相依套件以確保授權合規性 (GPL, AGPL 等) | sessionEnd | `check-licenses.sh`<br />`hooks.json` |

@@ -115,31 +115,6 @@ function extractMcpServers(filePath) {
 }
 
 /**
- * 從 agent 檔案中擷取完整的 MCP 伺服器設定
- * @param {string} filePath - agent 檔案路徑
- * @returns {Array<{name:string,type?:string,command?:string,args?:string[],url?:string,headers?:object}>}
- */
-function extractMcpServerConfigs(filePath) {
-  const metadata = extractAgentMetadata(filePath);
-  if (!metadata || !metadata.mcpServers) return [];
-  return Object.entries(metadata.mcpServers).map(([name, cfg]) => {
-    // 確保我們不會變更原始 cfg
-    const copy = { ...cfg };
-    return {
-      name,
-      type: typeof copy.type === "string" ? copy.type : undefined,
-      command: typeof copy.command === "string" ? copy.command : undefined,
-      args: Array.isArray(copy.args) ? copy.args : undefined,
-      url: typeof copy.url === "string" ? copy.url : undefined,
-      headers:
-        typeof copy.headers === "object" && copy.headers !== null
-          ? copy.headers
-          : undefined,
-    };
-  });
-}
-
-/**
  * 解析 SKILL.md frontmatter 並列出技能資料夾中的隨附資產
  * @param {string} skillPath - 技能資料夾路徑
  * @returns {object|null} 包含 name、description 和 assets 陣列的技能 metadata
@@ -343,7 +318,6 @@ function parseYamlFile(filePath) {
 
 export {
   extractAgentMetadata,
-  extractMcpServerConfigs,
   extractMcpServers,
   parseFrontmatter,
   parseHookMetadata,

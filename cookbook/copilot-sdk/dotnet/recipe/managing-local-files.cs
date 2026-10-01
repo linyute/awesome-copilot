@@ -11,14 +11,14 @@ await client.StartAsync();
 // 定義檔案操作工具
 var session = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "gpt-5",
+    Model = "auto",
     OnPermissionRequest = PermissionHandler.ApproveAll
 });
 
 // 等待完成
 var done = new TaskCompletionSource();
 
-session.On(evt =>
+session.On<SessionEvent>(evt =>
 {
     switch (evt)
     {

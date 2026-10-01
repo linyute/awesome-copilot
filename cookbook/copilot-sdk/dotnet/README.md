@@ -9,6 +9,9 @@
 - [管理本機檔案](managing-local-files.md)：使用 AI 驅動的分組策略，按 Metadata 組織檔案。
 - [PR 視覺化](pr-visualization.md)：使用 GitHub MCP 伺服器產生互動式 PR 時長圖表。
 - [持續性工作階段](persisting-sessions.md)：跨重新啟動儲存並恢復工作階段。
+- [Ralph Loop](ralph-loop.md)：執行無人值守的代理循環，反覆迭代任務直至完成。
+- [協助工具報告](accessibility-report.md)：稽核網頁的無障礙問題並即時串流結果。
+- [程序內執行階段](in-process-runtime.md)：在程序內執行 Copilot 執行階段，而非啟動獨立的 CLI 程序。
 
 ## 貢獻
 

@@ -62,7 +62,7 @@ Console.WriteLine("請稍候...\n");
 // 使用 Playwright MCP 伺服器建立工作階段
 await using var session = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "claude-opus-4.6",
+    Model = "auto",
     Streaming = true,
     OnPermissionRequest = PermissionHandler.ApproveAll,
     McpServers = new Dictionary<string, McpServerConfig>()
@@ -81,7 +81,7 @@ await using var session = await client.CreateSessionAsync(new SessionConfig
 // 使用 session.idle 事件等待回應
 var done = new TaskCompletionSource();
 
-session.On(evt =>
+session.On<SessionEvent>(evt =>
 {
     switch (evt)
     {
@@ -228,7 +228,7 @@ McpServers = new Dictionary<string, McpServerConfig>()
 與 `SendAndWaitAsync` 不同，此食譜使用串流進行即時輸出：
 
 ```csharp
-session.On(evt =>
+session.On<SessionEvent>(evt =>
 {
     switch (evt)
     {

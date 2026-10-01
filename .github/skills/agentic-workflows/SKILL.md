@@ -16,6 +16,7 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 僅讀取您需要的檔案：
 從 `github/gh-aw` 載入這些檔案（本機無法使用）。
 - `.github/aw/action-container-substitutions.md`
+- `.github/aw/agent-runtime-instructions.md`
 - `.github/aw/agentic-chat.md`
 - `.github/aw/agentic-workflows-mcp.md`
 - `.github/aw/asciicharts.md`
@@ -23,6 +24,7 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 - `.github/aw/charts-trending.md`
 - `.github/aw/charts.md`
 - `.github/aw/cli-commands.md`
+- `.github/aw/compat.md`
 - `.github/aw/configure-agentic-engine.md`
 - `.github/aw/context.md`
 - `.github/aw/create-agentic-workflow-trigger-details.md`
@@ -31,13 +33,19 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 - `.github/aw/debug-agentic-workflow.md`
 - `.github/aw/dependabot.md`
 - `.github/aw/deployment-status.md`
+- `.github/aw/designer-mappings.md`
 - `.github/aw/designer.md`
+- `.github/aw/drive-memory.md`
+- `.github/aw/enclaves.md`
 - `.github/aw/evals.md`
 - `.github/aw/experiments.md`
 - `.github/aw/github-agentic-workflows.md`
 - `.github/aw/github-mcp-server-pagination.md`
+- `.github/aw/github-mcp-server-tools.md`
 - `.github/aw/github-mcp-server.md`
 - `.github/aw/instructions.md`
+- `.github/aw/intent.md`
+- `.github/aw/jobs.md`
 - `.github/aw/linter-workflows.md`
 - `.github/aw/llms.md`
 - `.github/aw/loop.md`
@@ -51,6 +59,7 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 - `.github/aw/network.md`
 - `.github/aw/optimize-agentic-workflow.md`
 - `.github/aw/patterns.md`
+- `.github/aw/playwright.md`
 - `.github/aw/pr-reviewer.md`
 - `.github/aw/release-workflow.md`
 - `.github/aw/report.md`
@@ -98,5 +107,6 @@ description: '將 gh-aw 工作流程設計/建立/除錯/升級請求路由至�
 - 選擇工作流程架構與模式：`.github/aw/patterns.md`
 - 最佳化權杖使用量與成本：`.github/aw/token-optimization.md`
 - 設計長時間運行的多代理人研究工作流程：`.github/aw/multi-agent-research.md`
+- 新增使用者要求的技能或代理人外掛（`skills:` / `plugins:` frontmatter，絕不即席安裝）：`.github/aw/skills.md`
 
 當任務涉及 OTEL、OTLP、追蹤、可觀測性後端或遙測驅動分析時，請在載入相符的工作流程提示詞或技能後，亦閱讀並遵循 `skills/otel-queries/SKILL.md`。

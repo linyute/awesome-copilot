@@ -164,7 +164,7 @@ await client.StartAsync();
 
 var session = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "gpt-5",
+    Model = "auto",
     OnPermissionRequest = PermissionHandler.ApproveAll,
     SystemMessage = new SystemMessageConfig
     {
@@ -185,7 +185,7 @@ var session = await client.CreateSessionAsync(new SessionConfig
 });
 
 // 設定事件處理
-session.On(evt =>
+session.On<SessionEvent>(evt =>
 {
     switch (evt)
     {
@@ -256,3 +256,27 @@ while (true)
 | 彈性         | 固定邏輯       | **AI 決定最佳方法**          |
 | 圖表類型     | 您所編寫的內容 | **Copilot 能產生的任何類型** |
 | 資料分組     | 硬編碼的貯槽   | **智慧分組**                 |
+
+## 使用工具搜尋延遲載入工具
+
+僅 GitHub MCP 伺服器就公開了數以十計的工具，而這個範例還同時可用檔案與程式碼執行工具——遠已超過「把每個工具描述都塞進模型上下文」在每個回合都划算的範圍。`SessionConfig.ToolSearch` 控制 SDK 何時將較少使用的工具延遲到搜尋步驟之後，而非一開始就全部列出：
+
+```csharp
+var session = await client.CreateSessionAsync(new SessionConfig
+{
+    Model = "auto",
+    OnPermissionRequest = PermissionHandler.ApproveAll,
+    ToolSearch = new ToolSearchConfig
+    {
+        Enabled = true,
+        DeferThreshold = 20
+    },
+    SystemMessage = new SystemMessageConfig { Content = "..." }
+});
+```
+
+- `Enabled` 明確開啟或關閉工具搜尋；留為 `null` 則使用執行階段預設值。
+- `DeferThreshold` 是工具數量門檻，超過此數量的 MCP/外部工具會被延遲到 `tool_search_tool` 呼叫之後，而非直接列出（未設定時執行階段預設值為 30）。當範例引入了像 GitHub MCP 伺服器這樣的大型 MCP 伺服器，再加上檔案與程式碼執行工具時，調低此值（如上所示）很有用，因為它能在讓 Copilot 搜尋到所需精確工具的同時，保持每個回合的工具清單精簡。
+- 若要自訂搜尋本身的行為，可註冊一個名為 `"tool_search_tool"` 的工具並設定 `OverridesBuiltInTool = true`，以取代內建實作。
+
+這是每個工作階段的設定，而非全域設定，因此您可以針對像這樣工具繁多的範例與應用程式中其他較輕量工作階段獨立調整。

@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
+import fs from "fs";
+import path from "path";
 import { runExternalPluginQualityGates } from "./external-plugin-quality-gates.mjs";
+import { validateExternalPlugin } from "./external-plugin-validation.mjs";
 
 function normalizePluginPath(pluginPath) {
   if (!pluginPath || pluginPath === "/") {
@@ -76,25 +79,61 @@ function createValidationFailureQuality(errors) {
     ref_sha_consistency_status: "not_run",
     canvas_structure_status: "not_run",
     failure_class: "submitter_fixes",
-    summary: "外掛程式項目未通過 external.json 驗證。請修正所列錯誤後重新執行品質檢查。",
+    summary: "插件項目未通過 external.json 驗證。請修正下列錯誤並重新執行品質檢查。",
     vally_lint_output: output,
-    smoke_output: "由於 external.json 驗證錯誤，跳過安裝冒煙測試。",
-    version_match_output: "由於 external.json 驗證錯誤，跳過版本比對。",
-    ref_sha_consistency_output: "由於 external.json 驗證錯誤，跳過 Ref/SHA 一致性檢查。",
-    canvas_structure_output: "由於 external.json 驗證錯誤，跳過 Canvas 結構檢查。",
+    smoke_output: "因 external.json 驗證錯誤，已跳過安裝冒煙測試。",
+    version_match_output: "因 external.json 驗證錯誤，已跳過版本比對。",
+    ref_sha_consistency_output: "因 external.json 驗證錯誤，已跳過 Ref/SHA 一致性檢查。",
+    canvas_structure_output: "因 external.json 驗證錯誤，已跳過 Canvas 結構檢查。",
   };
 }
 
-export async function runExternalPluginPrQualityGates(plugins) {
-  if (!Array.isArray(plugins)) {
-    throw new Error("plugins 必須是一個陣列");
+function createLogFilePath(logsDirectory, pluginName, index) {
+  if (!logsDirectory) {
+    return undefined;
   }
 
-  const checkedPlugins = await Promise.all(plugins.map(async (plugin) => {
+  const safeName = String(pluginName || "unknown")
+    .toLowerCase()
+    .replace(/[^a-z0-9.-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 64) || "unknown";
+  return path.join(logsDirectory, `${String(index + 1).padStart(2, "0")}-${safeName}.log`);
+}
+
+function writeValidationFailureLog(logFile, plugin, quality) {
+  if (!logFile) {
+    return;
+  }
+
+  fs.mkdirSync(path.dirname(logFile), { recursive: true });
+  fs.writeFileSync(
+    logFile,
+    [
+      `外部插件品質閘門記錄：${plugin?.name || "unknown"}`,
+      "",
+      "外部插件項目驗證",
+      quality.vally_lint_output || "未擷取任何輸出。",
+      "",
+    ].join("\n"),
+  );
+}
+
+export async function runExternalPluginPrQualityGates(plugins, { logsDirectory } = {}) {
+  if (!Array.isArray(plugins)) {
+    throw new Error("plugins 必須是陣列");
+  }
+
+  const checkedPlugins = await Promise.all(plugins.map(async (plugin, index) => {
     const validation = validateExternalPlugin(plugin, "changed-plugin", { policy: "marketplace" });
-    const quality = validation.errors.length > 0
-      ? createValidationFailureQuality(validation.errors)
-      : await runExternalPluginQualityGates(plugin);
+    const logFile = createLogFilePath(logsDirectory, plugin?.name, index);
+    let quality;
+    if (validation.errors.length > 0) {
+      quality = createValidationFailureQuality(validation.errors);
+      writeValidationFailureLog(logFile, plugin, quality);
+    } else {
+      quality = await runExternalPluginQualityGates(plugin, { logFile });
+    }
     return {
       name: plugin?.name ?? "unknown",
       source: plugin?.source ?? {},
@@ -105,10 +144,10 @@ export async function runExternalPluginPrQualityGates(plugins) {
 
   const aggregate = aggregateResultStatus(checkedPlugins);
   const summary = checkedPlugins.length === 0
-    ? "在 plugins/external.json 中未偵測到變更的外部外掛程式項目。"
+    ? "在 plugins/external.json 中未偵測到任何已變更的外部插件項目。"
     : checkedPlugins
       .map((entry) =>
-        `- ${entry.name}: vally-lint=${entry.quality.vally_lint_status}, install-smoke=${entry.quality.smoke_status}, version-match=${entry.quality.version_match_status}, overall=${entry.quality.overall_status}`
+        `- ${entry.name}: spec=${entry.quality.spec_compliance_status}, vally-lint=${entry.quality.vally_lint_status}, install-smoke=${entry.quality.smoke_status}, version-match=${entry.quality.version_match_status}, ref-sha-consistency=${entry.quality.ref_sha_consistency_status}, canvas-structure=${entry.quality.canvas_structure_status}, overall=${entry.quality.overall_status}`
       )
       .join("\n");
 
@@ -137,11 +176,13 @@ function parseCliArgs(argv) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = parseCliArgs(process.argv.slice(2));
   if (!args["plugins-json"]) {
-    console.error("用法: node ./eng/external-plugin-pr-quality-gates.mjs --plugins-json '<json-array>'");
+    console.error("用法：node ./eng/external-plugin-pr-quality-gates.mjs --plugins-json '<json-array>'");
     process.exit(1);
   }
 
   const plugins = JSON.parse(args["plugins-json"]);
-  const result = await runExternalPluginPrQualityGates(plugins);
+  const result = await runExternalPluginPrQualityGates(plugins, {
+    logsDirectory: args["logs-directory"],
+  });
   process.stdout.write(`${JSON.stringify(result)}\n`);
 }

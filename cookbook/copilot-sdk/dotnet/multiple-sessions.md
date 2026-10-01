@@ -20,20 +20,21 @@ using GitHub.Copilot;
 await using var client = new CopilotClient();
 await client.StartAsync();
 
-// 建立多個獨立的工作階段
+// 建立多個獨立的工作階段。大多數工作階段應讓 Copilot 自動選擇
+// 最合適的模型；僅在有明確原因時才固定指定模型（例如此處的 session3 用於 A/B 比較）。
 var session1 = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "gpt-5",
+    Model = "auto",
     OnPermissionRequest = PermissionHandler.ApproveAll
 });
 var session2 = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "gpt-5",
+    Model = "auto",
     OnPermissionRequest = PermissionHandler.ApproveAll
 });
 var session3 = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "claude-sonnet-4.5",
+    Model = "claude-sonnet-5",
     OnPermissionRequest = PermissionHandler.ApproveAll
 });
 
@@ -61,7 +62,7 @@ await session3.DisposeAsync();
 var session = await client.CreateSessionAsync(new SessionConfig
 {
     SessionId = "user-123-chat",
-    Model = "gpt-5",
+    Model = "auto",
     OnPermissionRequest = PermissionHandler.ApproveAll
 });
 
@@ -89,4 +90,4 @@ await client.DeleteSessionAsync("user-123-chat");
 
 - **多使用者應用程式**：每個使用者一個工作階段
 - **多任務工作流**：針對不同任務使用獨立的工作階段
-- **A/B 測試**：比較來自不同模型的回應
+- **A/B 測試**：透過為每個工作階段固定指定明確的 `Model`（如上方的 `session3` 所示），而非使用預設的 `"auto"`，來比較不同模型的回應

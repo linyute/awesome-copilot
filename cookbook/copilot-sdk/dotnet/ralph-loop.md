@@ -60,13 +60,13 @@ try
         var session = await client.CreateSessionAsync(
             new SessionConfig
             {
-                Model = "gpt-5.1-codex-mini",
+                Model = "gpt-5.3-codex",
                 OnPermissionRequest = PermissionHandler.ApproveAll
             });
         try
         {
             var done = new TaskCompletionSource<string>();
-            session.On(evt =>
+            session.On<SessionEvent>(evt =>
             {
                 if (evt is AssistantMessageEvent msg)
                     done.TrySetResult(msg.Data.Content);
@@ -125,7 +125,7 @@ try
         var session = await client.CreateSessionAsync(
             new SessionConfig
             {
-                Model = "gpt-5.1-codex-mini",
+                Model = "gpt-5.3-codex",
                 // 將代理程式固定在專案目錄
                 WorkingDirectory = Environment.CurrentDirectory,
                 // 自動核准工具呼叫以進行自動化執行
@@ -134,7 +134,7 @@ try
         try
         {
             var done = new TaskCompletionSource<string>();
-            session.On(evt =>
+            session.On<SessionEvent>(evt =>
             {
                 // 記錄工具使用情況以提高可見性
                 if (evt is ToolExecutionStartEvent toolStart)

@@ -7,20 +7,21 @@ using GitHub.Copilot;
 await using var client = new CopilotClient();
 await client.StartAsync();
 
-// 建立多個獨立的工作階段
+// 建立多個獨立的工作階段。大多數工作階段應讓 Copilot 自動選擇
+// 最合適的模型；僅在有明確需求時才固定指定模型（例如此處 session3 的 A/B 比較）。
 var session1 = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "gpt-5",
+    Model = "auto",
     OnPermissionRequest = PermissionHandler.ApproveAll
 });
 var session2 = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "gpt-5",
+    Model = "auto",
     OnPermissionRequest = PermissionHandler.ApproveAll
 });
 var session3 = await client.CreateSessionAsync(new SessionConfig
 {
-    Model = "claude-sonnet-4.5",
+    Model = "claude-sonnet-5",
     OnPermissionRequest = PermissionHandler.ApproveAll
 });
 
