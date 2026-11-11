@@ -41,25 +41,34 @@ export function buildSourceTreeUrl(plugin) {
   return `https://github.com/${sourceRepo}/tree/${encodedLocator}/${encodedPath}`;
 }
 
-function aggregateResultStatus(pluginResults) {
-  if (pluginResults.some((entry) => entry.quality?.overall_status === "fail")) {
+export function aggregateResultStatus(pluginResults) {
+  if (pluginResults.length === 0) {
+    return {
+      overallStatus: "not_run",
+      failureClass: "none",
+    };
+  }
+
+  const statuses = pluginResults.map((entry) => entry.quality?.overall_status);
+  if (statuses.includes("fail")) {
     return {
       overallStatus: "fail",
       failureClass: "submitter_fixes",
     };
   }
 
-  if (pluginResults.some((entry) => entry.quality?.overall_status === "infra_error")) {
+  if (statuses.includes("infra_error")) {
     return {
       overallStatus: "infra_error",
       failureClass: "infra",
     };
   }
 
-  if (pluginResults.length === 0) {
+  // 每個變更的外掛程式都必須完全通過；其他任何情況（警告、not_run、未知）都會封鎖。
+  if (statuses.some((status) => status !== "pass")) {
     return {
-      overallStatus: "not_run",
-      failureClass: "none",
+      overallStatus: "fail",
+      failureClass: "submitter_fixes",
     };
   }
 
@@ -73,18 +82,19 @@ function createValidationFailureQuality(errors) {
   const output = errors.map((error) => `- ${error}`).join("\n");
   return {
     overall_status: "fail",
+    spec_compliance_status: "not_run",
     vally_lint_status: "fail",
     smoke_status: "not_run",
     version_match_status: "not_run",
     ref_sha_consistency_status: "not_run",
     canvas_structure_status: "not_run",
     failure_class: "submitter_fixes",
-    summary: "插件項目未通過 external.json 驗證。請修正下列錯誤並重新執行品質檢查。",
+    summary: "Plugin entry failed external.json validation. Fix the listed errors and re-run quality checks.",
     vally_lint_output: output,
-    smoke_output: "因 external.json 驗證錯誤，已跳過安裝冒煙測試。",
-    version_match_output: "因 external.json 驗證錯誤，已跳過版本比對。",
-    ref_sha_consistency_output: "因 external.json 驗證錯誤，已跳過 Ref/SHA 一致性檢查。",
-    canvas_structure_output: "因 external.json 驗證錯誤，已跳過 Canvas 結構檢查。",
+    smoke_output: "Install smoke test skipped due to external.json validation errors.",
+    version_match_output: "Version match skipped due to external.json validation errors.",
+    ref_sha_consistency_output: "Ref/SHA consistency check skipped due to external.json validation errors.",
+    canvas_structure_output: "Canvas structure check skipped due to external.json validation errors.",
   };
 }
 
@@ -110,10 +120,10 @@ function writeValidationFailureLog(logFile, plugin, quality) {
   fs.writeFileSync(
     logFile,
     [
-      `外部插件品質閘門記錄：${plugin?.name || "unknown"}`,
+      `External plugin quality gate log: ${plugin?.name || "unknown"}`,
       "",
-      "外部插件項目驗證",
-      quality.vally_lint_output || "未擷取任何輸出。",
+      "External plugin entry validation",
+      quality.vally_lint_output || "No output captured.",
       "",
     ].join("\n"),
   );
@@ -121,7 +131,7 @@ function writeValidationFailureLog(logFile, plugin, quality) {
 
 export async function runExternalPluginPrQualityGates(plugins, { logsDirectory } = {}) {
   if (!Array.isArray(plugins)) {
-    throw new Error("plugins 必須是陣列");
+    throw new Error("plugins must be an array");
   }
 
   const checkedPlugins = await Promise.all(plugins.map(async (plugin, index) => {
@@ -144,7 +154,7 @@ export async function runExternalPluginPrQualityGates(plugins, { logsDirectory }
 
   const aggregate = aggregateResultStatus(checkedPlugins);
   const summary = checkedPlugins.length === 0
-    ? "在 plugins/external.json 中未偵測到任何已變更的外部插件項目。"
+    ? "No changed external plugin entries were detected in plugins/external.json."
     : checkedPlugins
       .map((entry) =>
         `- ${entry.name}: spec=${entry.quality.spec_compliance_status}, vally-lint=${entry.quality.vally_lint_status}, install-smoke=${entry.quality.smoke_status}, version-match=${entry.quality.version_match_status}, ref-sha-consistency=${entry.quality.ref_sha_consistency_status}, canvas-structure=${entry.quality.canvas_structure_status}, overall=${entry.quality.overall_status}`
@@ -176,7 +186,7 @@ function parseCliArgs(argv) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = parseCliArgs(process.argv.slice(2));
   if (!args["plugins-json"]) {
-    console.error("用法：node ./eng/external-plugin-pr-quality-gates.mjs --plugins-json '<json-array>'");
+    console.error("Usage: node ./eng/external-plugin-pr-quality-gates.mjs --plugins-json '<json-array>'");
     process.exit(1);
   }
 

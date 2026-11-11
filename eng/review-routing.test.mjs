@@ -46,9 +46,11 @@ function rawConfig(overrides = {}) {
       canvas: { team: "github/canvas", reviewers: ["canvas1", "canvas2", "canvas3"], backup: ["canvasBackup"] },
       plugin: { team: "github/plugin", reviewers: ["plugin1"], backup: [] },
       content: { team: "github/content", reviewers: [], backup: [] },
+      workshops: { team: "github/workshops", reviewers: ["workshop1"], backup: [] },
       automation: { team: "github/automation", reviewers: ["auto1"], backup: ["autoBackup"] },
     },
     routes: [
+      { label: "workshops", pool: "workshops" },
       { label: "workflow", pool: "automation" },
       { label: "hooks", pool: "automation" },
       { label: "canvas-extension", pool: "canvas" },
@@ -84,19 +86,20 @@ function review(login, submittedAt = "2026-09-30T12:00:00Z", state = "COMMENTED"
   return { user: { login, type: login.endsWith("[bot]") ? "Bot" : "User" }, state, submitted_at: submittedAt };
 }
 
-// 2026-09-28 是週一。
+// 2026-09-28 是星期一。
 const MONDAY = new Date("2026-09-28T10:00:00Z");
 
-describe("設定", () => {
-  test("儲存庫設定檔案有效", () => {
+describe("configuration", () => {
+  test("repository config file is valid", () => {
     const loaded = loadReviewRoutingConfig(REVIEW_ROUTING_CONFIG_PATH);
     assert.equal(loaded.sla.firstReviewBusinessDays, 2);
     assert.equal(loaded.sla.escalationBusinessDays, 4);
     assert.ok(loaded.pools[loaded.escalationPool]);
-    // 固定路由契約：label -> pool，依優先順序排列。
+    // 固定路由合約：標籤 -> 集區，按優先順序排列。
     assert.deepEqual(
       loaded.routes.map((route) => [route.label, route.pool]),
       [
+        ["workshops", "workshops"],
         ["canvas-extension", "canvas"],
         ["external-plugin", "plugin"],
         ["plugin", "plugin"],
@@ -108,12 +111,12 @@ describe("設定", () => {
         ["website-update", "core-maintainers"],
       ]
     );
-    assert.deepEqual(Object.keys(loaded.pools).sort(), ["canvas", "content", "core-maintainers", "plugin"]);
+    assert.deepEqual(Object.keys(loaded.pools).sort(), ["canvas", "content", "core-maintainers", "plugin", "workshops"]);
     assert.equal(loaded.defaultPool, "core-maintainers");
     assert.equal(loaded.escalationPool, "core-maintainers");
   });
 
-  test("拒絕未知的 pool、無效的 login 與反轉的 SLA", () => {
+  test("rejects unknown pools, bad logins, and inverted SLAs", () => {
     const { config: normalized, errors } = normalizeReviewRoutingConfig(
       rawConfig({
         sla: { first_review_business_days: 4, escalation_business_days: 2 },
@@ -131,25 +134,25 @@ describe("設定", () => {
   });
 });
 
-describe("工作日", () => {
-  test("週末與假日不是工作日", () => {
-    assert.equal(isBusinessDay("2026-10-02"), true); // 週五
-    assert.equal(isBusinessDay("2026-10-03"), false); // 週六
-    assert.equal(isBusinessDay("2026-10-04"), false); // 週日
+describe("business days", () => {
+  test("weekends and holidays are not business days", () => {
+    assert.equal(isBusinessDay("2026-10-02"), true); // Friday
+    assert.equal(isBusinessDay("2026-10-03"), false); // Saturday
+    assert.equal(isBusinessDay("2026-10-04"), false); // Sunday
     assert.equal(isBusinessDay("2026-10-05", ["2026-10-05"]), false);
   });
 
-  test("addBusinessDays 略過週末與假日", () => {
-    assert.equal(addBusinessDays("2026-09-28", 2), "2026-09-30"); // 週一 -> 週三
-    assert.equal(addBusinessDays("2026-10-01", 2), "2026-10-05"); // 週四 -> 週一
-    assert.equal(addBusinessDays("2026-10-02", 2), "2026-10-06"); // 週五 -> 週二
-    assert.equal(addBusinessDays("2026-10-03", 2), "2026-10-06"); // 週六 -> 週二
+  test("addBusinessDays skips weekends and holidays", () => {
+    assert.equal(addBusinessDays("2026-09-28", 2), "2026-09-30"); // Mon -> Wed
+    assert.equal(addBusinessDays("2026-10-01", 2), "2026-10-05"); // Thu -> Mon
+    assert.equal(addBusinessDays("2026-10-02", 2), "2026-10-06"); // Fri -> Tue
+    assert.equal(addBusinessDays("2026-10-03", 2), "2026-10-06"); // Sat -> Tue
     assert.equal(addBusinessDays("2026-10-02", 1, ["2026-10-05"]), "2026-10-06");
     assert.equal(addBusinessDays("2026-10-06", -2), "2026-10-02");
     assert.equal(addBusinessDays(new Date("2026-09-28T23:59:00Z"), 0), "2026-09-28");
   });
 
-  test("slaMilestones 推算路由、逾期與升級日期", () => {
+  test("slaMilestones derives routing, overdue, and escalation dates", () => {
     assert.deepEqual(slaMilestones("2026-09-30", config()), {
       routedOn: "2026-09-28",
       dueDate: "2026-09-30",
@@ -159,35 +162,36 @@ describe("工作日", () => {
   });
 });
 
-describe("reviewer 選擇", () => {
-  test("selectPool 遵循路由優先順序，並退回預設 pool", () => {
+describe("reviewer selection", () => {
+  test("selectPool honors route priority and falls back to the default pool", () => {
     const cfg = config();
     assert.equal(selectPool(["skills", "plugin"], cfg), "plugin");
     assert.equal(selectPool(["plugin", "canvas-extension"], cfg), "canvas");
     assert.equal(selectPool(["canvas-extension", "workflow"], cfg), "automation");
+    assert.equal(selectPool(["website-update", "workshops"], cfg), "workshops");
     assert.equal(selectPool(["website-update"], cfg), "core-maintainers");
   });
 
-  test("effectiveLabelNames 將 artifact 意圖 label 視為權威", () => {
+  test("effectiveLabelNames treats artifact intent labels as authoritative", () => {
     const labels = [{ name: "workflow" }, { name: "needs-reviewer" }, { name: "review-due:2026-09-30" }];
     assert.deepEqual([...effectiveLabelNames(labels, null)].sort(), ["needs-reviewer", "review-due:2026-09-30", "workflow"]);
     assert.deepEqual([...effectiveLabelNames(labels, ["skills"])].sort(), ["needs-reviewer", "review-due:2026-09-30", "skills"]);
     assert.deepEqual([...effectiveLabelNames(labels, [])].sort(), ["needs-reviewer", "review-due:2026-09-30"]);
   });
 
-  test("validateIntentLabels 拒絕未知的 label", () => {
+  test("validateIntentLabels rejects unknown labels", () => {
     assert.deepEqual(validateIntentLabels(["skills", "plugin"]), ["skills", "plugin"]);
     assert.throws(() => validateIntentLabels(["approved"]), /unexpected desired label/);
     assert.throws(() => validateIntentLabels("skills"), /invalid desired_labels/);
   });
 
-  test("computeReviewLoad 以不區分大小寫方式統計開啟中的 review 請求", () => {
+  test("computeReviewLoad counts open review requests case-insensitively", () => {
     const load = computeReviewLoad([pr({ requested: ["Canvas1", "canvas2"] }), pr({ requested: ["canvas1"] })]);
     assert.equal(load.get("canvas1"), 2);
     assert.equal(load.get("canvas2"), 1);
   });
 
-  test("pickReviewer 偏好最低負載，並以 seed 輪替同分者", () => {
+  test("pickReviewer prefers the lowest load and rotates ties by seed", () => {
     const load = new Map([["canvas1", 3], ["canvas2", 1], ["canvas3", 1]]);
     assert.equal(pickReviewer(["canvas1", "canvas2", "canvas3"], { load, seed: 0 }), "canvas2");
     assert.equal(pickReviewer(["canvas1", "canvas2", "canvas3"], { load, seed: 1 }), "canvas3");
@@ -196,7 +200,7 @@ describe("reviewer 選擇", () => {
     assert.equal(pickReviewer([], {}), null);
   });
 
-  test("hasHumanReview 忽略作者、機器人、待處理，以及邊界之前的 review", () => {
+  test("hasHumanReview ignores the author, bots, pending, and reviews before the boundary", () => {
     assert.equal(hasHumanReview([review("contributor")], "contributor"), false);
     assert.equal(hasHumanReview([review("copilot-pull-request-reviewer[bot]")], "contributor"), false);
     assert.equal(hasHumanReview([review("core1", "2026-09-30T00:00:00Z", "PENDING")], "contributor"), false);
@@ -206,20 +210,20 @@ describe("reviewer 選擇", () => {
     assert.equal(hasHumanReview([review("core1", "2026-09-28T16:00:00Z")], "contributor", "2026-09-28T15:00:00Z"), true);
   });
 
-  test("coveringReviewers 統計 pool、備援與 core 中被請求或已 review 的個人", () => {
+  test("coveringReviewers counts pool, backup, and core individuals who are requested or reviewed", () => {
     const cfg = config();
     const target = pr({ labels: ["plugin"], requested: ["canvas1", "core2"] });
     assert.deepEqual(coveringReviewers(target, [review("plugin1")], "plugin", cfg), ["core2", "plugin1"]);
     assert.deepEqual(coveringReviewers(pr({ requested: ["canvas1"] }), [], "automation", cfg), []);
   });
 
-  test("coveringReviewers 忽略無法使用之 reviewer 的待處理請求，但保留其已提交的 review", () => {
+  test("coveringReviewers ignores pending requests for unavailable reviewers but keeps their submitted reviews", () => {
     const cfg = config({ unavailable: ["plugin1"] });
     assert.deepEqual(coveringReviewers(pr({ labels: ["plugin"], requested: ["plugin1"] }), [], "plugin", cfg), []);
     assert.deepEqual(coveringReviewers(pr({ labels: ["plugin"] }), [review("plugin1")], "plugin", cfg), ["plugin1"]);
   });
 
-  test("limitTargets 限制 matrix 目標數量並回報遞延數", () => {
+  test("limitTargets caps matrix targets and reports the deferred count", () => {
     const many = Array.from({ length: MAX_MATRIX_TARGETS + 5 }, (_, index) => ({ pr: index + 1 }));
     const limited = limitTargets(many);
     assert.equal(limited.targets.length, MAX_MATRIX_TARGETS);
@@ -229,7 +233,7 @@ describe("reviewer 選擇", () => {
 });
 
 describe("planRouting", () => {
-  test("請求負載最低的 pool reviewer，排除作者，並設定到期 label", () => {
+  test("requests the least-loaded pool reviewer, excluding the author, and sets a due label", () => {
     const plan = planRouting({
       pr: pr({ author: "canvas2", labels: ["canvas-extension", "plugin"] }),
       load: new Map([["canvas1", 2], ["canvas3", 0]]),
@@ -244,7 +248,7 @@ describe("planRouting", () => {
     assert.deepEqual(plan.removeLabels, []);
   });
 
-  test("artifact 意圖 label 取代過期的目前意圖 label", () => {
+  test("artifact intent labels replace stale current intent labels", () => {
     const cfg = config();
     const stale = pr({ labels: ["workflow"] });
     assert.equal(planRouting({ pr: stale, intentLabels: ["plugin"], config: cfg, now: MONDAY }).pool, "plugin");
@@ -252,7 +256,7 @@ describe("planRouting", () => {
     assert.equal(planRouting({ pr: stale, intentLabels: null, config: cfg, now: MONDAY }).pool, "automation");
   });
 
-  test("先退回 backup，再退回升級 pool，最後退回團隊", () => {
+  test("falls back to backup, then escalation pool, then the team", () => {
     const cfg = config();
     assert.deepEqual(planRouting({ pr: pr({ author: "auto1", labels: ["hooks"] }), config: cfg, now: MONDAY }).reviewers, ["autoBackup"]);
     const content = planRouting({ pr: pr({ labels: ["skills"] }), config: cfg, now: MONDAY });
@@ -268,7 +272,7 @@ describe("planRouting", () => {
     assert.equal(teamPlan.source, "team");
   });
 
-  test("略過草稿、已關閉的 PR、skip label、已涵蓋的路由 PR，以及已 review 的未路由 PR", () => {
+  test("skips drafts, closed PRs, skip labels, covered routed PRs, and reviewed unrouted PRs", () => {
     const cfg = config();
     assert.equal(planRouting({ pr: pr({ draft: true }), config: cfg }).reason, "draft");
     assert.equal(planRouting({ pr: pr({ state: "closed" }), config: cfg }).reason, "not-open");
@@ -277,7 +281,7 @@ describe("planRouting", () => {
     assert.equal(planRouting({ pr: pr(), reviews: [review("core1")], config: cfg }).reason, "already-reviewed");
   });
 
-  test("已被請求的涵蓋 reviewer 會保留；非 pool 的請求仍會取得 pool reviewer", () => {
+  test("a covering reviewer already requested is kept; a non-pool request still gets a pool reviewer", () => {
     const covered = planRouting({ pr: pr({ labels: ["plugin"], requested: ["plugin1"] }), config: config(), now: MONDAY });
     assert.equal(covered.source, "covered");
     assert.deepEqual(covered.reviewers, []);
@@ -287,7 +291,7 @@ describe("planRouting", () => {
     assert.deepEqual(manual.reviewers, ["plugin1"]);
   });
 
-  test("當新 head 變更 pool 時重新路由已路由的 PR，並保留 SLA", () => {
+  test("re-routes an already-routed PR when a new head changes the pool, keeping the SLA", () => {
     const routed = pr({ labels: ["canvas-extension", "review-due:2026-09-30"], requested: ["canvas1"] });
     const plan = planRouting({ pr: routed, intentLabels: ["canvas-extension", "workflow"], config: config(), now: new Date("2026-09-29T10:00:00Z") });
     assert.equal(plan.action, "route");
@@ -302,7 +306,7 @@ describe("planRouting", () => {
     assert.equal(unchanged.reason, "already-routed");
   });
 
-  test("未設定個人時，有人已 review 後不會重新請求團隊", () => {
+  test("does not re-request a team after someone reviewed when no individuals are configured", () => {
     const empty = config({
       pools: { ...rawConfig().pools, "core-maintainers": { team: "github/core", reviewers: [] }, content: { team: "github/content" } },
     });
@@ -311,7 +315,7 @@ describe("planRouting", () => {
     assert.deepEqual(planRouting({ pr: routed, config: empty }).teamReviewers, ["content"]);
   });
 
-  test("needs-reviewer 重新路由、重啟 SLA，並移除請求 label", () => {
+  test("needs-reviewer re-routes, restarts the SLA, and removes the request label", () => {
     const plan = planRouting({
       pr: pr({
         labels: ["canvas-extension", "needs-reviewer", "review-due:2026-09-10", "review-overdue", "review-escalated"],
@@ -328,7 +332,7 @@ describe("planRouting", () => {
     assert.deepEqual(plan.removeLabels.sort(), ["needs-reviewer", "review-due:2026-09-10", "review-escalated", "review-overdue"]);
   });
 
-  test("needs-reviewer 略過已提交 review 的 reviewer", () => {
+  test("needs-reviewer skips reviewers who already submitted a review", () => {
     const plan = planRouting({
       pr: pr({ labels: ["canvas-extension", "needs-reviewer", "review-due:2026-09-10"], requested: ["canvas1"] }),
       reviews: [review("canvas2", "2026-09-09T00:00:00Z")],
@@ -339,7 +343,7 @@ describe("planRouting", () => {
     assert.deepEqual(plan.reviewers, ["canvas3"]);
   });
 
-  test("needs-reviewer 沒有新的可請求 reviewer 時，label 與 SLA 維持不變", () => {
+  test("needs-reviewer with no new reviewer to request leaves labels and the SLA unchanged", () => {
     const plan = planRouting({
       pr: pr({ labels: ["plugin", "needs-reviewer", "review-due:2026-09-10"], requested: ["plugin1"], teams: ["plugin"] }),
       config: config({ unavailable: ["core1", "core2"] }),
@@ -351,7 +355,7 @@ describe("planRouting", () => {
     assert.equal(plan.removeLabels, undefined);
   });
 
-  test("needs-reviewer 移除並重新加入同日到期的 label，以標記新的 SLA 週期", () => {
+  test("needs-reviewer removes and re-adds a same-date due label to mark a new SLA cycle", () => {
     const plan = planRouting({ pr: pr({ labels: ["plugin", "needs-reviewer", "review-due:2026-09-30"] }), config: config(), now: MONDAY });
     assert.deepEqual(plan.removeLabels, ["review-due:2026-09-30", "needs-reviewer"]);
     assert.deepEqual(plan.addLabels, ["review-due:2026-09-30"]);
@@ -362,11 +366,11 @@ describe("planEscalation", () => {
   const routed = (extra = {}) =>
     pr({ labels: [extra.pool ?? "canvas-extension", `review-due:${extra.due ?? "2026-09-30"}`, ...(extra.labels ?? [])], requested: extra.requested ?? ["canvas1"] });
 
-  test("在到期日之前一切正常", () => {
+  test("is on track through the due date", () => {
     assert.equal(planEscalation({ pr: routed(), config: config(), now: new Date("2026-09-30T20:00:00Z") }).state, "on-track");
   });
 
-  test("標記逾期，並在下一個工作日請求 backup", () => {
+  test("marks overdue and requests a backup the next business day", () => {
     const plan = planEscalation({ pr: routed(), config: config(), now: new Date("2026-10-01T14:00:00Z") });
     assert.equal(plan.action, "overdue");
     assert.deepEqual(plan.reviewers, ["canvasBackup"]);
@@ -376,7 +380,7 @@ describe("planEscalation", () => {
     assert.match(plan.comment, /2026-10-02/);
   });
 
-  test("當沒有可用的 backup 個人時退回團隊，並如此說明", () => {
+  test("falls back to a team when no backup individual is available, and says so", () => {
     const noBackups = config({ unavailable: ["core1", "core2"], pools: { ...rawConfig().pools, canvas: { team: "github/canvas", reviewers: ["canvas1"] } } });
     const now = new Date("2026-10-01T14:00:00Z");
     const plan = planEscalation({ pr: routed(), config: noBackups, now });
@@ -390,9 +394,9 @@ describe("planEscalation", () => {
     assert.match(allRequested.comment, /No additional reviewer is available/);
   });
 
-  test("不重複逾期動作，並略過週末", () => {
+  test("does not repeat the overdue action and skips weekends", () => {
     const cfg = config();
-    // 週三 2026-09-30 路由：週五到期、週一逾期、週二升級。
+    // 2026-09-30 星期三路由：星期五到期、星期一逾期、星期二呈報。
     const wednesday = (labels = []) => routed({ due: "2026-10-02", labels });
     assert.equal(planEscalation({ pr: wednesday(), config: cfg, now: new Date("2026-10-03T14:00:00Z") }).state, "on-track");
     assert.equal(planEscalation({ pr: wednesday(), config: cfg, now: new Date("2026-10-04T14:00:00Z") }).state, "on-track");
@@ -401,7 +405,7 @@ describe("planEscalation", () => {
     assert.equal(planEscalation({ pr: wednesday(["review-overdue"]), config: cfg, now: new Date("2026-10-06T14:00:00Z") }).action, "escalate");
   });
 
-  test("路由後四個工作日升級到 core pool", () => {
+  test("escalates to the core pool four business days after routing", () => {
     const plan = planEscalation({ pr: routed({ labels: ["review-overdue"] }), config: config(), now: new Date("2026-10-02T14:00:00Z") });
     assert.equal(plan.action, "escalate");
     assert.equal(plan.escalateOn, "2026-10-02");
@@ -412,13 +416,13 @@ describe("planEscalation", () => {
     assert.ok(plan.comment.startsWith(COMMENT_MARKERS.escalated));
   });
 
-  test("逾期 label 被略過時兩個 label 都加入，且不重複升級", () => {
+  test("adds both labels when overdue was skipped, and does not repeat escalation", () => {
     const cfg = config();
     assert.deepEqual(planEscalation({ pr: routed(), config: cfg, now: new Date("2026-10-07T14:00:00Z") }).addLabels, ["review-escalated", "review-overdue"]);
     assert.equal(planEscalation({ pr: routed({ labels: ["review-escalated"] }), config: cfg, now: new Date("2026-10-07T14:00:00Z") }).state, "escalated");
   });
 
-  test("路由後有人類 review 到達時清除 SLA label", () => {
+  test("clears SLA labels once a human review arrives after routing", () => {
     const plan = planEscalation({
       pr: routed({ labels: ["review-overdue"] }),
       reviews: [review("canvas1", "2026-10-01T09:00:00Z", "APPROVED")],
@@ -429,20 +433,20 @@ describe("planEscalation", () => {
     assert.deepEqual(plan.removeLabels, ["review-due:2026-09-30", "review-overdue"]);
   });
 
-  test("使用精確的路由時間，使同日較早的 review 不算數", () => {
+  test("uses the exact routing time so earlier same-day reviews do not count", () => {
     const args = { pr: routed(), config: config(), now: new Date("2026-10-01T14:00:00Z"), routedAt: "2026-09-28T15:00:00Z" };
     assert.equal(planEscalation({ ...args, reviews: [review("canvas1", "2026-09-28T10:00:00Z")] }).action, "overdue");
     assert.equal(planEscalation({ ...args, reviews: [review("canvas1", "2026-09-28T16:00:00Z")] }).action, "reviewed");
   });
 
-  test("路由發生在非工作日時，comment 顯示實際的路由日期", () => {
-    // 週六 2026-09-26 路由：週二 2026-09-29 到期、週三逾期。
+  test("comments show the actual routing date when routing happened on a non-business day", () => {
+    // 2026-09-26 星期六路由：2026-09-29 星期二到期、星期三逾期。
     const plan = planEscalation({ pr: routed({ due: "2026-09-29" }), config: config(), now: new Date("2026-09-30T14:00:00Z"), routedAt: "2026-09-26T12:00:00Z" });
     assert.equal(plan.action, "overdue");
     assert.match(plan.comment, /pool on 2026-09-26;/);
   });
 
-  test("忽略未路由的 PR", () => {
+  test("ignores unrouted PRs", () => {
     assert.equal(planEscalation({ pr: pr({ labels: ["skills"] }), config: config(), now: MONDAY }).reason, "not-routed");
   });
 });
@@ -482,15 +486,15 @@ function fakeGithub({ pulls = [], reviews = {}, events = {}, repoLabels = [], fa
       if (method === rest.pulls.listReviews) return reviews[params.pull_number] ?? [];
       if (method === rest.issues.listEvents) return events[params.issue_number] ?? [];
       if (method === rest.issues.listLabelsForRepo) return repoLabels.map((name) => ({ name }));
-      throw new Error("非預期的 paginate 呼叫");
+      throw new Error("unexpected paginate call");
     },
   };
 }
 
 const writeCalls = (github) => github.calls.map((call) => call.name);
 
-describe("GitHub 執行器", () => {
-  test("planRoutingSweep 唯讀，並回傳路由計畫", async () => {
+describe("GitHub runners", () => {
+  test("planRoutingSweep is read-only and returns route plans", async () => {
     const pulls = [pr({ number: 1, labels: ["canvas-extension"] }), pr({ number: 2, labels: ["review-due:2026-09-30"], requested: ["core1"] }), pr({ number: 3, draft: true })];
     const github = fakeGithub({ pulls });
     const plans = await planRoutingSweep({ github, owner: "o", repo: "r", config: config(), now: MONDAY });
@@ -498,7 +502,7 @@ describe("GitHub 執行器", () => {
     assert.deepEqual(github.calls, []);
   });
 
-  test("routePullRequest 請求、建立到期 label，並遵守 dry run", async () => {
+  test("routePullRequest requests, creates the due label, and respects dry run", async () => {
     const pulls = [pr({ number: 1, labels: ["canvas-extension"] })];
     const github = fakeGithub({ pulls });
     const plan = await routePullRequest({ github, owner: "o", repo: "r", config: config(), prNumber: 1, now: MONDAY });
@@ -510,7 +514,7 @@ describe("GitHub 執行器", () => {
     assert.deepEqual(dry.calls, []);
   });
 
-  test("請求 reviewer 失敗時 label 保持原狀，讓下次執行重試", async () => {
+  test("a failed reviewer request leaves labels untouched so the next run retries", async () => {
     const pulls = [pr({ number: 1, labels: ["canvas-extension", "needs-reviewer"] })];
     const github = fakeGithub({ pulls, failRequest: true });
     const plan = await routePullRequest({ github, owner: "o", repo: "r", config: config(), prNumber: 1, now: MONDAY });
@@ -518,7 +522,7 @@ describe("GitHub 執行器", () => {
     assert.deepEqual(writeCalls(github), ["requestReviewers"]);
   });
 
-  test("PR head 在 intent artifact 之後移動時 routePullRequest 會略過", async () => {
+  test("routePullRequest skips when the PR head moved after the intent artifact", async () => {
     const pulls = [{ ...pr({ number: 1 }), head: { sha: "b".repeat(40) } }];
     const github = fakeGithub({ pulls });
     const plan = await routePullRequest({ github, owner: "o", repo: "r", config: config(), prNumber: 1, intentLabels: ["skills"], expectedHeadSha: "a".repeat(40) });
@@ -526,7 +530,7 @@ describe("GitHub 執行器", () => {
     assert.deepEqual(github.calls, []);
   });
 
-  test("升級使用到期 label 的 labeled 事件作為 review 邊界", async () => {
+  test("escalation uses the due label's labeled event as the review boundary", async () => {
     const pulls = [pr({ number: 7, labels: ["plugin", "review-due:2026-09-30"], requested: ["plugin1"] })];
     const events = { 7: [{ event: "labeled", label: { name: "review-due:2026-09-30" }, created_at: "2026-09-28T15:00:00Z" }] };
     const reviews = { 7: [review("plugin1", "2026-09-28T10:00:00Z")] };
@@ -543,7 +547,7 @@ describe("GitHub 執行器", () => {
     assert.ok(github.calls.some((call) => call.name === "createComment"));
   });
 
-  test("升級請求失敗時不會加入 label 或 comment", async () => {
+  test("a failed escalation request does not add labels or comments", async () => {
     const pulls = [pr({ number: 7, labels: ["plugin", "review-due:2026-09-30"], requested: ["plugin1"] })];
     const github = fakeGithub({ pulls, failRequest: true });
     const plan = await escalatePullRequest({ github, owner: "o", repo: "r", config: config(), prNumber: 7, now: new Date("2026-10-02T14:00:00Z") });
@@ -552,7 +556,7 @@ describe("GitHub 執行器", () => {
     assert.deepEqual(writeCalls(github), ["requestReviewers"]);
   });
 
-  test("cleanupStaleDueLabels 只刪除舊的、未使用的到期 label", async () => {
+  test("cleanupStaleDueLabels deletes only old, unused due labels", async () => {
     const pulls = [pr({ number: 7, labels: ["review-due:2026-09-01"] })];
     const github = fakeGithub({ pulls, repoLabels: ["review-due:2026-09-01", "review-due:2026-09-02", "review-due:2026-09-30", "plugin"] });
     const deleted = await cleanupStaleDueLabels({ github, owner: "o", repo: "r", config: config(), now: new Date("2026-10-01T14:00:00Z") });
@@ -571,7 +575,7 @@ describe("resolveWorkflowRunArtifact", () => {
   };
   const workflowRun = { id: 99, event: "pull_request", head_sha: sha, head_branch: "feature", head_repository: { full_name: "fork/r" }, pull_requests: [] };
 
-  test("接受相符的 intent artifact，並回傳權威的 intent label", async () => {
+  test("accepts a matching intent artifact and returns authoritative intent labels", async () => {
     const github = fakeGithub({ pulls: [openPr] });
     const result = await resolveWorkflowRunArtifact({
       github,
@@ -583,7 +587,7 @@ describe("resolveWorkflowRunArtifact", () => {
     assert.deepEqual(result, { prNumber: 5, headSha: sha, intentLabels: ["skills"] });
   });
 
-  test("拒絕偽造或不相符的 artifact；request artifact 不攜帶 intent label", async () => {
+  test("rejects forged or mismatched artifacts; request artifacts carry no intent labels", async () => {
     const github = fakeGithub({ pulls: [openPr] });
     const base = { schema_version: "review-routing-request/v1", event: "pull_request", pr_number: 5, head_sha: sha, run_id: "99" };
     await assert.rejects(resolveWorkflowRunArtifact({ github, owner: "o", repo: "r", workflowRun, artifact: { ...base, run_id: "1" } }), /run_id/);
@@ -596,7 +600,7 @@ describe("resolveWorkflowRunArtifact", () => {
   });
 });
 
-test("formatResultsSummary 渲染一個表格", () => {
+test("formatResultsSummary renders a table", () => {
   const summary = formatResultsSummary(
     [{ prNumber: 1, action: "route", pool: "canvas", reviewers: ["a"], teamReviewers: ["t"], addLabels: ["x"], removeLabels: [], source: "pool", requestError: "boom" }],
     { title: "Review routing", dryRun: true }

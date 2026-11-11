@@ -380,7 +380,7 @@ exclude-paths:
 rebase-strategy: "disabled"  # 停止自動 rebase
 ```
 
-在提交訊息中包含 `[dependabot skip]`，可允許在額外提交上進行 rebase。
+只要有人將提交推送到 PR 的分支，Dependabot 就會停止對該 PR 進行 rebase。若該提交的訊息中包含 `[dependabot skip]`，便會解除此限制（但不會覆寫 `rebase-strategy: "disabled"`）：下一次 rebase 會以強制推送覆寫該分支，並捨棄該提交。若要保留你的提交，請勿加入此標記。
 
 ### 開放 PR 限制
 

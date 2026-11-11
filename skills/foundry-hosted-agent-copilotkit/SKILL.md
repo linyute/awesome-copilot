@@ -1,100 +1,136 @@
 ---
 name: foundry-hosted-agent-copilotkit
-description: '針對結合了 CopilotKit 前端與透過 AG-UI 協定在 Azure AI Foundry 託管代理程式上之 Microsoft Agent Framework 代理程式的代理程式網頁應用程式，提供持續開發指引 - 新增和管制代理程式工具、連接人機協同（Human-in-the-loop）核准、建構生成式 UI 和共享狀態、偵錯事件串流、安全地升級 pre-1.0 套件，以及部署託管代理程式更新。'
+description: '建構與演進結合 CopilotKit React 前端與以 Microsoft Foundry 託管代理人形式執行的 Microsoft Agent Framework 代理人的代理人 Web 應用程式，雙方透過 AG-UI 通訊協定連線。涵蓋連線架構選擇、使用 Foundry 原生基語而非自行手工打造管線、代理人工具、真人介入 (Human-in-the-loop) 核准、生成式 UI 與共用狀態、本機執行與 azd 部署、除錯事件串流以及安全升級。'
 ---
 
-# 開發 CopilotKit + AG-UI + Azure AI Foundry 託管代理程式
+# CopilotKit + AG-UI + Microsoft Foundry 託管代理人
 
-針對在此技術堆疊上建構的**現有**應用程式執行開發工作：React/Next.js 前端使用 CopilotKit，透過 AG-UI 協定連接到 Microsoft Agent Framework (MAF) 代理程式（Python 或 .NET），該代理程式在 Azure AI Foundry 託管代理程式（付費 Azure 服務；使用可能會產生費用）上執行，或者正針對該代理程式進行開發。
+當 React/Next.js 應用程式使用 CopilotKit 並透過 AG-UI 與託管於 Microsoft Foundry 的 Microsoft Agent Framework (MAF) 代理人進行通訊時，請使用此技能。這涵蓋新專案建構以及對現有應用程式的變更。Foundry 託管代理人為付費的 Azure 服務。
 
-請**勿**使用此技能來建構全新專案。存在專用的腳手架工具（CopilotKit CLI, `azd ai agent init`）；使用這些工具，然後返回此處執行後續所有操作：新增工具、在核准後管制它們、生成式 UI、共享狀態、偵錯、相依性升級以及部署代理程式更新。
+使用 `azd ai agent init` 樣板化代理人，並使用慣用的 React/Next.js 工具樣板化前端。接著遵循此技能處理兩者連線的所有環節。
 
-## 心理模型
+## 心智模型 (Mental model)
 
 ```text
-CopilotKit hooks (React)            useFrontendTool / useHumanInTheLoop /
-        │                           useRenderToolCall / useCoAgent
-        ▼
-CopilotKit Runtime (route handler)  agents: { <name>: new HttpAgent({ url }) }
-        │  AG-UI events over SSE
-        ▼
-AG-UI endpoint                      ← 此處所在位置定義了您的架構
-        │
-        ▼
-MAF Agent (tools, approval modes)   → model deployment
+React (CopilotKit v2)        CopilotKitProvider / CopilotChat threadId=<conv_ id> / useInterrupt
+      │ HTTP
+CopilotKit runtime           CopilotRuntime({ agents: { default: new HttpAgent({ url }) } })
+      │ AG-UI (SSE)
+AG-UI gateway (FastAPI)      add_agent_framework_fastapi_endpoint(app, AgentFrameworkAgent(FoundryAgent(...),
+                                use_service_session=True, service_session_id_from_thread_id=True))   ← 不保留對話串狀態
+      │ OpenAI Responses + Entra token (https://ai.azure.com/.default)
+Foundry hosted agent         ResponsesHostServer(Agent(tools=[...]))  ← 使用 azd 部署
 ```
 
-最重要的一個事實是：**預設情況下，已部署的 Foundry 託管代理程式端點不會發送 AG-UI。** 它會公開一個 OpenAI 回應端點（`.../protocols/openai/responses`）和/或一個原始的 `.../protocols/invocations` 端點。AG-UI 必須在某處產生，而它在何處產生決定了每個功能（尤其是人機協同核准）的行為方式。三種佈線方式在 [references/architecture.md](references/architecture.md) 中有詳細說明。
+**已部署的託管代理人本身不支援 AG-UI。** 它對外公開 `.../agents/<name>/endpoint/protocols/openai/responses` (Responses 通訊協定) 或 `.../protocols/invocations`。請使用 MAF 本身的配接器 (`FoundryAgent` + `agent-framework-ag-ui`) 進行轉譯，而不要手動撰寫 SSE 轉譯器。由於瀏覽器端無法存放 Entra 權杖，因此閘道一律位於伺服器端。
+
+## 優先使用平台原生功能
+
+在編寫任何底層管道程式碼之前，請先查閱此表格。每一列都是舊程式庫中過去手工自行實作的功能。
+
+| 需求 | 原生基語（請勿手動實作） |
+| --- | --- |
+| 跨回合與重新啟動保留對話歷程記錄 | Foundry **交談 (conversations)**：每個聊天建立一個，使用其 `conv_…` ID 作為 AG-UI 執行緒 ID，閘道會直接傳遞（無須快照存放區） |
+| 耐用持久的工具核准 | `ResponsesHostServer` 預設會保存核准請求 (`FoundryFunctionApprovalStore`)。AG-UI 配接器會將其轉換為 AG-UI 中斷 (interrupt) 並將決定轉發回託管代理人 |
+| 瀏覽器斷線後仍可持續執行的 Run | Responses `background: true` + `store: true`，然後輪詢或重新連線（請參閱 [連線配置](references/wiring.md#background-runs-gateway)） |
+| 具備關卡的耐久多步驟工作流程 | Invocations 託管代理人 + `@multi_turn_task` + `FoundryStateStore` |
+| 代理人的個別使用者檔案 | Session Files API；代理人使用自己的工具讀取 `$HOME`。切勿將大型文件直接內嵌於提示詞中 |
+| 長期使用者記憶 | Foundry Memory Store（使用者範圍）或 `FoundryMemoryProvider` |
+| 工具目錄、Web 搜尋、程式碼直譯器 | 具備 Tool Search 的 Foundry **工具箱** (`FoundryToolbox`)，而非預先列出所有工具 |
+| 編寫程式碼時的即時文件 | Microsoft Learn 與 Foundry MCP 伺服器（隨附於本技能的外掛程式） |
+
+## 選擇連線架構
+
+| 若應用程式需要… | 使用 | 閘道程式碼大小 |
+| --- | --- | --- |
+| 託管代理人 + 聊天 + 工具 + 核准 (**預設**) | **A. 位於 Responses 託管代理人之上的 AG-UI 閘道** | 約 50 行 Python |
+| 所有狀態模式、本機原型、無需 Foundry 運算 | **B. 同處理程序 AG-UI**（代理人直接在 FastAPI 應用程式內執行） | 約 15 行 |
+| 斷線後持續執行的背景 Run、重新連線、每位使用者的交談清單 | **C. 背景 Run 閘道**（建構於 Foundry 交談之上的自訂 AG-UI 代理人） | 約 150 行 TypeScript |
+| 多步驟規劃 → 核准 → 執行，不可重複執行的不可逆步驟 | **D. Invocations 託管代理人**（與 A 或 C 並行） | REST Proxy |
+
+各架構的程式碼位於 [references/wiring.md](references/wiring.md)。在現有程式庫中，在變更任何內容前請先識別其連線方式：
+- 被 `add_agent_framework_fastapi_endpoint` 包裝的 `FoundryAgent(...)` 代表架構 A。
+- 直接包裝的 `Agent(client=...)` 代表架構 B。
+- 呼叫帶有 `background` 的 `/responses` 之自訂 `AbstractAgent` 代表架構 C。
+- `azure.yaml` 中的 `protocol: invocations` 代表架構 D。
 
 ## 工作流程
 
-針對此堆疊上的每項工作，請遵循以下步驟：
+1. **選擇或識別連線架構**（參見上方表格）。
+2. **使用每個套件的最新版本**（`@copilotkit/*`、`@ag-ui/*`、`agent-framework-*`、`azd` 及其 `azure.ai.agents` 擴充套件）。接著依據即時來源校準：
+   - 適用於 MAF 與 Foundry 的 Microsoft Learn MCP 伺服器
+   - 適用於專案狀態的 Foundry MCP 伺服器
+   - docs.copilotkit.ai 以及已安裝 `@copilotkit/*` 套件中隨附的 `.d.ts` 檔案
+   - docs.ag-ui.com
 
-1. **首先識別佈線方式。** 在變更任何內容之前檢查程式碼庫：
-   - `add_agent_framework_fastapi_endpoint(...)` (Python) 或 `MapAGUI(...)` (.NET) 包裝了一個同進程代理程式 → 架構 A（同進程 AG-UI 端點）。
-   - 託管代理程式其自身的容器提供 AG-UI 服務，並在 `agent.yaml` 中宣告 `protocol: invocations` → 架構 B。
-   - 一個單獨的服務在 AG-UI 端點與託管代理程式的 `/responses` 端點之間進行轉譯（在程式碼中尋找 `previous_response_id`、`mcp_approval_response` 或 Foundry `conversation` 物件）→ 架構 C（轉譯橋接器）。
-   - 確認前端代理程式名稱：執行階段 `agents` 設定中的鍵、`<CopilotKit>` 提供者上的 `agent` 屬性，以及 `agent.yaml` 中的託管代理程式名稱都必須一致。
-2. **立足於即時文件。** 此處的每一層都是預先 1.0 版或預覽版，且在次要版本之間會發生變動。絕不要相信憑記憶記住的 API：
-   - MAF 和 Foundry 託管代理程式：在可用時使用 Microsoft Docs MCP 工具，否則閱讀 learn.microsoft.com（`/agent-framework/integrations/ag-ui/`, `/azure/foundry/`）。
-   - CopilotKit：docs.copilotkit.ai（Microsoft Agent Framework 區段）。針對已安裝的 `@copilotkit/*` 套件中隨附的 TypeScript 宣告驗證勾點（Hook）與執行階段 API 名稱——名稱經歷了重構（`useCopilotAction` 是舊版；目前名稱包括 `useFrontendTool`、`useHumanInTheLoop`、`useRenderToolCall`、`useCoAgent`）。
-   - AG-UI 協定：docs.ag-ui.com（事件參考，dojo 模式）。
-3. **使用下方對應的參考資料執行工作。**
-4. **進行對抗性驗證。** 能編譯的建構、啟動的開發伺服器，或單次成功的聊天回覆都不是證明的依據。請套用此技能末尾的完成標準。
+   API 在次版本之間常有變動，請勿盲信記憶中的名稱。
+3. **依據下列教戰守則進行建構或修改**。
+4. **以對抗性思維對照完成標準進行驗證**。單純編譯成功、伺服器啟動或單次聊天成功回覆並不能作為完成的證明。
 
-## 參考資料
+## 教戰守則 (Playbooks)
 
-視需求載入；每一項都是自足的：
+### 端到端建構新應用程式（架構 A）
 
-| 參考資料 | 何時載入 |
-| --- | --- |
-| [references/architecture.md](references/architecture.md) | 選擇或理解佈線方式；本地與部署模式；為什麼存在轉譯橋接器以及它必須處理什麼 |
-| [references/patterns.md](references/patterns.md) | 實作 7 種 AG-UI 互動模式中的任何一種（前端工具、後端工具呈現、人機協同、生成式 UI、共享狀態、預測狀態） |
-| [references/hitl.md](references/hitl.md) | 新增或偵錯人機協同核准，包括已知的重複執行危害 |
-| [references/troubleshooting.md](references/troubleshooting.md) | 任何失敗：每一層的症狀 → 根本原因 → 修正方法對照表 |
-| [references/upgrading.md](references/upgrading.md) | 升級任何相依性；版本相容性規則；追蹤的上游問題 |
-| [references/deploy-loop.md](references/deploy-loop.md) | 使用 `azd ai agent run` 在本地執行代理程式、部署更新、部署注意事項 |
+1. 在**全新目錄**中，針對專案執行 `azd ai agent init --no-prompt ...`。確認 `azd env get-values` 顯示 `FOUNDRY_PROJECT_ENDPOINT`，接著在 `main.py` 中編寫工具 ([wiring §1](references/wiring.md#1-hosted-agent))。
+2. 使用 `azd ai agent run` 在本機執行（連接埠 8088），並使用 `azd ai agent invoke --local "hi"` 進行冒煙測試。
+3. 執行 `azd deploy`（每次部署均會建立新的代理人版本），然後執行 `azd ai agent invoke "hi"`。
+4. 完全依照 [wiring §2](references/wiring.md#2-ag-ui-gateway-wiring-a) 加入 AG-UI 閘道，包含 thread-ID-is-conversation-ID 旗標與互通相容層 (interop shim)。建立交談，接著在碰觸前端 UI 之前，使用其 `conv_…` ID 作為 `threadId`，透過 `curl -N` 測試聊天**以及**核准恢復執行流程。
+5. 加入交談路由、CopilotKit 執行階段路由與 React 提供者 ([wiring §3](references/wiring.md#3-copilotkit-runtime-and-react))。
+6. 加入 `useInterrupt` 核准 UI 與工具轉譯器 ([hitl.md](references/hitl.md#frontend-copilotkit-v2))。
+7. 逐一驗證每項完成標準，先在本機驗證，接著針對已部署的代理人進行驗證。
 
-## 工作手冊
+### 新增或變更代理人工具
 
-### 新增或修改代理程式工具
+1. 使用 `@tool` (Python) 或 `AIFunctionFactory.Create` (.NET) 定義工具，並指定型別與參數描述。
+2. 參數描述中請勿包含模型必須推導之資料的具體範例數值。模型會複製字面上的範例。
+3. 傳回精簡數值。豐富格式屬於 UI 轉譯器的工作。
+4. 具副作用的工具請設定 `approval_mode="always_require"` ([hitl.md](references/hitl.md))。
+5. 重新部署託管代理人。工具存在於託管代理人中，而非閘道。
+6. 透過 UI 驗證 `TOOL_CALL_*` 事件串流傳輸，且任何解析該引數的元件仍可正常運作。
 
-1. 在代理程式上定義工具（Python 中為 `@tool`；.NET 中為 `AIFunctionFactory.Create`），並帶有具體類型且已說明的參數。
-2. 保持文件字串（Docstrings）符合安全接地：不要在參數說明中為模型必須從實際資料衍生出的欄位放入具體的範例數值——模型會複製字面範例。在工具內部使用預留位置並進行驗證。
-3. 傳回緊湊且模型可使用的值；豐富的格式化屬於 UI 呈現，而不是工具結果。
-4. 現在決定核准模式：具有副作用的工具獲得 `approval_mode="always_require"`（參見 [references/hitl.md](references/hitl.md)）；唯讀工具保持不受限。
-5. 如果工具呼叫應該在 UI 中呈現，請為其新增一個 `useRenderToolCall`/呈現項目（[references/patterns.md](references/patterns.md)）。
-6. 即時驗證：透過聊天 UI 觸發工具，確認呼叫和結果串流呈現為 `TOOL_CALL_*` 事件，並確認重新命名或重新鍵入的參數沒有破壞任何解析參數的前端元件。
+### 生成式 UI 與共用狀態 (CopilotKit v2 hooks)
 
-### 將人機協同（HITL）連接到現有工具
+| 模式 | 代理人端 | 前端 Hook |
+| --- | --- | --- |
+| 前端工具（代理人呼叫 UI） | 無；在 `RunAgentInput.tools` 抵達 | `useFrontendTool` |
+| 轉譯後端工具呼叫 | 一般 `@tool` | `useRenderTool` / `useRenderToolCall` / `useDefaultRenderTool` |
+| 工具呼叫的人工核准 | `approval_mode="always_require"` | `useInterrupt` → `resolve({approved})` |
+| 代理人向使用者索取輸入（前端解析工具） | 無 | `useHumanInTheLoop` → `respond(...)` |
+| 共用或預測性狀態 | `AgentFrameworkAgent` 上的 `state_schema` / `predict_state_config` | `useAgent`（讀取 `agent.state`） |
 
-完全遵循 [references/hitl.md](references/hitl.md)。摘要：標記工具（`approval_mode="always_require"` / `ApprovalRequiredAIFunction`），在 AG-UI 包裝器上啟用確認，在前端註冊核准 UI 勾點，並使回應承載資料形狀與伺服器偵測所預期的相符。然後測試核准以及拒絕，以及核准後的後續輪次（參見重複執行危害）。
+狀態模式僅在配接器能看到代理人狀態時才會發出 `STATE_SNAPSHOT`/`STATE_DELTA`：
+- **架構 B** 原生支援。
+- **架構 A** 必須在閘道的 `AgentFrameworkAgent` 上明確宣告。在承諾提供此功能前請先進行測試。
+- **架構 C** 不會產生狀態事件，除非自行合成。
 
-### 建構生成式 UI 或共享狀態
+### 針對失效流程進行除錯
 
-遵循 [references/patterns.md](references/patterns.md) 中的模式表。注意誠實性限制：當 AG-UI 配接器包裝同進程代理程式（架構 A/B）時，狀態同步模式是原生的；透過回應協定（Responses-protocol）橋接器（架構 C），它們需要明確的綜合處理——在承諾此功能之前，請檢查程式碼庫實際實作了什麼。
+從最底層開始逐步向上排查：
+1. 使用 `azd ai agent invoke` 或針對 `/responses` 的 `curl` 呼叫託管代理人。
+2. 使用真實的交談識別碼呼叫閘道。在此連線架構下，捏造的執行緒識別碼會傳回 HTTP 500：
 
-### 偵錯損壞的流程
+   ```bash
+   CONV=$(curl -s -X POST "$FOUNDRY_PROJECT_ENDPOINT/agents/$FOUNDRY_AGENT_NAME/endpoint/protocols/openai/conversations?api-version=v1" \
+     -H "Authorization: Bearer $(az account get-access-token --resource https://ai.azure.com --query accessToken -o tsv)" \
+     -H 'content-type: application/json' -d '{}' | jq -r .id)
+   curl -N -X POST <gateway>/ -H 'content-type: application/json' -d '{"threadId":"'$CONV'","runId":"r1","messages":[{"id":"m1","role":"user","content":"hi"}],"tools":[],"context":[],"state":{},"forwardedProps":{}}'
+   ```
+3. 測試 CopilotKit 路由。
+4. 測試瀏覽器。
 
-1. 首先在最低層進行重現：使用最小的 `RunAgentInput` JSON 主體對 AG-UI 端點進行 `curl -N`，並讀取原始的 SSE 事件。如果該處可以重現錯誤，則前端是無辜的。
-2. 對於託管代理程式，再往下一層：直接呼叫代理程式的 `/responses` 端點。這就是已知的重複執行錯誤如何被隔離到框架而不是 UI 堆疊的方法。
-3. 將症狀與 [references/troubleshooting.md](references/troubleshooting.md) 進行比對——其中列出了確切的錯誤字串。
-4. 如果代理程式持有記憶體中狀態，請在驗證傳遞之間重新啟動本地執行的託管代理程式（`azd ai agent run`）；過期的狀態會導致測試因為錯誤的原因而通過或失敗。
+第一個發生失敗的層級即為問題所在。接著對照 [troubleshooting.md](references/troubleshooting.md) 中的徵兆進行處理。託管代理人記錄請使用 `azd ai agent monitor` 檢視。
 
-### 升級相依性
+### 升級相依套件
 
-遵循 [references/upgrading.md](references/upgrading.md)。絕不要單獨升級單一套件：那裡的版本關係規則（執行階段 ↔ AG-UI 用戶端、代理程式框架行一致性、裝載協定 ↔ 資訊清單版本）必須同時成立，且任何本地因應措施在移除前都必須針對其追蹤的上游問題重新進行驗證。
+遵循 [troubleshooting.md](references/troubleshooting.md#upgrades) 中的版本規則。請同時升級所有套件，然後在線上環境重新執行完成標準測試。
 
-### 部署代理程式更新
+## 完成標準 (Completion criteria)
 
-遵循 [references/deploy-loop.md](references/deploy-loop.md)：使用 `azd ai agent run` 針對真實代理程式進行本地反覆運算，然後 `azd deploy`（每次部署都會建立一個新的代理程式版本），接著在宣告成功之前驗證已部署的代理程式（包括核准暫停）。
-
-## 完成標準
-
-只有在以下所有條件都滿足時，此堆疊上的變更才算完成：
-
-1. 讀取/查詢路徑透過真實的 UI（不僅是透過 curl）正常運作。
-2. 每個核准管制的工具都經過了雙向測試：核准 → 工具在伺服器端執行且狀態明顯改變；拒絕 → 工具不執行且代理程式確認。
-3. 在同一個執行緒中，於核准後發送了至少一個後續輪次，且受管制的工具**沒有**再次靜默執行（[references/hitl.md](references/hitl.md)，重複執行危害）。
-4. 工具呼叫在串流結束時正確呈現，而不僅是在串流期間（訊息快照可能與即時事件不同）。
-5. 對於已部署的變更：上述檢查是針對已部署的端點執行的，而不僅是在本地執行——部署成功不是行為的證明。
+僅當下列所有條件均滿足時，變更才算完成：
+1. 聊天路徑可透過真實 UI 運作，而非僅透過 curl。
+2. 每個受核准保護的工具均已進行雙向測試：
+   - 核准：工具在伺服器上執行一次，且副作用可被觀察到。
+   - 拒絕：工具不執行，且代理人確認收到拒絕。
+3. 在核准之後，同一個對話串中的後續回合**不會**重複執行受保護的工具。
+4. 工具與核准卡片在 `RUN_FINISHED` 之後仍會正常轉譯，而非僅在串流過程中顯示。
+5. 對於已部署的變更，檢查項目 1–4 均已針對部署的代理人與閘道通過測試。單純部署成功並不能證明行為正確。

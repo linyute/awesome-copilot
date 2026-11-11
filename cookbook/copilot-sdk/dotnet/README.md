@@ -1,6 +1,6 @@
-# GitHub Copilot SDK Cookbook — .NET (C#)
+# Microsoft Copilot SDK 食譜 — .NET (C#)
 
-此資料夾收錄了使用 GitHub Copilot SDK 配合 .NET 的簡短實用食譜。每份食譜都簡潔、可複製貼上，並指向更完整的範例與測試。
+此資料夾收錄使用 Microsoft Copilot SDK 搭配 .NET 的簡短實用食譜。套件名稱與程式碼範例反映了目前從 GitHub Copilot SDK 分階段轉型的狀況。
 
 ## 食譜
 

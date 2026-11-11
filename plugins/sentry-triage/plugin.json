@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "sentry-triage",
   "description": "在 Copilot 畫布中掃描即時 Sentry 問題，依緊急程度分組，並移交問題以進行追蹤或建立修復 PR。",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "author": {
     "name": "Liz Tom",
     "url": "https://github.com/liztom"

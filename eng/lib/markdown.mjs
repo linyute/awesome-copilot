@@ -5,6 +5,7 @@ export function inlineCode(value) {
   const fence = "`".repeat(longestBacktickRun + 1);
   const pad = content.length === 0 || content.startsWith("`") || content.endsWith("`") ? " " : "";
 
-  // 這些數值會逐字轉譯為 Markdown 機器人評論；使用長於內容中任何反引號序列的保護圍欄可防止程式碼跨距被提前關閉。
+  // 這些值會逐字呈現在 Markdown 機器人評論中；使用比內容中任何
+  // 反引號序列更長的反引號標記，可防止代碼區段被提早關閉。
   return `${fence}${pad}${content}${pad}${fence}`;
 }

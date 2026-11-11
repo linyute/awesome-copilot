@@ -118,6 +118,11 @@ gh api repos/{owner}/{repo}/issues/{issue_number}/labels \
 
 ## 從 Issue 移除所有標籤
 
+Removes every label from the issue in one call. Remove all labels only when
+ 在單一呼叫中從 Issue 移除所有標籤。僅在明確要求時才移除所有標籤。
+ 請先讀取目前的標籤；其他情況請優先使用
+ `--remove-label`。
+
 ```bash
 gh api repos/{owner}/{repo}/issues/{issue_number}/labels -X DELETE
 ```
@@ -149,6 +154,8 @@ gh label list --limit 1000 --json name,isDefault --jq '.[] | select(.isDefault |
 - 僅在明確要求取代時才取代 Issue 的整個標籤集。
   請先讀取目前的標籤，其餘情況優先使用新增與移除：
   `PUT` 會捨棄未在呼叫中指名的所有標籤。
+- 僅在明確要求時，才移除 Issue 的所有標籤。請先讀取目前的標籤：對標籤端點執行
+  `DELETE` 會清除所有標籤。
 - 標籤名稱的比對不區分大小寫，並以給定的大小寫形式儲存。
 - 包含空格的標籤名稱請用引號括起來。
 - 在無提示執行時，傳遞 `--yes` 給 `gh label delete`，並在刪除前

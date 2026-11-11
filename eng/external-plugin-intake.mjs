@@ -15,6 +15,8 @@ export const ISSUE_FORM_MARKER = "<!-- external-plugin-submission -->";
 export const EXTERNAL_PLUGIN_INTAKE_COMMENT_MARKER = "<!-- external-plugin-intake -->";
 export const RERUN_INTAKE_COMMAND = "/rerun-intake";
 export const MARK_READY_FOR_REVIEW_COMMAND = "/mark-ready-for-review";
+export const REQUEST_FIXES_COMMAND = "/request-fixes";
+export const REQUEST_FIXES_COMMENT_MARKER = "<!-- external-plugin-request-fixes -->";
 const RERUN_INTAKE_COMMAND_PATTERN = new RegExp(
   `^\\s*${RERUN_INTAKE_COMMAND.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
   "m",
@@ -23,10 +25,13 @@ const MARK_READY_FOR_REVIEW_COMMAND_PATTERN = new RegExp(
   `^\\s*${MARK_READY_FOR_REVIEW_COMMAND.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
   "m",
 );
+const REQUEST_FIXES_COMMAND_PATTERN = new RegExp(
+  `^\\s*${REQUEST_FIXES_COMMAND.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w-])`,
+);
 const PLUGINS_DIR = path.join(ROOT_FOLDER, "plugins");
 
-// 每個項目都是等效檢查清單項目文字 (新版 + 舊版別名) 的 Set。
-// 如果勾選的項目至少包含來自每個 Set 的一個文字，則提交通過。
+// 每個項目都是一個等效核取清單項目文字的 Set（新別名 + 舊別名）。
+// 若勾選的項目包含來自每個 Set 的至少一個文字，則提交通過。
 const REQUIRED_CHECKLIST_ITEMS = [
   new Set(["The plugin lives in a public GitHub repository."]),
   new Set([
@@ -55,14 +60,14 @@ const FIELD_TITLES = Object.freeze({
   submissionChecklist: "Submission checklist",
 });
 
-// 原始 issue 範本中使用的舊版欄位標題 (在 ref/sha 拆分之前)
+// 原始 issue 範本中使用的舊版欄位標題（在 ref/sha 拆分之前）
 const LEGACY_FIELD_TITLES = Object.freeze({
   immutableRef: "Immutable ref to review",
 });
 const EXTERNAL_CANVAS_KEYWORD = "canvas";
 const EXTERNAL_CANVAS_PREVIEW_PATH = "assets/preview.png";
-// 外部外掛程式直接以 Copilot 應用程式用戶端 harness 為目標，因此其 canvas extension
-// 檔案位於用戶端自己的命名空間目錄下，而非用於具體化此存放庫中現有外掛程式的存放庫本地端
+// 外部外掛程式直接以 Copilot 應用程式用戶端控控 harness 為目標，因此其 canvas 延伸模組
+// 檔案位於用戶端自己的命名空間目錄下，而非用於實體化此存放庫中外掛程式的存放庫本地
 // "com.github.awesome-copilot" 命名空間。
 const COPILOT_CLIENT_NAMESPACE = "com.github.copilot";
 const COPILOT_EXTENSIONS_DIRECTORY = "extensions";
@@ -74,6 +79,14 @@ const MARKETING_SIGNAL_PATTERNS = Object.freeze([
   ["sales", /\bbook\s+a\s+demo\b|\bcontact\s+sales\b|\btalk\s+to\s+sales\b|\brequest\s+a\s+demo\b/i],
   ["trial", /\bfree\s+trial\b|\bstart\s+your\s+trial\b|\bget\s+started\s+free\b/i],
   ["checkout", /\bstripe\b|\bcheckout\b|\bsubscribe\s+now\b|\bbuy\s+now\b/i],
+]);
+const FIRST_PARTY_ORGANIZATIONS = new Set([
+  "microsoft",
+  "github",
+  "azure",
+  "dotnet",
+  "microsoftdocs",
+  "microsoftgraph",
 ]);
 const EXTERNAL_PLUGIN_ROOT_MANIFEST_PATHS = Object.freeze([
   ".github/plugin/plugin.json",
@@ -359,8 +372,8 @@ async function assertPublicUrl(url) {
   return addresses[0];
 }
 
-// 原生 fetch 未公開查詢掛鉤 (lookup hook)。此派送器 (dispatcher) 會連線至
-// 上方檢查過的位址，同時保留 Host/SNI 的原始主機名稱。
+// 原生 fetch 未公開查閱 hook。此分派器會連接至
+// 上方已檢查的位址，同時為 Host/SNI 保留原始主機名稱。
 export class PinnedAddressDispatcher {
   constructor(url, address) {
     this.url = url;
@@ -532,6 +545,11 @@ function buildRepositorySignals(repository) {
 
   return {
     status: "pass",
+    ownershipLabel: repository.owner?.type === "Organization"
+      ? FIRST_PARTY_ORGANIZATIONS.has(repository.owner.login?.toLowerCase())
+        ? "first party"
+        : "third party"
+      : null,
     age_days: ageDays,
     stars: repository.stargazers_count,
     watchers: repository.subscribers_count,
@@ -714,16 +732,16 @@ function buildGitTreePath(repo, treeish, { recursive = false } = {}) {
 
 function normalizeTreeish(locator) {
   const value = String(locator ?? "").trim();
-  // Git Trees API 將 tree-ish 視為單一路徑區段。完整的 "refs/tags/<tag>"
-  // ref 會破壞該規則，因此將其縮減為單純的 tag 名稱；commit SHA 與單純 tag
-  // 名稱則原樣傳遞。
+  // Git Trees API 將類樹物件 (tree-ish) 視為單一路徑區段。完整的 "refs/tags/<tag>"
+  // ref 會破壞此行為，因此將其簡化為純標籤名稱；commit SHA 與簡單標籤名稱
+  // 則保持不變傳遞。
   return value.startsWith("refs/tags/") ? value.slice("refs/tags/".length) : value;
 }
 
-// 透過逐層遍歷路徑來解析目錄的 tree SHA。每一次跳轉都是對單一目錄的
-// 非遞迴 tree 擷取，因此工作量受限於路徑深度，
-// 且與整體存放庫大小無關 — 不同於根目錄遞迴擷取，
-// 大型無關的 monorepo 可能會使其超出 API 的截斷限制而永遠無法驗證。
+// 透過一次走訪一層路徑來解析目錄的樹狀 SHA。每一次躍點皆為
+// 單一目錄的非遞迴樹狀擷取，因此工作量受路徑深度限制，且與
+// 整個存放庫大小無關——不像根目錄遞迴擷取，大型無關的
+// 單體存放庫 (monorepo) 可能會超出 API 的截斷限制而永遠無法完成驗證。
 async function resolveDirectoryTreeSha(repo, treeish, segments, token) {
   let currentTreeish = treeish;
   for (const segment of segments) {
@@ -732,7 +750,7 @@ async function resolveDirectoryTreeSha(repo, treeish, segments, token) {
       return { status: "apiError" };
     }
     if (response.data.truncated) {
-      // 單一目錄層級超出了回應限制；無法驗證是否存在。
+      // 單一目錄層級超過了回應限制；無法驗證是否存在。
       return { status: "apiError" };
     }
 
@@ -749,11 +767,10 @@ async function resolveDirectoryTreeSha(repo, treeish, segments, token) {
   return { status: "found", treeSha: currentTreeish };
 }
 
-// 檢查 (遞迴擷取的) "com.github.copilot" 子樹狀結構，以尋找外掛程式的 canvas
-// extension 進入點。路徑相對於 "com.github.copilot/"，且必須使用
-// Copilot 應用程式所使用的 "extensions/<extension-name>/extension.mjs" 配置。
-// 將遞迴擷取範圍限定在此子樹狀結構，可保持查詢完整性，
-// 而不受存放庫其餘部分大小的影響。
+// 檢查（遞迴擷取的）"com.github.copilot" 子樹狀目錄以尋找外掛程式的 canvas
+// 延伸模組進入點。路徑相對於 "com.github.copilot/"，且必須使用 Copilot 應用程式
+// 所採用的 "extensions/<extension-name>/extension.mjs" 版面配置。將遞迴擷取範圍
+// 限制在此子樹狀目錄可保持查閱完整，而無需依賴存放庫其餘部分的大小。
 function analyzeCanvasExtensionSubtree(subtreeEntries) {
   let nestedEntryPath = null;
   let nestedEntryIsNotFile = false;
@@ -896,11 +913,10 @@ export async function validateCanvasPluginMetadata(plugin, errors, warnings, tok
     } else {
       const canvasStructure = analyzeCanvasExtensionSubtree(subtreeResponse.data.tree);
       if (canvasStructure.status === "found") {
-        // 進入點位於所需的具名 extension 目錄中。
+        // 進入點位於所需的具名延伸模組目錄中。
       } else if (subtreeResponse.data.truncated) {
-        // 只有當 (已經限定命名空間範圍的) 子樹狀結構本身被截斷時，不存在才是不確定的，
-        // 這需要難以置信的大型 extension 目錄；
-        // 將其標記為無法驗證而非錯誤地拒絕。
+        // 只有在（已經受命名空間限定的）子樹狀目錄本身被截斷時，缺失才算是不確定結果，
+        // 這需要極端龐大的延伸模組目錄；將其標記為無法驗證，而非錯誤地拒絕。
         warnings.push(unverifiableEntryPointWarning);
       } else if (canvasStructure.status === "notFile") {
         errors.push(
@@ -946,7 +962,7 @@ export function parseExternalPluginIssueBody(body) {
   const pluginName = requiredField(FIELD_TITLES.pluginName);
   const shortDescription = requiredField(FIELD_TITLES.shortDescription);
   const repoInput = normalizeGitHubRepo(requiredField(FIELD_TITLES.githubRepository));
-  // 同時支援目前的欄位標題以及在 ref/sha 拆分之前使用的舊版標題
+  // 同時支援目前欄位標題與 ref/sha 拆分前所使用的舊版標題
   const immutableRef = stripNoResponse(
     sections.get(FIELD_TITLES.immutableRef) ?? sections.get(LEGACY_FIELD_TITLES.immutableRef),
   );
@@ -975,7 +991,7 @@ export function parseExternalPluginIssueBody(body) {
       }
     }
     if (!isChecked) {
-      // 使用每個等效項目 Set 中的標準 (第一個) 文字進行報告
+      // 使用每個等效 Set 中的標準（第一個）文字進行回報
       const [canonical] = equivalents;
       errors.push(`submission: checklist item must be checked: "${canonical}"`);
     }
@@ -1029,6 +1045,21 @@ export function parseMarkReadyForReviewCommand(body) {
   };
 }
 
+// 與其他指令不同，此原因為必填項且可跨越多行，以便維護人員列出
+// 提交者需要進行的每一項修正。
+export function parseRequestFixesCommand(body) {
+  const text = String(body ?? "");
+  const match = text.match(REQUEST_FIXES_COMMAND_PATTERN);
+  if (!match) {
+    return undefined;
+  }
+
+  return {
+    command: REQUEST_FIXES_COMMAND,
+    reason: text.slice(match[0].length).trim() || undefined,
+  };
+}
+
 function normalizeQualityGateResult(rawResult) {
   const defaults = {
     overall_status: "not_run",
@@ -1059,13 +1090,13 @@ function normalizeQualityGateResult(rawResult) {
 }
 
 function buildQualityGatesCommentSection(qualityResult) {
-  const formatStatus = (rawStatus, gate) => {
+  const formatStatus = (rawStatus) => {
     const status = String(rawStatus || "not_run");
     if (status === "pass") {
       return "✅ pass";
     }
 
-    if (status === "warning" || (gate === "spec" && status === "fail")) {
+    if (status === "warning") {
       return "⚠️ warning";
     }
     if (status === "fail" || status === "infra_error") {
@@ -1089,7 +1120,7 @@ function buildQualityGatesCommentSection(qualityResult) {
     "",
     "| Gate | Status |",
     "|---|---|",
-    `| spec compliance (non-blocking) | ${formatStatus(specState, "spec")} |`,
+    `| spec compliance | ${formatStatus(specState, "spec")} |`,
     `| vally lint | ${formatStatus(vallyState, "vally")} |`,
     `| install smoke test | ${formatStatus(smokeState, "smoke")} |`,
     `| version match | ${formatStatus(versionMatchState, "version match")} |`,
@@ -1208,6 +1239,13 @@ function buildReviewSignalsCommentSection(reviewSignals) {
     "|---|---|",
   ];
   if (repository?.status === "pass") {
+    const ownershipNote = {
+      "first party": "Organization-owned (first party: Microsoft/GitHub organization)",
+      "third party": "Organization-owned (third party)",
+    }[repository.ownershipLabel];
+    if (ownershipNote) {
+      rows.push(`| Repository owner | ${ownershipNote} |`);
+    }
     rows.push(
       `| Repository age | ${repository.age_days === undefined ? "unknown" : `${repository.age_days} day(s)`} |`,
       `| Repository activity | ${repository.signals?.length ? repository.signals.join("; ") : "no configured signal"} |`,
@@ -1239,7 +1277,7 @@ function getIntakeStateFromQualityResult(baseResult, qualityResult) {
     return "awaiting-review";
   }
 
-  return "ready-for-review";
+  return qualityResult.overall_status === "pass" ? "ready-for-review" : "awaiting-review";
 }
 
 function buildMergedIntakeComment(baseResult, qualityResult, runId, owner, repo, qualityLogUrl) {
@@ -1254,24 +1292,19 @@ function buildMergedIntakeComment(baseResult, qualityResult, runId, owner, repo,
     ? `_[Download full quality gate logs](${qualityLogUrl})_`
     : "";
 
-  const hasSpecWarnings = String(qualityResult.spec_compliance_status || "") === "warning";
   const intro =
     qualityResult.failure_class === "submitter_fixes"
       ? "## 🛑 External plugin intake failed (submitter fixes required)"
-      : qualityResult.failure_class === "infra"
+      : qualityResult.overall_status !== "pass"
         ? "## 🛑 External plugin intake failed (quality checks could not complete)"
-        : hasSpecWarnings
-          ? "## ⚠️ External plugin intake passed with spec warnings"
-          : "## ✅ External plugin intake passed";
+        : "## ✅ External plugin intake passed";
 
   const statusLine =
     qualityResult.failure_class === "submitter_fixes"
       ? "This submission passed metadata validation, but quality gates found issues that must be fixed before it can move to maintainer review. Update the issue details or source plugin and then comment `/rerun-intake`."
-      : qualityResult.failure_class === "infra"
-        ? "This submission passed metadata validation, but the automated quality checks hit an infrastructure issue. A maintainer should rerun intake or use the explicit override command after review."
-        : hasSpecWarnings
-          ? "This submission passed blocking quality checks and is ready for maintainer review, but it has non-blocking Agent Plugins spec compliance warnings."
-          : "This submission passed automated intake validation and quality checks and is ready for maintainer review.";
+      : qualityResult.overall_status !== "pass"
+        ? "This submission passed metadata validation, but the automated quality checks did not complete successfully. A maintainer should rerun intake or use the explicit override command after review."
+        : "This submission passed automated intake validation and quality checks and is ready for maintainer review.";
 
   return [
     marker,
@@ -1346,7 +1379,7 @@ export async function evaluateExternalPluginIssue({ issue, token, runId, owner, 
     }
   }
 
-  if (parsed.plugin?.source?.repo && (parsed.plugin?.source?.ref || parsed.plugin?.source?.sha)) {
+  if (parsed.plugin?.source?.repo) {
     repositorySignals = await validateRemoteRepository(parsed.plugin.source.repo, parsed.plugin.source, errors, warnings, token);
   }
   const homepageSignals = await inspectHomepage(parsed.plugin?.homepage);

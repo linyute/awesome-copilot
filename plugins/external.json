@@ -1,7 +1,33 @@
 [
   {
+    "name": "accessibility-agents",
+    "description": "以代理人技能形式落實 WCAG 2.2 AA 規範：六個路由技能負責分派無障礙專家處理網頁、文件、Markdown、桌面與 GitHub 工作；掛鉤會在無障礙負責人檢閱完成前阻止編輯面向使用者的檔案；並具備配備 axe、Office、PDF 與 ePub 掃描程式的 MCP 伺服器。",
+    "version": "7.1.0",
+    "author": {
+      "name": "Community Access (Jeff Bishop and Taylor Arndt)",
+      "url": "https://www.community-access.org"
+    },
+    "repository": "https://github.com/Community-Access/accessibility-agents",
+    "homepage": "https://github.com/Community-Access/accessibility-agents",
+    "license": "MIT",
+    "keywords": [
+      "accessibility",
+      "a11y",
+      "wcag",
+      "aria",
+      "screen-reader"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "Community-Access/accessibility-agents",
+      "path": "accessibility-agents",
+      "ref": "copilot-plugin-v7.1.0-aaf1cfb",
+      "sha": "44594ff1f61b8c8ff3fd1a26dd6744655a9204dd"
+    }
+  },
+  {
     "name": "agent-council",
-    "description": "一個在交付前判定文字產出物的執行階段可移植 5-agent 品質閘門。五個依角色條件設定的 LLM 審議者執行具有交叉研讀反駁的 2 輪非同步協定，並返回一個裁決 — SHIP、REVISE 或 HOLD — 加上結構化的修訂簡報與完整稽核紀錄。",
+    "description": "具備執行階段可攜性的 5 代理人品質門檻，在文字產出物交付前進行裁決。五位基於角色設定的 LLM 審議者執行包含交叉反駁的 2 輪非同步通訊協定，並傳回單一裁決 — SHIP（交付）、REVISE（修訂）或 HOLD（擱置）— 外加結構化的修訂簡報與完整稽核記錄。",
     "version": "0.1.3",
     "author": {
       "name": "Parth Sangani",
@@ -27,8 +53,37 @@
     }
   },
   {
+    "name": "agentcouncil",
+    "description": "適用於 Copilot CLI 的多模型評議會：三個採用不同模型家族（Anthropic、OpenAI、Google）的子代理人獨立回答，接著在協調器從匿名輸入撰寫最終結果之前，互相借鏡或對領先的答案進行質疑。",
+    "version": "2.0.0",
+    "author": {
+      "name": "Shlomi Shaki",
+      "url": "https://github.com/Sentry01"
+    },
+    "repository": "https://github.com/Sentry01/AgentCouncil",
+    "license": "MIT",
+    "keywords": [
+      "multi-agent",
+      "multi-model",
+      "council",
+      "debate",
+      "brainstorm",
+      "stress-test",
+      "adversarial",
+      "collaborative",
+      "orchestration",
+      "second-opinion"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "Sentry01/AgentCouncil",
+      "ref": "v2.0.0",
+      "sha": "abad48ddd3117056bbda12f2f7e87142d8c43369"
+    }
+  },
+  {
     "name": "ai-ready",
-    "description": "分析任何儲存庫並產生 AI-ready 設定 — AGENTS.md、copilot-instructions.md、CI 工作流程、issue 範本等。探勘您的 PR 審查模式並建立針對您技術堆疊自訂的檔案。",
+    "description": "分析任何存放庫並產生 AI 就緒的設定 — AGENTS.md、copilot-instructions.md、CI 工作流程、議題（issue）範本等。挖掘您的 PR 檢閱模式並為您的技術堆疊建立自訂檔案。",
     "version": "1.3.0",
     "author": {
       "name": "John Papa",
@@ -55,7 +110,7 @@
   },
   {
     "name": "anarlog",
-    "description": "在本地查詢 Anarlog 會議，或透過 OAuth 連線以讀取已選擇加入的雲端快照。",
+    "description": "在本機查詢 Anarlog 會議，或透過 OAuth 連線讀取選擇加入的雲端快照。",
     "version": "1.3.0",
     "author": {
       "name": "Fastrepl",
@@ -80,7 +135,7 @@
   },
   {
     "name": "apify",
-    "description": "協助開發人員使用來自 Apify Store 的數千個受信任爬蟲、擷取工具與自動化流程從任何網站擷取資料。整合現成的 Actor 以存取所有熱門社群媒體、影片、電子商務、搜尋引擎、地圖和旅遊網站。在 Apify 上建構、除錯、發佈新 Actor 並從中獲利。",
+    "description": "透過 Apify Store 中數千個值得信賴的爬蟲、抓取程式與自動化工具，協助開發者從任何網站擷取資料。整合現成的 Actor 以存取所有熱門社群媒體、影片、電子商務、搜尋引擎、地圖與旅遊網站。在 Apify 上建構、偵錯、發佈新 Actor 並獲利。",
     "version": "1.0.0",
     "author": {
       "name": "Jakub-Vacek",
@@ -106,7 +161,7 @@
   },
   {
     "name": "atlassian-twg-cli",
-    "description": "安裝並設定 Atlassian Teamwork Graph CLI (`twg`) 以與 GitHub Copilot 搭配使用。設定完成後，CLI 可提供跨 Jira、Confluence、Bitbucket 及連線工具的授權工作情境存取。",
+    "description": "安裝並設定 Atlassian Teamwork Graph CLI (`twg`) 以供 GitHub Copilot 使用。設定完成後，該 CLI 可存取 Jira、Confluence、Bitbucket 及已連線工具中獲授權的工作內容脈絡。",
     "version": "1.0.10",
     "author": {
       "name": "Atlassian",
@@ -134,9 +189,39 @@
     }
   },
   {
+    "name": "aws-core",
+    "description": "在 AWS 上建構、部署與營運應用程式。涵蓋基礎設施即程式碼（CDK、CloudFormation）、核心服務（Lambda、API Gateway、Step Functions、ECS/Fargate、IAM、Amazon Bedrock）、資料庫、可觀察性、傳訊與串流、AWS SDK、成本最佳化以及 Well-Architected 檢閱的技能。",
+    "version": "1.2.0",
+    "author": {
+      "name": "Amazon Web Services",
+      "url": "https://aws.amazon.com"
+    },
+    "repository": "https://github.com/aws/agent-toolkit-for-aws",
+    "homepage": "https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/",
+    "license": "Apache-2.0",
+    "keywords": [
+      "aws",
+      "amazon-web-services",
+      "cdk",
+      "cloudformation",
+      "serverless",
+      "lambda",
+      "bedrock",
+      "containers",
+      "observability",
+      "cost-optimization"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "aws/agent-toolkit-for-aws",
+      "path": "plugins/aws-core",
+      "sha": "e8c630949189f03b3dd77388c86b06a7f2f911a9"
+    }
+  },
+  {
     "name": "azure",
-    "description": "Microsoft Azure MCP 伺服器與技能，用於雲端資源管理、部署及 Azure 服務。直接從 Copilot 管理您的 Azure 基礎架構、監視應用程式並部署資源。",
-    "version": "1.0.0",
+    "description": "用於雲端資源管理、部署與 Azure 服務的 Microsoft Azure MCP 與技能整合。直接從您的開發環境管理 Azure 基礎結構、監視應用程式並部署資源。",
+    "version": "1.2.110",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -148,19 +233,22 @@
       "infrastructure",
       "deployment",
       "microsoft",
-      "devops"
+      "devops",
+      "foundry",
+      "diagnostics"
     ],
     "license": "MIT",
     "repository": "https://github.com/microsoft/github-copilot-for-azure",
     "source": {
       "source": "github",
       "repo": "microsoft/azure-skills",
-      "path": ".github/plugins/azure-skills"
+      "path": ".github/plugins/azure-skills",
+      "sha": "bd001a39dc9d4fea4f4e488284a9cfbb05d4bf78"
     }
   },
   {
     "name": "azure-cost-health-check",
-    "description": "在 Copilot canvas 中提供唯讀的 Azure 成本、預測、預算警準、Advisor 建議以及 AI 計費分析。",
+    "description": "在 Copilot 畫布中提供唯讀的 Azure 成本、預測、預算警示、Advisor 建議以及 AI 計費分析。",
     "version": "0.4.5",
     "author": {
       "name": "Shayne Boyer",
@@ -184,8 +272,35 @@
     }
   },
   {
+    "name": "azure-functions",
+    "description": "在 Copilot 畫布中建立、編輯、現代化、檢閱、執行、部署與監視 Azure 函式應用程式（Function App），並提供選用的 AI 協助。包含官方函式範本、執行階段與設定檢查，以及隨附技能。",
+    "version": "0.1.2",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://github.com/microsoft"
+    },
+    "repository": "https://github.com/microsoft/azure-dev-tools",
+    "homepage": "https://github.com/microsoft/azure-dev-tools/tree/azure-functions-v0-1-2-6b01d09/canvases/azure-functions",
+    "license": "MIT",
+    "keywords": [
+      "canvas",
+      "azure",
+      "azure-functions",
+      "serverless",
+      "development",
+      "modernization"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "microsoft/azure-dev-tools",
+      "path": "canvases/azure-functions",
+      "ref": "azure-functions-v0-1-2-6b01d09",
+      "sha": "cb156e5a48531b012726696c7bbc93a9fdd86f36"
+    }
+  },
+  {
     "name": "azure-functions-hosted-skills",
-    "description": "在本地建構、執行和除錯 Azure Functions 託管技能，或從 Copilot canvas 呼叫現有 Function App 中受支援的函式。",
+    "description": "在本機建構、執行與偵錯 Azure Functions 託管技能，或直接從 Copilot 畫布呼叫現有函式應用程式中受支援的函式。",
     "version": "0.5.5",
     "author": {
       "name": "paulyuk",
@@ -211,9 +326,39 @@
     }
   },
   {
+    "name": "azure-resiliency-agent",
+    "description": "驗證 Azure 應用程式架構與基礎結構即程式碼的復原力缺口，產生新的高彈性範本，並檢閱現有範本。",
+    "version": "0.1.1",
+    "author": {
+      "name": "Microsoft Azure",
+      "url": "https://azure.microsoft.com"
+    },
+    "repository": "https://github.com/Azure/azure-resiliency-agent",
+    "homepage": "https://learn.microsoft.com/azure/copilot/resiliency-agent",
+    "license": "MIT",
+    "keywords": [
+      "azure",
+      "resiliency",
+      "availability-zones",
+      "zone-redundancy",
+      "high-availability",
+      "architecture-assessment",
+      "infrastructure-as-code",
+      "bicep",
+      "arm-templates",
+      "terraform"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "Azure/azure-resiliency-agent",
+      "ref": "v0.1.1",
+      "sha": "a2c4a112acbed372a8fcc7295c0bfca6811904c0"
+    }
+  },
+  {
     "name": "azure-resources-query",
-    "description": "透過具有明確訂閱選取的唯讀 Resource Graph 查詢，在 Copilot canvas 中瀏覽 Azure 資源。",
-    "version": "0.1.5",
+    "description": "透過明確選取訂用帳戶的唯讀 Resource Graph 查詢，在 Copilot 畫布中瀏覽 Azure 資源。",
+    "version": "0.1.7",
     "author": {
       "name": "Alex Weininger",
       "url": "https://azure.microsoft.com/en-us/get-started/azure-portal/resource-graph/?msockid=1add9a5fadea65191f338d23acc864b6"
@@ -232,12 +377,68 @@
       "source": "github",
       "repo": "microsoft/azure-dev-tools",
       "path": "canvases/azure-resources-query",
-      "sha": "bf0bd07520d004845b727bb40932c24a6e69bb8d"
+      "sha": "17ab2a69f841a1a252c4bee750505b7c4b9e7abf"
+    }
+  },
+  {
+    "name": "azure-sre-agent",
+    "description": "透過互動式 Copilot 畫布，搭配現有的 Azure SRE 代理人調查發生異常的 Azure 應用程式。檢視調查對話串與事件事證，並在明確的使用者核准下結合您自己的脈絡與工具繼續進行調查。",
+    "version": "0.4.4",
+    "author": {
+      "name": "Paul Yuknewicz, Deepthi Chelupati",
+      "url": "https://github.com/paulyuk/"
+    },
+    "repository": "https://github.com/microsoft/azure-dev-tools",
+    "homepage": "https://azure.microsoft.com/en-us/products/sre-agent/",
+    "license": "MIT",
+    "keywords": [
+      "canvas",
+      "azure",
+      "sre",
+      "diagnostics",
+      "incident-management",
+      "kusto",
+      "connectors",
+      "m365",
+      "teams",
+      "data-explorer"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "microsoft/azure-dev-tools",
+      "path": "canvases/azure-sre-agent",
+      "sha": "2806dde90afb910106b2ca06d7045ac4bf005ffc"
+    }
+  },
+  {
+    "name": "azure-storage",
+    "description": "在共享的 Copilot 畫布上瀏覽 Azure 儲存體：探索 Blob、檔案、佇列與資料表，篩選 Blob 統計資料，預覽與下載 Blob，開啟唯讀 SAS 連結，並規劃帳戶間的複製作業。",
+    "version": "0.3.4",
+    "author": {
+      "name": "Microsoft Azure Tools",
+      "url": "https://github.com/microsoft/azure-dev-tools"
+    },
+    "repository": "https://github.com/microsoft/azure-dev-tools",
+    "license": "MIT",
+    "keywords": [
+      "canvas",
+      "azure",
+      "storage",
+      "blobs",
+      "files",
+      "queues",
+      "tables"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "microsoft/azure-dev-tools",
+      "path": "canvases/azure-storage",
+      "sha": "3b4d7fc2c2a56ace4c8e10333b03fcbeb1c0b887"
     }
   },
   {
     "name": "bd-skills",
-    "description": "協助 GitHub Copilot 調查行動應用程式遙測、診斷當機、管理 [bitdrift](bitdrift.ai) 工作流程與儀表板、將 Capture SDK 整合至 iOS、Android 和 React Native 應用程式，以及設定使用者旅程監視。包含涵蓋 CLI 操作、SDK 檢測、文件查詢和使用者旅程監視的四項技能；即時帳戶操作需要 bd CLI 以及 [bitdrift](bitdrift.ai) 帳戶與驗證。",
+    "description": "協助 GitHub Copilot 調查行動應用程式遙測資料、診斷當機問題、管理 [bitdrift](bitdrift.ai) 工作流程與儀表板、將 Capture SDK 整合至 iOS、Android 與 React Native 應用程式，以及設定使用者旅程監視。包含涵蓋 CLI 操作、SDK 檢測、文件查詢與使用者旅程監視的四項技能；即時帳戶操作需要 bd CLI 以及 [bitdrift](bitdrift.ai) 帳戶與驗證。",
     "version": "0.1.26",
     "author": {
       "name": "Bitdrift",
@@ -262,7 +463,7 @@
   },
   {
     "name": "blea",
-    "description": "透過技能、CLI 和本地 MCP 伺服器，提供安全、Agent 優先的低功耗藍牙 (Bluetooth Low Energy) 診斷，具備可移植的證據擷取／diff／重放以及受保護的寫入。",
+    "description": "透過技能、CLI 與本機 MCP 伺服器，提供安全、代理人優先的低功耗藍牙（Bluetooth Low Energy）診斷，具備可攜式事證擷取/比較/重播與受保護的寫入功能。",
     "version": "0.6.1",
     "author": {
       "name": "Nitmi",
@@ -286,8 +487,35 @@
     }
   },
   {
+    "name": "bootui",
+    "description": "使用 BootUI 診斷執行中的 Spring Boot 與 Quarkus 應用程式。包含設定與疑難排解技能，以及用於執行階段診斷和事證型建議的本機 MCP 連線。",
+    "version": "2.1.0",
+    "author": {
+      "name": "Julien Dubois",
+      "url": "https://github.com/jdubois"
+    },
+    "repository": "https://github.com/jdubois/boot-ui",
+    "homepage": "https://www.julien-dubois.com/boot-ui",
+    "license": "Apache-2.0",
+    "keywords": [
+      "spring-boot",
+      "quarkus",
+      "java",
+      "mcp",
+      "observability",
+      "diagnostics"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "jdubois/boot-ui",
+      "path": "plugins/bootui",
+      "ref": "v2.1.0",
+      "sha": "7d4bf29eb48e2016e17ec13087a2618eedb74416"
+    }
+  },
+  {
     "name": "brainmaxxing",
-    "description": "以程式碼庫為基礎的概念掌握度測驗，並具有互動式 BrainMax Canvas 儀表板。",
+    "description": "以程式碼庫為基礎的概念掌握度測驗，搭配互動式 BrainMax 畫布儀表板。",
     "version": "1.0.0",
     "author": {
       "name": "Julia Muiruri",
@@ -315,8 +543,8 @@
   },
   {
     "name": "cache-stats",
-    "description": "在不呼叫模型的情況下，顯示當前 GitHub Copilot 工作階段的即時提示快取重用、過期、權杖組成以及 AIU 成本。",
-    "version": "1.0.1",
+    "description": "顯示目前 GitHub Copilot 工作階段的即時提示快取重複使用、過期時間、Token 組成以及 AI 額度成本，無需進行模型呼叫。",
+    "version": "1.0.2",
     "author": {
       "name": "Arafat Tehsin",
       "url": "https://github.com/arafattehsin"
@@ -325,6 +553,7 @@
     "homepage": "https://github.com/arafattehsin/cache-stats-extension",
     "license": "MIT",
     "keywords": [
+      "ai-credits",
       "aiu",
       "cache",
       "canvas",
@@ -336,14 +565,14 @@
     "source": {
       "source": "github",
       "repo": "arafattehsin/cache-stats-extension",
-      "ref": "v1.0.1",
-      "sha": "678c3468977889d5c50a0a5f33898b8d9638523a"
+      "ref": "v1.0.2",
+      "sha": "a6d6e0c2cb3c4309794dcc712cd14906b2b297db"
     }
   },
   {
     "name": "canvas-authoring",
-    "description": "為主機原生 `create-canvas` 技能準備的工具組設定與 Azure 或計數器起步範本；僅提供技能，非 canvas 擴充功能。包含樣式、登入、訂閱、遙測等預建套件與指引。",
-    "version": "0.1.1",
+    "description": "適用於主機原生 `create-canvas` 技能的工具箱設定以及 Azure 或計數器入門範本；僅提供技能，非畫布擴充功能。包含針對樣式、登入、訂用帳戶、遙測等預先建置的套件與指南。",
+    "version": "0.1.3",
     "author": {
       "name": "Alex Weininger"
     },
@@ -362,12 +591,12 @@
       "source": "github",
       "repo": "microsoft/azure-dev-tools",
       "path": "plugins/canvas-authoring",
-      "sha": "a6d394bbaa6fb1dc0151257a85cbac0de772b138"
+      "sha": "0cebd139704378c24dc5c1ec0b952639c946c5ba"
     }
   },
   {
     "name": "catalyst-by-zoho",
-    "description": "Catalyst by Zoho（全端無伺服器雲端平台）的官方 GitHub Copilot 外掛程式。包含涵蓋服務、SDK、CLI 工作流程、架構模式、定價、移轉指南以及 Zoho MCP 資源管理的技能。",
+    "description": "Catalyst by Zoho（全端無伺服器雲端平台）官方 GitHub Copilot 外掛程式。包含涵蓋各項服務、SDK、CLI 工作流程、架構模式、定價、移轉指南與 Zoho MCP 資源管理的技能。",
     "version": "0.0.1",
     "author": {
       "name": "Catalyst By Zoho",
@@ -396,7 +625,7 @@
   },
   {
     "name": "chat-fork-map",
-    "description": "對話分支地圖 Copilot 對話，讓來自複雜任務或學習的平行後續問題與探索路徑可以在不遺失情境的情況下進行導覽。其視覺化版面配置使廣度優先探索比在傳統對話清單中管理多個作用中對話更為容易。",
+    "description": "繪製 Copilot 交談分支地圖，以便在不遺失脈絡的情況下瀏覽複雜工作或學習過程中的平行後續問題與探索路徑。相較於在傳統交談清單中管理多個進行中的對話，其視覺化版面配置讓廣度優先探索更加輕鬆。",
     "version": "0.0.5",
     "author": {
       "name": "jdneo",
@@ -421,7 +650,7 @@
   },
   {
     "name": "chrome-devtools-plugin",
-    "description": "使用 Chrome DevTools 和 Puppeteer 在 Chrome 中進行可靠的自動化、深度除錯與效能分析。",
+    "description": "使用 Chrome 開發人員工具（DevTools）與 Puppeteer，在 Chrome 中實現可靠的自動化、深度偵錯與效能分析。",
     "version": "1.0.1",
     "author": {
       "name": "Chrome DevTools Team"
@@ -446,8 +675,8 @@
   },
   {
     "name": "cockroachdb",
-    "description": "將 GitHub Copilot 連線至您的 CockroachDB 叢集：透過 MCP 執行並探索 SQL，配備 DBA／開發人員／營運人員 Agent、CockroachDB 最佳實踐技能，以及封鎖破壞性陳述式的安全勾點。",
-    "version": "0.1.4",
+    "description": "將 GitHub Copilot 連線至您的 CockroachDB 叢集：透過 MCP 執行並探索 SQL，隨附 DBA/開發者/維運人員代理人、CockroachDB 最佳實踐技能，以及封鎖破壞性陳述式的安全攔截機制。",
+    "version": "0.1.5",
     "author": {
       "name": "Cockroach Labs",
       "url": "https://github.com/cockroachdb"
@@ -466,13 +695,13 @@
     "source": {
       "source": "github",
       "repo": "cockroachdb/copilot-plugin",
-      "ref": "v0.1.4",
-      "sha": "0874b16210768d54b273c1395d9715bc8638b347"
+      "ref": "v0.1.5",
+      "sha": "010e81c747916fbec875d211b4dca6e1c1caeb46"
     }
   },
   {
     "name": "connector-namespaces",
-    "description": "互動式 GitHub Copilot canvas，用於從 Azure Connector Namespace 探索、連線與管理託管的 MCP 伺服器。",
+    "description": "互動式 GitHub Copilot 畫布，用於探索、連線與管理來自 Azure 連接器命名空間的託管 MCP 伺服器。",
     "version": "1.2.0",
     "author": {
       "name": "Microsoft",
@@ -498,8 +727,37 @@
     }
   },
   {
+    "name": "containers",
+    "description": "在 Copilot 畫布中瀏覽與操作本機 Docker 容器與映像檔。追蹤記錄、監看資源使用量、瀏覽檔案、檢查映像檔層級，並還原 Dockerfile 來源。",
+    "version": "0.1.1",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://github.com/microsoft/azure-dev-tools"
+    },
+    "repository": "https://github.com/microsoft/azure-dev-tools",
+    "license": "MIT",
+    "keywords": [
+      "canvas",
+      "containers",
+      "docker",
+      "podman",
+      "logs",
+      "monitoring",
+      "images",
+      "filesystem",
+      "local-development"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "microsoft/azure-dev-tools",
+      "path": "canvases/containers",
+      "ref": "containers-v0-1-1-8ed51ad",
+      "sha": "a58ca3cacced9dbb116687377b404149898cdaa8"
+    }
+  },
+  {
     "name": "copilot-goal-skill",
-    "description": "具有獨立驗證的目標導向任務協調。訪談使用者以定義明確目標，接著在 Builder 子 Agent（執行工作）和 Inspector 子 Agent（使用全新情境評估結果）之間進行迴圈。Inspector 絕不輕信 Builder。輸出成果可在每個子 Agent 操作的 git commit 中進行稽核。適用於使用者表示「達成此目標」、「使其運作」、「實作直到完成」，或希望透過獨立品質審查獲得經驗證的自主任務完成成果時。",
+    "description": "具備獨立驗證的目標導向工作協調。透過訪談使用者以定義明確目標，接著在 Builder 子代理人（負責實作）與 Inspector 子代理人（在全新脈絡下評判成果）之間循環。Inspector 絕不盲信 Builder。輸出成果可在各子代理人動作的 Git 提交中進行稽核。適用於使用者指示「實現此目標」、「讓這個能運作」、「實作直到完成」，或需要經過獨立品質審查與驗證的自主工作完成流程。",
     "version": "1.1.2",
     "author": {
       "name": "Gaetan Semet",
@@ -523,9 +781,62 @@
     }
   },
   {
+    "name": "copilot-session-dj",
+    "description": "為目前的 GitHub Copilot 工作階段及其子代理人提供充滿趣味的本機 Strudel 原聲配樂。包含英/日語 DJ 畫布、三種純合成器預設，以及具備明確停止控制項、點擊前保持靜音的播放模式。",
+    "version": "0.1.0",
+    "author": {
+      "name": "nomhiro",
+      "url": "https://github.com/nomhiro"
+    },
+    "repository": "https://github.com/nomhiro/copilot-session-jam",
+    "homepage": "https://github.com/nomhiro/copilot-session-jam/releases/tag/v0.1.0",
+    "license": "AGPL-3.0-or-later",
+    "keywords": [
+      "canvas",
+      "strudel",
+      "music",
+      "session",
+      "subagents",
+      "local-audio"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "nomhiro/copilot-session-jam",
+      "path": "dist/copilot-session-dj",
+      "ref": "v0.1.0",
+      "sha": "fb815e24917136289c5a9152da8c81f25a7d33b6"
+    }
+  },
+  {
+    "name": "crowdstrike-charlotte-ai-agentworks",
+    "description": "CrowdStrike Charlotte AI AgentWorks 技能，用於透過外部 Falcon API 閘道端點建立、管理與呼叫 AI 代理人。包含代理人生態週期管理、呼叫、知識庫操作，以及模型/工具/範本的探索。",
+    "version": "1.0.1",
+    "author": {
+      "name": "CrowdStrike",
+      "url": "https://www.crowdstrike.com/"
+    },
+    "repository": "https://github.com/CrowdStrike/agentworks-skills",
+    "license": "MIT",
+    "keywords": [
+      "crowdstrike",
+      "agentworks",
+      "charlotte",
+      "agentic-studio",
+      "ai-agents",
+      "knowledge-base",
+      "falcon"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "CrowdStrike/agentworks-skills",
+      "ref": "v1.0.1",
+      "sha": "924f943f3bd4c71ab6dcd650debbf0425046f941"
+    }
+  },
+  {
     "name": "crowdstrike-falcon-foundry",
-    "description": "用於建構 CrowdStrike Falcon Foundry 應用程式的 AI 程式碼輔助技能：鷹架建立、部署，以及 API 整合、集合、函式、UI 擴充功能、UI 頁面和工作流程的最佳實踐。",
-    "version": "1.5.0",
+    "description": "用於建構 CrowdStrike Falcon Foundry 應用程式的 AI 程式碼撰寫輔助技能：涵蓋 API 整合、集合、函式、UI 擴充功能、UI 頁面與工作流程的鷹架、部署與最佳實踐。",
+    "version": "1.7.0",
     "author": {
       "name": "CrowdStrike",
       "url": "https://www.crowdstrike.com/"
@@ -542,13 +853,14 @@
     "source": {
       "source": "github",
       "repo": "CrowdStrike/foundry-skills",
-      "sha": "d9af175fe2b86836b431ebdb7e088957e6c7820d"
+      "ref": "v1.7.0",
+      "sha": "024c8b03f0e26b70c21cac492ca9cc7e4be7a564"
     }
   },
   {
     "name": "crowdstrike-falcon-fusion",
-    "description": "用於建構 CrowdStrike Falcon Fusion 工作流程的 AI 程式碼輔助技能：動作探索、YAML 撰寫、部署、執行監視，以及觸發條件、條件式、迴圈和 HTTP 動作的最佳實踐。",
-    "version": "1.2.0",
+    "description": "用於建構 CrowdStrike Falcon Fusion 工作流程的 AI 程式碼撰寫輔助技能：動作探索、YAML 撰寫、部署、執行監視，以及觸發條件、條件判斷、迴圈與 HTTP 動作的最佳實踐。",
+    "version": "1.4.0",
     "author": {
       "name": "CrowdStrike",
       "url": "https://www.crowdstrike.com"
@@ -565,13 +877,13 @@
     "source": {
       "source": "github",
       "repo": "CrowdStrike/fusion-skills",
-      "ref": "v1.2.0",
-      "sha": "3e15710a94b712473e87ce7cd7c43d026156a3f3"
+      "ref": "v1.4.0",
+      "sha": "d4e2abf93b1f0900fcc67fe040e98d086fa1fb0c"
     }
   },
   {
     "name": "datadog",
-    "description": "透過預先設定的 Datadog MCP 伺服器，直接在 Copilot / VS Code 中使用 Datadog。透過自然對話查詢記錄、計量、追蹤、儀表板等。",
+    "description": "透過預先設定的 Datadog MCP 伺服器，直接在 Copilot / VS Code 中使用 Datadog。透過自然語言對話查詢記錄、計量、追蹤、儀表板等內容。",
     "version": "0.7.21",
     "author": {
       "name": "Datadog",
@@ -595,8 +907,8 @@
   },
   {
     "name": "dataverse",
-    "description": "使用自然語言建構與管理 Microsoft Dataverse 解決方案。包含資料表／資料行建立、解決方案生命週期、資料操作以及 MCP 伺服器設定。",
-    "version": "1.0.0",
+    "description": "適用於程式碼代理人的 Microsoft Dataverse 外掛程式，透過 MCP、CLI 與 SDK 工作流程涵蓋記錄 CRUD、大量資料操作、進階查詢、結構描述與 Metadata、管理、安全性、環境管理以及解決方案生命週期。",
+    "version": "1.16.1",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -604,23 +916,22 @@
     "homepage": "https://github.com/microsoft/Dataverse-skills",
     "keywords": [
       "dataverse",
-      "power-platform",
-      "microsoft",
       "mcp",
-      "python",
-      "sdk"
+      "power-platform",
+      "dynamics-365"
     ],
     "license": "MIT",
     "repository": "https://github.com/microsoft/Dataverse-skills",
     "source": {
       "source": "github",
       "repo": "microsoft/Dataverse-skills",
-      "path": ".github/plugins/dataverse"
+      "path": ".github/plugins/dataverse",
+      "sha": "1966192f0bee20216f1b58cf11f8b0c4b0e3edb8"
     }
   },
   {
     "name": "dependabot-triage",
-    "description": "分流 Dependabot 警示並推薦安全、基於佐證的相依性更新。",
+    "description": "分級 Dependabot 警示並推薦安全、具事證支持的相依套件更新。",
     "version": "1.0.0",
     "author": {
       "name": "Aaron Powell"
@@ -641,8 +952,8 @@
   },
   {
     "name": "dotnet",
-    "description": "日常常見的 C#/.NET 撰寫程式碼技能。預期對所有 .NET 開發人員皆有助益。",
-    "version": "0.1.0",
+    "description": "適用於程式碼代理人的 C# 語言伺服器（LSP）整合與高階 .NET 開發技能。",
+    "version": "0.2.5",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -663,13 +974,14 @@
     "source": {
       "source": "github",
       "repo": "dotnet/skills",
-      "path": "plugins/dotnet"
+      "path": "plugins/dotnet",
+      "sha": "fbada88709c854e3ea74fb1b34dd237dea13d413"
     }
   },
   {
     "name": "dotnet-diag",
-    "description": "用於 .NET 效能調查、除錯與事件分析的技能。",
-    "version": "0.1.0",
+    "description": "用於 .NET 效能調查、偵錯與事件分析的技能。",
+    "version": "0.1.3",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -692,13 +1004,14 @@
     "source": {
       "source": "github",
       "repo": "dotnet/skills",
-      "path": "plugins/dotnet-diag"
+      "path": "plugins/dotnet-diag",
+      "sha": "fbada88709c854e3ea74fb1b34dd237dea13d413"
     }
   },
   {
     "name": "dotnet-test",
-    "description": "透過多 Agent 研究-規劃-實作管線產生多語言單元測試 — 為 .NET/C#、Python、TypeScript/JavaScript、Java、Go、Ruby、Rust、C++、Kotlin、Swift 和 PowerShell 撰寫並執行測試。加上以 .NET 為核心的測試執行、涵蓋率與 CRAP 分析、可測試性審查、平台偵測以及 MSTest/xUnit 移轉。",
-    "version": "0.2.0",
+    "description": "用於執行、產生、分析與改進 .NET 測試的技能：測試執行、篩選、平台偵測、涵蓋範圍、可測試性與 MSTest 工作流程。",
+    "version": "1.0.0",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -721,12 +1034,36 @@
     "source": {
       "source": "github",
       "repo": "dotnet/skills",
-      "path": "plugins/dotnet-test"
+      "path": "plugins/dotnet-test",
+      "sha": "fbada88709c854e3ea74fb1b34dd237dea13d413"
+    }
+  },
+  {
+    "name": "easybrandkit",
+    "description": "在代理人為產品進行任何設計之前，從其網站取得產品的真實品牌資料。它會在您現有的 Chrome、Chromium、Edge 或 Brave 中開啟該網站，並將標誌檔案（PNG 與 SVG）、依角色分類的色彩、字型、首頁畫面與應用程式市集影像儲存為 BRAND.md 與 brand.json。",
+    "version": "0.2.1",
+    "author": {
+      "name": "Emin Budak",
+      "url": "https://eminbudak.com"
+    },
+    "repository": "https://github.com/EminBudak/easybrandkit",
+    "license": "MIT",
+    "keywords": [
+      "brand",
+      "logo",
+      "colors",
+      "fonts",
+      "design"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "EminBudak/easybrandkit",
+      "sha": "5ab4e4bbb274e8ad097f0f2433223f594d898341"
     }
   },
   {
     "name": "elasticsearch",
-    "description": "適用於 GitHub Copilot 的官方 Elastic 外掛程式 — 將自然語言轉譯為 ES|QL 查詢、內嵌資料、管理 Elasticsearch 安全性（認證、授權、稽核）以及對叢集進行疑難排解。由官方 Elastic agent skills 儲存庫提供技術支援。",
+    "description": "適用於 GitHub Copilot 的官方 Elastic 外掛程式 — 將自然語言轉換為 ES|QL 查詢、內嵌資料、管理 Elasticsearch 安全性（驗證、授權、稽核），以及排除叢集問題。由官方 Elastic 代理人技能存放庫提供支援。",
     "version": "0.3.0",
     "author": {
       "name": "Elastic",
@@ -752,8 +1089,8 @@
   },
   {
     "name": "excel-cli",
-    "description": "適用於程式碼編寫 Agent 且節省權杖的原生 Excel 自動化，由 Excel 本身執行 300 多項操作以保留原生活頁簿真實度 — 包含 Excel 中的 Python、VBA、Power Query、DAX/資料模型、樞紐分析表、圖表、表格、格式設定、外部連線以及假設分析。需要 Windows 和 Excel。",
-    "version": "2.0.1",
+    "description": "讓您的程式碼代理人直接從終端機操作實際的 Microsoft Excel 活頁簿：公式、Power Query、樞紐分析表、圖表與 VBA。具備與 Excel MCP 相同的功能，通常消耗更少的 AI Token。需要 Windows、傳統型 Excel 2016 或更新版本，以及 Node.js 18 或更新版本。",
+    "version": "2.3.11",
     "author": {
       "name": "Stefan Brönner",
       "url": "https://github.com/sbroenne"
@@ -766,25 +1103,25 @@
       "windows",
       "cli",
       "automation",
-      "scripting",
-      "batch",
+      "formulas",
       "power-query",
       "dax",
       "pivottable",
-      "ci-cd"
+      "charts",
+      "vba"
     ],
     "source": {
       "source": "github",
       "repo": "sbroenne/mcp-server-excel-plugins",
       "path": "plugins/excel-cli",
-      "ref": "v2.0.1",
-      "sha": "6c33486d2c74db050259411c73b5d87dfae9499e"
+      "ref": "v2.3.11",
+      "sha": "0057e645ff3620206e440bd313b8b26f0be943c0"
     }
   },
   {
     "name": "excel-mcp",
-    "description": "適用於複雜活頁簿最全方位的原生 Excel 自動化，由 Excel 本身執行 300 多項操作以保留原生活頁簿真實度 — 包含 Excel 中的 Python、VBA、Power Query、DAX/資料模型、樞紐分析表、圖表、表格、格式設定、外部連線以及假設分析。需要 Windows 和 Excel。",
-    "version": "2.0.1",
+    "description": "讓 AI 助理建立與更新 Microsoft Excel 活頁簿：在傳統型應用程式中使用儲存格、公式、Power Query、樞紐分析表、圖表與 VBA。需要 Windows、傳統型 Excel 2016 或更新版本，以及 Node.js 18 或更新版本。",
+    "version": "2.3.11",
     "author": {
       "name": "Stefan Brönner",
       "url": "https://github.com/sbroenne"
@@ -796,24 +1133,26 @@
       "excel",
       "windows",
       "mcp",
+      "automation",
+      "formulas",
       "power-query",
       "dax",
       "pivottable",
-      "vba",
-      "com-interop"
+      "charts",
+      "vba"
     ],
     "source": {
       "source": "github",
       "repo": "sbroenne/mcp-server-excel-plugins",
       "path": "plugins/excel-mcp",
-      "ref": "v2.0.1",
-      "sha": "6c33486d2c74db050259411c73b5d87dfae9499e"
+      "ref": "v2.3.11",
+      "sha": "0057e645ff3620206e440bd313b8b26f0be943c0"
     }
   },
   {
     "name": "figma",
-    "description": "包含 Figma MCP 伺服器與常見工作流程技能的外掛程式。",
-    "version": "2.2.96",
+    "description": "包含 Figma MCP 伺服器與常用工作流程技能的外掛程式。",
+    "version": "2.2.124",
     "author": {
       "name": "Figma",
       "url": "https://www.figma.com"
@@ -830,12 +1169,12 @@
     "source": {
       "source": "github",
       "repo": "figma/mcp-server-guide",
-      "ref": "v2.2.96-figquery.1"
+      "ref": "v2.2.124-figquery.1"
     }
   },
   {
     "name": "foundation-models",
-    "description": "協助程式碼編寫 Agent 使用開發人員 Mac 上安裝的 SDK，為 iOS、macOS、visionOS 和 watchOS 撰寫與審查 Apple Foundation Models 程式碼。它會驗證真實的 API 簽章與可用性，接著對結果進行型別檢查，而非依賴模型記憶體。",
+    "description": "使用開發者 Mac 上安裝的 SDK，協助程式碼代理人為 iOS、macOS、visionOS 與 watchOS 撰寫與檢閱 Apple Foundation Models 程式碼。它會驗證實際的 API 簽章與可用性，接著對結果進行型別檢查，而非單純依賴模型記憶。",
     "version": "0.1.3",
     "author": {
       "name": "Artem Novichkov",
@@ -863,9 +1202,36 @@
     }
   },
   {
+    "name": "frugal",
+    "description": "在您的代理人註冊付費 API、LLM 模型、雲端服務、SaaS 方案、網域或任何其他需要花費金錢的項目之前，它會根據涉及的金額大小，檢查免費層級、最適方案與計費週期、新創、學生、開放原始碼與非營利方案、經驗證的促銷代碼以及更平價的替代方案。它絕不會自行付款。",
+    "version": "1.0.2",
+    "author": {
+      "name": "Nir Feinstein",
+      "url": "https://github.com/fainir"
+    },
+    "repository": "https://github.com/fainir/frugal",
+    "homepage": "https://github.com/fainir/frugal",
+    "license": "MIT",
+    "keywords": [
+      "cost-saving",
+      "finops",
+      "llm-costs",
+      "cloud-costs",
+      "saas",
+      "discounts",
+      "skill"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "fainir/frugal",
+      "ref": "v1.0.2",
+      "sha": "0200e93415093562c926e3cdd8e4d3ba88883b6a"
+    }
+  },
+  {
     "name": "gh-skills-builder",
-    "description": "儲存庫：https://github.com/arilivigni/gh-skills-builder\n此外掛程式適用於想要建立 GitHub Skills 練習的人員，這些練習是在 GitHub 內部自主學習 GitHub 的課程。\nhttps://learn.github.com/skills\n範例：\nhttps://github.com/skills/agent-orchestration-build-your-ai-dream-team\nhttps://github.com/skills/agentic-workflows-that-read-the-room",
-    "version": "1.1.0",
+    "description": "透過一位協調代理人與五項代理人技能，設計、建構、檢閱與發佈 GitHub Skills 風格的練習，涵蓋學習旅程、工作流程支援的驗證以及發佈整備度。",
+    "version": "3.0.1",
     "author": {
       "name": "Ari LiVigni",
       "url": "https://github.com/arilivigni"
@@ -873,25 +1239,24 @@
     "repository": "https://github.com/arilivigni/gh-skills-builder",
     "license": "MIT",
     "keywords": [
-      "github-learn",
       "github-skills",
-      "github-skills-exercises",
       "education",
+      "curriculum",
       "exercise-creation",
-      "agent-skills",
-      "custom-agents"
+      "custom-agents",
+      "agent-skills"
     ],
     "source": {
       "source": "github",
       "repo": "arilivigni/gh-skills-builder",
-      "ref": "v1.1.0",
-      "sha": "ea22105c191554d4eeaeb05952e071526b93d73f"
+      "ref": "v3.0.1",
+      "sha": "ee198d0a6d45ccb760e87eeea167681b113f8611"
     }
   },
   {
     "name": "git-ape",
-    "description": "適用於 GitHub Copilot 的智慧型 Azure 部署 Agent 系統，具備引導式 ARM 範本產生、安全閘門、成本分析與部署工作流程。",
-    "version": "0.0.1",
+    "description": "透過 GitHub Copilot 部署任何 Azure 工作負載的智慧代理人系統。使用 ARM 範本提供受引導、安全且經驗證的部署，並內建安全性分析、成本估算與 CI/CD 管線整合。",
+    "version": "0.4.1",
     "author": {
       "name": "Microsoft",
       "url": "https://github.com/Azure/git-ape"
@@ -900,25 +1265,26 @@
     "keywords": [
       "azure",
       "cloud",
-      "infrastructure",
-      "arm-templates",
+      "workloads",
       "deployment",
+      "arm-templates",
       "devops",
-      "iac",
       "security",
       "cost-estimation",
-      "github-actions"
+      "github-actions",
+      "copilot-agents"
     ],
     "license": "MIT",
     "repository": "https://github.com/Azure/git-ape",
     "source": {
       "source": "github",
-      "repo": "Azure/git-ape"
+      "repo": "Azure/git-ape",
+      "sha": "0f7e3ef2b327eded343c24143f9dc53b23e419c1"
     }
   },
   {
     "name": "github-copilot-modernization",
-    "description": "使用多 Agent 協調為 GitHub Copilot CLI 進行自主應用程式現代化。支援 Java 升級（8→21、Spring Boot 2.x→3.x）、.NET 現代化、Azure 移轉、CVE／弱點修復以及應用程式重新架構（單體移轉為微服務）。具備 3 層 Agent 階層結構（協調者 → 協調人員 → 執行者），並支援企業規則手冊以將組織策略嵌入至工作流程中。",
+    "description": "適用於 GitHub Copilot CLI、採用多代理人協調的自主應用程式現代化系統。支援 Java 升級（8→21、Spring Boot 2.x→3.x）、.NET 現代化、Azure 移轉、CVE/弱點修復，以及應用程式架構重構（單體架構轉微服務）。具備 3 層代理人階層架構（協調器 → 協調者 → 執行者），並支援企業規則手冊以將組織原則嵌入工作流程中。",
     "version": "1.24.0",
     "author": {
       "name": "Microsoft",
@@ -948,8 +1314,8 @@
   },
   {
     "name": "incident-io",
-    "description": "適用於 AI Agent 的官方 incident.io 外掛程式：用於操作 [incident.io](https://incident.io/) 的技能 — 事件、輪值排班和調查 — 以及用於撰寫我們平台所依據的營運內容。",
-    "version": "0.18.0",
+    "description": "適用於 AI 代理人的官方 incident.io 外掛程式：用於操作 [incident.io](https://incident.io/)（事件、待命輪值與調查）的技能，以及撰寫平台所需維運內容的技能。",
+    "version": "1.20261009.666",
     "author": {
       "name": "incident.io",
       "url": "https://incident.io"
@@ -969,13 +1335,36 @@
       "source": "github",
       "repo": "incident-io/skills",
       "path": "plugins/incident-io",
-      "sha": "6d0bbfc9e52256fc39326b9ba6d08f16831b60ae"
+      "sha": "52f1c60db6d59b2e4e6abd327d5107d3bff0f53d"
+    }
+  },
+  {
+    "name": "jira-workbench",
+    "description": "一款 Copilot 應用程式畫布，可顯示任何 Jira 專案的完整階層架構（Epic、議題與子工作），並追蹤各項目對應的 Copilot 工作階段與 GitHub 提取請求。此畫布僅會讀取 Jira；它可以從任何議題啟動限縮範圍的 Copilot 工作階段。",
+    "version": "2.4.2",
+    "author": {
+      "name": "Sentry01",
+      "url": "https://github.com/Sentry01"
+    },
+    "repository": "https://github.com/Sentry01/jira-workbench",
+    "license": "MIT",
+    "keywords": [
+      "jira",
+      "canvas",
+      "traceability",
+      "copilot"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "Sentry01/jira-workbench",
+      "ref": "v2.4.2",
+      "sha": "e1f47f5912e0850e30aae76719ffd0f6de7abcd4"
     }
   },
   {
     "name": "keep-the-why",
-    "description": "保留或還原程式碼庫背後的理由 — 架構決策、否決的替代方案、因應措施、事件學習心得、營運限制以及程式碼本身無法解釋的歷史情境。",
-    "version": "0.17.0",
+    "description": "保留或還原程式碼庫背後的決策脈絡 — 架構決策、被否決的替代方案、因應措施、事件經驗、維運限制，以及程式碼本身無法說明的歷史脈絡。",
+    "version": "0.20.3",
     "author": {
       "name": "Oliver Zehentleitner",
       "url": "https://github.com/oliver-zehentleitner"
@@ -994,13 +1383,37 @@
     "source": {
       "source": "github",
       "repo": "oliver-zehentleitner/keep-the-why",
-      "ref": "v0.17.0"
+      "ref": "v0.20.3",
+      "sha": "2771046616a3c6bcd62916ed072f71feb5afd222"
+    }
+  },
+  {
+    "name": "launch-film",
+    "description": "從產品網站或 App Store 頁面為產品製作 20 至 40 秒的發佈宣傳短片：解析度 1920x1080 且配有音樂的 MP4 影片，使用該產品真實的標誌、色彩、字型與畫面截圖。完全透過本機的 Chrome 與 ffmpeg 進行轉譯，無需任何帳戶或 API 金鑰。",
+    "version": "0.2.0",
+    "author": {
+      "name": "Emin Budak",
+      "url": "https://eminbudak.com"
+    },
+    "repository": "https://github.com/EminBudak/launch-film",
+    "license": "MIT",
+    "keywords": [
+      "video",
+      "launch",
+      "brand",
+      "ffmpeg",
+      "marketing"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "EminBudak/launch-film",
+      "sha": "940979bf3d82be136c4529a0b08aee7198ef178f"
     }
   },
   {
     "name": "markdstage",
-    "description": "在 GitHub Copilot Canvas 中建立、編輯、展示與匯出 Markdown 簡報投影片。",
-    "version": "4.2.4",
+    "description": "在 GitHub Copilot 畫布中建立、編輯、簡報並匯出 Markdown 投影片。",
+    "version": "4.6.3",
     "author": {
       "name": "Kazuki Ota",
       "url": "https://github.com/runceel"
@@ -1018,14 +1431,68 @@
       "source": "github",
       "repo": "runceel/MarkdStage",
       "path": ".github/plugin/markdstage",
-      "ref": "v4.2.4",
-      "sha": "34621f7217fbf2a10499c229229df4c86241095d"
+      "ref": "v4.6.3",
+      "sha": "2ee5fa20ce228a4f6aa9b105afe83ab6d2061730"
+    }
+  },
+  {
+    "name": "mastercard-developers",
+    "description": "Mastercard Developers 外掛程式，協助建構與 Mastercard API 的整合，包含最佳實踐與 Mastercard Developers MCP 伺服器。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Mastercard",
+      "url": "https://developer.mastercard.com"
+    },
+    "repository": "https://github.com/Mastercard/developers-agent-toolkit",
+    "homepage": "https://developer.mastercard.com",
+    "license": "MIT",
+    "keywords": [
+      "mastercard",
+      "mastercard-developers",
+      "payments",
+      "api",
+      "open-finance",
+      "open-banking",
+      "integration",
+      "mcp",
+      "modelcontextprotocol",
+      "agent-toolkit"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "Mastercard/developers-agent-toolkit",
+      "path": "providers/agent-plugins/plugin",
+      "sha": "2c6781ce476a222faf93862a735ced7777aa02ae"
+    }
+  },
+  {
+    "name": "megalinter",
+    "description": "在任何存放庫上設定、執行並修復 MegaLinter：涵蓋 69 種以上語言、23 種以上格式與 21 種以上工具格式的 100 多種 Linter，可從 CI 或本機端執行。",
+    "version": "1.0.3",
+    "author": {
+      "name": "OX Security",
+      "url": "https://github.com/oxsecurity"
+    },
+    "repository": "https://github.com/oxsecurity/megalinter",
+    "homepage": "https://megalinter.io",
+    "license": "AGPL-3.0",
+    "keywords": [
+      "linter",
+      "code-quality",
+      "formatter",
+      "security",
+      "ci"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "oxsecurity/megalinter",
+      "sha": "e96b2d606cd8b32303706e8cd8f9c3c9269eb043"
     }
   },
   {
     "name": "microsoft-docs",
-    "description": "存取 Azure、.NET、Windows 等技術的官方 Microsoft 文件、API 參考與程式碼範例。",
-    "version": "1.0.0",
+    "description": "存取適用於 Azure、.NET、Windows 等領域的官方 Microsoft 說明文件、API 參考資料與程式碼範例。",
+    "version": "0.3.1",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -1047,13 +1514,14 @@
     "repository": "https://github.com/MicrosoftDocs/mcp",
     "source": {
       "source": "github",
-      "repo": "MicrosoftDocs/mcp"
+      "repo": "MicrosoftDocs/mcp",
+      "sha": "f8ffde185dfd232dbf5d187c22ce299eadc3d583"
     }
   },
   {
     "name": "microsoft-events",
-    "description": "將您的專案連線至 Microsoft Build 和 Ignite 議程 — 從您的開發環境探索相關演講、探索適用於您技術堆疊的新功能，並規劃後續步驟。",
-    "version": "1.0.0",
+    "description": "將您的專案與 Microsoft Build 和 Ignite 工作階段連結 — 探索相關演講、發掘適合您技術堆疊的新功能，並直接從開發環境規劃後續步驟。",
+    "version": "1.0.6",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -1071,13 +1539,14 @@
     "repository": "https://github.com/microsoft/Build-CLI",
     "source": {
       "source": "github",
-      "repo": "microsoft/Build-CLI"
+      "repo": "microsoft/Build-CLI",
+      "sha": "d5b8033077ac0e23820fa478b75249c95e99fc65"
     }
   },
   {
     "name": "microsoft-foundry",
-    "description": "用於向 Microsoft Foundry 設計、設定、測試和部署 Agent 的技能與互動式 Copilot canvas。",
-    "version": "1.0.14",
+    "description": "用於向 Microsoft Foundry 設計、設定、測試與部署代理人的技能與互動式 Copilot 畫布。",
+    "version": "1.0.19",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -1098,12 +1567,12 @@
       "source": "github",
       "repo": "microsoft/foundry-dev-tools",
       "path": "microsoft-foundry",
-      "sha": "5fd2e70c47ebdd888e537713cd002ef275bef405"
+      "sha": "bba484bffc275cc9640f61b7b7357be0f943e16b"
     }
   },
   {
     "name": "mobile-canvas",
-    "description": "從 GitHub Copilot canvas 檢視、建立、啟動本機 iOS 模擬器和 Android 模擬器並與之互動。此外掛程式還透過 MCP 向 Agent 公開相同的裝置控制項。",
+    "description": "從 GitHub Copilot 畫布檢視、建立、開機並與本機 iOS 模擬器和 Android 模擬器互動。此外掛程式亦透過 MCP 向代理人公開相同的裝置控制項。",
     "version": "0.1.6",
     "author": {
       "name": "Jonathan Dick",
@@ -1130,7 +1599,7 @@
   },
   {
     "name": "modern-web-guidance",
-    "description": "Modern Web Guidance 是一項 Agent 技能與 CLI 工具，旨在協助 AI 程式碼編寫 Agent 使用現代、安全且高效能的 API 而非過時的替代方案來建構網頁應用程式。\n由 Google Chrome 小組支援，它將專家精選的網頁平台最佳實踐直接插入 Agent 的情境視窗中，以防止產生臃腫的舊版程式碼。",
+    "description": "Modern Web Guidance 是一項代理人技能與 CLI 工具，旨在協助 AI 程式碼代理人使用現代、安全且高效能的 API 建構 Web 應用程式，而非依賴過時的相容因應手段。由 Google Chrome 小組支援，將專家策劃的 Web 平台最佳實踐直接注入代理人的上下文視窗中，以防止產生臃腫的舊版程式碼。",
     "version": "0.0.179",
     "author": {
       "name": "GoogleChrome",
@@ -1152,7 +1621,7 @@
   },
   {
     "name": "modernize-dotnet",
-    "description": "AI 驅動的 .NET 現代化與升級助理。協助將 .NET Framework 和 .NET 應用程式升級至最新版本的 .NET。",
+    "description": "AI 驅動的 .NET 現代化與升級助理。協助將 .NET Framework 與 .NET 應用程式升級至最新版本的 .NET。",
     "version": "1.0.1161-preview1",
     "author": {
       "name": "Microsoft",
@@ -1176,7 +1645,7 @@
   },
   {
     "name": "modernize-java",
-    "description": "GitHub Copilot 現代化 – Java 升級 CLI 外掛程式可協助您從命令列升級 Java 應用程式。它為您的終端機與 CI/CD 管線帶來智慧型現代化功能：分析您的專案並產生升級計劃、自動轉換您的程式碼庫、修復建構問題、對照已知 CVE 進行驗證，並輸出檔案變更與更新相依性的詳細摘要。",
+    "description": "GitHub Copilot 現代化 – Java 升級 CLI 外掛程式可協助您從命令列升級 Java 應用程式。它為您的終端機與 CI/CD 管線帶來智慧現代化功能：分析您的專案並產生升級計畫、自動轉換您的程式碼庫、修復建構問題、對照已知 CVE 進行驗證，並輸出檔案變更與更新相依套件的詳細摘要。",
     "version": "1.24.0",
     "author": {
       "name": "microsoft",
@@ -1201,7 +1670,7 @@
   },
   {
     "name": "msgraph-developer-skills",
-    "description": "使用極簡、專門建置的 API 用戶端建構與現代化 Microsoft Graph 應用程式。此外掛程式可識別所需的 Microsoft Graph 端點及其最低權限，使用 [Kiota](https://aka.ms/kiota) 或 AI 輔助工作流程產生專屬用戶端，並套用建議的驗證與 SDK 模式。",
+    "description": "使用精簡、專門打造的 API 用戶端建構並現代化 Microsoft Graph 應用程式。此外掛程式可識別所需的 Microsoft Graph 端點及其最低特殊權限，使用 [Kiota](https://aka.ms/kiota) 或 AI 輔助工作流程產生重點用戶端，並套用建議的驗證與 SDK 模式。",
     "version": "1.0.0",
     "author": {
       "name": "Sergio Lopez"
@@ -1224,7 +1693,7 @@
   },
   {
     "name": "netlify",
-    "description": "涵蓋函式、邊緣函式、Blob、資料庫、身分識別、影像 CDN、表單、設定、CLI、框架、快取、AI 閘道和部署的 Netlify 平台技能 — 加上用於建立與管理專案、部署及環境變數的官方 Netlify MCP 伺服器。",
+    "description": "Netlify 平台技能，涵蓋函式、Edge Functions、Blob、資料庫、身分識別、影像 CDN、表單、設定、CLI、架構、快取、AI 閘道與部署 — 以及用於建立和管理專案、部署與環境變數的官方 Netlify MCP 伺服器。",
     "version": "1.1.0",
     "author": {
       "name": "Netlify",
@@ -1253,8 +1722,64 @@
     }
   },
   {
+    "name": "nitrosend",
+    "description": "透過 Nitrosend 託管的 OAuth MCP 伺服器，在其中準備與檢閱電子郵件行銷活動、自動化流程、聯絡人與交易訊息。包含用於帳戶選取、同意與即時傳送檢閱的特定範圍技能。",
+    "version": "0.1.0",
+    "author": {
+      "name": "Nitrosend",
+      "url": "https://nitrosend.com"
+    },
+    "repository": "https://github.com/nitrosend/copilot",
+    "homepage": "https://nitrosend.com",
+    "license": "MIT",
+    "keywords": [
+      "nitrosend",
+      "email-marketing",
+      "campaigns",
+      "automation",
+      "transactional-email",
+      "mcp",
+      "oauth"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "nitrosend/copilot",
+      "sha": "9790c695cec6c36673927071f5913d0ae9bc0a8d"
+    }
+  },
+  {
+    "name": "orrery",
+    "description": "採用官方 AWS、Azure、Google Cloud、Kubernetes 與 GitHub 圖示的架構與系統設計圖表，由 ELK 自動排版，並從 YAML 規格轉譯為 SVG、PNG、可編輯的 draw.io、React TSX 與獨立 HTML 檢視器。",
+    "version": "0.4.0",
+    "author": {
+      "name": "Sagar Gupta",
+      "url": "https://github.com/Sagargupta16"
+    },
+    "repository": "https://github.com/Sagargupta16/orrery",
+    "homepage": "https://github.com/Sagargupta16/orrery",
+    "license": "MIT",
+    "keywords": [
+      "diagram",
+      "architecture",
+      "system-design",
+      "aws",
+      "azure",
+      "gcp",
+      "kubernetes",
+      "drawio",
+      "svg",
+      "png"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "Sagargupta16/orrery",
+      "ref": "v0.4.0",
+      "sha": "69942d3358d492a9b328ef35164b8f4ed41a0493"
+    }
+  },
+  {
     "name": "pm-skills",
-    "description": "MCP 伺服器與 12 項技能，用於產品分析、規格撰寫、策略、敘事與專案關係人共識協調。直接從 Copilot 執行競爭分析、撰寫零疑問規格、設計計量，並產生可直接呈交主管的文件。",
+    "description": "包含 MCP 伺服器以及 12 項用於產品分析、規格撰寫、策略、敘事與專案關係人協調的技能。直接從 Copilot 執行競爭分析、撰寫零疑問規格、設計指標並產出高階主管就緒的文件。",
     "version": "2.1.0",
     "author": {
       "name": "Parth Sangani",
@@ -1281,8 +1806,33 @@
     }
   },
   {
+    "name": "pmx-canvas",
+    "description": "PMX Canvas 是一個協作畫布，您與您的 AI 代理人可在其中共同收集事證、分析發現項目並發展想法。將素材固定為代理人的脈絡背景，接著要求它在看板上新增發現項目、比較或圖表，以供您檢閱、呈現與進一步發揮。",
+    "version": "0.12.0",
+    "author": {
+      "name": "pskoett",
+      "url": "https://github.com/pskoett"
+    },
+    "repository": "https://github.com/pskoett/pmx-canvas",
+    "homepage": "https://github.com/pskoett/pmx-canvas#readme",
+    "license": "MIT",
+    "keywords": [
+      "canvas",
+      "mcp",
+      "spatial",
+      "copilot-canvas"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "pskoett/pmx-canvas",
+      "path": "plugins/pmx-canvas",
+      "ref": "v0.12.0",
+      "sha": "facd794de99b239ae89bf08efafeef2a45714762"
+    }
+  },
+  {
     "name": "postgres-skills",
-    "description": "專家級 PostgreSQL 指引與即時資料庫工具，適用於任何位置的 Postgres，包括本地、自行託管、容器、內部部署、AWS、Google Cloud、Azure Database for PostgreSQL 和 Azure HorizonDB。具備連線感知指引，涵蓋索引編製、向量搜尋與 RAG、JSONB、分割、安全性、複寫和知識圖譜。",
+    "description": "適用於各處 Postgres 的專家級 PostgreSQL 指南與即時資料庫工具，包括本機、自行託管、容器、內部部署、AWS、Google Cloud、Azure Database for PostgreSQL 與 Azure HorizonDB。具備連線感知指引，涵蓋索引編製、向量搜尋與 RAG、JSONB、分割、安全性、複寫以及知識圖譜。",
     "version": "0.1.2",
     "author": {
       "name": "Microsoft",
@@ -1309,8 +1859,8 @@
   },
   {
     "name": "radius",
-    "description": "從 GitHub Copilot 應用程式與 CLI 透過 Radius 進行應用程式模型建立、視覺化與部署。",
-    "version": "0.2.0",
+    "description": "透過 GitHub Copilot 應用程式與 CLI，使用 Radius 對應用程式進行模型化、視覺化與部署。",
+    "version": "0.4.0",
     "author": {
       "name": "Radius",
       "url": "https://radapp.io"
@@ -1331,13 +1881,13 @@
       "source": "github",
       "repo": "radius-project/ai-extensions",
       "path": "plugins/radius",
-      "ref": "radius@0.2.0",
-      "sha": "ffa3c1eb0bda0d288005162955dedc0d48b1ec30"
+      "ref": "radius@0.4.0",
+      "sha": "1247f1347d2141ebe46d18bcb9ec139a90857b76"
     }
   },
   {
     "name": "rayfin",
-    "description": "Rayfin 的入門路由技能 - 使用 Rayfin CLI 建立新應用程式的鷹架，接著使用安裝在專案中鎖定版本的技能。",
+    "description": "Rayfin 入門路由技能 - 使用 Rayfin CLI 建立新應用程式的鷹架，接著使用安裝於專案中鎖定版本的技能。",
     "version": "0.4.2",
     "author": {
       "name": "Microsoft",
@@ -1363,12 +1913,12 @@
   },
   {
     "name": "remotion",
-    "description": "以 Agent 方式製作影片。",
-    "version": "4.0.519",
+    "description": "以代理人自主方式製作影片。",
+    "version": "4.0.536",
     "author": {
       "name": "Jonny Burger"
     },
-    "repository": "https://github.com/remotion-dev/agent-plugin",
+    "repository": "https://github.com/remotion-dev/cursor-plugin",
     "homepage": "https://remotion.dev/plugins",
     "license": "Remotion License",
     "keywords": [
@@ -1377,13 +1927,13 @@
     ],
     "source": {
       "source": "github",
-      "repo": "remotion-dev/agent-plugin",
-      "sha": "ef892905120340970357997f20bcb8ce9bb341da"
+      "repo": "remotion-dev/cursor-plugin",
+      "sha": "a6efec03031ea8ec1e183539ff8df11d96e8f00d"
     }
   },
   {
     "name": "rhost",
-    "description": "使用已安裝的 rhost CLI，在可透過 SSH 存取的 Linux 主機上執行一般命令，具備如同本機般的標準輸入、輸出和結束行為。",
+    "description": "使用已安裝的 rhost CLI 在可透過 SSH 連線的 Linux 主機上執行一般命令，具備如同本機般的標準輸入（stdin）、輸出與結束行為。",
     "version": "1.0.0",
     "author": {
       "name": "starfield17",
@@ -1407,9 +1957,35 @@
     }
   },
   {
+    "name": "sap-ux-fiori-tools",
+    "description": "用於 SAP Fiori 開發的 MCP 伺服器與技能。協助 AI 程式碼撰寫助理建構、修改與測試連線至 CAP 或 ABAP OData 服務的 SAP Fiori Elements 應用程式。提供 7 項技能，涵蓋應用程式產生、分析圖表、視覺化篩選條件、OPA5 測試、ESLint、樹狀表格與 Fiori 工具 CLI。",
+    "version": "1.16.7",
+    "author": {
+      "name": "SAP SE",
+      "url": "https://www.sap.com"
+    },
+    "repository": "https://github.com/SAP/open-ux-tools",
+    "homepage": "https://github.com/SAP/open-ux-tools/tree/main/plugins-coding-agents/fiori",
+    "license": "Apache-2.0",
+    "keywords": [
+      "sap",
+      "fiori",
+      "ui5",
+      "cap",
+      "mcp",
+      "fiori-elements"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "SAP/open-ux-tools",
+      "path": "plugins-coding-agents/fiori",
+      "sha": "653ac13f5eec09dca862dae200e349e7cc7288c9"
+    }
+  },
+  {
     "name": "skills-for-copilot-studio",
-    "description": "適用於 AI 程式碼編寫 Agent 的 Microsoft Copilot Studio 外掛程式",
-    "version": "1.0.3",
+    "description": "Microsoft Copilot Studio YAML 撰寫工具箱。使用 YAML 檔案建立、編輯、驗證與測試 Copilot Studio 代理人。",
+    "version": "1.0.11",
     "author": {
       "name": "Microsoft Copilot Studio CAT Team",
       "url": "https://www.microsoft.com"
@@ -1427,13 +2003,14 @@
     "repository": "https://github.com/microsoft/skills-for-copilot-studio",
     "source": {
       "source": "github",
-      "repo": "microsoft/skills-for-copilot-studio"
+      "repo": "microsoft/skills-for-copilot-studio",
+      "sha": "fd9653d0ec743b39443596d7132f907d0d993f1f"
     }
   },
   {
     "name": "sonarqube",
-    "description": "SonarQube 是數百萬開發人員用於找出錯誤、弱點與流出密碼的 AI 程式碼品質與安全性驗證平台。此外掛程式在撰寫程式碼迴圈中強制執行這些標準：涵蓋 40 多種語言的 7,500+ 種相異問題類型、秘密掃描、agentic 分析與品質閘門。",
-    "version": "2.6.0",
+    "description": "SonarQube 是受到數百萬開發者信賴的 AI 程式碼品質與安全性驗證平台，用於捕捉程式錯誤、弱點與外洩機密。此外掛程式在程式碼編寫迴圈中貫徹這些標準：跨越 40 多種語言支援 7,500 多種相異問題類型、機密掃描、代理人分析與品質門檻。",
+    "version": "2.7.0",
     "author": {
       "name": "Sonar",
       "url": "https://sonarsource.com/"
@@ -1451,12 +2028,84 @@
     "source": {
       "source": "github",
       "repo": "SonarSource/sonarqube-agent-plugins",
-      "ref": "2.6.0"
+      "ref": "2.7.0"
+    }
+  },
+  {
+    "name": "spacefast",
+    "description": "使用 Spacefast 建構並發佈網站、儀表板、報告與小型 Web 工具。包含用於編輯 Space、分享預覽、連結網域與還原部署的技能。",
+    "version": "0.5.1",
+    "author": {
+      "name": "Automattic Inc.",
+      "url": "https://automattic.com"
+    },
+    "repository": "https://github.com/spacefast/plugins",
+    "homepage": "https://spacefast.com",
+    "license": "MIT",
+    "keywords": [
+      "spacefast",
+      "publish-to-spacefast",
+      "artifact-sharing",
+      "hosting"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "spacefast/plugins",
+      "sha": "d2cfc0fe9b450de785826bc25a216440ac61081b"
+    }
+  },
+  {
+    "name": "stacked-prs",
+    "description": "在 GitHub、Azure DevOps 或 GitLab 上將現有的大型分支拆分為較小的堆疊 PR，並在 PR 合併時管理這些分支。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Baron Khan"
+    },
+    "repository": "https://github.com/BaronKhan/stacked-prs",
+    "license": "MIT",
+    "keywords": [
+      "stacked-prs",
+      "code-review",
+      "github",
+      "azure-devops",
+      "gitlab"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "BaronKhan/stacked-prs",
+      "sha": "dd43e89c42f69a79dc08d2350770fbe345fb804a"
+    }
+  },
+  {
+    "name": "statuslines",
+    "description": "適用於 Copilot CLI 的工作目錄感知工作階段儀表板：依分支/工作樹將提取請求與關聯議題分組、顯示本機變更與上游/基準差異、監視 CI 與檢閱進度，並在單一可組合的頁尾中彙總子代理人的進度。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Jon Gallant",
+      "url": "https://github.com/jongio"
+    },
+    "repository": "https://github.com/jongio/skills",
+    "homepage": "https://jongio.github.io/skills/statuslines/",
+    "license": "MIT",
+    "keywords": [
+      "copilot",
+      "copilot-cli",
+      "statusline",
+      "pr-statusline",
+      "issue-statusline",
+      "subagent-statusline",
+      "worktree-statusline"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "jongio/skills",
+      "path": "extensions",
+      "sha": "83e185a6b7f62881e407b55f760610c2480bae8d"
     }
   },
   {
     "name": "stripe",
-    "description": "接受付款並拓展業務。Stripe 的 Agent 外掛程式包含最佳實踐、升級指南與我們的 MCP 伺服器。",
+    "description": "接受付款並拓展您的業務。Stripe 的代理人外掛程式包含最佳實踐、升級指南與我們的 MCP 伺服器。",
     "version": "0.1.2",
     "author": {
       "name": "Stripe",
@@ -1480,7 +2129,7 @@
   },
   {
     "name": "sumo-logic",
-    "description": "直接從 Copilot 查詢 Sumo Logic 記錄、警示、儀表板和 SIEM 深入見解。",
+    "description": "直接從 Copilot 查詢 Sumo Logic 記錄、警示、儀表板與 SIEM 深入資訊。",
     "version": "1.0.1",
     "author": {
       "name": "Sumo Logic",
@@ -1510,8 +2159,8 @@
   },
   {
     "name": "timebase",
-    "description": "透過用於 QQL 查詢與 TimeBase 用戶端程式碼產生的 MCP 工具與技能，將您的 AI Agent 連線至 TimeBase（適用於金融市場與其他時間序列資料的高效能資料庫）。",
-    "version": "0.1.3",
+    "description": "透過 MCP 工具以及用於 QQL 查詢與 TimeBase 用戶端程式碼產生的技能，將您的 AI 代理人連線至 TimeBase（適用於金融市場與其他時間序列資料的高效能資料庫）。",
+    "version": "0.1.7",
     "author": {
       "name": "EPAM Systems",
       "url": "https://www.epam.com/"
@@ -1528,13 +2177,13 @@
     "source": {
       "source": "github",
       "repo": "epam/TimeBase-Agent-Plugins",
-      "ref": "v0.1.3",
-      "sha": "536887d80f631dfa32213fc78be1e00edaa21b68"
+      "ref": "v0.1.7",
+      "sha": "d5b0d7bd57b7dd7bd051238527bfe3d87e15da29"
     }
   },
   {
     "name": "tmforge",
-    "description": "tmforge 外掛程式隨附的 Strider Agent 為 GitHub Copilot 增添具佐證支援的 STRIDE 威脅模型建立，具備結構化風險評估、確定性驗證與 Markdown 報告。選用的 tmforge 整合支援建立、更新與驗證 Microsoft 威脅模型建立工具 (.tm7) 模型。",
+    "description": "tmforge 外掛程式隨附的 Strider 代理人為 GitHub Copilot 帶來具事證支持的 STRIDE 威脅模型分析，具備結構化風險評估、決定性驗證與 Markdown 報告功能。選用的 tmforge 整合支援建立、更新與驗證 Microsoft Threat Modeling Tool (.tm7) 模型。",
     "version": "0.11.0",
     "author": {
       "name": "Mark Dalton Gray",
@@ -1564,8 +2213,30 @@
     }
   },
   {
+    "name": "typescript",
+    "description": "來自 TypeScript 團隊、適用於處理 TypeScript、JavaScript 與 Node.js 的程式碼代理人技能。涵蓋升級、專案設定、嚴格性、ESM 移轉、宣告發佈、建構、專案驗證以及相依套件安全性等複雜的 TypeScript 工作。",
+    "version": "0.1.0",
+    "author": {
+      "name": "Nathan Shively-Sanders, Ryan Cavanaugh, Emily Fischer"
+    },
+    "repository": "https://github.com/microsoft/typescript-skills",
+    "license": "MIT",
+    "keywords": [
+      "typescript",
+      "javascript",
+      "nodejs",
+      "project-setup"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "microsoft/typescript-skills",
+      "path": "plugins/typescript",
+      "sha": "2480764651ce9afbb7b29c56bb58e9a16b80e7b9"
+    }
+  },
+  {
     "name": "ui-theme-designer",
-    "description": "為 AI 程式碼編寫 Agent 配備使用 UI 主題設計工具、SAP 設計系統和 SAP Fiori 設計語彙元 (tokens) 的知識與工具。",
+    "description": "為 AI 程式碼代理人提供處理 UI theme designer、SAP 設計系統與 SAP Fiori 設計語彙元（design token）的知識與工具。",
     "version": "2.0.0",
     "author": {
       "name": "SAP SE",
@@ -1593,8 +2264,8 @@
   },
   {
     "name": "ui5",
-    "description": "適用於 GitHub Copilot 的 SAPUI5 / OpenUI5 外掛程式。建立並驗證 UI5 專案、存取 API 文件、執行 UI5 linter、取得 UI5 開發的開發指引與最佳實踐。",
-    "version": "0.1.8",
+    "description": "適用於 GitHub CoPilot 的 SAPUI5 / OpenUI5 外掛程式。建立並驗證 UI5 專案、存取 API 說明文件、執行 UI5 Linter、取得 UI5 開發的開發指導方針與最佳做法。",
+    "version": "0.1.9",
     "author": {
       "name": "SAP SE",
       "url": "https://www.sap.com"
@@ -1615,13 +2286,13 @@
       "source": "github",
       "repo": "UI5/plugins-coding-agents",
       "path": "plugins/ui5",
-      "ref": "v0.1.8"
+      "ref": "v0.1.9"
     }
   },
   {
     "name": "ui5-modernization",
-    "description": "完整的 UI5 現代化工具組，具備現代化 SAPUI5/OpenUI5 應用程式的工作流程與專門修復模式",
-    "version": "0.1.8",
+    "description": "完整的 UI5 現代化工具箱，包含用於將 SAPUI5/OpenUI5 應用程式現代化的工作流程與專門修復模式。",
+    "version": "0.1.9",
     "author": {
       "name": "SAP SE",
       "url": "https://www.sap.com"
@@ -1641,13 +2312,13 @@
       "source": "github",
       "repo": "UI5/plugins-coding-agents",
       "path": "plugins/ui5-modernization",
-      "ref": "v0.1.8"
+      "ref": "v0.1.9"
     }
   },
   {
     "name": "ui5-typescript-conversion",
-    "description": "適用於 GitHub Copilot 的 SAPUI5 / OpenUI5 外掛程式。將以 JavaScript 為基礎的 UI5 專案轉換為 TypeScript。",
-    "version": "0.1.8",
+    "description": "適用於 GitHub CoPilot 的 SAPUI5 / OpenUI5 外掛程式。將以 JavaScript 為基礎的 UI5 專案轉換為 TypeScript。",
+    "version": "0.1.9",
     "author": {
       "name": "SAP SE",
       "url": "https://www.sap.com"
@@ -1669,13 +2340,13 @@
       "source": "github",
       "repo": "UI5/plugins-coding-agents",
       "path": "plugins/ui5-typescript-conversion",
-      "ref": "v0.1.8"
+      "ref": "v0.1.9"
     }
   },
   {
     "name": "upgrade-agent",
-    "description": "用於升級與移轉應用程式的 AI 輔助升級助理。協助現代化舊版程式碼，並將 .NET 應用程式升級至當前架構。",
-    "version": "1.1.612",
+    "description": "用於升級與移轉應用程式的 AI 驅動升級助理。協助現代化舊版程式碼，並將 .NET 應用程式升級至目前的架構。",
+    "version": "1.1.784",
     "author": {
       "name": "Microsoft",
       "url": "https://www.microsoft.com"
@@ -1694,13 +2365,13 @@
       "source": "github",
       "repo": "microsoft/upgrade-agent-plugins",
       "path": "plugins/upgrade-agent",
-      "ref": "v1.1.612",
-      "sha": "cbd0b4cb071ec69eba4c1df84c4c6224cd9c7779"
+      "ref": "v1.1.784",
+      "sha": "cede9dcfbc09a06f0e63652e64fc7545ce5fe1df"
     }
   },
   {
     "name": "usage-insights",
-    "description": "檢查當前與歷史 GitHub Copilot 權杖與 AI 點數使用量，具備個別 Agent 彙總與 canvas 內工作階段向下切入功能。",
+    "description": "檢查目前與歷史的 GitHub Copilot Token 及 AI 額度使用量，具備個別代理人彙總與畫布內工作階段深入分析功能。",
     "version": "1.1.0",
     "author": {
       "name": "David Kaya",
@@ -1725,7 +2396,7 @@
   },
   {
     "name": "vercel-plugin",
-    "description": "建構與部署網頁應用程式及 Agent。全方位的 Vercel 生態系統外掛程式 — 關聯知識圖譜、每個主要產品的技能、專用 Agent 和 Vercel 慣例。將任何 AI Agent 轉變為 Vercel 專家。",
+    "description": "建構並部署 Web 應用程式與代理人。全方位的 Vercel 生態系統外掛程式 — 關聯知識圖譜、涵蓋所有主要產品的技能、專門代理人與 Vercel 慣例。將任何 AI 代理人打造成 Vercel 專家。",
     "version": "0.48.1",
     "author": {
       "name": "Vercel",
@@ -1754,7 +2425,7 @@
   },
   {
     "name": "whatidid",
-    "description": "將您的 Copilot 工作階段轉化為影響力證明 — 基於研究的 HTML 報告，包含來自本機工作階段記錄的工作量預估、技能分析與 ROI 計量。",
+    "description": "將您的 Copilot 工作階段轉化為影響力證明 — 根據本機工作階段記錄，產出具研究依據的 HTML 報告，包含投入心力估算、技能分析與 ROI 指標。",
     "version": "1.0.0",
     "author": {
       "name": "Microsoft",
@@ -1774,12 +2445,13 @@
     "repository": "https://github.com/microsoft/What-I-Did-Copilot",
     "source": {
       "source": "github",
-      "repo": "microsoft/What-I-Did-Copilot"
+      "repo": "microsoft/What-I-Did-Copilot",
+      "sha": "85c9c0f93129abbc00d14b78a64b8571f39873a6"
     }
   },
   {
     "name": "winappcli",
-    "description": "Windows 應用程式開發、封裝與發佈。協助建立 Windows 安裝程式 (MSIX)、程式碼簽署、憑證、Windows SDK 和 Windows App SDK 設定、Windows API 的套件身分識別（推播通知、背景工作、共用目標）、appxmanifest 撰寫以及 Microsoft Store 發布。支援 Electron、.NET、C++、Rust、Flutter 和 Tauri 應用程式。",
+    "description": "Windows 應用程式開發、封裝與發佈。協助建立 Windows 安裝程式（MSIX）、程式碼簽署、憑證、Windows SDK 與 Windows App SDK 設定、適用於 Windows API 的套件身分識別（推播通知、背景工作、共用目標）、appxmanifest 撰寫，以及 Microsoft Store 發佈。支援 Electron、.NET、C++、Rust、Flutter 與 Tauri 應用程式。",
     "version": "0.7.1",
     "author": {
       "name": "Microsoft",
@@ -1808,8 +2480,38 @@
     }
   },
   {
+    "name": "windbg",
+    "description": "適用於原生 Windows 應用程式、服務、UMDF/使用者模式驅動程式以及核心模式驅動程式的 WinDbg 診斷工作流程。以事證優先方法與報告驗證，涵蓋當機、無回應（hang）、堆積損毀、記憶體耗盡、TTD、錯誤檢查（bugcheck）、Driver Verifier、IRP 生命週期與核心死結。",
+    "version": "1.0.0",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://github.com/microsoft/WinDbg-Feedback"
+    },
+    "repository": "https://github.com/microsoft/win-dev-skills",
+    "homepage": "https://github.com/microsoft/WinDbg-Feedback",
+    "license": "MIT",
+    "keywords": [
+      "windows",
+      "windbg",
+      "debugging",
+      "crash-dump",
+      "hang",
+      "memory",
+      "drivers",
+      "kernel",
+      "umdf",
+      "ttd"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "microsoft/win-dev-skills",
+      "path": "plugins/windbg",
+      "sha": "5ce74fa89c49ca353c6ab03bd5889aa519aa9e5e"
+    }
+  },
+  {
     "name": "winui",
-    "description": "用於 WinUI 3 應用程式開發的 Agent 與技能。建立新的 WinUI 3 傳統型應用程式、從其他框架（WPF、WinForms、Electron、Tauri、Flutter）轉換為 WinUI 3，或將功能新增至現有 WinUI 3 應用程式。包含 MSIX 封裝、程式碼簽署、UI 自動化測試以及 Windows App SDK 指引。",
+    "description": "用於 WinUI 3 應用程式開發的代理人與技能。建立新的 WinUI 3 桌面應用程式、從其他架構（WPF、WinForms、Electron、Tauri、Flutter）轉換為 WinUI 3，或為現有的 WinUI 3 應用程式新增功能。包含 MSIX 封裝、程式碼簽署、UI 自動化測試與 Windows App SDK 指南。",
     "version": "0.7.1",
     "author": {
       "name": "Microsoft",
@@ -1836,6 +2538,34 @@
       "path": "plugins/winui/agent-plugin",
       "ref": "v0.7.1",
       "sha": "2e8c902e9ba675e4c57550e066fc7e48b64c49b0"
+    }
+  },
+  {
+    "name": "wiqd",
+    "description": "開發者工具箱，用於透過 wiqd CLI 建構、驗證、佈建與發佈 Microsoft 365 Copilot 外掛程式，包括宣告式代理人、技能與連接器等擴充功能。",
+    "version": "0.23.0",
+    "author": {
+      "name": "Microsoft",
+      "url": "https://www.microsoft.com"
+    },
+    "repository": "https://github.com/microsoft/wiqd",
+    "homepage": "https://github.com/microsoft/wiqd",
+    "license": "MIT",
+    "keywords": [
+      "wiqd",
+      "microsoft-365",
+      "copilot",
+      "plugins",
+      "declarative-agents",
+      "skills",
+      "connectors",
+      "agent-development"
+    ],
+    "source": {
+      "source": "github",
+      "repo": "microsoft/wiqd",
+      "path": "plugins/wiqd",
+      "sha": "925de866de27950ad2e0d66ebab694c192b27ce1"
     }
   }
 ]

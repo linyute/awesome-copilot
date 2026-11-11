@@ -1,6 +1,6 @@
-# GitHub Copilot SDK 食譜 (Cookbook)
+# Microsoft Copilot SDK Cookbook
 
-本食譜收集了簡短且聚焦的訣竅 (recipes)，展示如何跨語言使用 GitHub Copilot SDK 完成常見任務。每個訣竅都刻意保持簡短且實用，並附上可複製貼上的程式碼片段，以及指向更完整範例和測試的指標。
+本食譜彙整了簡短且聚焦的範例，說明如何使用 Microsoft Copilot SDK，以不同程式語言完成常見工作。SDK 正分階段從 GitHub Copilot SDK 過渡而來，目前不需要立即進行任何變更。這些範例中的套件名稱、命名空間和儲存庫連結，仍維持目前發布的形式；詳情請參閱[官方過渡公告](https://github.blog/changelog/2026-10-28-github-copilot-sdk-is-becoming-microsoft-copilot-sdk/)。每個範例都刻意保持簡短實用，並提供可直接複製貼上的程式碼片段，以及更完整範例和測試的參考連結。
 
 ## 依語言分類的訣竅
 
@@ -53,16 +53,25 @@
 - [PR 視覺化](java/pr-visualization.md): 使用 GitHub MCP Server 產生互動式的 PR 年齡圖表。
 - [持久化呼叫](java/persisting-sessions.md): 在重新啟動後儲存並恢復對話。
 - [無障礙報告](java/accessibility-report.md): 使用 Playwright MCP Server 產生 WCAG 無障礙報告。
+- [處理程序內執行階段](java/in-process-runtime.md): 將原生 Copilot 執行階段程式庫載入 JVM 程序中，而非另行啟動獨立的執行階段程序。
 
 ## 如何使用
 
 - 瀏覽上方的語言區塊並開啟訣竅連結
 - 每個訣竅在 `recipe/` 子資料夾中都包含了可執行的範例以及特定語言的工具
-- 查看現有的範例和測試以獲取工作參考：
-  - Node.js 範例: `nodejs/examples/basic-example.ts`
-  - E2E 測試: `go/e2e`, `python/e2e`, `nodejs/test/e2e`, `dotnet/test/Harness`
+- 如需依特定版本參考，請查看官方 SDK 儲存庫 `java/v1.0.21` 標籤中的現有範例和測試：
+  - [Node.js 範例](https://github.com/github/copilot-sdk/blob/java/v1.0.21/nodejs/examples/basic-example.ts)
+  - 端對端測試：[Go](https://github.com/github/copilot-sdk/tree/java/v1.0.21/go/internal/e2e)、[Python](https://github.com/github/copilot-sdk/tree/java/v1.0.21/python/e2e)、[Node.js](https://github.com/github/copilot-sdk/tree/java/v1.0.21/nodejs/test/e2e)、[.NET](https://github.com/github/copilot-sdk/tree/java/v1.0.21/dotnet/test/Harness)、[Java](https://github.com/github/copilot-sdk/tree/java/v1.0.21/java/sdk/src/test/java/com/github/copilot/e2e)
 
 ## 執行範例
+
+執行範例前，請先參閱您所使用語言之食譜 README 中的先決條件：
+
+ - [.NET](dotnet/recipe/README.md#prerequisites)
+ - [Node.js](nodejs/recipe/README.md#prerequisites)
+ - [Python](python/recipe/README.md#prerequisites)
+ - [Go](go/recipe/README.md#prerequisites)
+ - [Java](java/recipe/README.md#prerequisites)
 
 ### .NET
 
@@ -108,4 +117,4 @@ jbang <FileName>.java
 
 ## 狀態
 
-食譜結構已完成，在 5 種支援的語言中共有 7 個訣竅。每個訣竅都包含 markdown 文件和可執行的範例。
+此食譜涵蓋 5 種語言：.NET 和 Java 各有 8 個範例，Node.js、Python 和 Go 則各有 7 個共用範例。每個範例都包含 Markdown 說明文件和可執行的程式碼。

@@ -5,7 +5,7 @@
 ## 先決條件
 
 - Go 1.21 或更高版本
-- GitHub Copilot SDK for Go
+- Microsoft Copilot SDK for Go（目前發布於既有的 GitHub SDK 存放庫）
 
 ```bash
 go get github.com/github/copilot-sdk/go
@@ -57,5 +57,5 @@ go run managing-local-files.go
 ## 學習資源
 
 - [Go 文件](https://go.dev/doc/)
-- [GitHub Copilot SDK for Go](https://github.com/github/copilot-sdk/blob/main/go/README.md)
+- [Microsoft Copilot SDK for Go 文件](https://github.com/github/copilot-sdk/blob/main/go/README.md)
 - [上層 Cookbook](../README.md)

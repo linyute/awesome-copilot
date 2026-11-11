@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "copilot-sdk",
-  "description": "跨多種程式設計語言使用 GitHub Copilot SDK 建構應用程式。包含適用於 C#、Go、Node.js/TypeScript 與 Python 的完整指引，協助您建立 AI 驅動的應用程式。",
+  "description": "使用 Microsoft Copilot SDK 建置應用程式，並從 GitHub Copilot SDK 遷移，支援多種程式語言。包含 C#、Go、Node.js/TypeScript 與 Python 的操作指南。",
   "version": "1.0.0",
   "author": {
     "name": "Awesome Copilot Community"

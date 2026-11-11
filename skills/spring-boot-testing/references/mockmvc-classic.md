@@ -1,15 +1,15 @@
-# MockMvc 經典版 (Classic)
+# MockMvc 傳統用法
 
-用於 Spring MVC 控制器測試的傳統 MockMvc API (適用於 Spring Boot 3.2 以前版本或舊有程式碼庫)。
+適用於 Spring MVC 控制器測試的傳統 MockMvc API（Spring Boot 3.2 之前或舊版程式碼庫）。
 
-## 何時使用此參考
+## 何時使用此參考文件
 
-- 專案使用 Spring Boot < 3.2 (無 `MockMvcTester` 可用)
-- 現有測試使用 `mvc.perform(...)`，且您正在維護或擴充這些測試
-- 您需要將經典的 MockMvc 測試遷移至 `MockMvcTester` (請參閱下方的遷移章節)
-- 使用者明確詢問有關 `ResultActions`、`andExpect()` 或 Hamcrest 風格的 Web 斷言
+- 專案使用 Spring Boot < 3.2（無可用的 `MockMvcTester`）
+- 現有測試使用 `mvc.perform(...)` 且您正在進行維護或擴充
+- 您需要將傳統 MockMvc 測試移轉至 `MockMvcTester`（請參閱下方的移轉節區）
+- 使用者明確詢問 `ResultActions`、`andExpect()` 或 Hamcrest 風格的 Web 斷言
 
-對於 Spring Boot 3.2+ 的新測試，請改用 [mockmvc-tester.md](mockmvc-tester.md)。
+對於 Spring Boot 3.2+ 上的新測試，請改為偏好使用 [mockmvc-tester.md](mockmvc-tester.md)。
 
 ## 設定
 
@@ -41,7 +41,7 @@ void shouldReturnOrder() throws Exception {
 }
 ```
 
-## 帶有請求本文 (Request Body) 的 POST
+## 帶有請求本文的 POST
 
 ```java
 @Test
@@ -78,7 +78,7 @@ void shouldDeleteOrder() throws Exception {
 }
 ```
 
-## 狀態比對器 (Status Matchers)
+## 狀態比對器
 
 ```java
 .andExpect(status().isOk())           // 200
@@ -88,28 +88,28 @@ void shouldDeleteOrder() throws Exception {
 .andExpect(status().isUnauthorized()) // 401
 .andExpect(status().isForbidden())    // 403
 .andExpect(status().isNotFound())     // 404
-.andExpect(status().is(422))          // 任意代碼
+.andExpect(status().is(422))          // arbitrary code
 ```
 
 ## JSON Path 斷言
 
 ```java
-// 精確值
+// Exact value
 .andExpect(jsonPath("$.status").value("PENDING"))
 
-// 存在性
+// Existence
 .andExpect(jsonPath("$.id").exists())
 .andExpect(jsonPath("$.deletedAt").doesNotExist())
 
-// 陣列大小
+// Array size
 .andExpect(jsonPath("$.items").isArray())
 .andExpect(jsonPath("$.items", hasSize(3)))
 
-// 巢狀欄位
+// Nested field
 .andExpect(jsonPath("$.customer.name").value("John Doe"))
 .andExpect(jsonPath("$.customer.address.city").value("Berlin"))
 
-// 使用 Hamcrest 比對器
+// With Hamcrest matchers
 .andExpect(jsonPath("$.total", greaterThan(0.0)))
 .andExpect(jsonPath("$.description", containsString("order")))
 ```
@@ -135,15 +135,15 @@ void shouldDeleteOrder() throws Exception {
 ## 請求參數與標頭
 
 ```java
-// 查詢參數 (Query parameters)
+// Query parameters
 mvc.perform(get("/orders").param("status", "PENDING").param("page", "0"))
   .andExpect(status().isOk());
 
-// 路徑變數 (Path variables)
+// Path variables
 mvc.perform(get("/orders/{id}", 1L))
   .andExpect(status().isOk());
 
-// 請求標頭
+// Request headers
 mvc.perform(get("/orders/1").header("X-Api-Key", "secret"))
   .andExpect(status().isOk());
 ```
@@ -166,11 +166,11 @@ void shouldReturnCreatedId() throws Exception {
 }
 ```
 
-## 使用 andDo 鏈式呼叫
+## 使用 andDo 鏈結
 
 ```java
 mvc.perform(get("/orders/1"))
-  .andDo(print())              // 將請求/回應列印至主控台 (偵錯用)
+  .andDo(print())              // prints request/response to console (debug)
   .andExpect(status().isOk());
 ```
 
@@ -184,23 +184,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.hamcrest.Matchers.*;
 ```
 
-## 遷移至 MockMvcTester
+## 移轉至 MockMvcTester
 
-| 經典 MockMvc | MockMvcTester (推薦) |
+| 傳統 MockMvc | MockMvcTester（建議） |
 | --- | --- |
 | `@Autowired MockMvc mvc` | `@Autowired MockMvcTester mvc` |
 | `mvc.perform(get("/orders/1"))` | `mvc.get().uri("/orders/1")` |
 | `.andExpect(status().isOk())` | `.hasStatusOk()` |
 | `.andExpect(jsonPath("$.status").value("X"))` | `.bodyJson().convertTo(T.class)` + AssertJ |
-| 每個方法都要 `throws Exception` | 無受檢例外 (Checked exception) |
+| 每個方法皆宣告 `throws Exception` | 無檢查型例外狀況 |
 | Hamcrest 比對器 | AssertJ 流暢斷言 |
 
-請參閱 [mockmvc-tester.md](mockmvc-tester.md) 以瞭解完整的現代 API。
+如需完整的現代 API，請參閱 [mockmvc-tester.md](mockmvc-tester.md)。
 
-## 關鍵要點
+## 重點摘要
 
-1. **每個測試方法都必須宣告 `throws Exception`** — `perform()` 會拋出受檢例外
-2. **在偵錯期間使用 `andDo(print())`** — 在提交程式碼前請將其移除
-3. **優先使用 `jsonPath()` 而非 `content().string()`** — 提供更精確的欄位級斷言
-4. **必須使用靜態匯入** — IDE 通常可以自動新增
-5. **升級至 Spring Boot 3.2+ 時，請遷移至 MockMvcTester** 以獲得更好的可讀性
+1. **每個測試方法必須宣告 `throws Exception`** — `perform()` 會擲出檢查型例外狀況
+2. **在除錯期間使用 `andDo(print())`** — 認可前請移除
+3. **偏好使用 `jsonPath()` 勝過 `content().string()`** — 更精確的欄位層級斷言
+4. **需要靜態匯入** — IDE 可以自動新增它們
+5. **升級至 Spring Boot 3.2+ 時移轉至 MockMvcTester** 以獲得更好的可讀性

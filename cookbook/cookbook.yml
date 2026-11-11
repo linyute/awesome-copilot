@@ -4,8 +4,8 @@
 
 cookbooks:
   - id: copilot-sdk
-    name: GitHub Copilot SDK
-    description: 適用於多種語言的 GitHub Copilot SDK 構建即用食譜
+    name: Microsoft GitHub Copilot SDK
+    description: 適用於多種語言的 Microsoft GitHub Copilot SDK 構建即用食譜
     path: cookbook/copilot-sdk
     featured: true
     languages:
@@ -92,7 +92,7 @@ cookbooks:
           - community
       - id: copilot-sdk-web-app
         name: Copilot SDK 網頁應用程式 (Web App)
-        description: 一款使用 GitHub Copilot SDK、.NET Aspire 以及帶有 GitHub OAuth、工作階段歷程記錄與模型選擇功能的 React 構建的全疊層對話應用程式
+        description: 使用 Microsoft Copilot SDK（目前以 GitHub Copilot SDK 名義發布）、.NET Aspire 與 React 建構的全端聊天應用程式，具備 GitHub OAuth、工作階段記錄與模型選擇功能
         external: true
         url: https://github.com/aaronpowell/copilot-sdk-web-app
         author:

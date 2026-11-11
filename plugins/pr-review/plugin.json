@@ -1,0 +1,28 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "pr-review",
+  "description": "在唯讀畫布中檢閱 GitHub 提取請求（pull request），具備 AI 分組的變更、可展開的 Diff，以及限定於群組、檔案或程式碼片段（hunk）範圍的問題諮詢功能。",
+  "version": "1.0.0",
+  "keywords": [
+    "canvas",
+    "code-review",
+    "copilot-extension",
+    "pull-request",
+    "pull-request-review"
+  ],
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/pr-review"
+      ]
+    }
+  }
+}

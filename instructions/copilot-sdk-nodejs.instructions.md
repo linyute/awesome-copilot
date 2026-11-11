@@ -1,8 +1,10 @@
 ---
 applyTo: "**.ts, **.js, package.json"
-description: "使用 GitHub Copilot SDK 建構 Node.js/TypeScript 應用程式指南"
-name: "GitHub Copilot SDK Node.js 指令"
+description: "使用 Microsoft Copilot SDK 建構 Node.js/TypeScript 應用程式指南"
+name: "Microsoft Copilot SDK Node.js 指令"
 ---
+
+Microsoft Copilot SDK 正分階段從 GitHub Copilot SDK 轉型。目前無需立即變更；以下套件名稱和範例使用目前已發布的識別名稱。請參閱[官方轉型公告](https://github.blog/changelog/2026-10-28-github-copilot-sdk-is-becoming-microsoft-copilot-sdk/)。
 
 ## 核心原則
 

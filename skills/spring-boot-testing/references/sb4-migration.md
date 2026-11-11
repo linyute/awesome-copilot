@@ -1,14 +1,14 @@
 # Spring Boot 4.0 遷移
 
-從 Spring Boot 3.x 遷移到 4.0 時的主要測試變更。
+從 Spring Boot 3.x 遷移至 4.0 時的重要測試變更。
 
-## 依賴項目變更
+## 相依性變更
 
 ### 模組化測試 Starter
 
-Spring Boot 4.0 引入了模組化測試 starter：
+Spring Boot 4.0 引入了模組化測試 Starter：
 
-**之前 (3.x):**
+**之前 (3.x)：**
 
 ```xml
 <dependency>
@@ -18,7 +18,7 @@ Spring Boot 4.0 引入了模組化測試 starter：
 </dependency>
 ```
 
-**之後 (4.0) - WebMvc 測試:**
+**之後 (4.0) - WebMvc 測試：**
 
 ```xml
 <dependency>
@@ -28,7 +28,7 @@ Spring Boot 4.0 引入了模組化測試 starter：
 </dependency>
 ```
 
-**之後 (4.0) - REST 用戶端測試:**
+**之後 (4.0) - REST 用戶端測試：**
 
 ```xml
 <dependency>
@@ -40,52 +40,22 @@ Spring Boot 4.0 引入了模組化測試 starter：
 
 ## 註解遷移
 
-### @MockBean → @MockitoBean
+`@MockBean`/`@SpyBean` 已被 `@MockitoBean`/`@MockitoSpyBean` 取代。請參閱 `mockitobean.md` 取得完整遷移指引。
 
-**已棄用 (3.x):**
-
-```java
-@MockBean
-private OrderService orderService;
-```
-
-**新增 (4.0):**
-
-```java
-@MockitoBean
-private OrderService orderService;
-```
-
-### @SpyBean → @MockitoSpyBean
-
-**已棄用 (3.x):**
-
-```java
-@SpyBean
-private PaymentGatewayClient paymentClient;
-```
-
-**新增 (4.0):**
-
-```java
-@MockitoSpyBean
-private PaymentGatewayClient paymentClient;
-```
-
-## 新增測試功能
+## 全新測試功能
 
 ### RestTestClient
 
-取代 TestRestTemplate (已棄用)：
+取代 TestRestTemplate（已棄用）：
 
 ```java
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 class OrderIntegrationTest {
-  
+
   @Autowired
   private RestTestClient restClient;
-  
+
   @Test
   void shouldCreateOrder() {
     restClient
@@ -105,29 +75,29 @@ class OrderIntegrationTest {
 
 Spring Boot 4.0 預設使用 JUnit 6：
 
-- JUnit 4 已棄用 (暫時使用 JUnit Vintage)
-- 所有 JUnit 5 功能仍可運作
-- 移除 JUnit 4 依賴項目以進行乾淨的遷移
+- JUnit 4 已棄用（可暫時使用 JUnit Vintage）
+- 擴充功能模型保持相容
+- 支援平行測試執行改良
 
 ## Testcontainers 2.0
 
-模組命名已變更：
+模組命名有所變更：
 
-**之前 (1.x):**
+**之前 (1.x)：**
 
 ```xml
 <artifactId>postgresql</artifactId>
 ```
 
-**之後 (2.0):**
+**之後 (2.0)：**
 
 ```xml
 <artifactId>testcontainers-postgresql</artifactId>
 ```
 
-## 非 Singleton Bean Mocking
+## 非 Singleton Bean 模擬
 
-Spring Framework 7 允許對 prototype-scoped bean 進行 mocking：
+Spring Framework 7 允許模擬 prototype 範圍的 Bean：
 
 ```java
 @Component
@@ -137,45 +107,35 @@ public class OrderProcessor { }
 @SpringBootTest
 class OrderServiceTest {
   @MockitoBean
-  private OrderProcessor orderProcessor; // 現在可以運作了！
+  private OrderProcessor orderProcessor; // Now works!
 }
 ```
 
-## SpringExtension Context 變更
+## SpringExtension 上下文變更
 
-Extension context 現在預設為 test-method 範圍。
+Extension 上下文現在預設為測試方法範圍（test-method scoped）。
 
-如果測試在 @Nested 類別中失敗：
+若測試在 `@Nested` 類別中失敗：
 
 ```java
 @SpringExtensionConfig(useTestClassScopedExtensionContext = true)
 @SpringBootTest
 class OrderTest {
-  // 使用舊行為
+  // Use old behavior
 }
 ```
 
-## 遷移檢查清單
+## 遷移檢核清單
 
 - [ ] 將 @MockBean 替換為 @MockitoBean
 - [ ] 將 @SpyBean 替換為 @MockitoSpyBean
-- [ ] 將 Testcontainers 依賴項目更新為 2.0 命名
-- [ ] 根據需要新增模組化測試 starter
-- [ ] 將 TestRestTemplate 遷移至 RestTestClient
-- [ ] 移除 JUnit 4 依賴項目
-- [ ] 更新自定義 TestExecutionListener 實作
-- [ ] 測試 @Nested 類別行為
+- [ ] 將 TestRestTemplate 替換為 RestTestClient
+- [ ] 更新模組化 test starter 相依性
+- [ ] 升級 Testcontainers 模組座標
+- [ ] 檢查並更新自訂的 SpringExtension 邏輯
+- [ ] 驗證並修正任何 @Nested 測試類別
+- [ ] 執行完整的測試套件以驗證整體相容性
 
 ## 回溯相容性
 
-使用 "classic" starter 進行逐步遷移：
-
-```xml
-<dependency>
-  <groupId>org.springframework.boot</groupId>
-  <artifactId>spring-boot-starter-test-classic</artifactId>
-  <scope>test</scope>
-</dependency>
-```
-
-這會在您逐步遷移時提供舊行為。
+傳統的 starter（例如 `spring-boot-starter-test-webmvc`）會將已棄用的類別保留至 4.1，但建議儘早遷移至新註解與用戶端。

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// 提交閘門（Submission gate）：彙總檢查評估、合併風險等級、核准政策、
-// PR 狀態機、狀態留言呈現，以及 PR 指令。
-// 由 .github/workflows/submission-gate*.yml 和 pr-commands.yml 使用。
-// 詳見 docs/maintainers/submission-gate.md。
+// 提交閘門：彙總檢查評估、合併風險層級、核准政策、
+// PR 狀態機器、狀態評論呈現與 PR 指令。
+// 由 .github/workflows/submission-gate*.yml 與 pr-commands.yml 使用。
+// 請參閱 docs/maintainers/submission-gate.md。
 
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -11,7 +11,7 @@ import path from "node:path";
 import * as yaml from "js-yaml";
 
 export const GATE_CHECK_NAME = "submission-gate";
-// 可信寫入者（trusted writer）所發佈之檢查執行蓋上的 external_id。
+// 標註在受信任寫入者所發布檢查執行上的 external_id。
 export const GATE_CHECK_EXTERNAL_ID = "submission-gate-writer";
 const CONTRIBUTOR_RESULT_JOB = "pr-check";
 export const GATE_WORKFLOW_FILE = "submission-gate.yml";
@@ -26,7 +26,7 @@ export const STATE_LABELS = [
   "approved",
 ];
 export const PR_EVENTS = new Set(["pull_request", "pull_request_review"]);
-// 帶有這些標籤的 PR，其狀態標籤由另一個工作流管理。
+// 帶有這些標籤的 PR，其狀態標籤由另一個工作流程管理。
 export const STATE_LABEL_OWNERS = ["external-plugin"];
 
 const WRITE_PERMISSIONS = new Set(["admin", "maintain", "write"]);
@@ -34,18 +34,18 @@ const MAINTAINER_PERMISSIONS = new Set(["admin", "maintain"]);
 const RERUNNABLE_CONCLUSIONS = new Set(["failure", "cancelled", "timed_out", "startup_failure"]);
 
 const STATE_DISPLAY = {
-  "awaiting-automation": { icon: "⏳", text: "等待自動化" },
-  "requires-submitter-fixes": { icon: "🛠️", text: "需要提交者修正" },
-  "ready-for-review": { icon: "👀", text: "準備好在評審" },
-  "review-in-progress": { icon: "💬", text: "評審進行中" },
-  approved: { icon: "✅", text: "已核准" },
+  "awaiting-automation": { icon: "⏳", text: "Awaiting automation" },
+  "requires-submitter-fixes": { icon: "🛠️", text: "Requires submitter fixes" },
+  "ready-for-review": { icon: "👀", text: "Ready for review" },
+  "review-in-progress": { icon: "💬", text: "Review in progress" },
+  approved: { icon: "✅", text: "Approved" },
 };
 
 // ---------------------------------------------------------------------------
 // 設定與路徑比對
 // ---------------------------------------------------------------------------
 
-/** 將 GitHub Actions 風格的路徑 glob 轉換為 RegExp。 */
+/** 將 GitHub Actions 樣式的路徑 glob 轉換為 RegExp。 */
 export function globToRegExp(glob) {
   let source = "";
   for (let i = 0; i < glob.length; i += 1) {
@@ -84,26 +84,26 @@ function readYamlIfExists(filePath) {
   return yaml.load(fs.readFileSync(filePath, "utf8"));
 }
 
-/** 載入閘門、風險等級，以及（可選的）評審路由設定。 */
+/** 載入閘門、風險層級以及（選用的）檢閱路由設定。 */
 export function loadGateConfig(rootDir = process.cwd()) {
   const gate = readYamlIfExists(path.join(rootDir, ".github", "submission-gate.yml"));
   const tiers = readYamlIfExists(path.join(rootDir, ".github", "risk-tiers.yml"));
-  if (!gate || !Array.isArray(gate.checks)) throw new Error(".github/submission-gate.yml 不存在，或沒有 checks");
-  if (!tiers || !tiers.high || !tiers.medium || !tiers.low) throw new Error(".github/risk-tiers.yml 缺少某個 tier");
+  if (!gate || !Array.isArray(gate.checks)) throw new Error(".github/submission-gate.yml is missing or has no checks");
+  if (!tiers || !tiers.high || !tiers.medium || !tiers.low) throw new Error(".github/risk-tiers.yml is missing a tier");
 
-  // 缺少路由檔案是受支援的退路。若檔案存在但無法解析，則必須
-  // 以失敗為安全（fail closed）：把它當成缺失會放寬領域/所有權人的核准要求。
+  // 遺失路由檔案是受支援的遞補情境。但若檔案存在卻無法剖析，則必須
+  // 執行關閉失敗原則：若將其視為遺失會放寬領域／擁有者的核准需求。
   let routing;
   try {
     routing = readYamlIfExists(path.join(rootDir, ".github", "review-routing.yml"));
   } catch (error) {
-    throw new Error(`.github/review-routing.yml 無法解析：${error.message}`);
+    throw new Error(`.github/review-routing.yml could not be parsed: ${error.message}`);
   }
   if (routing !== null && routing !== undefined && (typeof routing !== "object" || Array.isArray(routing))) {
-    throw new Error(".github/review-routing.yml 必須是 mapping");
+    throw new Error(".github/review-routing.yml must be a mapping");
   }
   if (routing?.pools !== undefined && (typeof routing.pools !== "object" || routing.pools === null || Array.isArray(routing.pools))) {
-    throw new Error(".github/review-routing.yml 的 `pools` 必須是 mapping");
+    throw new Error(".github/review-routing.yml `pools` must be a mapping");
   }
   return { gate, tiers, routing: routing ?? null };
 }
@@ -117,7 +117,7 @@ function fileNames(files) {
   return names;
 }
 
-/** 適用於此 PR 的檢查，對應每個工作流的分支與路徑篩選條件。 */
+/** 套用至此 PR 的檢查，鏡像每個工作流程的分支與路徑篩選器。 */
 export function selectApplicableChecks(checks, files, baseRef) {
   const names = fileNames(files);
   return checks.filter((check) => {
@@ -133,7 +133,7 @@ export function selectApplicableChecks(checks, files, baseRef) {
 }
 
 // ---------------------------------------------------------------------------
-// 風險等級
+// 風險層級
 // ---------------------------------------------------------------------------
 
 function addedLines(patch) {
@@ -145,8 +145,8 @@ function addedLines(patch) {
 }
 
 /**
- * 將 PR 分類到唯一的一個合併風險等級。
- * `incompleteFiles` 表示變更檔案清單已被 GitHub 截斷；此情況會以失敗為安全（fail closed）判定為高風險。
+ * Classify a PR into exactly one merge-risk tier.
+ * `incompleteFiles` marks a changed-file list GitHub truncated; that fails closed to high.
  * @returns {{tier: 'low'|'medium'|'high', reasons: string[]}}
  */
 export function classifyRisk({ files, labels = [], contributorRisk = null, tiers, incompleteFiles = false }) {
@@ -154,20 +154,20 @@ export function classifyRisk({ files, labels = [], contributorRisk = null, tiers
   const low = tiers.low || {};
   const reasons = [];
 
-  if (incompleteFiles) reasons.push("GitHub 未回傳完整的變更檔案清單，因此此 PR 被視為高風險");
+  if (incompleteFiles) reasons.push("GitHub did not return the complete list of changed files, so the PR is treated as high risk");
 
   for (const file of files) {
     for (const name of fileNames([file])) {
       if (matchesAny(name, high.exclude_paths || [])) continue;
       if (matchesAny(name, high.paths || [])) {
-        reasons.push(`\`${name}\` 是高風險路徑（自動化、腳本、MCP 設定、hooks 或評審政策）`);
+        reasons.push(`\`${name}\` is a high-risk path (automation, scripts, MCP config, hooks, or review policy)`);
         break;
       }
     }
   }
 
-  // GitHub 對二進位檔案與非常大的 diff 會省略 `patch`。若新增行無法掃描的文字檔案，
-  // 會以失敗為安全（fail closed）處理，而不是跳過能力（capability）觸發條件。
+  // GitHub 會省略二進位檔案與超大型 diff 的 `patch`。若文字檔案的新增行
+  // 無法被掃描，則執行關閉失敗原則，而不是略過功能觸發條件。
   const capabilities = high.capabilities || [];
   const unscannable = files.filter(
     (file) =>
@@ -178,7 +178,7 @@ export function classifyRisk({ files, labels = [], contributorRisk = null, tiers
       capabilities.some((capability) => !Array.isArray(capability.files) || matchesAny(file.filename, capability.files))
   );
   for (const file of unscannable) {
-    reasons.push(`\`${file.filename}\` 沒有可供掃描特權能力的 diff`);
+    reasons.push(`\`${file.filename}\` has no diff available to scan for privileged capabilities`);
   }
 
   for (const capability of capabilities) {
@@ -186,23 +186,23 @@ export function classifyRisk({ files, labels = [], contributorRisk = null, tiers
     for (const file of files) {
       if (Array.isArray(capability.files) && !matchesAny(file.filename, capability.files)) continue;
       if (addedLines(file.patch).some((line) => pattern.test(line))) {
-        reasons.push(`於 \`${file.filename}\` 發現 ${capability.description}`);
+        reasons.push(`${capability.description} in \`${file.filename}\``);
       }
     }
   }
 
   for (const label of high.labels || []) {
-    if (labels.includes(label)) reasons.push(`標籤 \`${label}\` 表示高貢獻者風險訊號`);
+    if (labels.includes(label)) reasons.push(`Label \`${label}\` flags a high contributor-risk signal`);
   }
   if (String(contributorRisk || "").toUpperCase() === "HIGH" && !reasons.some((r) => r.includes("contributor-risk"))) {
-    reasons.push("貢獻者聲望檢查回報了高貢獻者風險訊號");
+    reasons.push("Contributor reputation check reported a high contributor-risk signal");
   }
 
   if (reasons.length > 0) return { tier: "high", reasons: [...new Set(reasons)] };
 
   const names = fileNames(files);
   if (names.every((name) => matchesAny(name, low.paths || []))) {
-    return { tier: "low", reasons: ["只有文件、Metadata 或自動產生的檔案有變更"] };
+    return { tier: "low", reasons: ["Only documentation, metadata, or generated files changed"] };
   }
 
   const small = low.small_update || {};
@@ -216,16 +216,16 @@ export function classifyRisk({ files, labels = [], contributorRisk = null, tiers
   if (onlyModifiesResources && totalChanges <= maxLines) {
     return {
       tier: "low",
-      reasons: [`對現有資源的小型更新（${totalChanges} 行變更），無新增或移除檔案`],
+      reasons: [`Small update (${totalChanges} changed lines) to existing resources with no added or removed files`],
     };
   }
 
   const mediumReasons = [];
   const added = files.filter((file) => file.status === "added").map((file) => file.filename);
-  if (added.length > 0) mediumReasons.push(`新增 ${added.length} 個檔案，例如 \`${added[0]}\``);
-  if (files.some((file) => ["removed", "renamed"].includes(file.status))) mediumReasons.push("移除或重新命名檔案");
-  if (totalChanges > maxLines) mediumReasons.push(`變更 ${totalChanges} 行（低風險上限為 ${maxLines}）`);
-  if (mediumReasons.length === 0) mediumReasons.push("變更了低風險文件與資源路徑之外的檔案");
+  if (added.length > 0) mediumReasons.push(`Adds ${added.length} file(s), e.g. \`${added[0]}\``);
+  if (files.some((file) => ["removed", "renamed"].includes(file.status))) mediumReasons.push("Removes or renames files");
+  if (totalChanges > maxLines) mediumReasons.push(`Changes ${totalChanges} lines (low-risk limit is ${maxLines})`);
+  if (mediumReasons.length === 0) mediumReasons.push("Changes files outside the low-risk documentation and resource paths");
   return { tier: "medium", reasons: mediumReasons };
 }
 
@@ -233,7 +233,7 @@ export function classifyRisk({ files, labels = [], contributorRisk = null, tiers
 // 核准
 // ---------------------------------------------------------------------------
 
-/** 將 review-routing.yml 正規化為「池金鑰 -> 小寫 login 的 Set」的 Map。 */
+/** 將 review-routing.yml 正規化為集區索引鍵 -> 小寫帳號 Set 的 Map。 */
 export function normalizeRouting(routing) {
   const pools = new Map();
   const source = routing?.pools || routing?.teams || {};
@@ -264,7 +264,7 @@ function unionPools(pools, keys) {
   return union;
 }
 
-/** PR 觸及的領域範圍（用於選擇領域評審池）。 */
+/** PR 所涉及的領域範疇（用於挑選領域檢閱者集區）。 */
 export function touchedDomains(files, domains = {}) {
   const names = fileNames(files);
   return Object.entries(domains)
@@ -273,8 +273,8 @@ export function touchedDomains(files, domains = {}) {
 }
 
 /**
- * 依據某等級的核准政策評估評審。
- * `permissions` 對應小寫 login -> 儲存庫權限（admin|maintain|write|triage|read|none）。
+ * Evaluate reviews against the approval policy of a tier.
+ * `permissions` maps lowercase login -> repository permission (admin|maintain|write|triage|read|none).
  */
 export function evaluateApprovals({ tier, tiers, reviews = [], author, permissions = new Map(), routing = null, files = [] }) {
   const policy = tiers[tier]?.approvals || {};
@@ -304,43 +304,43 @@ export function evaluateApprovals({ tier, tiers, reviews = [], author, permissio
 
   const missing = [];
   const notes = [];
-  const requirements = [`${required} 個核准${required === 1 ? "" : "s"}（來自具寫入權限的評審者）`];
-  if (approvers.length < required) missing.push(`${required - approvers.length} 個核准(s)`);
+  const requirements = [`${required} approval${required === 1 ? "" : "s"} from reviewers with write access`];
+  if (approvers.length < required) missing.push(`${required - approvers.length} more approval(s)`);
 
   const coreMembers = unionPools(pools, tiers.core_pools || []);
   if (policy.require_domain || policy.require_owner) {
-    const kind = policy.require_owner ? "資源所有權人" : "領域評審者";
+    const kind = policy.require_owner ? "resource owner" : "domain reviewer";
     const touched = touchedDomains(files, tiers.domains).flatMap((domain) => domain.pools);
-    // 位於所有領域之外的檔案（文件、Metadata）由核心池（core pools）負責。
+    // 所有領域之外的檔案（說明文件、metadata）歸核心集區所屬。
     const ownsUntouched = fileNames(files).some(
       (name) => !Object.values(tiers.domains || {}).some((domain) => matchesAny(name, domain.paths || []))
     );
     const domainPoolKeys = [...new Set([...touched, ...(ownsUntouched ? tiers.core_pools || [] : [])])];
     const domainMembers = unionPools(pools, domainPoolKeys);
     if (domainMembers.size > 0) {
-      requirements.push(`包含一位 ${kind}（${domainPoolKeys.join(", ")}）`);
+      requirements.push(`including a ${kind} (${domainPoolKeys.join(", ")})`);
       if (!approvers.some((login) => domainMembers.has(login) || coreMembers.has(login))) {
-        missing.push(`來自 ${domainPoolKeys.join("/")} 評審池中 ${kind} 的一個核准`);
+        missing.push(`an approval from a ${kind} (${domainPoolKeys.join("/")} reviewer pool)`);
       }
     } else {
-      notes.push(`目前尚無有負責人的評審池擁有這些檔案；任何具寫入權限的評審者都算作 ${kind}。`);
+      notes.push(`No staffed reviewer pool owns these files yet; any reviewer with write access counts as the ${kind}.`);
     }
   }
 
   if (policy.require_core) {
     if (coreMembers.size > 0) {
-      requirements.push("包含一位核心維護者");
-      if (!approvers.some((login) => coreMembers.has(login))) missing.push("來自核心維護者的一個核准");
+      requirements.push("including a core maintainer");
+      if (!approvers.some((login) => coreMembers.has(login))) missing.push("an approval from a core maintainer");
     } else {
-      requirements.push("包含一位具 admin 或 maintain 權限的維護者");
-      notes.push("core-maintainers 池目前尚無負責人；改需一位具 admin 或 maintain 權限的核准者。");
+      requirements.push("including a maintainer with admin or maintain permission");
+      notes.push("The core-maintainers pool is not staffed yet; an approver with admin or maintain permission is required instead.");
       if (!approvers.some((login) => MAINTAINER_PERMISSIONS.has(permissions.get(login)))) {
-        missing.push("來自具 admin 或 maintain 權限的維護者的一個核准");
+        missing.push("an approval from a maintainer with admin or maintain permission");
       }
     }
   }
 
-  if (changesRequestedBy.length > 0) missing.push(`${changesRequestedBy.join(", ")} 所要求變更的處理`);
+  if (changesRequestedBy.length > 0) missing.push(`resolution of changes requested by ${changesRequestedBy.join(", ")}`);
 
   return {
     tier,
@@ -363,47 +363,47 @@ function toRegExps(patterns = []) {
   return patterns.map((pattern) => new RegExp(pattern));
 }
 
-/** 判定一次失敗的工作流執行屬於基礎設施失敗還是貢獻失敗。 */
+/** 判定失敗的工作流程執行屬於基礎結構失敗還是貢獻失敗。 */
 export function classifyFailure(check, jobs, infrastructureSteps = []) {
   if (check.failure_kind === "infrastructure") {
-    return { category: "infrastructure", detail: "工作流未成功完成" };
+    return { category: "infrastructure", detail: "The workflow did not complete successfully" };
   }
   if (!Array.isArray(jobs)) {
-    return { category: "contribution", detail: "檢查回報了失敗" };
+    return { category: "contribution", detail: "The check reported a failure" };
   }
   const contributionPatterns = toRegExps(check.contribution_steps);
   const infraPatterns = toRegExps(infrastructureSteps);
   const failedJobs = jobs.filter((job) => ["failure", "timed_out", "cancelled", "startup_failure"].includes(job.conclusion));
   if (failedJobs.length === 0) {
-    return { category: "infrastructure", detail: "工作流在任何工作（job）執行前就已失敗" };
+    return { category: "infrastructure", detail: "The workflow failed before any job ran" };
   }
 
   let infraDetail = null;
   for (const job of failedJobs) {
     if (job.conclusion !== "failure") {
-      infraDetail ??= `工作（job）\`${job.name}\` ${job.conclusion.replace("_", " ")}`;
+      infraDetail ??= `Job \`${job.name}\` ${job.conclusion.replace("_", " ")}`;
       continue;
     }
     const step = (job.steps || []).find((candidate) => candidate.conclusion === "failure");
     if (!step) {
-      infraDetail ??= `工作（job）\`${job.name}\` 在步驟（step）之外失敗`;
+      infraDetail ??= `Job \`${job.name}\` failed outside of a step`;
       continue;
     }
     if (contributionPatterns.some((pattern) => pattern.test(step.name))) {
-      return { category: "contribution", detail: `失敗的步驟：\`${step.name}\`` };
+      return { category: "contribution", detail: `Failed step: \`${step.name}\`` };
     }
     if (infraPatterns.some((pattern) => pattern.test(step.name))) {
-      infraDetail ??= `失敗的步驟：\`${step.name}\``;
+      infraDetail ??= `Failed step: \`${step.name}\``;
       continue;
     }
-    return { category: "contribution", detail: `失敗的步驟：\`${step.name}\`` };
+    return { category: "contribution", detail: `Failed step: \`${step.name}\`` };
   }
-  return { category: "infrastructure", detail: infraDetail || "工作流未成功完成" };
+  return { category: "infrastructure", detail: infraDetail || "The workflow did not complete successfully" };
 }
 
 /**
- * 評估一個適用的檢查。
- * `observation` 為 {found, status, conclusion, url, jobs}。`gaveUp` 表示閘門已停止等待。
+ * Evaluate one applicable check.
+ * `observation` is {found, status, conclusion, url, jobs}. `gaveUp` means the gate stopped waiting.
  */
 export function evaluateCheck(check, observation, { gaveUp = false, infrastructureSteps = [] } = {}) {
   const base = {
@@ -416,41 +416,41 @@ export function evaluateCheck(check, observation, { gaveUp = false, infrastructu
   };
 
   if (!observation || !observation.found) {
-    if (!gaveUp) return { ...base, outcome: "pending", detail: "等待檢查開始" };
-    if (check.optional) return { ...base, outcome: "skipped", detail: "此提交未回報結果" };
+    if (!gaveUp) return { ...base, outcome: "pending", detail: "Waiting for the check to start" };
+    if (check.optional) return { ...base, outcome: "skipped", detail: "Not reported for this commit" };
     return {
       ...base,
       outcome: "failure",
       category: "infrastructure",
-      detail: "檢查未對此提交回報結果",
+      detail: "The check did not report a result for this commit",
     };
   }
 
   if (observation.status !== "completed") {
-    if (!gaveUp) return { ...base, outcome: "pending", detail: observation.status === "queued" ? "佇列中" : "執行中" };
-    return { ...base, outcome: "failure", category: "infrastructure", detail: "閘門停止等待前未完成" };
+    if (!gaveUp) return { ...base, outcome: "pending", detail: observation.status === "queued" ? "Queued" : "Running" };
+    return { ...base, outcome: "failure", category: "infrastructure", detail: "Did not finish before the gate stopped waiting" };
   }
 
   switch (observation.conclusion) {
     case "success":
     case "neutral":
-      return { ...base, outcome: "pass", detail: "通過" };
+      return { ...base, outcome: "pass", detail: "Passed" };
     case "skipped":
       if (check.optional || check.allow_skip || check.required === false) {
-        return { ...base, outcome: "skipped", detail: "被其工作流略過" };
+        return { ...base, outcome: "skipped", detail: "Skipped by its workflow" };
       }
       return {
         ...base,
         outcome: "failure",
         category: "infrastructure",
-        detail: "被其工作流略過，因此從未驗證此提交",
+        detail: "Skipped by its workflow, so it never validated this commit",
       };
     case "action_required":
       return {
         ...base,
         outcome: "failure",
         category: "infrastructure",
-        detail: "等待維護者核准此 PR 的工作流執行",
+        detail: "Waiting for a maintainer to approve workflow runs for this PR",
       };
     case "cancelled":
     case "timed_out":
@@ -460,7 +460,7 @@ export function evaluateCheck(check, observation, { gaveUp = false, infrastructu
         ...base,
         outcome: "failure",
         category: "infrastructure",
-        detail: `工作流 ${String(observation.conclusion).replace("_", " ")}`,
+        detail: `Workflow ${String(observation.conclusion).replace("_", " ")}`,
       };
     case "failure": {
       const { category, detail } = classifyFailure(check, observation.jobs, infrastructureSteps);
@@ -471,18 +471,18 @@ export function evaluateCheck(check, observation, { gaveUp = false, infrastructu
         ...base,
         outcome: "failure",
         category: "infrastructure",
-        detail: `未預期的結論 \`${observation.conclusion}\``,
+        detail: `Unexpected conclusion \`${observation.conclusion}\``,
       };
   }
 }
 
-/** 將檢查結果分組為與閘門相關的區桶（buckets）。 */
+/** 將檢查結果分組至閘門相關的群組中。 */
 export function summarizeChecks(results) {
   const failures = results.filter((result) => result.outcome === "failure");
   return {
     results,
     passed: results.filter((result) => result.outcome === "pass" || result.outcome === "skipped"),
-    // 只有必需的檢查會擋住閘門；參考性（required: false）檢查永遠不會阻擋。
+    // 只有必要檢查會阻擋閘門；參考性 (required: false) 檢查絕不封鎖。
     pending: results.filter((result) => result.outcome === "pending" && result.required),
     advisoryPending: results.filter((result) => result.outcome === "pending" && !result.required),
     contributionFailures: failures.filter((result) => result.required && result.category === "contribution"),
@@ -491,7 +491,7 @@ export function summarizeChecks(results) {
   };
 }
 
-/** PR 狀態機。回傳 STATE_LABELS 中的一個值。 */
+/** PR 狀態機器。傳回 STATE_LABELS 其中之一。 */
 export function computeState({ automation, approvals }) {
   if (automation.contributionFailures.length > 0 || approvals.changesRequestedBy.length > 0) {
     return "requires-submitter-fixes";
@@ -502,22 +502,22 @@ export function computeState({ automation, approvals }) {
   return "ready-for-review";
 }
 
-/** 以人類可讀的方式說明閘門未通過的原因。 */
+/** 閘門未通過的人類可讀原因。 */
 export function gateFailureSummary(evaluation) {
   const lines = [];
   const { automation, approvals } = evaluation;
   if (automation.contributionFailures.length > 0) {
-    lines.push(`貢獻失敗：${automation.contributionFailures.map((r) => r.title).join(", ")}`);
+    lines.push(`Contribution failures: ${automation.contributionFailures.map((r) => r.title).join(", ")}`);
   }
   if (automation.infrastructureFailures.length > 0) {
     lines.push(
-      `基礎設施失敗（非貢獻所導致；留言 /rerun-checks 可重新執行）：${automation.infrastructureFailures
+      `Infrastructure failures (not caused by the contribution; comment /rerun-checks): ${automation.infrastructureFailures
         .map((r) => r.title)
         .join(", ")}`
     );
   }
-  if (automation.pending.length > 0) lines.push(`仍在等待：${automation.pending.map((r) => r.title).join(", ")}`);
-  if (!approvals.satisfied) lines.push(`等待評審中（merge-risk:${evaluation.risk.tier}）：尚需 ${approvals.missing.join("; ")}`);
+  if (automation.pending.length > 0) lines.push(`Still pending: ${automation.pending.map((r) => r.title).join(", ")}`);
+  if (!approvals.satisfied) lines.push(`Waiting on review (merge-risk:${evaluation.risk.tier}): needs ${approvals.missing.join("; ")}`);
   return lines;
 }
 
@@ -525,7 +525,7 @@ export function gateFailureSummary(evaluation) {
 // 呈現
 // ---------------------------------------------------------------------------
 
-/** 中和不受信任的文字，使其可安全嵌入 markdown（提及、表格、HTML）。 */
+/** 對不受信任的文字進行無害化處理，以納入 markdown（提及、表格、HTML）。 */
 export function sanitize(text, maxLength = 300) {
   let value = String(text ?? "")
     .replace(/@/g, "@\u200b")
@@ -537,11 +537,11 @@ export function sanitize(text, maxLength = 300) {
 }
 
 function outcomeCell(result) {
-  if (result.outcome === "pass") return "✅ 通過";
-  if (result.outcome === "skipped") return "⏭️ 已略過";
-  if (result.outcome === "pending") return result.required ? "⏳ 等待中" : "⏳ 等待中（參考性、不阻擋）";
-  if (!result.required) return "⚠️ 失敗（參考性、不阻擋）";
-  return result.category === "contribution" ? "❌ 貢獻失敗" : "🔧 基礎設施失敗";
+  if (result.outcome === "pass") return "✅ Passed";
+  if (result.outcome === "skipped") return "⏭️ Skipped";
+  if (result.outcome === "pending") return result.required ? "⏳ Pending" : "⏳ Pending (advisory, non-blocking)";
+  if (!result.required) return "⚠️ Failed (advisory, non-blocking)";
+  return result.category === "contribution" ? "❌ Contribution failure" : "🔧 Infrastructure failure";
 }
 
 export function renderStatusComment(evaluation, { gateRunUrl = null } = {}) {
@@ -550,74 +550,74 @@ export function renderStatusComment(evaluation, { gateRunUrl = null } = {}) {
   const tierDescription = evaluation.tierDescription || "";
   const lines = [
     STATUS_MARKER,
-    `## 🚦 提交狀態：${display.icon} ${display.text}`,
+    `## 🚦 Submission status: ${display.icon} ${display.text}`,
     "",
-    `**風險等級：** \`merge-risk:${risk.tier}\`${tierDescription ? ` — ${tierDescription}` : ""}`,
-    `**合併所需：** 通過 \`${GATE_CHECK_NAME}\` 檢查，外加 ${approvals.requirement}。`,
+    `**Risk tier:** \`merge-risk:${risk.tier}\`${tierDescription ? ` — ${tierDescription}` : ""}`,
+    `**Required to merge:** passing \`${GATE_CHECK_NAME}\` checks plus ${approvals.requirement}.`,
     "",
-    "<details><summary>為何屬於此等級</summary>",
+    "<details><summary>Why this tier</summary>",
     "",
     ...risk.reasons.slice(0, 15).map((reason) => `- ${sanitize(reason, 200)}`),
-    ...(risk.reasons.length > 15 ? [`- …及另外 ${risk.reasons.length - 15} 項`] : []),
+    ...(risk.reasons.length > 15 ? [`- …and ${risk.reasons.length - 15} more`] : []),
     "",
     "</details>",
     "",
-    "### 自動檢查",
+    "### Automated checks",
     "",
   ];
 
   if (automation.results.length === 0) {
-    lines.push("_沒有自動檢查適用於此 PR。_");
+    lines.push("_No automated checks apply to this PR._");
   } else {
-    lines.push("| 檢查 | 狀態 | 詳細資訊 |", "|---|---|---|");
+    lines.push("| Check | Status | Details |", "|---|---|---|");
     for (const result of automation.results) {
-      const detail = result.url ? `${sanitize(result.detail)} · [日誌](${result.url})` : sanitize(result.detail);
+      const detail = result.url ? `${sanitize(result.detail)} · [logs](${result.url})` : sanitize(result.detail);
       lines.push(`| ${sanitize(result.title)} | ${outcomeCell(result)} | ${detail} |`);
     }
   }
 
   const actions = [];
   for (const result of automation.contributionFailures) {
-    actions.push(`- **${sanitize(result.title)}** 失敗。${result.hint ? sanitize(result.hint, 400) : "請查看日誌以取得詳細資訊。"}`);
+    actions.push(`- **${sanitize(result.title)}** failed. ${result.hint ? sanitize(result.hint, 400) : "See the logs for details."}`);
   }
   if (approvals.changesRequestedBy.length > 0) {
-    actions.push(`- 處理 ${approvals.changesRequestedBy.map((login) => `\`${login}\``).join(", ")} 所要求的變更，然後推送更新。`);
+    actions.push(`- Address the changes requested by ${approvals.changesRequestedBy.map((login) => `\`${login}\``).join(", ")}, then push an update.`);
   }
   if (automation.infrastructureFailures.length > 0) {
     actions.push(
-      `- 🔧 ${automation.infrastructureFailures.map((r) => sanitize(r.title)).join(", ")} 遇到自動化問題，**並非**由你的貢獻所導致。留言 \`/rerun-checks\` 重試；若持續失敗，維護者會收到通知。`
+      `- 🔧 ${automation.infrastructureFailures.map((r) => sanitize(r.title)).join(", ")} hit an automation problem that is **not** caused by your contribution. Comment \`/rerun-checks\` to retry; maintainers are notified if it keeps failing.`
     );
   }
   if (automation.warnings.length > 0) {
-    actions.push(`- ⚠️ 參考性檢查未完成（${automation.warnings.map((r) => sanitize(r.title)).join(", ")}）。這不會阻擋此 PR。`);
+    actions.push(`- ⚠️ Advisory checks did not complete (${automation.warnings.map((r) => sanitize(r.title)).join(", ")}). This does not block the PR.`);
   }
-  if (actions.length > 0) lines.push("", "### 需要採取的行動", "", ...actions);
+  if (actions.length > 0) lines.push("", "### Action needed", "", ...actions);
 
   const reviewerLinks = [
     ...reviewAssignment.users.map((login) => `[${sanitize(login, 60)}](https://github.com/${encodeURIComponent(login)})`),
-    ...reviewAssignment.teams.map((slug) => `團隊 \`${sanitize(slug, 80)}\``),
+    ...reviewAssignment.teams.map((slug) => `team \`${sanitize(slug, 80)}\``),
   ];
   lines.push(
     "",
-    "### 評審",
+    "### Review",
     "",
-    `- **核准：** ${approvals.approvers.length}/${approvals.required}${approvals.approvers.length > 0 ? ` (${approvals.approvers.map((login) => `\`${login}\``).join(", ")})` : ""}`,
-    `- **指派評審者：** ${reviewerLinks.length > 0 ? reviewerLinks.join(", ") : "尚未指派 — 留言 \`/request-review\` 即可要求指派"}`,
-    `- **評審目標日期：** ${reviewAssignment.due ? sanitize(reviewAssignment.due, 40) : "未設定"}`
+    `- **Approvals:** ${approvals.approvers.length}/${approvals.required}${approvals.approvers.length > 0 ? ` (${approvals.approvers.map((login) => `\`${login}\``).join(", ")})` : ""}`,
+    `- **Assigned reviewer:** ${reviewerLinks.length > 0 ? reviewerLinks.join(", ") : "not assigned yet — comment `/request-review` to ask for one"}`,
+    `- **Review target date:** ${reviewAssignment.due ? sanitize(reviewAssignment.due, 40) : "not set"}`
   );
-  if (!approvals.satisfied && approvals.missing.length > 0) lines.push(`- **仍需要：** ${approvals.missing.map((item) => sanitize(item, 200)).join("; ")}`);
+  if (!approvals.satisfied && approvals.missing.length > 0) lines.push(`- **Still needed:** ${approvals.missing.map((item) => sanitize(item, 200)).join("; ")}`);
   for (const note of approvals.notes) lines.push(`- _${sanitize(note, 300)}_`);
 
   lines.push(
     "",
-    "### 指令",
+    "### Commands",
     "",
-    "| 指令 | 執行者 | 作用 |",
+    "| Command | Who | What it does |",
     "|---|---|---|",
-    "| \`/rerun-checks\` | PR 作者、維護者 | 重新執行失敗或未完成的檢查，並重新評估此閘門 |",
-    "| \`/request-review\` | PR 作者、維護者 | 請評審輪值指派一位評審者（新增 \`needs-reviewer\` 標籤） |",
+    "| `/rerun-checks` | PR author, maintainers | Re-runs failed or incomplete checks and re-evaluates this gate |",
+    "| `/request-review` | PR author, maintainers | Asks the review rotation to assign a reviewer (adds `needs-reviewer`) |",
     "",
-    `<sub>已針對 ${headSha ? `\`${headSha.slice(0, 7)}\`` : "最新提交"}${gateRunUrl ? ` · [閘門執行](${gateRunUrl})` : ""} · 此留言由系統自動維護 — 詳見 [提交閘門文件](https://github.com/github/awesome-copilot/blob/main/docs/maintainers/submission-gate.md)。</sub>`
+    `<sub>Updated for ${headSha ? `\`${headSha.slice(0, 7)}\`` : "the latest commit"}${gateRunUrl ? ` · [gate run](${gateRunUrl})` : ""} · This comment is maintained automatically — see [submission gate docs](https://github.com/github/awesome-copilot/blob/main/docs/maintainers/submission-gate.md).</sub>`
   );
   return `${lines.join("\n")}\n`;
 }
@@ -627,15 +627,15 @@ export function renderStatusComment(evaluation, { gateRunUrl = null } = {}) {
 // ---------------------------------------------------------------------------
 
 /**
- * 解析一個 PR 指令。指令必須位於留言開頭（與工作流的
- * 大小寫不敏感的 `startsWith` 篩選條件相符）；該行之後的內容一律忽略。
+ * Parse a PR command. The command must start the comment (matching the workflow's
+ * case-insensitive `startsWith` filter); anything after it on the line is ignored.
  */
 export function parsePrCommand(body) {
   const match = /^\/(rerun-checks|request-review)(?:\s|$)/i.exec(String(body || ""));
   return match ? { command: match[1].toLowerCase() } : null;
 }
 
-/** 判斷留言者是否可執行 PR 指令：PR 作者或具寫入權限的使用者。 */
+/** 留言者是否可執行 PR 指令：PR 作者或具有寫入權限的使用者。 */
 export function canRunPrCommand({ commenter, prAuthor, permission }) {
   if (!commenter) return false;
   if (String(commenter).toLowerCase() === String(prAuthor || "").toLowerCase()) return true;
@@ -650,7 +650,7 @@ function workflowFile(run) {
   return path.posix.basename(String(run.path || "").split("@")[0]);
 }
 
-/** 對每個工作流檔案，取得特定提交的最新工作流執行，僅限 PR 觸發的執行。 */
+/** commit 每個工作流程檔案的最新工作流程執行，僅限於 PR 觸發的執行。 */
 export function latestRunsByWorkflow(runs) {
   const latest = new Map();
   for (const run of runs) {
@@ -747,7 +747,7 @@ function evaluateObservations(applicable, observations, { elapsedMs, timeoutMs, 
   });
 }
 
-/** 貢獻者檢查執行的 PR 工作（job）是否成功；若是，則其結果 artefact 必須存在。 */
+/** contributor-check 執行的 PR 作業是否成功，因此其結果成品必須存在。 */
 export async function contributorResultExpected(github, { owner, repo, run }) {
   if (run?.status !== "completed" || run.conclusion !== "success") return false;
   const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRun, {
@@ -760,7 +760,7 @@ export async function contributorResultExpected(github, { owner, repo, run }) {
   return jobs.some((job) => job.name === CONTRIBUTOR_RESULT_JOB && job.conclusion === "success");
 }
 
-/** 以 gh CLI 下載貢獻者聲望 artefact（僅能升高風險方向的訊號）。 */
+/** 使用 gh CLI 下載貢獻者信譽成品（僅提升等級訊號）。 */
 export function readContributorRiskArtifact({ owner, repo, runId, headSha, token }) {
   if (!runId) return null;
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "contributor-check-"));
@@ -793,14 +793,14 @@ async function lookupPermissions(github, { owner, repo, reviews, author }) {
       const { data } = await github.rest.repos.getCollaboratorPermissionLevel({ owner, repo, username: review.user.login });
       permissions.set(login, data.role_name === "maintain" ? "maintain" : data.permission);
     } catch {
-      // 以失敗為安全：author_association（例如 COLLABORATOR）不等於具有寫入權限。
+      // 關閉失敗原則：author_association（例如 COLLABORATOR）並不代表具有寫入權限。
       permissions.set(login, "none");
     }
   }
   return permissions;
 }
 
-/** 已要求的評審者，加上由評審路由維護的評審期限標籤。 */
+/** 所請求的檢閱者加上由檢閱者路由維護的 review-due 標籤。 */
 export function reviewAssignmentFrom(pr, labels) {
   const dueLabel = labels.find((label) => label.startsWith("review-due:"));
   return {
@@ -813,11 +813,11 @@ export function reviewAssignmentFrom(pr, labels) {
 }
 
 /**
- * 端到端評估一個 PR。
+ * Evaluate a PR end to end.
  * @param {object} options
- * @param {boolean} [options.wait] 輪詢直到適用檢查完成（閘門模式）
- * @param {boolean|"auto"} [options.finalized] 將未回報的檢查視為最終狀態：true 用於閘門
- *   完成後（writer），"auto" 用於 head 提交的閘門執行已完成時（sweeps）
+ * @param {boolean} [options.wait] poll until applicable checks finish (gate mode)
+ * @param {boolean|"auto"} [options.finalized] treat unreported checks as final: true after the gate
+ *   completed (writer), "auto" when the gate run for the head commit has completed (sweeps)
  */
 export async function evaluateSubmission(github, options) {
   const {
@@ -838,11 +838,11 @@ export async function evaluateSubmission(github, options) {
   const { data: initialPr } = await github.rest.pulls.get({ owner, repo, pull_number: pullNumber });
   const headSha = initialPr.head.sha;
   if (expectedHeadSha && expectedHeadSha !== headSha) {
-    log(`PR #${pullNumber} 的 head 是 ${headSha}，而非 ${expectedHeadSha}；較新的評估會接手處理。`);
+    log(`PR #${pullNumber} head is ${headSha}, not ${expectedHeadSha}; a newer evaluation will handle it.`);
     return { stale: true, pr: initialPr, headSha };
   }
   const files = await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: pullNumber, per_page: 100 });
-  // listFiles 最多列出 3,000 個檔案；被截斷的清單不可信，不能用於檢查或風險判斷。
+  // listFiles 最多取得 3,000 個檔案；遭截斷的清單無法被信任用於檢查或風險評估。
   const incompleteFiles = Number.isInteger(initialPr.changed_files) && files.length < initialPr.changed_files;
   const applicable = selectApplicableChecks(config.gate.checks, files, initialPr.base.ref);
 
@@ -871,20 +871,20 @@ export async function evaluateSubmission(github, options) {
     const pending = results.filter((result) => result.outcome === "pending" && result.required);
     const blockingContribution = results.some((result) => result.required && result.category === "contribution");
     if (!wait || pending.length === 0 || blockingContribution || elapsedMs >= timeoutMs) break;
-    log(`等待 ${pending.map((result) => result.title).join(", ")}`);
+    log(`Waiting for ${pending.map((result) => result.title).join(", ")}`);
     await sleep(intervalMs);
   }
 
-  // 等待後重新讀取 PR 狀態：標籤與評審可能已變更。若 head 已移動，
-  // 這些結果描述的是舊提交，不可套用到新的提交。
+  // 等待後重新讀取 PR 狀態：標籤與檢閱可能已變更。若 head 已變動，
+  // 這些結果描述的是舊 commit，不可套用至新的 commit。
   const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: pullNumber });
   if (pr.head.sha !== headSha) {
-    log(`PR 的 head 在評估期間從 ${headSha} 移動到 ${pr.head.sha}；捨棄此次評估。`);
+    log(`PR head moved from ${headSha} to ${pr.head.sha} while evaluating; discarding this evaluation.`);
     return { stale: true, pr, headSha };
   }
-  // 適用的檢查取決於基礎分支；重新指定目標的 PR 需要一次全新的評估。
+  // 適用的檢查取決於目標基準分支；重新指定目標的 PR 需要全新的評估。
   if (pr.base.ref !== initialPr.base.ref) {
-    log(`PR 的 base 在評估期間從 ${initialPr.base.ref} 變更到 ${pr.base.ref}；捨棄此次評估。`);
+    log(`PR base changed from ${initialPr.base.ref} to ${pr.base.ref} while evaluating; discarding this evaluation.`);
     return { stale: true, pr, headSha };
   }
   const labels = (pr.labels || []).map((label) => label.name);
@@ -900,18 +900,18 @@ export async function evaluateSubmission(github, options) {
       expected = true;
     }
     contributorRisk = readContributorRisk({ owner, repo, runId: contributorRun.id, headSha, token });
-    // 被略過的執行（bot 作者）沒有訊號。成功執行的 PR 工作（job）必然留下了可讀的
-    // 結果；若遺失可能掩蓋 HIGH 訊號，因此以失敗為安全，直到後續的 sweep 讀取為止。
+    // 略過的執行（機器人作者）沒有訊號。成功的 PR 作業必須留下可讀取的
+    // 結果；遺失它可能會隱藏 HIGH 訊號，因此執行關閉失敗原則，直到後續的批次排程讀取它。
     if (contributorRisk === null && expected) {
       results.push({
         id: "contributor-risk-signal",
-        title: "貢獻者風險訊號",
+        title: "Contributor risk signal",
         required: true,
         url: contributorRun.html_url || null,
-        hint: "每小時一次的 Submission Gate Writer sweep 會重試此項；若問題持續，維護者可重新執行貢獻者檢查。",
+        hint: "The hourly Submission Gate Writer sweep retries this; a maintainer can re-run the contributor check if it persists.",
         outcome: "failure",
         category: "infrastructure",
-        detail: "貢獻者檢查成功，但其結果 artefact 遺失、無法讀取，或屬於另一個提交",
+        detail: "The contributor check succeeded but its result artifact was missing, unreadable, or for another commit",
       });
     }
   }
@@ -919,33 +919,33 @@ export async function evaluateSubmission(github, options) {
   if (incompleteFiles) {
     results.push({
       id: "changed-files",
-      title: "變更檔案清單",
+      title: "Changed file list",
       required: true,
       url: null,
       hint: null,
       outcome: "failure",
       category: "infrastructure",
-      detail: `GitHub 只回報了 ${initialPr.changed_files} 個變更檔案中的 ${files.length} 個；請拆分 PR，或請維護者人工評審`,
+      detail: `GitHub returned ${files.length} of ${initialPr.changed_files} changed files; split the PR or ask a maintainer to review it manually`,
     });
   }
   const impostors = await findImpostorGateChecks(github, { owner, repo, headSha });
   if (impostors.length > 0) {
     results.push({
       id: "gate-integrity",
-      title: "閘門完整性",
+      title: "Gate integrity",
       required: true,
       url: impostors[0].html_url || null,
-      hint: `請從此 PR 移除名為 \`${GATE_CHECK_NAME}\` 的工作流工作（job）；只有 Submission Gate Writer 可以回報該檢查。`,
+      hint: `Remove the workflow job named \`${GATE_CHECK_NAME}\` from this PR; only the Submission Gate Writer may report that check.`,
       outcome: "failure",
       category: "contribution",
-      detail: `此提交另回報了 ${impostors.length} 個名為 \`${GATE_CHECK_NAME}\` 的檢查執行`,
+      detail: `${impostors.length} other check run(s) named \`${GATE_CHECK_NAME}\` were reported for this commit`,
     });
   }
 
   const risk = classifyRisk({ files, labels, contributorRisk, tiers: config.tiers, incompleteFiles });
   if (impostors.length > 0) {
     risk.tier = "high";
-    risk.reasons.unshift(`另一個工作流對此提交回報了 \`${GATE_CHECK_NAME}\` 檢查`);
+    risk.reasons.unshift(`Another workflow reports a \`${GATE_CHECK_NAME}\` check for this commit`);
   }
   const permissions = await lookupPermissions(github, { owner, repo, reviews, author: pr.user?.login });
   const approvals = evaluateApprovals({
@@ -981,48 +981,48 @@ export async function evaluateSubmission(github, options) {
   };
 }
 
-/** 套用恰好一個風險標籤與一個狀態標籤，並 upsert 狀態留言。 */
+/** 套用剛好一個風險標籤與一個狀態標籤，並 upsert 狀態評論。 */
 export async function syncPullRequestStatus(
   github,
   { owner, repo, evaluation, gateRunUrl = null, publishCheck = false, log = () => {} }
 ) {
   const issueNumber = evaluation.pr.number;
 
-  // 在寫入前最後再驗證一次，讓較慢的執行無法覆寫較新的 head 或評審狀態。
+  // 在寫入前立即重新驗證，避免執行緩慢的操作覆寫較新的 head 或檢閱狀態。
   const { data: fresh } = await github.rest.pulls.get({ owner, repo, pull_number: issueNumber });
   if (fresh.state !== "open") {
-    log(`PR #${issueNumber} 已不再是開啟狀態；不再更新。`);
+    log(`PR #${issueNumber} is no longer open; not updating.`);
     return { updated: false, reason: "closed" };
   }
   if (fresh.head.sha !== evaluation.headSha) {
-    log(`PR #${issueNumber} 的 head 已移動到 ${fresh.head.sha}；不套用針對 ${evaluation.headSha} 的評估。`);
+    log(`PR #${issueNumber} head moved to ${fresh.head.sha}; not applying the evaluation of ${evaluation.headSha}.`);
     return { updated: false, reason: "head-changed" };
   }
   if (evaluation.baseRef !== undefined && fresh.base.ref !== evaluation.baseRef) {
-    log(`PR #${issueNumber} 的 base 已變更到 ${fresh.base.ref}；不套用針對 ${evaluation.baseRef} 的評估。`);
+    log(`PR #${issueNumber} base changed to ${fresh.base.ref}; not applying the evaluation for ${evaluation.baseRef}.`);
     return { updated: false, reason: "base-changed" };
   }
   if (evaluation.riskLabelSignature !== undefined) {
     const freshLabels = (fresh.labels || []).map((label) => label.name);
     if (riskLabelSignature(freshLabels, evaluation.riskLabelInputs) !== evaluation.riskLabelSignature) {
-      log(`PR #${issueNumber} 的風險標籤在評估期間已變更；較新的評估會更新它。`);
+      log(`PR #${issueNumber} risk labels changed during evaluation; a newer evaluation will update it.`);
       return { updated: false, reason: "labels-changed" };
     }
   }
   if (evaluation.reviewsSignature !== undefined) {
     const reviews = await github.paginate(github.rest.pulls.listReviews, { owner, repo, pull_number: issueNumber, per_page: 100 });
     if (reviewsSignature(reviews) !== evaluation.reviewsSignature) {
-      log(`PR #${issueNumber} 的評審在評估期間已變更；較新的評估會更新它。`);
+      log(`PR #${issueNumber} reviews changed during evaluation; a newer evaluation will update it.`);
       return { updated: false, reason: "reviews-changed" };
     }
   }
 
-  // 先發佈權威檢查，讓強制執行從不需要等待標籤或留言。
+  // 首先發布具權威性的檢查，使強制執行絕不等待標籤或評論。
   if (publishCheck) await publishGateCheck(github, { owner, repo, evaluation, detailsUrl: gateRunUrl, log });
 
   const current = new Set((fresh.labels || []).map((label) => label.name));
-  // 外部插件收件（external-plugin-pr-quality-gates-writer.yml）擁有其 PR 上共享的
-  // 狀態標籤；在那邊只管理風險標籤與留言。
+  // 外部外掛程式進件流程 (external-plugin-pr-quality-gates-writer.yml) 擁有其
+  // PR 上的共用狀態標籤；該處僅管理風險標籤與評論。
   const manageState = !STATE_LABEL_OWNERS.some((label) => current.has(label));
   const desired = new Set([`merge-risk:${evaluation.risk.tier}`, ...(manageState ? [evaluation.state] : [])]);
   const managed = new Set([...RISK_LABELS, ...(manageState ? STATE_LABELS : [])]);
@@ -1040,7 +1040,7 @@ export async function syncPullRequestStatus(
       }
     }
   } catch (error) {
-    errors.push(`標籤：${error.message}`);
+    errors.push(`labels: ${error.message}`);
   }
 
   try {
@@ -1060,21 +1060,21 @@ export async function syncPullRequestStatus(
       await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber, body });
     }
   } catch (error) {
-    errors.push(`狀態留言：${error.message}`);
+    errors.push(`status comment: ${error.message}`);
   }
 
-  log(`PR #${issueNumber}: state=${evaluation.state} risk=${evaluation.risk.tier} (+${toAdd.join(",") || "無"} -${toRemove.join(",") || "無"})`);
-  if (errors.length > 0) throw new Error(`已發佈閘門檢查，但無法同步 ${errors.join("; ")}`);
+  log(`PR #${issueNumber}: state=${evaluation.state} risk=${evaluation.risk.tier} (+${toAdd.join(",") || "none"} -${toRemove.join(",") || "none"})`);
+  if (errors.length > 0) throw new Error(`Published the gate check but could not sync ${errors.join("; ")}`);
   return { updated: true };
 }
 
-/** 輸入風險分類之標籤的指紋（如 `high.labels`，例如 `needs-review:HIGH`）。 */
+/** 提供風險分類的標籤指紋（`high.labels`，例如 `needs-review:HIGH`）。 */
 export function riskLabelSignature(labels, inputs = []) {
   const watched = new Set(inputs);
   return [...new Set(labels)].filter((label) => watched.has(label)).sort().join(",");
 }
 
-/** 評審清單的穩定指紋，用於偵測評估期間新到的評審。 */
+/** 檢閱清單的穩定指紋，用於偵測在評估期間送達的檢閱。 */
 export function reviewsSignature(reviews) {
   return reviews.map((review) => `${review.id}:${review.state}`).join(",");
 }
@@ -1091,15 +1091,31 @@ async function listGateCheckRuns(github, { owner, repo, headSha }) {
   return data.check_runs || [];
 }
 
-/** 該提交上名為 `submission-gate` 的檢查執行中，未由閘門寫入者發佈者。 */
+/** commit 上名稱為 `submission-gate` 且非由閘門寫入者所發布的檢查執行。 */
 export async function findImpostorGateChecks(github, { owner, repo, headSha }) {
   const runs = await listGateCheckRuns(github, { owner, repo, headSha });
   return runs.filter((run) => run.external_id !== GATE_CHECK_EXTERNAL_ID);
 }
 
 /**
- * 在 PR 的 head 提交上發佈必需的 `submission-gate` 檢查。只有可信的
- * writer 會呼叫此函式，因此無法透過編輯由 PR 控制的工作流來滿足該檢查。
+ * A PR that is only waiting for a review is not broken: report `action_required`, which
+ * still blocks the required check but reads as "needs a reviewer" rather than a failure.
+ */
+export function gateConclusion(evaluation) {
+  if (evaluation.passed) return "success";
+  const { automation, approvals } = evaluation;
+  const onlyAwaitingReview =
+    automation.contributionFailures.length === 0 &&
+    automation.infrastructureFailures.length === 0 &&
+    automation.pending.length === 0 &&
+    (approvals.changesRequestedBy ?? []).length === 0 &&
+    !approvals.satisfied;
+  return onlyAwaitingReview ? "action_required" : "failure";
+}
+
+/**
+ * Publish the required `submission-gate` check on the PR head commit. Only the trusted
+ * writer calls this, so the check can't be satisfied by editing a PR-controlled workflow.
  */
 export async function publishGateCheck(github, { owner, repo, evaluation, detailsUrl = null, log = () => {} }) {
   const pending = evaluation.automation.pending.length > 0;
@@ -1108,26 +1124,26 @@ export async function publishGateCheck(github, { owner, repo, evaluation, detail
   const output = {
     title: `${display.text} · merge-risk:${evaluation.risk.tier}`,
     summary: (evaluation.passed
-      ? "所有必需的檢查均已通過，且此風險等級所需的核准都已具備。"
-      : reasons.map((line) => `- ${sanitize(line, 1000)}`).join("\n") || `狀態：${evaluation.state}`
+      ? "All required checks passed and the approvals required by this risk tier are present."
+      : reasons.map((line) => `- ${sanitize(line, 1000)}`).join("\n") || `State: ${evaluation.state}`
     ).slice(0, 60_000),
   };
   const fields = pending
     ? { status: "in_progress", output }
-    : { status: "completed", conclusion: evaluation.passed ? "success" : "failure", completed_at: new Date().toISOString(), output };
+    : { status: "completed", conclusion: gateConclusion(evaluation), completed_at: new Date().toISOString(), output };
   if (detailsUrl) fields.details_url = detailsUrl;
 
   const runs = await listGateCheckRuns(github, { owner, repo, headSha: evaluation.headSha });
   const ours = runs.filter((run) => run.external_id === GATE_CHECK_EXTERNAL_ID).sort((a, b) => b.id - a.id);
   const impostors = runs.length > ours.length;
-  // external_id 並非來源證明：任何能用 `checks: write` 執行工作流的人
-  // 都可以設定它。修正任何針對失敗評估宣稱成功的副本。
+  // external_id 並非來源證明：任何能夠執行具有 `checks: write` 權限之
+  // 工作流程的人員都可以設定它。請更正任何聲稱評估失敗但標記為成功的複本。
   const disagreeing = evaluation.passed ? [] : ours.filter((run) => run.conclusion === "success");
   if (disagreeing.length > 0) {
-    log(`正在修正 ${disagreeing.length} 個針對失敗評估回報成功的 \`${GATE_CHECK_NAME}\` 執行。`);
+    log(`Correcting ${disagreeing.length} \`${GATE_CHECK_NAME}\` run(s) that reported success for a failing evaluation.`);
   }
-  // 通常就地更新最新的執行；當另一個來源回報同名檢查時，
-  // 建立更新的執行，讓 writer 的結果成為最新的一個。
+  // 正常情況下就地更新最新執行；當另一個來源回報相同名稱時，
+  // 建立較新的執行，讓寫入者的結果成為最新版本。
   if (ours.length > 0 && !impostors) {
     await github.rest.checks.update({ owner, repo, check_run_id: ours[0].id, ...fields });
     for (const run of disagreeing.filter((candidate) => candidate.id !== ours[0].id)) {
@@ -1146,8 +1162,8 @@ export async function publishGateCheck(github, { owner, repo, evaluation, detail
 }
 
 /**
- * 解析 workflow_run 對應的開啟中 PR，不信任任何 artefact 內容，
- * 對應 label-pr-intent-writer.yml 的做法。回傳 PR 編號或 null。
+ * Resolve the open PR for a workflow_run without trusting any artifact content,
+ * mirroring label-pr-intent-writer.yml. Returns the PR number or null.
  */
 export async function resolvePullRequestForWorkflowRun(github, { owner, repo, workflowRun }) {
   const expectedBase = `${owner}/${repo}`.toLowerCase();
@@ -1185,7 +1201,7 @@ export async function resolvePullRequestForWorkflowRun(github, { owner, repo, wo
   return matches.length === 1 ? matches[0] : null;
 }
 
-/** 為 head 提交重新執行失敗或未完成的 PR 工作流，然後重新評估閘門。 */
+/** 針對 head commit 重新執行失敗或未完成的 PR 工作流程，然後重新評估閘門。 */
 export async function rerunChecks(github, { owner, repo, headSha }) {
   const latest = latestRunsByWorkflow(await listRunsForSha(github, { owner, repo, headSha }));
   const rerun = [];
@@ -1195,7 +1211,7 @@ export async function rerunChecks(github, { owner, repo, headSha }) {
     if (file === GATE_WORKFLOW_FILE) continue;
     if (run.status !== "completed") continue;
     if (run.conclusion === "action_required") {
-      skipped.push({ name: label, reason: "等待維護者核准工作流執行" });
+      skipped.push({ name: label, reason: "waiting for a maintainer to approve workflow runs" });
       continue;
     }
     if (!RERUNNABLE_CONCLUSIONS.has(run.conclusion)) continue;
@@ -1207,24 +1223,24 @@ export async function rerunChecks(github, { owner, repo, headSha }) {
         await github.rest.actions.reRunWorkflow({ owner, repo, run_id: run.id });
         rerun.push(label);
       } catch (error) {
-        skipped.push({ name: label, reason: `無法重新執行（${error.status || error.message}）` });
+        skipped.push({ name: label, reason: `could not be re-run (${error.status || error.message})` });
       }
     }
   }
 
   const gateRun = latest.get(GATE_WORKFLOW_FILE);
   if (!gateRun) {
-    skipped.push({ name: "提交閘門", reason: "尚未對此提交執行" });
+    skipped.push({ name: "Submission Gate", reason: "has not run for this commit yet" });
   } else if (gateRun.status !== "completed") {
-    skipped.push({ name: gateRun.name || "提交閘門", reason: "正在執行中，會接續處理重新執行" });
+    skipped.push({ name: gateRun.name || "Submission Gate", reason: "is already running and will pick up the re-runs" });
   } else if (gateRun.conclusion === "action_required") {
-    skipped.push({ name: gateRun.name || "提交閘門", reason: "等待維護者核准工作流執行" });
+    skipped.push({ name: gateRun.name || "Submission Gate", reason: "waiting for a maintainer to approve workflow runs" });
   } else {
     try {
       await github.rest.actions.reRunWorkflow({ owner, repo, run_id: gateRun.id });
-      rerun.push(gateRun.name || "提交閘門");
+      rerun.push(gateRun.name || "Submission Gate");
     } catch (error) {
-      skipped.push({ name: gateRun.name || "提交閘門", reason: `無法重新執行（${error.status || error.message}）` });
+      skipped.push({ name: gateRun.name || "Submission Gate", reason: `could not be re-run (${error.status || error.message})` });
     }
   }
   return { rerun, skipped };
@@ -1235,25 +1251,25 @@ export const COMMAND_CLAIM_REACTION = "eyes";
 export const COMMAND_DONE_REACTION = "rocket";
 
 /**
- * 驗證唯讀 PR Commands 工作流上傳的不受信任 artefact。只採用其中的
- * 留言與 PR 編號；其餘一切都從 API 重新讀取。
+ * Validate the untrusted artifact uploaded by the read-only PR Commands workflow. Only the
+ * comment and PR numbers are taken from it; everything else is re-read from the API.
  */
 export function validatePrCommandRequest(request, { workflowRunId }) {
   const fail = (message) => {
-    throw new Error(`無效的 PR 指令請求：${message}`);
+    throw new Error(`Invalid PR command request: ${message}`);
   };
-  if (!request || typeof request !== "object") fail("不是物件");
-  if (request.schema_version !== PR_COMMAND_SCHEMA) fail("schema_version 不符預期");
-  if (!Number.isSafeInteger(request.pr_number) || request.pr_number < 1) fail("pr_number 無效");
-  if (!Number.isSafeInteger(request.comment_id) || request.comment_id < 1) fail("comment_id 無效");
-  if (String(request.run_id ?? "") !== String(workflowRunId)) fail("run_id 與 workflow_run 不符");
+  if (!request || typeof request !== "object") fail("not an object");
+  if (request.schema_version !== PR_COMMAND_SCHEMA) fail("unexpected schema_version");
+  if (!Number.isSafeInteger(request.pr_number) || request.pr_number < 1) fail("invalid pr_number");
+  if (!Number.isSafeInteger(request.comment_id) || request.comment_id < 1) fail("invalid comment_id");
+  if (String(request.run_id ?? "") !== String(workflowRunId)) fail("run_id did not match workflow_run");
   return { prNumber: request.pr_number, commentId: request.comment_id };
 }
 
 /**
- * 代可信的 PR Commands Writer 執行一個 PR 指令。從 API 重新讀取留言、PR，
- * 以及留言者的權限，因此偽造的 artefact 最多只能指向一個
- * 已經要求該指令的真實留言。
+ * Run a PR command on behalf of the trusted PR Commands Writer. Re-reads the comment, the PR,
+ * and the commenter's permission from the API, so a forged artifact can at most point at a
+ * real comment that already asked for the command.
  */
 export async function runPrCommand(
   github,
@@ -1262,14 +1278,14 @@ export async function runPrCommand(
   const { data: comment } = await github.rest.issues.getComment({ owner, repo, comment_id: commentId });
   const issueUrlSuffix = `/repos/${owner}/${repo}/issues/${prNumber}`.toLowerCase();
   if (!String(comment.issue_url || "").toLowerCase().endsWith(issueUrlSuffix)) {
-    throw new Error(`留言 ${commentId} 不屬於 #${prNumber}`);
+    throw new Error(`Comment ${commentId} does not belong to #${prNumber}`);
   }
-  if (comment.user?.type === "Bot") return { status: "ignored", reason: "bot 留言" };
+  if (comment.user?.type === "Bot") return { status: "ignored", reason: "bot comment" };
   const parsed = parsePrCommand(comment.body);
-  if (!parsed) return { status: "ignored", reason: "沒有受支援的指令" };
+  if (!parsed) return { status: "ignored", reason: "no supported command" };
 
-  // 👀 = 已接手（行動前寫入），🚀 = 已完成（僅在回覆發佈後寫入）。
-  // 只有完成標記才會抑制重放，因此中途失敗的執行可以重試。
+  // 👀 = 已認領（在採取行動前寫入），🚀 = 已完成（僅在發布回覆後寫入）。
+  // 只有已完成的標記會隱制重播，因此中途失敗的執行可以重試。
   const reactions = await github.paginate(github.rest.reactions.listForIssueComment, {
     owner,
     repo,
@@ -1281,13 +1297,13 @@ export async function runPrCommand(
       (reaction) => reaction.content === COMMAND_DONE_REACTION && reaction.user?.login === "github-actions[bot]"
     )
   ) {
-    return { status: "ignored", reason: "已處理" };
+    return { status: "ignored", reason: "already handled" };
   }
 
   const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
-  if (pr.state !== "open") return { status: "ignored", reason: "PR 未開啟" };
+  if (pr.state !== "open") return { status: "ignored", reason: "PR is not open" };
   if (String(pr.base?.repo?.full_name || "").toLowerCase() !== `${owner}/${repo}`.toLowerCase()) {
-    throw new Error(`PR #${prNumber} 的目標不是 ${owner}/${repo}`);
+    throw new Error(`PR #${prNumber} does not target ${owner}/${repo}`);
   }
 
   const commenter = comment.user?.login;
@@ -1296,10 +1312,10 @@ export async function runPrCommand(
     const { data } = await github.rest.repos.getCollaboratorPermissionLevel({ owner, repo, username: commenter });
     permission = data.permission;
   } catch (error) {
-    log(`無法讀取 ${commenter} 的權限：${error.status || error.message}`);
+    log(`Could not read permission for ${commenter}: ${error.status || error.message}`);
   }
   if (!canRunPrCommand({ commenter, prAuthor: pr.user?.login, permission })) {
-    return { status: "ignored", reason: `${commenter} 不是 PR 作者，也不是維護者` };
+    return { status: "ignored", reason: `${commenter} is not the PR author or a maintainer` };
   }
 
   await github.rest.reactions.createForIssueComment({ owner, repo, comment_id: commentId, content: COMMAND_CLAIM_REACTION });
@@ -1309,7 +1325,7 @@ export async function runPrCommand(
       await github.rest.actions.createWorkflowDispatch({ owner, repo, workflow_id: workflowId, ref, inputs });
       return true;
     } catch (error) {
-      log(`無法觸發（dispatch）${workflowId}：${error.status || error.message}`);
+      log(`Could not dispatch ${workflowId}: ${error.status || error.message}`);
       return false;
     }
   };
@@ -1319,10 +1335,10 @@ export async function runPrCommand(
   if (parsed.command === "rerun-checks") {
     const result = await rerunChecks(github, { owner, repo, headSha: pr.head.sha });
     await dispatch("submission-gate-writer.yml", defaultBranch, { pr_number: String(pr.number) });
-    lines.push(`🔁 對 \`${pr.head.sha.slice(0, 7)}\` 執行 \`/rerun-checks\``, "");
-    lines.push(result.rerun.length > 0 ? `正在重新執行：${list(result.rerun)}。` : "沒有失敗或未完成的檢查可重新執行。");
+    lines.push(`🔁 \`/rerun-checks\` for \`${pr.head.sha.slice(0, 7)}\``, "");
+    lines.push(result.rerun.length > 0 ? `Re-running: ${list(result.rerun)}.` : "No failed or incomplete checks to re-run.");
     for (const skipped of result.skipped) lines.push(`- ${sanitize(skipped.name, 80)} ${sanitize(skipped.reason, 200)}.`);
-    lines.push("", "檢查完成時，狀態留言會更新。");
+    lines.push("", "The status comment updates when the checks finish.");
   } else {
     const settings = config.gate.commands?.request_review || {};
     const label = settings.label || "needs-reviewer";
@@ -1335,9 +1351,9 @@ export async function runPrCommand(
       ...(pr.requested_teams || []).map((team) => team.slug),
     ];
     lines.push(
-      `🙋 已新增 \`${label}\`。${dispatched ? "評審路由正在指派評審者。" : "評審路由會在下次執行時接手。"}`
+      `🙋 Added \`${label}\`. ${dispatched ? "Reviewer routing is assigning a reviewer now." : "Reviewer routing picks this up on its next run."}`
     );
-    if (requested.length > 0) lines.push("", `已要求：${list(requested)}。`);
+    if (requested.length > 0) lines.push("", `Already requested: ${list(requested)}.`);
   }
 
   await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body: lines.join("\n") });

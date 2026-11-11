@@ -1,0 +1,35 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "foundry-agentic-loop",
+  "description": "在 Microsoft Foundry、GitHub 和 Azure 上建構代理人解決方案。在現有 Foundry 專案中製作原型，或執行規格驅動開發 (SDD)：在事證門檻背後透過 azd 進行規格制定、實作、驗證與部署的動態工作流程。隨附包含 61 個產業提示詞範本庫的畫布、即時工作流程檢視表與 Foundry 啟用功能，再加上可從過往執行中汲取經驗的改進模式。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Microsoft AI Apps GBB",
+    "url": "https://github.com/aiappsgbb"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "agentic-loop",
+    "microsoft-foundry",
+    "azure",
+    "hosted-agents",
+    "spec-driven-development",
+    "rapid-prototyping",
+    "dynamic-workflow",
+    "canvas",
+    "azd",
+    "copilot-sdk"
+  ],
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/foundry-agentic-loop/"
+      ],
+      "extensions": [
+        "./extensions/foundry-agentic-loop-canvas",
+        "./extensions/foundry-agentic-loop-workflow"
+      ]
+    }
+  }
+}

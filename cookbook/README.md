@@ -6,9 +6,9 @@ GitHub Copilot 相關工具與功能的實用食譜（recipe）與範例集合�
 
 本 Cookbook 按工具或產品進行組織，並在適用的情況下按程式語言收集食譜：
 
-### GitHub Copilot SDK
+### Microsoft Copilot SDK
 
-可用於跨多種語言建構 GitHub Copilot SDK 的即用型食譜。
+適用於多種程式語言的 Microsoft Copilot SDK 即用型食譜。SDK 正分階段從其 GitHub 名稱轉換；目前不需要變更套件或 API。這些食譜會保留目前已發布的套件名稱與匯入語句。
 
 - **[Copilot SDK Cookbook](copilot-sdk/)** - 適用於 .NET、Go、Java、Node.js 與 Python 的食譜
   - 錯誤處理、工作階段（session）管理、檔案操作等
@@ -40,7 +40,8 @@ GitHub Copilot 相關工具與功能的實用食譜（recipe）與範例集合�
 ### 官方文件
 
 - [GitHub Copilot 文件](https://docs.github.com/copilot)
-- [GitHub Copilot SDK](https://github.com/github/copilot-sdk)
+- [Microsoft Copilot SDK（轉換公告）](https://github.blog/changelog/2026-10-28-github-copilot-sdk-is-becoming-microsoft-copilot-sdk/)
+- [SDK 儲存庫](https://github.com/github/copilot-sdk)
 
 ### 外部 Cookbook
 

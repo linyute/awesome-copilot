@@ -1,12 +1,12 @@
 # Arcade Canvas 外掛程式
 
-在 agent 進行工作時，於 Copilot 畫布中暢玩五款復古 Phaser 迷你遊戲。
+在 agent 進行工作時，於 Copilot 畫布中暢玩六款復古 Phaser 迷你遊戲。
 
 ## 安裝
 
-``bash
+```bash
 copilot plugin install arcade-canvas@awesome-copilot
-``
+```
 
 ## 來源
 

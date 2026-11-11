@@ -1,5 +1,9 @@
 # 建立 PR 帳齡圖表
 
+> **示範權限：** 這些範例僅在隔離且可信任的示範情境中使用
+> `PermissionHandler.APPROVE_ALL`。若要使用不受信任的提示或工作區，請先改用
+> 限制較嚴格的權限處理器。
+
 使用 Copilot 的內建功能，建構一個互動式 CLI 工具，為 GitHub 儲存庫視覺化提取要求 (pull request) 的帳齡分佈。
 
 > **可執行的範例：** [recipe/PRVisualization.java](recipe/PRVisualization.java)
@@ -25,14 +29,15 @@ jbang recipe/PRVisualization.java github/copilot-sdk
 ## 完整範例: PRVisualization.java
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
-import com.github.copilot.sdk.events.AssistantMessageEvent;
-import com.github.copilot.sdk.events.ToolExecutionStartEvent;
-import com.github.copilot.sdk.json.MessageOptions;
-import com.github.copilot.sdk.json.PermissionHandler;
-import com.github.copilot.sdk.json.SessionConfig;
-import com.github.copilot.sdk.json.SystemMessageConfig;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
+import com.github.copilot.generated.AssistantMessageEvent;
+import com.github.copilot.generated.ToolExecutionStartEvent;
+import com.github.copilot.rpc.MessageOptions;
+import com.github.copilot.rpc.PermissionHandler;
+import com.github.copilot.rpc.SessionConfig;
+import com.github.copilot.rpc.SystemMessageConfig;
+import com.github.copilot.rpc.ToolSearchConfig;
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.IOException;
@@ -94,6 +99,7 @@ public class PRVisualization {
             var session = client.createSession(
                 new SessionConfig().setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
                     .setModel("gpt-5")
+                    .setToolSearch(new ToolSearchConfig().setEnabled(true).setDeferThreshold(20))
                     .setSystemMessage(new SystemMessageConfig().setContent(systemMessage))
             ).get();
 
@@ -222,10 +228,50 @@ public class PRVisualization {
 | 圖表類型         | 您編寫的內容      | **Copilot 能產生的任何類型**      |
 | 資料分組         | 硬編碼的貯槽      | **智慧分組**                      |
 
+## 使用工具搜尋延遲載入工具
+
+GitHub MCP Server 除了檔案和程式碼執行工具外，還可以公開許多工具。設定
+`SessionConfig.setToolSearch(...)`，即可依類別和執行階段政策延遲載入符合條件的
+MCP 與 SDK 定義外部工具，之後再透過中繼資料搜尋來探索這些工具。延遲載入不會
+追蹤工具的使用頻率：
+
+```java
+import com.github.copilot.rpc.ToolSearchConfig;
+
+var session = client.createSession(new SessionConfig()
+    .setModel("auto")
+    .setOnPermissionRequest(PermissionHandler.APPROVE_ALL)
+    .setToolSearch(new ToolSearchConfig()
+        .setEnabled(true)
+        .setDeferThreshold(20))
+).get();
+```
+
+- `setEnabled(true)` 會明確啟用工具搜尋。若未設定，則交由執行階段控制是否自動
+    啟用；這取決於模型能力、傳輸方式、執行階段設定、停用開關及實驗設定。設為
+    `false` 會停用搜尋延遲載入，但不會停用獨立的工具篩選、政策或可用性設定。
+- `setDeferThreshold(20)` 只有在套用工具集和代理程式篩選後，有效工具目錄中的
+    工具數量**嚴格超過 20 個**時，才會考慮延遲載入。計數包含內建工具、MCP 工具
+    和 SDK 定義的工具，但不包含搜尋工具或代管搜尋機制。
+- 超過門檻後，符合條件的 MCP 與 SDK 定義外部工具會延遲載入；並非所有工具都會
+    延遲載入，也不是只有前 20 個之後的工具才會延遲載入。一般內建工具和豁免工具
+    仍會立即載入，因此直接可見的工具數量沒有固定值。豁免項目包括標記為
+    `defer: "never"` 的工具、搜尋工具本身、GitHub MCP `web_search`、Bluebird MCP
+    工具，以及明確選取的代理程式工具（除非該代理程式選擇延遲載入）。
+- 若未設定 `enabled` 或 `deferThreshold`，則由所選執行階段決定。SDK 1.0.21
+    隨附的執行階段使用 30 作為門檻；明確設定這些值可避免依賴特定版本的預設值。
+    只有執行階段判定已啟用工具搜尋時，明確設定的門檻才會生效。
+
+設定的範圍是工作階段，恢復工作階段時也適用。若子代理程式需要不同於執行階段
+預設值的設定，必須自行覆寫。工具搜尋會在每一輪依據目前的目錄進行解析；若結果
+穩定，可能會重複使用，但模型、傳輸方式、設定、執行階段控管或實驗設定有所變更
+時，可能會觸發重新解析。搜尋會依中繼資料排序，優先考量名稱，其次是描述和參數
+中繼資料；部分搜尋路徑也會使用命名空間／伺服器中繼資料。
+
 ## 最佳實踐
 
 1. **從自動偵測開始**: 在提示使用者之前，讓工具從 git 遠端偵測儲存庫
 2. **使用系統訊息**: 提供關於儲存庫和工作目錄的上下文，以便 Copilot 可以自主行動
-3. **核准工具執行**: 使用 `PermissionHandler.APPROVE_ALL` 允許 Copilot 執行像 GitHub MCP Server 這樣的工具，而無需手動核准
+3. **限制工具權限**：僅在隔離且可信任的示範環境中使用 `PermissionHandler.APPROVE_ALL`。對於不可信任的提示或工作區（包括 GitHub MCP 和圖表產生工具），請使用限制較嚴格的處理常式。
 4. **互動式後續行動**: 讓使用者透過對話方式精進分析，而不是要求重新啟動
 5. **在本地端儲存成品**: 指示 Copilot 將產生的圖表儲存到目前的目錄中，以便輕鬆存取

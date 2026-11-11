@@ -1,68 +1,92 @@
-# 修復 — 失敗分類法 → 修復方案 (Heal)
+# 修復 — 失敗分類學 → 修復措施
 
-一次處理一個失敗的工具。每次修復後重新驗證。觸發驗證
-失敗計為 attempt 0；每個修復週期遞增 `attempts`。當 `attempts`
-= 3 時 → 標記為 `skipped` 並附帶阻礙附註（這是最終報告中對
-人員的明確升級呈報，而非靜默捨棄）並繼續下一個。**切勿** 擴大
-diff、停用檢查或偽造傳回值以強制通過。**變更狀態的
-工具：** 在每次嘗試之間執行資訊清單中的 `cleanup` — 在未清理
-的情況下重試變更會導致資料重複。
+計數前先分類。在重試前保留
+`failure.class`、`failure.signature` 以及目前的 `contractRevision`：
 
-**修復修正的是實作，而非協定。** 資訊清單是
-經人員核准的協定：如果正確的修復會變更工具的 `inputSchema`、
-`description`、`mutating` 類別、`annotations` 或 `expect`，請將其
-帶回關卡進行小型重新核准 — 切勿靜默編輯資訊清單以符合程式碼。
+- `contract` — 一類工具共享的架構/結果/生命週期規則；
+- `environment` — 安全來源、瀏覽器/設定檔/顯示、應用程式啟動、後端/CORS；
+- `implementation` — 該工具的應用程式連線 wiring 錯誤；
+- `external-policy` — 真實的上游或生產來源限制；
+- `flaky` — 相同且未修改的路徑產生不一致的獨立結果；
+- `client-capacity` — 目標用戶端無法列舉/選取預期的集合。
 
-## 分類法
+`attempts`
+僅計算在相同經核准的契約修訂版下，針對相同失敗特徵的獨立重試次數。
+共享的契約或環境錯誤屬於單一根本原因，
+而非每個工具一次失敗嘗試：請修復它，在人工核准的契約變更時遞增
+`contractRevision`，然後清除受影響之每個工具的
+`failure` 並重設
+`attempts`。在連續三次獨立的實作/不穩定重試失敗後，`skipped`
+必須指名類別、特徵以及在目前契約下導致該工具無法運作的證據。僅有原始計數絕不足夠。**切勿**擴大
+diff、停用檢查或偽造傳回值來強行通過。**異動型工具：**在重試之間執行資訊清單的
+`cleanup` — 未經清除就重試異動會複製資料。
 
-| 徵狀 | 可能原因 | 修復方案 |
+**修復失敗，而非分數。**來自第三方 WebMCP
+檢查器/檢查程式的低分本身並非失敗：這些清單混合了規格功能、慣例以及臆造的檢查。請先將各項發現分類
+(`references/discovery.md`)。若它是在說明文件或
+Chrome
+文件中確認的**真實規格違規**，則測試載具有缺口 —
+請加入遺失的斷言，觀察其失敗，然後像修復其他失敗一樣進行修復。若它是慣例或臆造的檢查，請報告並停止：不要加入
+`toolaction`
+屬性，不要為了滿足宣告式檢查而新增表單，不要盲目追逐瀏覽器端的 `window.ai`。
+
+**修復是針對實作，而非契約。**資訊清單是經人工核准的契約：若正確的修復會變更工具的
+`inputSchema`、`description`、`mutating`
+類別、`annotations` 或
+`expect`，請將其帶回閘門作為迷你重新核准流程 — 絕不要悄悄編輯資訊清單以符合程式碼。
+
+## 分類學
+
+| Symptom | Likely cause | Fix |
 |---|---|---|
-| 工具未出現在列舉中 | **註冊是非同步的** — 測試在 `registerTool()` 完成前就進行了斷言；或註冊從未執行（未達到啟動程序，檢視未掛載）或使用了錯誤的 Chrome 建構/旗標 | 首先讓測試輪詢 (`waitForTool`) 或等待 `toolchange` — 僅在仍然失敗時，追蹤註冊呼叫；在測試環境中確認 `isWebMCPAvailable()`；使用當前 Chrome + `--enable-features=WebMCP,WebMCPTesting` |
-| 整個範圍缺失 | 批次中的某個註冊被拒絕（重複名稱、無效結構描述、原則）— 執行階段復原了整個範圍 | 檢查主控台中的 `onError` 報告；修復有問題的工具協定 |
-| 路由變更後工具缺失 | 範圍因導覽而處置（過度限定範圍） | 移至靜態應用程式層級註冊，除非確實繫結於檢視 |
-| 宣告式工具遺失 | `toolname` 拼寫錯誤、框架未包含 `allow="tools"`，或頁面發送了 `Origin-Agent-Cluster: ?0` | 修復屬性；檢查 Permissions-Policy `tools` 和來源索引鍵標頭 |
-| 結構描述不相符（宣告式） | 控制項缺少 `name`、說明無法解析、此建構中不支援該控制項型別 | 新增 `name`/`toolparamdescription`/`label[for]`；不支援的控制項 → 將該表單切換為命令式 |
-| 結構描述不相符（命令式） | 資訊清單與程式碼脫節 | 讓程式碼符合獲核准的資訊清單；若資訊清單有誤，那是協定變更 — 將其帶回關卡重新核准（見上方），切勿靜默更新 |
-| 斷言將物件與字串進行比較 | 列舉的 `inputSchema` 是字串化的 JSON Schema | 比較前進行 `JSON.parse`（請參閱 `verify.md`） |
-| `executeTool` 意外傳回 `null` | 執行進行了導覽（對於提交導覽的宣告式表單而言屬正常） | 斷言導覽後的頁面，而非傳回值 |
-| `executeTool` 拒絕執行 | 違反結構描述或宣告式驗證失敗 — 拒絕執行正是這些問題的失敗訊號 | 對於宣告式工具的無效輸入測試，斷言拒絕執行，而非 `"ERROR:"` 字串 |
-| 變更狀態的宣告式執行掛起直至逾時 | Chrome 填寫了表單，然後**暫停執行等待真實的提交互動** — 單獨等待 `executeTool` 會導致死結 | 使用規格樣板中的並行模式：啟動未等待的 `executeTool` → 等待代理程式填寫的值 → 點擊提交 → 等待。**切勿透過新增 `toolautosubmit` 進行修復**（基本規則 5） |
-| 後端儘管認證正確仍以 403/CORS 拒絕測試架構 | 端點**將生產 `Origin` 列入允許清單**（郵件發送器、表單閘道）— 本機測試架構來源在工具邏輯執行前被拒絕，且不存在本機修復方案 | 使用環境限制的伺服器端重放驗證實際路徑（下方 §Origin 允許清單端點），僅在 `approval.productionSideEffect` 中記錄了生產副作用核准時進行；若無核准，將實際路徑標記為 `skipped` 並附帶阻礙附註 |
-| 執行逾時 / 在 UI 仍載入時出現假成功 | 在非同步工作完成前觸發了完成事件，或缺少接聽程式/使用了錯誤的事件名稱 | 在等待實際工作完成後觸發帶有 `{ ok, message/error }` 的 `tool-completion-<requestId>`（`runtime.md` 協定） |
-| 傳回成功但 UI 未變更 | `execute()` 繞過了真實的 UI 路徑（平行實作） | 重寫以呼叫 UI 所使用的相同處理常式/儲存庫動作/端點 |
-| 無效輸入成功解析（命令式） | 缺少程式碼內驗證 | 在程式碼中嚴格驗證；傳回 `"ERROR: <what/how to fix>"` |
-| Fetch 提交的表單：代理程式未取得任何內容 | 使用了 `preventDefault()` 但沒有 `respondWith()` | 新增 `e.agentInvoked → e.respondWith(promise)` 橋接 |
-| 手動運作正常，但在 Playwright 中失敗 | 無介面 (Headless)、缺少旗標或設定檔未包含該旗標 | 使用有介面 + 旗標；持續性上下文；在 CI 中使用 `xvfb-run` |
-| 測試中 `execute()` 出現 401/403 | 工具註冊在已認證範圍之外，或測試工作階段缺少資訊清單 `auth` 欄位中的角色 | 將註冊限制在角色範圍內；使用記錄的測試載具登入 |
-| 不穩定：單獨執行通過，但在套件中失敗 | 工具執行之間存在共用狀態 | 為每次工具執行隔離測試資料（使用 `cleanup`）；不要透過重新排序測試來掩蓋問題 |
+| 工具自列舉中缺席 | Insecure verification origin; **registration is async**; bootstrap/view not reached; reused Chrome profile; wrong headed Chrome/flags | FIRST assert `window.isSecureContext` and `document.modelContext`, then poll (`waitForTool`) or await `toolchange`; only then trace registration. `WebMCPTesting` does not waive secure context |
+| 頁面從未啟動 | Absolute backend URL points at an absent localhost service, or CORS allow-list pins another exact origin/port | Capture console + failed requests; correct the verification origin/backend environment before changing tool code. Classify `environment` |
+| 整個範圍缺席 | A registration in the batch rejected (duplicate name, invalid schema, policy) — the runtime rolls back the entire scope | Check console for the `onError` report; fix the offending tool contract |
+| 路由變更後工具缺席 | Scope disposed by navigation (over-scoping) | Move to static app-level registration unless genuinely view-bound |
+| 宣告式工具遺失 | `toolname` typo, frame without `allow="tools"`, or page sends `Origin-Agent-Cluster: ?0` | Fix attribute; check Permissions-Policy `tools` and origin-keying headers |
+| 結構描述不符 (宣告式) | Control lacks `name`, description not resolvable, unsupported control type in this build | Add `name`/`toolparamdescription`/`label[for]`; unsupported controls → switch that form to imperative |
+| 結構描述不符 (命令式) | Manifest and code drifted | Make code match the approved manifest; if the manifest was wrong, that's a contract change — take it back to the gate for re-approval (see above), never silently update it |
+| 斷言比較物件與字串 | Enumerated `inputSchema` may be stringified (native lag) or object (spec) — handle both | `typeof === 'string' ? JSON.parse(s) : s ?? {type:'object',properties:{}}` before comparing (see `verify.md`) |
+| `executeTool` returns `null` unexpectedly | A declarative submission navigated; or an imperative handler returned bare `null` | Declarative navigation: assert the destination. Imperative: return a structured result and defer route-changing UI/disposal one event-loop task; the runtime guard converts accidental absence into a structured error |
+| `executeTool` rejects | Schema violation or declarative-validation failure — rejection IS the failure signal for these | For invalid-input tests on declarative tools, assert rejection, not an `"ERROR:"` string |
+| 異動型宣告式執行卡住直到逾時 | Chrome fills the form, then **pauses the execution awaiting a real submit interaction** — awaiting `executeTool` alone deadlocks | Use the concurrent pattern in the spec template: start `executeTool` unawaited → wait for the agent-filled value → click submit → await. **NEVER heal by adding `toolautosubmit`** (ground rule 5) |
+| 儘管驗證正確，後端仍以 403/CORS 拒絕測試載具 | The endpoint **allow-lists the production `Origin`** (mailers, form gateways) — the localhost harness origin is refused before the tool logic runs, and no local fix exists | Verify the live path with the env-gated server-side replay (§Origin-allow-listed endpoints below), only with the production side-effect approval recorded in `approval.productionSideEffect` (see §Origin-allow-listed endpoints below); without it, mark the live path `skipped` with a blocker note |
+| 執行逾時 / 在 UI 仍在載入時回傳預製的成功 | Completion event fired before the async work finished, or listener missing/wrong event name | Fire `tool-completion-<requestId>` with `{ ok, message/error }` AFTER awaiting the real work (`runtime.md` contract) |
+| 傳回成功但 UI 未改變 | `execute()` bypassed the real UI path (parallel implementation) | Rewrite to call the same handler/store action/endpoint the UI uses |
+| 無效輸入成功解析 (命令式) | Missing in-code validation | Validate strictly in code; return `"ERROR: <what/how to fix>"` |
+| 透過 Fetch 提交的表單：代理人未取得任何內容 | `preventDefault()` without `respondWith()` | Add the `e.agentInvoked → e.respondWith(promise)` bridge |
+| 手動可運作，但在 Playwright 中失敗 | Headless, missing flags/display/Chrome, or shared profile whose existing instance ignored the flag | Provision current Chrome + display; use headed persistent context with a dedicated `WEBMCP_PROFILE_DIR` |
+| 401/403 from `execute()` in test | Tool registered outside the authenticated scope, or test session lacks the role in the manifest `auth` field | Role-scope the registration; sign in with the recorded fixture |
+| 不穩定：單獨通過，在測試套件中失敗 | Shared state between tool executions | Isolate test data per tool run (use `cleanup`); don't reorder tests to hide it |
 
-## Origin 允許清單端點 — 重放模式
+## 來源允許清單端點 — 重放模式
 
-某些生產後端（郵件發送器、表單閘道）將生產環境的
-`Origin` 標頭列入允許清單並拒絕其他所有請求 — 本機測試架構永遠無法
-直接執行實際路徑。當（且僅當）關卡核准了真實的
-生產副作用 (`approval.productionSideEffect`) 時，使用環境限制的重放
-驗證實際路徑：在 Playwright 中攔截應用程式自身的請求，並在伺服器端
-（Node 上下文 — 不受瀏覽器 CORS 限制）使用生產 `Origin` 重新發出：
+某些生產後端（郵件傳送程式、表單閘道）會將生產
+`Origin` 標頭列入允許清單並拒絕其他所有請求 —
+本機測試載具來源永遠無法直接執行即時路徑。當（且僅當）閘門核准了真實的生產副作用
+(`approval.productionSideEffect`)
+時，透過受環境管制的重放來驗證即時路徑：在
+Playwright
+中攔截應用程式本身的請求，並在伺服器端（Node 上下文 — 不受瀏覽器 CORS 限制）以生產 `Origin` 重新發出：
 
 ```ts
-// 環境限制：僅在 WEBMCP_LIVE_MUTATIONS=1 時執行 — 在 CI 中絕不預設開啟。
+// Env-gated: runs only with WEBMCP_LIVE_MUTATIONS=1 — never default-on in CI.
 if (process.env.WEBMCP_LIVE_MUTATIONS === '1') {
   await page.route('**/api/contact', async (route) => {
     const response = await context.request.fetch(route.request(), {
-      headers: { ...route.request().headers(), origin: 'https://example.com' }, // 生產環境 Origin
+      headers: { ...route.request().headers(), origin: 'https://example.com' }, // the prod Origin
     });
     await route.fulfill({ response });
   });
 }
 ```
 
-這會導致真實的生產副作用。將每個測試負載標記為
-`[webmcpify verification]`，執行資訊清單的 `cleanup`，在
-`report.md` 中列出該影響，且在 CI 中絕不要預設啟用該閘門。
+這會導致真實的生產副作用。將每個酬載標記為 `[webmcpify
+verification]`，執行資訊清單的 `cleanup`，在
+`report.md` 中列出該效果，且在 CI 中絕不預設啟用此閘門。
 
 ## 修復之後
 
-為狀態為 `integrated` 或 `verified` 的 **所有** 工具重新執行一次驗證
-（不僅僅是已修復的工具）— 修復一個工具可能會取消註冊或破壞另一個工具；
-範圍衝突是典型的案例。只有在此之後才評估結束條件。
+針對狀態為 `integrated` 或 `verified`
+的**所有**工具重新執行一次驗證（不僅是已修復的工具）—
+修復一個工具可能會取消註冊或損壞另一個工具；範圍衝突是典型的案例。唯有此時才能評估結束條件。

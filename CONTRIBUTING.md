@@ -1,181 +1,184 @@
-# 對 Awesome GitHub Copilot 的貢獻
+# 貢獻至 Awesome GitHub Copilot
 
-感謝你對 Awesome GitHub Copilot 倉庫的貢獻興趣！我們歡迎來自社群的貢獻，以協助擴充我們的自訂 instructions 與 skills 集合。
+感謝您有興趣為 Awesome GitHub Copilot 儲存庫做出貢獻！我們歡迎社群的貢獻，以協助擴充我們的自訂 instructions 與 skills 收藏。
 
 ## 目錄
 
-- [我們接受什麼](#what-we-accept)
-- [我們不接受什麼](#what-we-dont-accept)
-- [品質指引](#quality-guidelines)
-- [如何貢獻](#how-to-contribute)
-  - [新增 Instructions](#adding-instructions)
-  - [新增 Agents](#adding-an-agent)
-  - [新增 Skills](#adding-skills)
-  - [新增 Canvas 外掛](#adding-canvas-extensions)
-  - [新增 Plugins](#adding-plugins)
-  - [新增 Hooks](#adding-hooks)
-  - [新增 Agentic Workflows](#adding-agentic-workflows)
-- [提交你的貢獻](#submitting-your-contribution)
-  - [開啟 Pull Request 之後](#after-you-open-a-pull-request)
-- [貢獻者表彰](#contributor-recognition)
-  - [貢獻類型](#contribution-types)
-- [行為準則](#code-of-conduct)
-- [授權條款](#license)
+- [我們接受的內容](#我們接受的內容)
+- [我們不接受的內容](#我們不接受的內容)
+- [品質指引](#品質指引)
+- [如何進行貢獻](#如何進行貢獻)
+  - [新增 Instructions](#新增-instructions)
+  - [新增 Agents](#新增-agent)
+  - [新增 Skills](#新增-skills)
+  - [新增 Canvas 擴充功能](#新增-canvas-擴充功能)
+  - [新增外掛程式](#新增外掛程式)
+  - [新增 Hooks](#新增-hooks)
+  - [新增 Agentic 工作流程](#新增-agentic-工作流程)
+- [提交您的貢獻](#提交您的貢獻)
+  - [在您提出 Pull Request 之後](#在您提出-pull-request-之後)
+- [貢獻者表彰](#貢獻者表彰)
+  - [貢獻類型](#貢獻類型)
+- [行為準則](#行為準則)
+- [授權條款](#授權條款)
 
-## 我們接受什麼
+## 我們接受的內容
 
-我們歡迎涵蓋任何技術、框架或開發實務的貢獻，只要它們能協助開發者更有效地使用 GitHub Copilot。這包括：
+我們歡迎涵蓋任何有助於開發者更有效率地使用 GitHub Copilot 的技術、架構或開發實踐的貢獻。這包括：
 
-- 程式語言與框架
-- 開發方法論與最佳實務
+- 程式語言與架構
+- 開發方法論與最佳實踐
 - 架構模式與設計原則
 - 測試策略與品質保證
-- DevOps 與部署實務
-- 無障礙與包容性設計
+- DevOps 與部署實踐
+- 無障礙環境與包容性設計
 - 效能最佳化技術
 
-如果你計劃貢獻涉及付費服務的內容，請先參閱我們的 [涉及付費服務的提交指引](https://github.com/github/awesome-copilot/discussions/968)。
+如果您計劃貢獻涉及付費服務的內容，請參閱我們的[涉及付費服務的提交指引](https://github.com/github/awesome-copilot/discussions/968)。
 
-## 我們不接受什麼
+## 我們不接受的內容
 
-為了維持一個安全、負責任且高資訊量的集合，我們**不會接受**以下貢獻：
+為了維持安全、負責任且高訊雜比的收藏，我們**不會接受**符合下列情況的貢獻：
 
-- **違反負責任 AI 原則**：試圖規避 Microsoft/GitHub 負責任 AI 指引，或推廣有害 AI 用途的內容
-- **危及安全**：設計用來繞過安全政策、利用漏洞或削弱系統安全的 instructions
-- **助長惡意活動**：意圖傷害其他系統、使用者或組織的內容
-- **利用弱點**：利用其他平台或服務漏洞的 instructions
-- **推廣有害內容**：可能導致產生有害、歧視性或不當內容的指引
-- **規避平台政策**：試圖規避 GitHub、Microsoft 或其他平台服務條款的做法
-- **重複現有模型優勢但無實質提升**：主要只是要求 Copilot 去做前沿模型已經做得很好的工作（例如一般性的 TypeScript、HTML 或其他廣泛支援的編碼任務），卻未處理明確的缺口、專門工作流或特定領域的限制。這類貢獻對使用者的價值往往較低，而且可能引入比模型預設行為更弱或相互衝突的指引。
-- **未經審查的遠端來源 plugins**：請勿開啟一個 PR 直接將第三方 plugin 加入 `plugins/external.json`。公開的 external plugins 必須使用下方記載的審查工作流。在 v1 中，該工作流只接受託管在公開 GitHub 倉庫中的 plugins；非 GitHub 來源（例如一般性的 git URL）不接受公開提交。
+- **違反負責任 AI 原則**：企圖規避 Microsoft/GitHub 的負責任 AI 指引或提倡有害 AI 使用方式的內容
+- **危害安全性**：旨在繞過安全策略、利用弱點或削弱系統安全性的 instructions
+- **促成惡意活動**：意圖損害其他系統、使用者或組織的內容
+- **利用弱點**：利用其他平台或服務弱點的 instructions
+- **推廣有害內容**：可能導致建立有害、歧視性或不當內容的指引
+- **規避平台政策**：企圖規避 GitHub、Microsoft 或其他平台服務條款的行為
+- **重複現有模型優勢且無實質提升**：主要指示 Copilot 執行前沿模型本就處理良好的工作（例如泛用 TypeScript、HTML 或其他廣泛支援的編碼任務），卻未解決明確差距、專門工作流程或領域特定限制的提交內容。這些貢獻對使用者的價值通常較低，且可能引入比模型預設行為更弱或相衝突的指引。
+- **未經審查的遠端來源外掛程式**：請勿建立直接將第三方外掛程式新增至 `plugins/external.json` 的 pull request。公開的外部外掛程式必須使用下方記載的審查工作流程。在第 1 版中，該工作流程僅接受裝載於公開 GitHub 儲存庫的外掛程式；非 GitHub 來源（例如一般 git URL）不被接受為公開提交內容。
 
 ## 品質指引
 
-- **要具體**：一般性的 instructions 不如具體、可執行的指引來得有用
-- **測試你的內容**：確保你的 instructions 或 skills 能與 GitHub Copilot 良好運作
+- **具體明確**：泛用的 instructions 不如具體、可操作的指引有幫助
+- **測試您的內容**：確保您的 instructions 或 skills 與 GitHub Copilot 配合良好
 - **遵循慣例**：使用一致的格式與命名
-- **保持聚焦**：每個檔案應針對特定的技術、框架或使用情境
-- **清楚撰寫**：使用簡單、直接的語言
-- **推廣最佳實務**：鼓勵安全、可維護且合乎倫理的開發實務
+- **保持專注**：每個檔案應針對特定的技術、架構或使用情境
+- **清晰撰寫**：使用簡潔、直接的語言
+- **提倡最佳實踐**：鼓勵安全、可維護且符合倫理的開發實踐
 
-## 如何貢獻
+## 如何進行貢獻
 
 ### 新增 Instructions
 
-Instructions 有助於針對特定技術、編碼實務或領域，自訂 GitHub Copilot 的行為。
+Instructions 有助於為特定技術、編碼實踐或領域自訂 GitHub Copilot 的行為。
 
-1. **建立你的 instruction 檔案**：在 `instructions/` 目錄中新增一個 `.md` 檔案
-2. **遵循命名慣例**：使用具描述性、以連字號分隔的小寫檔名（例如 `python-django.instructions.md`）
-3. **組織你的內容**：從一個清楚的標題開始，並有邏輯地組織你的 instructions
-4. **測試你的 instructions**：確保你的 instructions 能與 GitHub Copilot 良好運作
+1. **建立您的 instruction 檔案**：在 `instructions/` 目錄中新增 `.md` 檔案
+2. **遵循命名慣例**：使用包含連字號的描述性小寫檔名（例如 `python-django.instructions.md`）
+3. **組織您的內容**：以清晰的標題開始，並有邏輯地組織您的 instructions
+4. **測試您的 instructions**：確保您的 instructions 與 GitHub Copilot 配合良好
 
 #### Instruction 格式範例
 
 ```markdown
 ---
-description: "用於自訂 GitHub Copilot 行為，以因應特定技術與實務的 instructions"
+description: 'Instructions for customizing GitHub Copilot behavior for specific technologies and practices'
 ---
 
-# 你的技術／框架名稱
+# Your Technology/Framework Name
 
-## 說明
+## Instructions
 
-- 為 GitHub Copilot 提供清楚、具體的指引
-- 納入最佳實務與慣例
-- 使用項目符號以便閱讀
+- Provide clear, specific guidance for GitHub Copilot
+- Include best practices and conventions
+- Use bullet points for easy reading
 
-## 其他指引
+## Additional Guidelines
 
-- 任何其他背景資訊或範例
+- Any additional context or examples
 ```
 
 ### 新增 Agent
 
-Agents 是一種專門的配置，可將 GitHub Copilot Chat 轉變為針對特定開發情境的領域專屬助理或人格（persona）。
+Agents 是專門的設定，可將 GitHub Copilot Chat 轉變為針對特定開發情境的領域專屬助理或角色。
 
-1. **建立你的 agent 檔案**：在 `agents/` 目錄中新增一個 `.agent.md` 檔案
-2. **遵循命名慣例**：使用具描述性、以連字號分隔的小寫檔名，並加上 `.agent.md` 副檔名（例如 `react-performance-expert.agent.md`）
-3. **加入 frontmatter**：在檔案頂端加入 metadata 與必要的欄位
-4. **定義人格**：為 agent 建立明確的身分與專長領域
-5. **測試你的 agent**：確保 agent 在其領域中提供有用且準確的回應
+1. **建立您的 agent 檔案**：在 `agents/` 目錄中新增 `.agent.md` 檔案
+2. **遵循命名慣例**：使用包含連字號與 `.agent.md` 副檔名的描述性小寫檔名（例如 `react-performance-expert.agent.md`）
+3. **包含 frontmatter**：在檔案頂端新增包含必要欄位的 metadata
+4. **定義角色**：為 agent 建立明確的身分與專業領域
+5. **測試您的 agent**：確保 agent 在其領域中提供有用、準確的回應
 
 #### Agent 格式範例
 
 ```markdown
 ---
-description: "簡短描述該 agent 及其用途"
-model: "gpt-5"
+description: 'Brief description of the agent and its purpose'
+model: 'gpt-5'
 tools: ["codebase", "terminalCommand"]
-name: "My Agent Name"
+name: 'My Agent Name'
 ---
 
-你是一位在 [specific areas] 具有深厚知識的 [domain/role] 專家。
+You are an expert [domain/role] with deep knowledge in [specific areas].
 
-## 你的專長
+## Your Expertise
 
 - [Specific skill 1]
 - [Specific skill 2]
 - [Specific skill 3]
 
-## 你的做法
+## Your Approach
 
-- [你如何協助使用者]
-- [你的溝通風格]
-- [你所重視的事物]
+- [How you help users]
+- [Your communication style]
+- [What you prioritize]
 
-## 指引
+## Guidelines
 
-- [針對回應的具體 instructions]
-- [限制或約束]
-- [應遵循的最佳實務]
+- [Specific instructions for responses]
+- [Constraints or limitations]
+- [Best practices to follow]
 ```
 
 ### 新增 Skills
 
-Skills 是 `skills/` 目錄中自包含的資料夾，包含一個 `SKILL.md` 檔案（含 front matter）與可選的隨附資源。
+Skills 是 `skills/` 目錄中獨立自足的資料夾，其中包含 `SKILL.md` 檔案（具有 front matter）以及選用的隨附資產。
 
 1. **建立新的 skill 資料夾**：執行 `npm run skill:create -- --name <skill-name> --description "<skill description>"`
-2. **編輯 `SKILL.md`**：確保 `name` 與資料夾名稱相符（小寫、以連字號分隔），且 `description` 清楚且非空
-3. **加入可選資源**：讓隨附資源保持合理大小（每個小於 5MB），並從 `SKILL.md` 參照它們
-4. **驗證並更新文件**：執行 `npm run skill:validate`，接著執行 `npm run build` 以更新已產生的 README 表格
+2. **編輯 `SKILL.md`**：確保 `name` 與資料夾名稱相符（小寫並帶有連字號），且 `description` 清楚且非空
+3. **新增選用資產**：保持隨附資產大小合理（每個小於 5MB），並在 `SKILL.md` 中引用它們
+4. **驗證並更新文件**：執行 `npm run skill:validate`，然後執行 `npm run build` 以更新產生的 README 表格
 
-### 新增 Canvas 外掛
+### 新增 Canvas 擴充功能
 
-Canvas 外掛以可重用的來源元件形式，存放在 `extensions/<extension-id>/`。它們只透過 `plugins/` 中的 plugin manifest 發行。
+Canvas 擴充功能作為可重複使用的原始碼元件存放於 `extensions/<extension-id>/` 中。它們僅透過 `plugins/` 中的外掛程式清單提供。
 
-1. **建立／更新外掛來源**：新增或更新 `extensions/<extension-id>/extension.mjs`
-2. **註冊外掛 plugin**：新增 `plugins/<extension-id>/plugin.json`：
-   - 必要：`name`（與資料夾名稱相符）、`description`、`version`
-   - 可選：`author`、`keywords`
-   - `extensions.com.github.copilot.logo` **必須**精確為 `"assets/preview.png"`
-3. **截圖需求**：建立 `assets/preview.png` 作為你的主要視覺圖
-4. **不要新增 `canvas.json`**：外掛的網站 metadata 取自對應的 plugin manifest
-5. **提交前驗證**：執行 `npm run plugin:validate` 以檢查是否符合慣例
+1. **建立／更新擴充功能原始碼**：新增或更新 `extensions/<extension-id>/extension.mjs`
+2. **註冊擴充功能外掛程式**：新增 `plugins/<extension-id>/plugin.json`：
+   - 必要項目：`name`（與資料夾名稱相符）、`description`、`version`
+   - 選用項目：`author`、`keywords`
+   - `extensions.com.github.copilot.logo` **必須**完全等於 `"assets/preview.png"`
+3. **螢幕擷取畫面要求**：建立 `assets/preview.png` 作為主要視覺圖案，為了達到最佳效果（選用）：
+   - 影像尺寸 (px)：1280 x 720
+   - 中心焦點 (px)：600 x 600（焦點位於影像中央）
+   - 比例：16:9
+4. **請勿新增 `canvas.json`**：擴充功能網站 metadata 源自於相對應的外掛程式清單
+5. **在提交前進行驗證**：執行 `npm run plugin:validate` 以檢查是否符合慣例
 
-### 新增 Plugins
+### 新增外掛程式
 
-Plugins 將相關的 agents、hooks 與 skills 依特定主題或工作流分組，讓使用者能透過 GitHub Copilot CLI 輕鬆安裝完整的工具包。
+外掛程式圍繞特定主題或工作流程，將相關的 agents、hooks 和 skills 組織在一起，讓使用者可以輕鬆地透過 GitHub Copilot CLI 安裝全套工具套件。
 
-1. **建立你的 plugin**：執行 `npm run plugin:create` 以產生新的 plugin 骨架
-2. **遵循命名慣例**：使用具描述性、以連字號分隔的小寫資料夾名稱（例如 `python-web-development`）
-3. **定義你的內容**：在 `plugin.json` 的 `extensions.com.github.awesome-copilot` 下列出 agents、hooks、skills 與可重用外掛
-4. **測試你的 plugin**：執行 `npm run plugin:validate` 以驗證你的 plugin 結構
+1. **建立您的外掛程式**：執行 `npm run plugin:create` 以建立新外掛程式的骨架
+2. **遵循命名慣例**：使用包含連字號的描述性小寫資料夾名稱（例如 `python-web-development`）
+3. **定義您的內容**：在 `plugin.json` 的 `extensions.com.github.awesome-copilot` 下列出 agents、hooks、skills 和可重複使用的擴充功能
+4. **測試您的外掛程式**：執行 `npm run plugin:validate` 以驗證您的外掛程式結構
 
-#### 建立 plugin
+#### 建立外掛程式
 
 ```bash
 npm run plugin:create -- --name my-plugin-id
 ```
 
-#### Plugin 結構
+#### 外掛程式結構
 
 ```
 plugins/my-plugin-id/
-├── plugin.json                # Plugin metadata
-└── README.md                   # Plugin 文件
+├── plugin.json                # 外掛程式 metadata
+└── README.md                   # 外掛程式文件
 ```
 
-> **注意：** Plugin 內容以宣告式方式定義在 plugin.json 的 `extensions.com.github.awesome-copilot` 之下。來源檔案存放在頂層資料夾，並由 CI 具現化（materialize）成 plugins。Skills 輸出到 `skills/` 之下；Copilot 專屬的 agents、hooks 與 extensions 輸出到 `com.github.copilot/` 之下。本倉庫命名空間會從提供的 manifest 中移除。
+> **注意：** 外掛程式內容是在 plugin.json 中的 `extensions.com.github.awesome-copilot` 下宣告式定義的。來源檔案位於最上層目錄中，並由 CI 實體化為外掛程式。Skills 產生在 `skills/` 下；Copilot 專屬的 agents、hooks 和擴充功能則產生在 `com.github.copilot/` 下。此儲存庫命名空間會從對外提供的清單中移除。
 
 #### plugin.json 範例
 
@@ -183,7 +186,7 @@ plugins/my-plugin-id/
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "my-plugin-id",
-  "description": "Plugin 描述",
+  "description": "Plugin description",
   "version": "1.0.0",
   "keywords": [],
   "author": { "name": "Awesome Copilot Community" },
@@ -198,121 +201,144 @@ plugins/my-plugin-id/
 }
 ```
 
-#### Plugin 指引
+#### 外掛程式指引
 
-- **宣告式內容**：Plugin 內容指定在 `extensions.com.github.awesome-copilot` 之下 — 來源檔案存放在頂層資料夾，並由 CI 具現化成 plugins。Skills 使用標準的 `skills/` 目錄；Copilot 專屬內容使用 `com.github.copilot/`。
-- **有效的參照**：plugin.json 中參照的所有路徑，都必須指向倉庫中存在的來源檔案
-- **可重用外掛**：精選 plugins 可以透過在 `extensions.com.github.awesome-copilot.extensions` 下加入 `./extensions/<name>` 路徑來隨附外掛；同一個外掛可被多個 plugins 列出
-- **Instructions 被排除**：Instructions 是獨立的資源，不屬於 plugins 的一部分
-- **目的明確**：Plugin 應解決一個特定的問題或工作流
-- **提交前驗證**：執行 `npm run plugin:validate` 以確保你的 plugin 有效
+- **宣告式內容**：外掛程式內容指定於 `extensions.com.github.awesome-copilot` 下 —— 來源檔案位於頂層目錄中，並由 CI 實體化為外掛程式。Skills 使用標準的 `skills/` 目錄；Copilot 專屬內容使用 `com.github.copilot/`。
+- **有效參照**：plugin.json 中引用的所有路徑都必須指向儲存庫中現有的來源檔案
+- **可重複使用的擴充功能**：策劃的外掛程式可以透過在 `extensions.com.github.awesome-copilot.extensions` 下新增 `./extensions/<name>` 路徑來綑綁擴充功能；同一個擴充功能可由多個外掛程式列出
+- **排除 Instructions**：Instructions 是獨立資源，不屬於外掛程式的一部分
+- **明確目的**：外掛程式應解決特定的問題或工作流程
+- **提交前驗證**：執行 `npm run plugin:validate` 確保您的外掛程式有效
 
-#### 新增 External Plugins
+#### 新增外部外掛程式
 
-External plugins 是託管在本倉庫之外、並列於 `plugins/external.json` 的 plugins。公開貢獻者**不應該**開啟一個直接編輯 `plugins/external.json` 的 PR。相反地，應透過下方的公開審查工作流提交 external plugins。
+外部外掛程式是指裝載於此儲存庫外部、並列於 `plugins/external.json` 中的外掛程式。公開貢獻者**不應**直接發起編輯 `plugins/external.json` 的 PR。相反地，請透過下方的公開審查工作流程提交外部外掛程式。
 
 > [!IMPORTANT]
-> 公開的 external plugin 提交在 v1 中僅限 GitHub。所提交的 plugin 必須託管在公開的 GitHub 倉庫中，並使用 `source.source: "github"`
+> 公開外部外掛程式的提交在第 1 版中僅限 GitHub。提交的外掛程式必須位於公開的 GitHub 儲存庫中，並使用 `source.source: "github"`。
 
 ##### 提交欄位
 
-External plugin 的 issue 表單將收集這些欄位：
+外部外掛程式 issue 表單將收集以下欄位：
 
-- Plugin 名稱
+- 外掛程式名稱
 - 簡短描述
-- 以 `owner/repo` 格式表示的 GitHub 倉庫
-- Plugin 在倉庫內的路徑（當 plugin 位於倉庫根目錄時為可選）
-- 要審查的 ref（`ref`），使用 release tag 或 tag ref，而非分支（branch）
-- 要審查的 commit SHA（`sha`），使用完整的 40 字元 commit SHA
-- Plugin 版本
-- 授權條款標識
-- 作者名稱
-- 作者 URL（可選）
-- 首頁 URL（可選）
+- `owner/repo` 格式的 GitHub 儲存庫
+- 儲存庫內的外掛程式路徑（當外掛程式位於儲存庫根目錄時為選填）
+- 要審查的參照 (`ref`)，請使用 release tag 或標籤參照，而非分支
+- 要審查的 Commit SHA (`sha`)，請使用完整的 40 個字元 commit SHA
+- 外掛程式版本
+- 授權條款識別碼
+- 作者姓名
+- 作者 URL（選填）
+- 首頁 URL（選填）
 - 關鍵字／標籤
-- 給審查者的額外備註（可選）
-- 確認複選框：倉庫為公開、所提交的 ref 和／或 sha 為不可變（immutable）、提交符合本倉庫的政策，且該 plugin 不是重複的項目
+- 給審查者的附加備註（選填）
+- 確認核取方塊，確認儲存庫為公開、提交的 ref 與／或 sha 是不可變動的、提交符合此儲存庫的政策，且該外掛程式不是重複清單
 
-本倉庫的標準驗證規則位於 `eng/external-plugin-validation.mjs`。建構腳本會從該模組重用 `marketplace` policy，而 issue 收件（intake）自動化則使用較嚴格的 `publicSubmission` policy，以讓 JSON 契約與工作流檢查保持一致。
+儲存庫的標準驗證規則位於 `eng/external-plugin-validation.mjs`。建構指令碼會重複使用該模組的 `marketplace` 策略，而 issue 接收自動化則使用更嚴格的 `publicSubmission` 策略，以使 JSON 協定與工作流程檢查保持一致。
 
-對於提交到 `plugins/external.json` 的項目，目前的 marketplace 驗證要求：
+對於提交至 `plugins/external.json` 的項目，目前市集驗證需要：
 
-- `name`、`description` 與 `version`（有效的 [semantic version](https://semver.org)，例如 `1.2.3`）
-- `author.name`（以及，若存在時，有效的 `author.url` 與 `author.email`）
-- `repository` 為 HTTPS 的 GitHub URL
-- `keywords` 為小寫、以連字號分隔的標籤
-- `license` 若提供，建議為 [SPDX 標識或表示式](https://spdx.org/licenses)（例如 `MIT`、`Apache-2.0`、`MIT OR Apache-2.0`），但非 SPDX 或專有授權條款是允許的，且只會產生警告
-- `source.source: "github"` 加上以 `owner/repo` 格式的 `source.repo`
-- 可選的 `source.path` 值：`/` 代表倉庫根目錄，或是 plugin 結構開始處的倉庫相對資料夾（不要直接指向 `plugin.json`）
+- `name`、`description` 和 `version`（有效的[語意化版本](https://semver.org)，例如 `1.2.3`）
+- `author.name`（以及存在時有效的 `author.url` 和 `author.email`）
+- 作為 HTTPS GitHub URL 的 `repository`
+- 作為小寫連字號標籤的 `keywords`
+- 當提供 `license` 時，建議使用 [SPDX 識別碼或運算式](https://spdx.org/licenses)（例如 `MIT`、`Apache-2.0`、`MIT OR Apache-2.0`），但允許非 SPDX 或專有授權條款，且僅會產生警告
+- `source.source: "github"` 加上 `owner/repo` 格式的 `source.repo`
+- 選填的 `source.path` 值，儲存庫根目錄為 `/`，或是外掛程式結構開始的儲存庫相對資料夾（請勿直接指向 `plugin.json`）
 
-驗證也會發出非致命警告，以及早發現錯誤：未知／拼錯的頂層、`author` 或 `source` 欄位；非已識別 SPDX 標識的 `license` 值（非 SPDX／專有授權條款是被允許、而非被拒絕的）；以及 `source` 省略了不可變 `ref`／`sha` 定位器的 marketplace 項目。相同的 `license` 驗證與本機 plugin 的 `plugin.json` manifest 共用，使兩者一致地檢查。
+驗證還會發出非致命警告，以便及早發現錯誤：未知／拼寫錯誤的最上層欄位、`author` 或 `source` 欄位；未被辨識為 SPDX 識別碼的 `license` 值（非 SPDX／專有授權條款被允許，不會被拒絕）；以及其 `source` 省略不可變 `ref`/`sha` 定位器的市集項目。相同的 `license` 驗證會與本機外掛程式 `plugin.json` 清單共用，以便一致地檢查兩者。
 
-公開提交（public-submission）policy 在上述規則之上，另需 `license` 加上至少一個不可變的來源定位器：`source.ref`、`source.sha`，或兩者皆有。
+公開提交策略建構在這些規則之上，且額外需要 `license` 加上至少一個不可變的來源定位器：`source.ref`、`source.sha` 或兩者皆有。
 
-##### 審查工作流
+##### 審查工作流程
 
-1. **開啟 issue**：使用 external plugin 的 issue 表單。自動化會套用 `external-plugin` 與 `awaiting-review` 標籤。
-2. **自動收件驗證**：檢查必要欄位是否存在、且格式正確，以符合託管在 GitHub 上的 plugin。無效的提交會被標記 `requires-submitter-fixes`，並附上說明在維護者審查前必須修正什麼的註解。
-3. **自動品質關卡**在 metadata 驗證之後執行：
-   - 對所提交的 plugin 的 path/ref/sha 執行 `vally lint`
-   - 透過 Copilot CLI 對從提交所產生的暫存（ephemeral）marketplace 項目執行安裝冒煙測試（smoke test）
-4. **可進行維護者審查**：若 metadata 驗證與品質關卡都通過，自動化會移除 `awaiting-review` 並加上 `ready-for-review`
-5. **提交者修正阻擋**：若 metadata 有效但品質關卡失敗，自動化會套用 `requires-submitter-fixes`，而非推進到人工審查。
-6. **請求再進行一次收件**：在更新 issue 內文或來源 plugin 之後，issue 作者或維護者可以留言 `/rerun-intake`，以在 issue 仍開啟時按需重新執行自動收件與品質關卡。開啟中的 issue 在編輯時會自動重新觸發收件。當重新執行被接受時，自動化會對指令註解以 👀 回應，以顯示處理已開始。
-7. **維護者覆寫路徑**：具有寫入權限的維護者可以留言 `/mark-ready-for-review [optional reason]`，明確將一個 `requires-submitter-fixes` 的 issue 移到 `ready-for-review`
-8. **維護者決定**：進入 `ready-for-review` 後，具有寫入權限的維護者會進行人工審查，然後在 issue 上留言 `/approve` 或 `/reject <reason>`。來自非維護者的指令會被忽略。
-9. **核准路徑**：在 `/approve` 時，自動化會移除 `ready-for-review`、加上 `approved`、關閉 issue，並針對 `main` 開啟或更新一個 PR，以更新 `plugins/external.json` 與已產生的 marketplace 輸出。
-10. **拒絕路徑**：在 `/reject <reason>` 時，自動化會移除 `ready-for-review`、加上 `rejected`、關閉 issue，並在 issue 註解中記錄原因。被拒絕的 issue 是終態（terminal）：`/rerun-intake` 不再重新開啟它們，因此若提交者認為疑慮已完全解決，必須開啟一個新的 external plugin 提交 issue。
+1. **建立 issue**：使用外部外掛程式 issue 表單。自動化會套用 `external-plugin` 和 `awaiting-review` 標籤。
+2. **自動接收驗證**：檢查必要欄位是否存在且格式正確（針對 GitHub 裝載的外掛程式）。不合規的提交會被標記為 `requires-submitter-fixes`，並附帶註釋說明在維護者審查之前必須修正的內容。
+   接收程序也會使用 GitHub API 檢查儲存庫擁有者的類型。組織擁有的儲存庫若屬於 `Microsoft`、`GitHub`、`Azure`、`dotnet`、`MicrosoftDocs` 或 `microsoftgraph` 組織（不區分大小寫），將獲得 `first party` 標籤；若是任何其他組織則獲得 `third party` 標籤。使用者擁有的儲存庫不會獲得這兩種標籤。在分流看板上，`first party` 會跳過 AI 審查並以 `/approve` 建立 `Accept` 建議；這僅為分流建議。提交內容仍必須通過自動化驗證和品質關卡，且必須由真人維護者審查並核准後方可列入清單。擁有權標籤會在每次接收處理時更新。
+3. **自動化品質關卡**在 metadata 驗證後執行：
+   - Agent Plugins v1.0.0 清單合規性，包括具有所需結構描述和支援欄位的根目錄 `plugin.json`。當舊版清單並存時，根目錄清單具有權威性；舊版檔案不會覆寫它，也不會為無效的根目錄清單提供遞補機制。
+   - 針對提交之外掛程式路徑／ref／sha 執行 `vally lint`，包括 Agent Skills 規格合規性以及隨附 skills 的有效檔案參照
+   - 透過 Copilot CLI 針對根據提交內容產生的暫時性市集項目進行安裝冒煙測試
+   - 與來源清單的版本比對、在同時提供兩個定位器時的 ref/SHA 一致性，以及標記為 `canvas` 的外掛程式所需的擴充功能結構
 
-##### 透過 PR 更新已列出的 external plugins
+   所有適用的品質關卡都必須通過。規格合規性違規和 lint 失敗均為阻礙性錯誤，而非警告。基礎設施錯誤將使提交保持在 `awaiting-review` 狀態，直到檢查可以完成或維護者明確覆寫該阻礙。
 
-當一個 PR 更新 `plugins/external.json`（例如對先前核准的項目做版本更新）時，自動化會執行 PR 品質檢查，並直接在 PR 上貼上結果：
+4. **準備好接受維護者審查**：若 metadata 驗證和品質關卡通過，自動化會移除 `awaiting-review` 並新增 `ready-for-review`。
+5. **提交者修正阻礙**：若 metadata 有效但品質關卡失敗，自動化會套用 `requires-submitter-fixes`，而不是推進到人工審查。
+6. **要求另一次接收處理**：在更新 issue 內容或原始外掛程式後，issue 作者或維護者可以在 issue 仍開啟時留言 `/rerun-intake`，以按需重新執行自動接收和品質關卡。開啟的 issue 在編輯時會自動重新觸發接收處理。當重新執行被接受時，自動化會對指令留言回應 👀，以便清楚辨識處理已經開始。
+7. **維護者覆寫路徑**：具有寫入權限的維護者可以留言 `/mark-ready-for-review [選用原因]`，以明確將 `requires-submitter-fixes` 的 issue 移至 `ready-for-review`。反之，`/request-fixes <原因>` 會將未決定的開啟中提交移至 `requires-submitter-fixes`，並在 issue 留言中記錄要求的修正項目；提交者的編輯或 `/rerun-intake` 會重新進入接收流程。
+8. **維護者決策**：一旦進入 `ready-for-review`，具有寫入權限的維護者會執行手動審查，然後在 issue 上留言 `/approve` 或 `/reject <原因>`。來自非維護者的指令將被忽略。
+9. **核准路徑**：在 `/approve` 時，自動化會移除 `ready-for-review`、新增 `approved`、關閉 issue，並針對 `main` 建立或更新 PR，以更新 `plugins/external.json` 和產生的市集輸出。
+10. **拒絕路徑**：在 `/reject <原因>` 時，自動化會移除 `ready-for-review`、新增 `rejected`、關閉 issue，並在 issue 留言中記錄原因。被拒絕的 issue 是終態：`/rerun-intake` 不再重新開啟它們，因此若提交者認為問題已完全解決，必須建立新的外部外掛程式提交 issue。
 
-1. **偵測變更的項目**：自動化識別 PR 中新增／更新的 external plugin 項目。
-2. **執行品質關卡**：自動化對每個變更 plugin 的來源 ref/SHA/path 執行安裝冒煙測試與 `vally lint` 檢查。
-3. **貼上來源連結**：自動化會更新一個 bot 註解，附上每個 plugin 的結果，以及指向每個 plugin 來源位置的 GitHub tree 直接連結。
-4. **同步 PR 上的工作流狀態標籤**：
-   - 所有檢查通過時為 `ready-for-review`
-   - 因 plugin 問題導致品質檢查失敗時為 `requires-submitter-fixes`
-   - 因基礎設施／暫時性錯誤導致檢查無法完成時為 `awaiting-review`
+##### 透過 PR 更新已列出的外部外掛程式
+
+當 pull request 更新 `plugins/external.json` 時（例如更新先前核准項目的版本），自動化會執行 PR 品質檢查並直接將結果張貼在 PR 上：
+
+1. **偵測變更的項目**：自動化會識別 PR 中新增／更新的外部外掛程式項目。
+2. **執行品質關卡**：自動化會針對每個變更的外掛程式來源 ref/SHA/path 執行與提交接收相同的阻礙性品質關卡，包括清單合規性、透過 `vally lint` 的 Agent Skills 規格合規性，以及安裝冒煙測試。
+3. **張貼來源連結**：自動化會更新機器人留言，提供每個外掛程式的結果以及指向每個外掛程式來源位置的直接 GitHub 樹狀連結。
+4. **同步 PR 上的工作流程狀態標籤**：
+   - 當所有檢查通過時為 `ready-for-review`
+   - 當品質檢查因外掛程式問題而失敗時為 `requires-submitter-fixes`
+   - 當檢查因基礎設施／暫時性錯誤而無法完成時為 `awaiting-review`
+5. **使 PR 狀態檢查失敗**：除非每個變更的外掛程式都通過所有適用的關卡，否則 `enforce-quality-gates` 工作將會失敗，因此當任何關卡失敗或不完整時，PR 將顯示失敗的檢查（當設定為必要狀態檢查時會阻礙合併）。
+
+##### 網站 README
+
+外部外掛程式詳細資料頁面會在網站資料產生期間從 GitHub 載入其 README。此儲存庫中不需要文件副本或額外的清單欄位。
+來源取自 `plugins/external.json`：`source.repo`、`source.path`，以及 `source.sha`（偏好）或 `source.ref` 中的修訂版本。未包含任一修訂版本的清單會使用儲存庫的預設分支 (`HEAD`)。
+
+建構程序會先在外掛程式目錄中尋找 `README.md`、`readme.md` 和 `Readme.md`，然後在儲存庫根目錄中尋找。請保持上游 README 為最新狀態；固定修訂版本的清單會顯示所列修訂版本的文件，因此更新清單會重新整理其文件。
+相對連結和圖片會依據上游 README 進行解析；以單一 `/` 開頭的路徑則從相同修訂版本的儲存庫根目錄進行解析。
+遠端 Markdown 使用與本機文件相同的 HTML 清理工具。JavaScript frontmatter 在執行前就會被拒絕，且 README 內文會從目錄頁面的用戶端資料中排除。
+
+下載限制為 GitHub 的原始內容主機，一次最多六個外掛程式，每個請求逾時時間為十秒，每個 README 限制為 512 KiB。遺失的 README 或下載／轉譯錯誤將會被記錄，並在頁面上留下來源儲存庫連結，而不是使整個網站建構失敗。
+
+請執行 `node --test eng/lib/external-plugin-readme.test.mjs` 以檢查擷取功能。
+在 `npm run website:build` 之後，執行 `node --test website/scripts/external-plugin-readme.test.mjs` 以檢查遠端 Markdown 轉譯、相對 URL、清理作業以及產生的外掛程式頁面。
 
 ##### 維護者審查職責
 
 維護者負責確認該提交：
 
-- 清楚符合 Awesome Copilot 集合，並比現有項目提供更多價值
-- 使用公開的 GitHub 倉庫，以及可可靠審查的不可變 ref 和／或 SHA
-- 包含 `plugins/external.json` 所需的 metadata（`name`、`description`、`version`、`author.name`、`repository`、`keywords` 與 `source`），以及任何提供的 homepage/license 欄位
-- 沒有明顯重複現有的 marketplace 項目
-- 持續符合本倉庫的內容、安全與負責任 AI 政策
+- 明確符合 Awesome Copilot 收藏，並在現有清單之外增添價值
+- 使用公開的 GitHub 儲存庫以及可可靠審查的不可變 ref 與／或 SHA
+- 包含 `plugins/external.json` 所需的 metadata（`name`、`description`、`version`、`author.name`、`repository`、`keywords` 和 `source`），以及任何提供的首頁／授權條款欄位
+- 未明顯重複現有的市集項目
+- 持續符合本儲存庫的內容、安全性和負責任 AI 政策
 
 ##### 審查頻率與標籤語意
 
-- `external-plugin`：套用到每個公開 external plugin 提交，並保留在已核准的 issue 上，讓排程的審查自動化日後能找到它們
-- `awaiting-review`：在自動化完成驗證 issue 之前的初始收件狀態
-- `ready-for-review`：issue 已通過自動收件檢查，正在等待維護者的決定
-- `requires-submitter-fixes`：自動收件發現 metadata 或品質關卡問題；人工審查前需要提交者更新
-- `approved`：issue 已核准並關閉，可作為六個月重新審查的真實來源（source of truth）
-- `rejected`：issue 已被拒絕並關閉，未加入 marketplace
-- `re-review-due`：已核准的 issue 達到六個月的審查門檻，正在等待維護者的重新審查決定
-- `re-review-follow-up`：維護者審查了該 plugin，並在續期或移除前要求更多後續跟進
-- `removed`：該 plugin 在重新審查後已從 `plugins/external.json` 移除，不應再視為有效
+- `external-plugin`：套用於每個公開外部外掛程式提交，並保留在核准的 issue 上，以便排程審查自動化後續可以找到它們
+- `first party`：提交的儲存庫由第一方組織（`Microsoft`、`GitHub`、`Azure`、`dotnet`、`MicrosoftDocs` 或 `microsoftgraph`）擁有
+- `third party`：提交的儲存庫由其他組織擁有；使用者擁有的儲存庫不具備這兩種擁有權標籤
+- `awaiting-review`：在自動化完成驗證 issue 之前的初始接收狀態
+- `ready-for-review`：issue 已通過自動接收檢查，正在等待維護者的決策
+- `requires-submitter-fixes`：自動接收發現 metadata 或品質關卡問題；在人工審查前需要提交者進行更新
+- `approved`：issue 已獲核准、已關閉，並可用作六個月重新審查的事實來源
+- `rejected`：issue 已被拒絕並關閉，未新增至市集
+- `re-review-due`：核准的 issue 已達到六個月的審查門檻，正在等待維護者的重新審查決策
+- `re-review-follow-up`：維護者已審查該外掛程式，並在續期或移除前要求更多後續追蹤
+- `removed`：在重新審查後，該外掛程式已從 `plugins/external.json` 中移除，且不應再被視為有效
 
-六個月的重新審查期間，從已核准的提交 issue 被**關閉**時開始。一個夜間工作流會尋找標示為 `external-plugin` 與 `approved` 且 `closed_at` 已至少六個月的已關閉 issue，套用 `re-review-due`，並開啟或更新一個面向維護者的追蹤 issue，連結所有目前到期應審查的 plugin。
+六個月的重新審查窗口從核准的提交 issue **關閉**時開始計算。每晚執行的工作流程會尋找標記為 `external-plugin` 和 `approved` 且其 `closed_at` 至少已過去六個月的已關閉 issue，套用 `re-review-due`，並建立或更新列出目前所有到期外掛程式且面向維護者的追蹤 issue。
 
-維護者在**原本的已核准提交 issue** 上，以其中一個 issue 註解指令完成重新審查：
+維護者在**原本核准的提交 issue** 上使用以下 issue 留言指令之一完成重新審查：
 
-- `/re-review-keep` — 透過重新開啟並再關閉已核准的 issue，讓該項目續期六個月；這會重設 `closed_at` 審查錨點並移除到期標籤
-- `/re-review-needs-changes` — 讓該項目留在到期佇列中，同時加上 `re-review-follow-up`，讓維護者能追蹤額外的調查或修復工作
-- `/re-review-remove` — 針對 `main` 開啟或更新一個 PR，從 `plugins/external.json` 移除該 plugin 並重新產生 marketplace 輸出；該 issue 會留在到期佇列中，直到該移除生效為止
+- `/re-review-keep` — 透過重新開啟並再次關閉已核准的 issue，將清單續期六個月，這會重設 `closed_at` 審查基準點並移除到期標籤
+- `/re-review-needs-changes` — 將清單保留在到期佇列中，同時新增 `re-review-follow-up`，以便維護者追蹤額外的調查或補救工作
+- `/re-review-remove` — 針對 `main` 建立或更新 PR，從 `plugins/external.json` 中移除該外掛程式並重新產生市集輸出；在該移除合併之前，issue 將保留在到期佇列中
 
-已核准的提交會依循 [Claude Code plugin marketplace 規範](https://code.claude.com/docs/en/plugin-marketplaces#plugin-entries)，轉換成 `plugins/external.json` 的項目。一個典型的託管在 GitHub 上的項目如下所示：
+核准的提交會根據 [Claude Code 外掛程式市集規格](https://code.claude.com/docs/en/plugin-marketplaces#plugin-entries)轉換為 `plugins/external.json` 項目。典型的 GitHub 裝載項目如下所示：
 
 ```json
 [
   {
     "name": "my-external-plugin",
-    "description": "該 external plugin 的描述",
+    "description": "Description of the external plugin",
     "version": "1.0.0",
     "author": {
       "name": "Plugin Author",
@@ -335,62 +361,62 @@ External plugin 的 issue 表單將收集這些欄位：
 
 ### 新增 Hooks
 
-Hooks 能啟用由 GitHub Copilot 編碼 agent 會話期間特定事件觸發的自動化工作流，例如會話開始、會話結束、使用者 prompt 與工具使用。
+Hooks 可以在 GitHub Copilot 編碼 agent 工作階段期間由特定事件（例如工作階段開始、工作階段結束、使用者提示詞與工具使用）觸發自動化工作流程。
 
-1. **建立新的 hook 資料夾**：在 `hooks/` 目錄中新增一個具描述性、以連字號分隔的小寫名稱資料夾（例如 `session-logger`）
-2. **建立 `README.md`**：新增一個 `README.md` 檔案，其 frontmatter 包含 `name`、`description`，並可選 `tags`
-3. **建立 `hooks.json`**：新增一個 `hooks.json` 檔案，其 hook 配置依循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)
-4. **加入隨附腳本**：納入 hook 所需的任何腳本或資源，並讓它們可執行（`chmod +x script.sh`）
-5. **更新 README**：執行 `npm run build` 以更新已產生的 README 表格
+1. **建立新的 hook 資料夾**：在 `hooks/` 目錄中新增資料夾，使用包含連字號的描述性小寫名稱（例如 `session-logger`）
+2. **建立 `README.md`**：新增 `README.md` 檔案，其 frontmatter 包含 `name`、`description`，以及選填的 `tags`
+3. **建立 `hooks.json`**：遵循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)新增包含 hook 設定的 `hooks.json` 檔案
+4. **新增隨附指令碼**：包含 hook 所需的任何指令碼或資產，並使其具備可執行權限 (`chmod +x script.sh`)
+5. **更新 README**：執行 `npm run build` 以更新產生的 README 表格
 
 #### Hook 結構範例
 
 ```
 hooks/my-hook/
-├── README.md       # 含 frontmatter 的 Hook 文件
-├── hooks.json      # Hook 事件配置
-└── my-script.sh    # 隨附的腳本
+├── README.md       # 包含 frontmatter 的 hook 文件
+├── hooks.json      # Hook 事件設定
+└── my-script.sh    # 隨附指令碼
 ```
 
 #### README.md frontmatter 範例
 
 ```markdown
 ---
-name: "My Hook Name"
-description: "簡短描述這個 hook 做什麼"
+name: 'My Hook Name'
+description: 'Brief description of what this hook does'
 tags: ["logging", "automation"]
 ---
 
 # My Hook Name
 
-關於該 hook 的詳細文件…
+Detailed documentation about the hook...
 ```
 
 #### Hook 指引
 
-- **事件配置**：在 `hooks.json` 中定義 hook 事件 — 支援的事件包括會話開始、會話結束、使用者 prompt 與工具使用
-- **可執行腳本**：確保所有隨附腳本都可執行，並同時在 `README.md` 與 `hooks.json` 中被參照
-- **注意隱私**：留意你的 hook 收集或記錄哪些資料
-- **清楚的文件**：說明安裝步驟、配置選項，以及 hook 做什麼
-- 依循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)
+- **事件設定**：在 `hooks.json` 中定義 hook 事件 —— 支援的事件包括工作階段開始、工作階段結束、使用者提示詞與工具使用
+- **可執行指令碼**：確保所有隨附指令碼皆具備可執行權限，且在 `README.md` 與 `hooks.json` 中均有參照
+- **隱私意識**：請留意您的 hook 所收集或記錄的資料
+- **清晰的文件**：說明安裝步驟、設定選項以及 hook 的作用
+- 遵循 [GitHub Copilot hooks 規範](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/use-hooks)
 
-### 新增 Agentic Workflows
+### 新增 Agentic 工作流程
 
-[Agentic Workflows](https://github.github.com/gh-aw) 是由 AI 驅動的倉庫自動化，在 GitHub Actions 中執行編碼 agent。它們以 Markdown 搭配自然語言 instructions 定義，提供內建護欄（guardrails）的排程式與事件觸發式自動化。
+[Agentic 工作流程](https://github.github.com/gh-aw)是以 AI 驅動的儲存庫自動化，可在 GitHub Actions 中執行編碼 agents。以包含自然語言指示的 Markdown 定義，它們提供具有內建防護措施的排程與事件觸發自動化。
 
-1. **建立你的 workflow 檔案**：在 `workflows/` 目錄中新增一個 `.md` 檔案（例如 [`daily-issues-report.md`](./workflows/daily-issues-report.md)）
-2. **加入 frontmatter**：包含 `name` 與 `description`，接著是 agentic workflow frontmatter（`on`、`permissions`、`safe-outputs`）與自然語言 instructions
+1. **建立您的工作流程檔案**：在 `workflows/` 目錄中新增一個 `.md` 檔案（例如 [`daily-issues-report.md`](./workflows/daily-issues-report.md)）
+2. **包含 frontmatter**：包含 `name` 與 `description`，後面接著 agentic 工作流程 frontmatter（`on`、`permissions`、`safe-outputs`）以及自然語言指示
 3. **本機測試**：使用 `gh aw compile --validate --no-emit daily-issues-report.md` 驗證其有效性
-4. **更新 README**：使用 `npm run build` 以更新已產生的 README 表格
+4. **更新 README**：使用 `npm run build` 更新產生的 README 表格
 
-> **注意：** 只接受 `.md` 檔案 — 不要包含已編譯的 `.lock.yml` 或 `.yml` 檔案。CI 會封鎖它們。
+> **注意：** 僅接受 `.md` 檔案 —— 請勿包含編譯後的 `.lock.yml` 或 `.yml` 檔案。CI 將會予以阻擋。
 
-#### Workflow 檔案範例
+#### 工作流程檔案範例
 
 ```markdown
 ---
-name: "Daily Issues Report"
-description: "以 GitHub issue 的形式，每日彙總開啟中的 issue 與近期活動"
+name: 'Daily Issues Report'
+description: 'Generates a daily summary of open issues and recent activity as a GitHub issue'
 on:
   schedule: daily on weekdays
 permissions:
@@ -402,110 +428,110 @@ safe-outputs:
     labels: [report]
 ---
 
-## 每日 Issue 報告
+## Daily Issues Report
 
-為團隊建立一份開啟中 issue 的每日彙總。
+Create a daily summary of open issues for the team.
 
-## 應包含的內容
+## What to Include
 
-- 過去 24 小時內新開啟的 issue
-- 已關閉或已解決的 issue
-- 需要關注的閒置（stale）issue
+- New issues opened in the last 24 hours
+- Issues closed or resolved
+- Stale issues that need attention
 ```
 
-#### Workflow 指引
+#### 工作流程指引
 
-- **安全優先**：使用最小權限的 permissions 與 safe outputs，而非直接寫入存取
-- **清楚的 instructions**：在 workflow 內文中撰寫清楚的自然語言 instructions
-- **具描述性的名稱**：使用小寫、以連字號分隔的檔名（例如 `daily-issues-report.md`）
-- **本機測試**：使用 `gh aw compile --validate` 驗證你的 workflow 能編譯
-- **不要包含已編譯檔案**：只提交 `.md` 來源 — 不接受 `.lock.yml` 與 `.yml` 檔案
-- 更多內容請參閱 [Agentic Workflows 文件](https://github.github.com/gh-aw)
+- **安全第一**：使用最低權限與安全輸出，而非直接寫入權限
+- **明確指示**：在工作流程內文中撰寫清晰的自然語言指示
+- **描述性名稱**：使用包含連字號的小寫檔名（例如 `daily-issues-report.md`）
+- **本機測試**：使用 `gh aw compile --validate` 驗證您的工作流程可正確編譯
+- **無編譯檔案**：僅提交 `.md` 來源檔案 —— 不接受 `.lock.yml` 與 `.yml` 檔案
+- 在 [Agentic 工作流程文件](https://github.github.com/gh-aw)瞭解更多資訊
 
-## 提交你的貢獻
+## 提交您的貢獻
 
-1. **Fork 本倉庫**
-2. **建立新分支**：從 `main` 分支為你的貢獻建立新分支。**這非常重要** — 確保分支是從 `main` 建立，而非 `staged`。從 `staged` 建立的分支可能包含已具現化的 plugin 檔案，會造成衝突與延遲，甚至可能被直接拒絕。
-3. **新增你的 instruction、skills、agents、workflow 或 plugin**：依循上述指引
-4. **執行更新腳本**：`npm start`，以你的新檔案更新 README（如果你還沒執行 `npm install`，請先執行）
-   - 一個 GitHub Actions 工作流會驗證這個步驟是否正確完成
-   - 若執行腳本會修改 README.md，PR 檢查會失敗，並附上顯示所需變更的註解
-5. **提交一個 Pull Request**：目標為 `main` 分支，並包含：
-   - 一個清楚描述你貢獻的標題
-   - 簡短描述你的 instruction/skill/agent 做什麼
-   - 任何相關背景資訊或使用說明
+1. **Fork 此儲存庫**
+2. 從 `main` 分支**建立新分支**以進行您的貢獻。**這一點至關重要** —— 請確保分支是從 `main` 建立，而不是 `staged`。從 `staged` 建立的分支可能包含實體化的外掛程式檔案，這將會導致衝突和延遲，或者可能會被直接拒絕。
+3. 遵循上述指引**新增您的 instruction、skills、agents、工作流程或外掛程式**
+4. **執行更新指令碼**：`npm start` 以使用您的新檔案更新 README（如果尚未執行，請確保先執行 `npm install`）
+   - GitHub Actions 工作流程將會驗證此步驟是否已正確執行
+   - 如果執行指令碼會修改 README.md，PR 檢查將會失敗並留下說明必要變更的註釋
+5. 針對 `main` 分支**提交 pull request**，並包含：
+   - 描述您貢獻的明確標題
+   - 關於您的 instruction/skill/agent 作用的簡短描述
+   - 任何相關的背景資訊或使用說明
 
 > [!IMPORTANT]
-> 所有 Pull Request 都應以**`main`** 分支為目標，而非 `staged`。
+> 所有 pull requests 都應以 **`main`** 分支為目標，而非 `staged`。
 
 > [!TIP]
-> 你不需要 ping 維護者。一旦啟用自動審查路由（routing），Pull Request 會依其變更內容路由到一個審查者集，且 `review-due:YYYY-MM-DD` 標籤會顯示何時預期進行首次審查。在那之前，路由以 dry-run 模式執行，由維護者指派審查者。請參閱 [審查路由、擁有權與 SLA](docs/maintainers/review-routing.md)。
+> 您不需要標記維護者。一旦啟用自動審查路由，pull requests 會根據其變更內容指派給審查者群組，且 `review-due:YYYY-MM-DD` 標籤會顯示預期的第一次審查時間。在那之前，路由會以試行模式執行，並由維護者指派審查者。請參閱[審查路由、所有權與 SLA](docs/maintainers/review-routing.md)。
 
 > [!NOTE]
-> 關於 source/published 分支變更的分支遷移追蹤，見 [Issue #1368](https://github.com/github/awesome-copilot/issues/1368)。第二階段（Phase 2）的遷移工作會保持封鎖（gated），直到維護者確認外部工具的推出已完成。
+> 來源／已發布分支變更的分支移轉追蹤位於 [Issue #1368](https://github.com/github/awesome-copilot/issues/1368)。在維護者確認外部工具推出完成之前，第 2 階段移轉工作將保持管制。
 
 > [!IMPORTANT]
-> 如果你是一個 AI agent，我們有一個流程可最佳化你的貢獻。請在你的 PR 標題末尾加上 `🤖🤖🤖`，這樣它就能被快速處理以合併。
+> 如果您是 AI agent，我們有相應流程來最佳化您的貢獻。請在您的 PR 標題結尾加上 `🤖🤖🤖`，以便快速進行合併審查。
 
-### 開啟 Pull Request 之後
+### 在您提出 Pull Request 之後
 
-一個名為 `submission-gate` 的必要檢查會追蹤你的 PR。一個 bot 會在 PR 上維護一則保持最新狀態的註解。該註解列出所有檢查、說明任何失敗，並顯示風險層級、所指派的審查者，以及審查目標日期。
+名為 `submission-gate` 的必要檢查會追蹤您的 PR。機器人會在 PR 上保持更新一則狀態留言。該留言會列出每項檢查、說明任何失敗狀況，並顯示風險層級、指派的審查者以及預計審查日期。
 
-**狀態（States）。** 每個 PR 帶有一個狀態標籤：
+**狀態。** 每個 PR 都帶有一個狀態標籤：
 
-| 標籤 | 對你的意義 |
-|---|---|
-| `awaiting-automation` | 檢查仍在執行中。若某檢查遇到基礎設施問題（非你的變更所造成），請留言 `/rerun-checks`。 |
-| `requires-submitter-fixes` | 某檢查發現問題，或審查者要求變更。請依狀態註解中的步驟操作，並推送（push）一個修正。 |
-| `ready-for-review` | 所有檢查都通過。維護者將進行審查。 |
-| `review-in-progress` | 維護者正在審查。 |
-| `approved` | PR 已取得所有需要的核准，準備可以合併。 |
+| 標籤 | 對您的意義 |
+| --- | --- |
+| `awaiting-automation` | 檢查仍在執行中。若檢查遇到基礎設施問題（非您的變更所致），請留言 `/rerun-checks`。 |
+| `requires-submitter-fixes` | 檢查發現問題，或審查者要求變更。請遵循狀態留言中的步驟並推送修正。 |
+| `ready-for-review` | 所有檢查均已通過。維護者將進行審查。 |
+| `review-in-progress` | 維護者正在進行審查。 |
+| `approved` | PR 已獲得所需的所有核准，準備合併。 |
 
-**風險層級（Risk tiers）。** 每個 PR 還會得到 `merge-risk:low`、`merge-risk:medium` 或 `merge-risk:high` 標籤。該層級決定需要多少核准：
+**風險層級。** 每個 PR 還會獲得 `merge-risk:low`、`merge-risk:medium` 或 `merge-risk:high` 標籤。該層級決定了需要多少核准：
 
 - **Low（低）：** 文件，以及對現有資源的小幅編輯。
-- **Medium（中）：** 新的資源，包括 agentic workflows 與 hooks。
-- **High（高）：** 隨附腳本、hook 指令、MCP 配置、倉庫自動化（`.github/`、`eng/`），或審查政策檔案。
+- **Medium（中）：** 新資源，包括 agentic 工作流程與 hooks。
+- **High（高）：** 隨附指令碼、hook 指令、MCP 設定、儲存庫自動化 (`.github/`、`eng/`) 或審查政策檔案。
 
-**指令（Commands）。** 身為 PR 作者，你可以以這些指令之一開始一則註解：
+**指令。** 身為 PR 作者，您可以在留言開頭使用下列指令之一：
 
-- `/rerun-checks`：重新執行失敗或不完整的檢查。
-- `/request-review`：要求審查輪值（review rotation）指派審查者。
+- `/rerun-checks`：重新執行失敗或未完成的檢查。
+- `/request-review`：要求審查輪替輪替指派審查者。
 
-詳細資訊請參閱 [docs/maintainers/submission-gate.md](docs/maintainers/submission-gate.md)。
+詳情請參閱 [docs/maintainers/submission-gate.md](docs/maintainers/submission-gate.md)。
 
 ## 貢獻者表彰
 
-我們使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來表彰對此專案的**所有類型貢獻**。
+我們使用 [all-contributors](https://github.com/all-contributors/all-contributors) 來表彰對本專案的**所有類型貢獻**。
 
-要將自己加入，請在你的 GitHub 使用者名稱與適當的貢獻類型下，在相關的 issue 或 pull request 留言：
+若要新增您自己，請在相關 issue 或 pull request 上留言，附上您的 GitHub 使用者名稱與相應的貢獻類型：
 
 ```markdown
 @all-contributors add @username for contributionType1, contributionType2
 ```
 
-貢獻者清單會自動在每週日的 **UTC 上午 3:00** 更新。當下一次執行完成時，你的名字會出現在 [README Contributors](./README.md#contributors-) 章節。
+貢獻者名單會在每週日 **3:00 AM UTC** 自動更新。當下次執行完成時，您的名字將出現在 [README 貢獻者](./README.md#contributors-)區段中。
 
 ### 貢獻類型
 
-我們歡迎許多種類的貢獻，包括以下自訂類別：
+我們歡迎各種類型的貢獻，包含下列自訂類別：
 
-| 類別             | 描述                                                       | Emoji |
+| 類別             | 描述                                                       | 表情符號 |
 | ---------------- | ---------------------------------------------------------- | :---: |
-| **Instructions** | 引導 GitHub Copilot 行為的自訂 instruction 集             |  🧭   |
+| **Instructions** | 指引 GitHub Copilot 行為的自訂 instruction 集合             |  🧭   |
 | **Agents**       | 定義好的 GitHub Copilot 角色或個性                         |  🎭   |
-| **Skills**       | 針對 GitHub Copilot 的任務專精知識                         |  🧰   |
-| **Workflows**    | 用於 AI 驅動倉庫自動化的 Agentic Workflows                 |  ⚡   |
-| **Plugins**      | 可安裝的相關 prompts、agents 或 skills 套件                |  🎁   |
+| **Skills**       | GitHub Copilot 特定工作的專門知識                          |  🧰   |
+| **Workflows**    | 用於 AI 驅動儲存庫自動化的 Agentic 工作流程                |  ⚡   |
+| **Plugins**      | 相關提示詞、agents 或 skills 的可安裝套件                  |  🎁   |
 
-此外，[All Contributors](https://allcontributors.org/emoji-key/) 支援的所有標準貢獻類型也都會被認可。
+此外，亦支援 [All Contributors](https://allcontributors.org/emoji-key/) 所支援的所有標準貢獻類型。
 
-> 每一份貢獻都很重要。感謝你協助改進這份面向 GitHub Copilot 社群的資源。
+> 每一份貢獻都至關重要。感謝您協助為 GitHub Copilot 社群改善這項資源。
 
 ## 行為準則
 
-請注意，本專案依循 [貢獻者行為準則](CODE_OF_CONDUCT.md) 維護。參與本專案即表示你同意遵守其條款。
+請注意，本專案依循[貢獻者行為準則](CODE_OF_CONDUCT.md)進行維護。參與本專案即表示您同意遵守其條款。
 
 ## 授權條款
 
-對本倉庫進行貢獻，即表示你同意你的貢獻將以 MIT License 授權。
+透過對此儲存庫做出貢獻，您同意您的貢獻將依據 MIT 授權條款進行授權。

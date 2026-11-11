@@ -1,6 +1,6 @@
-# GitHub Copilot SDK Cookbook — Python
+# Microsoft Copilot SDK Cookbook — Python
 
-此資料夾收錄了使用 GitHub Copilot SDK 配合 Python 的簡短實用食譜。每份食譜都簡潔、可複製貼上，並指向更完整的範例與測試。
+此資料夾收錄使用 Python 搭配 Microsoft Copilot SDK 的簡短實用食譜。套件名稱與程式碼範例反映目前從 GitHub Copilot SDK 分階段轉換的情況。
 
 ## 食譜
 

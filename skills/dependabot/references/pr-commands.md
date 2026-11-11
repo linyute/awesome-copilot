@@ -84,7 +84,7 @@ gh pr merge <PR_NUMBER> --auto --squash
 ## 秘訣
 
 - **Rebase vs Recreate**：使用 `rebase` 可在保留您的審閱狀態下解決衝突。若 PR 偏離主線過多，請使用 `recreate` 重新開始。
-- **在額外提交上進行強制推送**：如果您已將提交推送到 Dependabot 分支，且希望 Dependabot 在其上進行 rebase，請在您的提交訊息中包含 `[dependabot skip]`。
+- **以強制推送覆蓋額外提交**：一旦您將提交推送到 Dependabot 的分支，Dependabot 就會停止 rebase。請在提交訊息中加入 `[dependabot skip]` 以解除此限制（除非 `rebase-strategy` 設為 `disabled`）；下一次 rebase 時，它會強制推送覆蓋該分支並捨棄您的提交。
 - **持久性忽略**：透過 PR 註解執行的忽略指令會集中儲存。為了團隊儲存庫的透明度，建議改在 `dependabot.yml` 中使用 `ignore` 設定。
 - **合併 Dependabot PR**：請使用 GitHub 原生的自動合併功能、CLI (`gh pr merge`) 或網頁介面。舊的 `@dependabot merge` 指令已於 2026 年 1 月棄用。
 - **關閉/重新開啟**：請使用 GitHub 網頁介面或 CLI。舊的 `@dependabot close` 和 `@dependabot reopen` 指令已於 2026 年 1 月棄用。

@@ -1,5 +1,8 @@
 # Ralph 迴圈：自主 AI 任務迴圈
 
+> **示範權限：** 這些範例僅在隔離且可信任的示範環境中使用 `PermissionHandler.APPROVE_ALL`。
+> 在使用不可信任的提示或工作區之前，請改用限制較嚴格的權限處理常式。
+
 建構自主編碼迴圈，其中 AI 代理會挑選任務、實作任務、根據反壓（測試、建構）進行驗證、提交並重複 —— 每次迭代都在新的上下文視窗中進行。
 
 > **可執行的範例：** [recipe/RalphLoop.java](recipe/RalphLoop.java)
@@ -42,11 +45,11 @@
 
 ```java
 ///usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
+//DEPS com.github:copilot-sdk-java:1.0.21
 
-import com.github.copilot.sdk.*;
-import com.github.copilot.sdk.events.*;
-import com.github.copilot.sdk.json.*;
+import com.github.copilot.*;
+import com.github.copilot.generated.*;
+import com.github.copilot.rpc.*;
 import java.nio.file.*;
 
 public class SimpleRalphLoop {
@@ -91,11 +94,11 @@ public class SimpleRalphLoop {
 
 ```java
 ///usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
+//DEPS com.github:copilot-sdk-java:1.0.21
 
-import com.github.copilot.sdk.*;
-import com.github.copilot.sdk.events.*;
-import com.github.copilot.sdk.json.*;
+import com.github.copilot.*;
+import com.github.copilot.generated.*;
+import com.github.copilot.rpc.*;
 import java.nio.file.*;
 import java.util.Arrays;
 
@@ -222,7 +225,7 @@ mvn compile
 7. **保持 `AGENTS.md` 簡短**：它在每次迭代都會載入 —— 僅包含操作資訊，不包含進度記錄
 8. **使用沙箱**：代理自主執行並具有完整的工具存取權限 —— 請將其隔離
 9. **設定 `workingDirectory`**：將工作階段固定在您的專案根目錄，以便工具操作能正確解析路徑
-10. **自動核准權限**：使用 `PermissionHandler.APPROVE_ALL` 允許工具呼叫而不中斷迴圈
+10. **限制工具權限**：`PermissionHandler.APPROVE_ALL` 僅限於隔離且可信任的示範環境。對於不可信任的提示或工作區，請使用限制較嚴格的處理常式；無人值守執行並非略過權限檢查的理由。
 
 ## 何時使用 Ralph 迴圈
 

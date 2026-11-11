@@ -1,9 +1,11 @@
---- 
+---
 description: '將 Spring Boot Cassandra 應用程式轉換為使用 Spring Data Cosmos 的 Azure Cosmos DB 的逐步指南'
 applyTo: '**/*.java,**/pom.xml,**/build.gradle,**/application*.properties,**/application*.yml,**/application*.conf'
 ---
 
 # 綜合指南：將 Spring Boot Cassandra 應用程式轉換為使用 Spring Data Cosmos (spring-data-cosmos) 的 Azure Cosmos DB
+
+> **重要提醒：** 僅在使用者明確要求遷移至 Azure Cosmos DB 時，才套用本指南。在專案中偵測到 Cassandra 並不代表可以進行遷移。其他情況請遵循 Spring Boot 指南。
 
 ## 適用性
 

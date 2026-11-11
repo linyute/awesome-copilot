@@ -1,15 +1,16 @@
-# 整合 — 各技術堆疊的模式 (Integrate)
+# 整合 — 依技術堆疊分類的模式
 
-> 線上時優先參考即時官方指南：
-> `npx -y modern-web-guidance@latest retrieve "webmcp,agentic-forms,agentic-javascript-tools"`。
-> 以下模式遵循 Google 的參考實作
-> (GoogleChromeLabs/webmcp-tools) 與 W3C CG 草案。
+> 閱讀 [Chrome
+指南](https://developer.chrome.com/docs/ai/webmcp)
+與 [CG
+草案](https://webmachinelearning.github.io/web-machine-learning-model-context-protocol/)
+取得原生 API 規格。
 
 ## 宣告式 — 標準 HTML 表單
 
-適用於純 HTML、SSG 發出、伺服器端呈現以及架構呈現的
-（非受控）表單 — 任何存在帶有具名控制項之真實 `<form>` 的地方。
-註釋現有表單；請勿重構其結構。
+適用於純 HTML、SSG
+發出、伺服器轉譯與框架轉譯（不受控）表單
+— 任何存在真實 `<form>` 的地方。
 
 ```html
 <form toolname="request_quote"
@@ -18,46 +19,50 @@
   <label for="email">Email</label>
   <input type="email" id="email" name="email" required
          toolparamdescription="Email address for the reply">
-  <!-- …現有欄位，每個欄位均帶有 label[for] + name + toolparamdescription… -->
+  <!-- …existing fields, each with label[for] + name + toolparamdescription… -->
   <button type="submit">Request quote</button>
 </form>
 ```
 
-規則：
-- 瀏覽器從控制項推導 JSON Schema — 每個控制項都需要
-  `name`、可解析的說明（`toolparamdescription` → `label[for]` 文字 →
-  `aria-description`）以及正確的 HTML 限制條件。選項按鈕群組：說明放置於
-  外層的 `<fieldset>` 上。
-- `toolautosubmit` **僅限** 用於純讀取表單（搜尋/篩選/可用性）。
-  絕不用於聯絡/結帳/設定/訊息表單。
-- 透過 Fetch 提交的表單 (`preventDefault()`) 必須將結果傳回給
-  代理程式 — 最常見的整合錯誤是被吞沒的提交：
+規則： -
+瀏覽器從控制項衍生出
+JSON Schema —
+每個控制項都需要
+`name`、可解析的說明與類型。
+- 異動型表單需要明確提交
+— 絕不要加入
+`toolautosubmit`。
+- 使用 `respondWith()` 傳回結構化結果給呼叫端代理人：
 
 ```js
 form.addEventListener('submit', (e) => {
   e.preventDefault();
   const result = doSubmit(new FormData(e.target))
     .then(() => 'Request received. Reply within one business day.');
-  if (e.agentInvoked) e.respondWith(result); // 傳遞 PROMISE，而非值
+  if (e.agentInvoked) e.respondWith(result); // pass the PROMISE, not a value
 });
 ```
 
-- 選擇性 UX（逐字引自 Chrome 文件）：使用
-  `form:tool-form-active` / `:tool-submit-active` CSS 虛擬類別設定代理程式活動樣式。
-- 導覽至感謝頁面的表單：`executeTool` 在導覽時傳回 `null`
-  （符合預期）。目標頁面上的 JSON-LD `{"@type":"Message","text":"…"}` 區塊
-  是盡力而為的點綴 — 該機制仍在規範討論中；
-  絕不要使行為依賴於它。
+- 選用
+UX（逐字引用自
+Chrome
+文件）：使用
+`form:tool-
+form-active`
+/
+`:tool-submit-active`
+CSS
+虛擬類別設定代理人活動的樣式。
 
-### 架構附註 — React
+### 框架注意事項 — React
 
-- 在環境型別旁提供 `templates/webmcp-jsx.d.ts`，以便嚴格的 TSX
-  接受 `toolname`/`tooldescription`/`toolparamdescription`（它擴充了
-  React 屬性介面；它是一個模組檔案 — 保持與
-  `webmcp.d.ts` 分離）。
-- 型別宣告為字串值（布林屬性樣式）：寫入
-  `toolautosubmit=""` — 且僅在純讀取表單上使用（基本規則 5）。
-- 在 `onSubmit` 中，WebMCP 欄位位於原生 (NATIVE) 事件上：
+- 將
+`templates/webmcp-jsx.d.ts`
+與環境類型一起供應商化，以便嚴格
+TSX 接受
+`toolname`/`tooldescription`/`toolparamdescription`。
+
+
 
   ```tsx
   const native = e.nativeEvent as SubmitEvent;
@@ -65,15 +70,15 @@ form.addEventListener('submit', (e) => {
     .then(() => 'Request received. Reply within one business day.'));
   ```
 
-  傳遞結果字串的 PROMISE，而非已解析的值。
+傳遞結果字串的 PROMISE，而非已經解析的值。
 
 ## 命令式 — SPA 與動態應用程式
 
-使用隨附的執行階段 (`runtime.md`)。每個應用程式的工具位於專用模組中
-（例如 `src/webmcp/tools.ts`），與元件分離：
+使用供應商化執行階段
+(`runtime.md`)。工具存在於每個應用程式的專用模組中（例如 `src/webmcp/tools.ts`），與元件解耦。
 
 ```ts
-import { createToolScope, dispatchAndWait } from './webmcpify';
+import { createToolScope, dispatchAndWait, singleFlight } from './webmcpify';
 
 export const searchTicketsTool = {
   name: 'search_tickets',
@@ -85,56 +90,114 @@ export const searchTicketsTool = {
     },
     required: ['query'],
   },
-  annotations: { readOnlyHint: true, untrustedContentHint: true },
-  async execute(input: Record<string, unknown>) {
+  annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
+  execute: singleFlight(async (input: Record<string, unknown>, options?: ToolExecuteCallbackOptions) => {
     const q = String(input.query ?? '').trim();
     if (!q) return 'ERROR: `query` must be a non-empty string.';
-    return dispatchAndWait('webmcp:search_tickets', { query: q });
-  },
+    return dispatchAndWait('webmcp:search_tickets', { query: q }, 10000, options?.signal);
+  }),
 };
 ```
 
-關鍵規則：
-- **`execute()` 包裝現有的 UI 程式碼路徑** — 發送相同的事件 / 呼叫
-  相同的儲存庫動作 / 存取與按鈕相同的 API。絕不使用平行實作。
-- **僅在介面狀態穩定後傳回**：元件接聽程式
-  等待實際工作完成，然後觸發帶有結果負載的完成事件
-  (`{ ok, message | error }`) — 完整協定與元件範例見
-  `runtime.md`。在工作完成前給出假成功是錯誤的通過狀態。
-- 傳回簡短字串；錯誤以 `"ERROR: <what and how to fix>"` 形式傳回，以便模型可以
-  自我修正。輸出長度限制在約 1.5k 字元。
-- 在程式碼中嚴格驗證，在結構描述中寬鬆驗證 — 並保持**與
-  表單原生 HTML 限制條件一致**：當工具包裝表單時，在獨立的複本上探測真實的
-  限制條件，而非重新實作它們 —
-  `const probe = emailInput.cloneNode() as HTMLInputElement; probe.value = value;`
-  然後在 `!probe.checkValidity()` 時拒絕。`execute()` 必須恰好拒絕
-  表單本身會拒絕的內容。
+執行選項必須透過包裝函
+式未經修改地抵達橋接器；
+對於省略第二個引數的舊版瀏覽器，
+請使用
+`options?.signal`。
+
+> **原生 I/O 相容性** — `getTools()` 在舊版 Chrome 上可能會將 `inputSchema` 作為字串傳回，而在目前的實作中則傳回物件。測試載具相容性輔助函式會自動處理此差異。
+
+重要規則：
+-
+**註解描述風險；
+它們不強制執行風險。
+
+
+
+
+
+
+
+
+
+**
+僅對具有不可逆、
+破壞性或財務
+影響的操作使用
+`conseque
+ntialHint:
+true`。
+-
+嚴格驗證輸入；
+在呼叫任何副作用之
+前回傳結構化錯誤：
+
+  ```ts
+  execute: async (input) => {
+    const route = validateProjectDraft(input); // throws/returns an error before acting
+    const result = { opened: true, surface: 'project-create', route, prefilled: false };
+    setTimeout(() => {
+      openProjectCreation(route); // the same path the visible UI uses
+      disposeRouteTools();
+    }, 0);
+    return result;
+  }
+  ```
+
+`null`
+仍是瀏覽器擁有的導覽*
+*宣告式表單**的結果；
+應用程式的
+`execute()`
+處理常式必須回傳
+JSON
+安全的結果。
 
 ### 註冊與生命週期
 
-- **靜態註冊是預設方式**：在啟動程序時一次性註冊全應用程式工具。
-- **僅針對**在其檢視之外沒有意義的工具進行個別檢視註冊 — 透過
-  檢視掛載/卸載中的 `createToolScope`（React `useEffect` 清理、Vue
-  `onUnmounted`、Angular `DestroyRef`）。過度限定範圍會使工具集閃爍，並在
-  方案規劃中途讓代理程式停滯。
-- 註冊失敗會復原該範圍並透過 `onError` 呈現 — 在整合期間檢查
-  主控台；無聲無息缺失的工具集通常意味著重複的
-  名稱或無效的結構描述導致批次被拒絕。
+-
+**靜態註冊為預設值**：在
+啟動時註冊全應用程式工具一次。
+-
+**僅針對檢視表特定工
+具使用個別檢視表註冊*
+*（例如僅存在於特定畫
+面上的篩選或檢查工具）。
+
+### 框架生命週期接受度
+
+僅在擁有的 UI
+掛載/融合後於瀏覽器中註冊；絕不在
+SSR
+期間執行瀏覽器全域物件。請在各框架中使用適當的生命週期掛勾：
+
+-
+React：在
+`useEffect`
+內部建立範圍並回傳其處置器。
+開發嚴格模式會
+重複設定/清理；
+處置器可防止重複註冊。
+
+這些是整合指南，
+而非經測試的框架版本認證。
+在資訊清單與
+驗證報告中記錄實際的框架/瀏覽器版本。
 
 ### 身分驗證 / 角色 (SaaS)
 
-切勿註冊目前工作階段無法透過 UI 使用的工具。在
-登入/登出/角色變更/租戶切換時：處置該範圍並重新註冊
-正確的集合 (`runtime.md` §Wiring)。伺服器仍會重新檢查所有內容（基本
-規則 3）— 角色範圍的註冊是 UX 衛生考量，而非安全性機制。
+絕不要註冊目前工作階段無法透過
+UI
+使用的工具。
+在登入/登出/角色變更/租戶切換時：處置現有工具範圍並根據新的使用者權限重新建立。
 
-## 源試用 / 旗標說明
+## 來源試用 / 旗標備註
 
-WebMCP 是 Chrome 源試用（149→，穩定里程碑仍為估計值）。對於
-生產環境公開，來源需要一個權杖：
-`<meta http-equiv="origin-trial" content="TOKEN">` 或 `Origin-Trial` 回應
-標頭 — 在 Chrome Origin Trials 主控台註冊。對於本地工作，
-`chrome://flags/#enable-webmcp-testing`。Chrome **會靜默忽略** 過期的
-權杖，因此不能依賴 WebMCP 必須存在（基本規則 4）。在設定時向目標存放庫的
-README 新增簡短說明，並在 `pipeline.setup.originTrialNoted` 中記錄修改的
-檔案路徑（例如 `["README.md"]`）。
+WebMCP 是一項
+Chrome
+來源試用（149→，穩定里程碑仍在估計中）。
+對於生產環境暴露，來源需要試用權杖；本機開發使用
+`--enable-blink-features=WebMCPTesting`。
+
+
+

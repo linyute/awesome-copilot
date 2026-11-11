@@ -1,41 +1,41 @@
 # @WebMvcTest
 
-透過聚焦的切片測試 (slice test) 來測試 Spring MVC 控制器。
+使用具針對性的切片測試來測試 Spring MVC 控制器。
 
-## 基本結構 (Basic Structure)
+## 基本結構
 
 ```java
 @WebMvcTest(OrderController.class)
 class OrderControllerTest {
-  
+
   @Autowired
   private MockMvcTester mvc;
-  
+
   @MockitoBean
   private OrderService orderService;
-  
+
   @MockitoBean
   private UserService userService;
 }
 ```
 
-## 載入的內容 (What Gets Loaded)
+## 載入的項目
 
-- 指定的控制器
-- Spring MVC 基礎架構 (HandlerMapping, HandlerAdapter)
-- Jackson ObjectMapper (用於 JSON)
-- 例外處理常式 (@ControllerAdvice)
-- Spring Security 篩選器 (若存在於類別路徑中)
-- 驗證 (若存在於類別路徑中)
+- 指定的控制器 -
+`@ControllerAdvice` 和
+`@JsonComponent` -
+`Filter` 和
+`WebMvcConfigurer` Bean -
+訊息轉換器（Jackson、Gson 等） - 不載入：`@Service`、`@Repository`、`@Component`（必須進行模擬）
 
-## 測試 GET 端點 (Testing GET Endpoints)
+## 測試 GET 端點
 
 ```java
 @Test
 void shouldReturnOrder() {
   var order = new Order(1L, "PENDING", BigDecimal.valueOf(99.99));
   given(orderService.findById(1L)).willReturn(order);
-  
+
   assertThat(mvc.get().uri("/orders/1"))
     .hasStatusOk()
     .hasContentType(MediaType.APPLICATION_JSON)
@@ -45,22 +45,22 @@ void shouldReturnOrder() {
 }
 ```
 
-## 測試含有請求本文的 POST (Testing POST with Request Body)
+## 測試帶有請求主體的 POST
 
-### 使用文字區塊 (Text Blocks) (Java 25)
+### 使用文字區塊 (Java 25)
 
 ```java
 @Test
 void shouldCreateOrder() {
   given(orderService.create(any(OrderRequest.class))).willReturn(1L);
-  
+
   var json = """
     {
       "product": "Product A",
       "quantity": 2
     }
     """;
-  
+
   assertThat(mvc.post().uri("/orders")
     .contentType(MediaType.APPLICATION_JSON)
     .content(json))
@@ -78,7 +78,7 @@ record OrderRequest(String product, int quantity) {}
 void shouldCreateOrderWithRecord() {
   var request = new OrderRequest("Product A", 2);
   given(orderService.create(any())).willReturn(1L);
-  
+
   assertThat(mvc.post().uri("/orders")
     .contentType(MediaType.APPLICATION_JSON)
     .content(json.write(request).getJson()))
@@ -86,7 +86,7 @@ void shouldCreateOrderWithRecord() {
 }
 ```
 
-## 測試驗證錯誤 (Testing Validation Errors)
+## 測試驗證錯誤
 
 ```java
 @Test
@@ -97,7 +97,7 @@ void shouldRejectInvalidOrder() {
       "quantity": -1
     }
     """;
-  
+
   assertThat(mvc.post().uri("/orders")
     .contentType(MediaType.APPLICATION_JSON)
     .content(invalidJson))
@@ -107,31 +107,31 @@ void shouldRejectInvalidOrder() {
 }
 ```
 
-## 測試查詢參數 (Testing Query Parameters)
+## 測試查詢參數
 
 ```java
 @Test
 void shouldFilterOrdersByStatus() {
   assertThat(mvc.get().uri("/orders?status=PENDING"))
     .hasStatusOk();
-  
+
   verify(orderService).findByStatus(OrderStatus.PENDING);
 }
 ```
 
-## 測試路徑變數 (Testing Path Variables)
+## 測試路徑變數
 
 ```java
 @Test
 void shouldCancelOrder() {
   assertThat(mvc.put().uri("/orders/123/cancel"))
     .hasStatusOk();
-  
+
   verify(orderService).cancel(123L);
 }
 ```
 
-## 配合安全性進行測試 (Testing with Security)
+## 搭配安全性測試
 
 ```java
 @Test
@@ -148,30 +148,30 @@ void anonymousUserShouldBeForbidden() {
 }
 ```
 
-## 多個控制器 (Multiple Controllers)
+## 多個控制器
 
 ```java
 @WebMvcTest({OrderController.class, ProductController.class})
 class WebLayerTest {
-  // 在一個切片中測試多個控制器
+  // Tests multiple controllers in one slice
 }
 ```
 
-## 排除自動組態 (Excluding Auto-Configuration)
+## 排除自動設定
 
 ```java
 @WebMvcTest(OrderController.class)
-@AutoConfigureMockMvc(addFilters = false) // 跳過安全性篩選器
+@AutoConfigureMockMvc(addFilters = false) // Skip security filters
 class OrderControllerWithoutSecurityTest {
-  // 不含安全性篩選器的測試
+  // Tests without security filters
 }
 ```
 
-## 重點 (Key Points)
+## 重點摘要
 
-1. 務必使用 @MockitoBean 模擬服務
-2. 使用 MockMvcTester 進行 AssertJ 風格的判斷
-3. 測試 HTTP 語義 (狀態、標頭、內容類型)
-4. 當副作用很重要時，驗證服務函式的呼叫
-5. 不要在此處測試商業邏輯 — 那是單元測試的工作
-6. 利用 Java 25 文字區塊處理 JSON 酬載 (payload)
+1. 永遠使用 @MockitoBean 模擬服務
+2. 使用 MockMvcTester 以取得型別安全的 AssertJ 斷言
+3. @WebMvcTest 預設包含 Spring Security
+4. 測試端點對端點的驗證與錯誤處理
+5. 保持測試切片專注於 Web 層 concerns
+6. 若需完整上下文驗證請改用 @SpringBootTest

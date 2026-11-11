@@ -1,14 +1,14 @@
 # RestTestClient
 
-使用 Spring Boot 4+ 的現代化 REST 用戶端測試（取代 TestRestTemplate）。
+Spring Boot 4+ 的新一代 REST 用戶端測試（取代 TestRestTemplate）。
 
-## 總覽
+## 概觀
 
-RestTestClient 是 Spring Boot 4.0+ 中 TestRestTemplate 的現代化替代方案。它為測試 REST 端點提供了流暢、反應式的 API。
+RestTestClient 是 TestRestTemplate 的新一代替代方案，提供基於 RestClient 架構的流暢 API。
 
 ## 設定
 
-### 依賴項目 (Spring Boot 4+)
+### 相依性 (Spring Boot 4+)
 
 ```xml
 <dependency>
@@ -18,13 +18,13 @@ RestTestClient 是 Spring Boot 4.0+ 中 TestRestTemplate 的現代化替代方�
 </dependency>
 ```
 
-### 基本組態
+### 基本設定
 
 ```java
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
 class OrderIntegrationTest {
-  
+
   @Autowired
   private RestTestClient restClient;
 }
@@ -57,7 +57,7 @@ void shouldGetOrder() {
 @Test
 void shouldCreateOrder() {
   OrderRequest request = new OrderRequest("Laptop", 2);
-  
+
   restClient
     .post()
     .uri("/orders")
@@ -118,7 +118,7 @@ restClient
   .isBadRequest()   // 400
   .isNotFound()     // 404
   .is5xxServerError() // 5xx
-  .isEqualTo(200);  // 特定代碼
+  .isEqualTo(200);  // Specific code
 ```
 
 ### 標頭
@@ -160,7 +160,7 @@ restClient
   .jsonPath("$.totalElements").isNumber();
 ```
 
-## 請求組態
+## 請求設定
 
 ### 標頭
 
@@ -198,20 +198,20 @@ restClient
 
 ## 搭配 MockMvc
 
-RestTestClient 也可以搭配 MockMvc 運作（無需啟動伺服器）：
+RestTestClient 亦可與 MockMvc 協同運作（無需啟動伺服器）：
 
 ```java
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestTestClient
 class OrderMockMvcTest {
-  
+
   @Autowired
   private RestTestClient restClient;
-  
+
   @Test
   void shouldWorkWithMockMvc() {
-    // 底層使用 MockMvc - 無需啟動伺服器
+    // Uses MockMvc under the hood - no server startup
     restClient
       .get()
       .uri("/orders/1")
@@ -222,19 +222,19 @@ class OrderMockMvcTest {
 }
 ```
 
-## 比較：RestTestClient vs TestRestTemplate
+## 比較：RestTestClient 與 TestRestTemplate
 
 | 功能 | RestTestClient | TestRestTemplate |
-| ------- | -------------- | ---------------- |
-| 風格 | 流暢/反應式 | 命令式 |
-| Spring Boot | 4.0+ | 所有版本 (在 4 中已棄用) |
-| 斷言 | 內建 | 手動 |
+| --- | --- | --- |
+| API 風格 | 流暢斷言 API | 基於 RestTemplate |
+| Spring Boot 版本 | 4.0+（偏好） | 3.x（已棄用） |
 | MockMvc 支援 | 是 | 否 |
-| 非同步 | 原生 | 需要額外處理 |
+| 斷言類型 | 內建斷言庫 | 外部（AssertJ） |
+| 響應式支援 | 否（請使用 WebTestClient） | 否 |
 
 ## 從 TestRestTemplate 遷移
 
-### 之前 (已棄用)
+### 之前（已棄用）
 
 ```java
 @Autowired
@@ -244,7 +244,7 @@ private TestRestTemplate restTemplate;
 void shouldGetOrder() {
   ResponseEntity<Order> response = restTemplate
     .getForEntity("/orders/1", Order.class);
-  
+
   assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   assertThat(response.getBody().getId()).isEqualTo(1L);
 }
@@ -269,10 +269,10 @@ void shouldGetOrder() {
 }
 ```
 
-## 最佳實務
+## 最佳實踐
 
-1. 搭配 @SpringBootTest(WebEnvironment.RANDOM_PORT) 使用以進行真實的 HTTP 測試
-2. 搭配 @AutoConfigureMockMvc 使用以在不啟動伺服器的情況下進行更快速的測試
-3. 利用流暢斷言來提高可讀性
-4. 測試成功與錯誤的情境
-5. 驗證安全性/API 版本控制的標頭
+1. 將 `@SpringBootTest(WebEnvironment.RANDOM_PORT)` 用於完整的端對端測試
+2. 針對 Web 層測試偏好 `bindTo(mockMvc)` 以節省伺服器啟動開銷
+3. 優先使用具型別的物件轉換，而非脆弱的 JSON 路徑斷言
+4. 針對已知的成功狀態碼使用內建的 `isOk()`、`isCreated()` 等便捷方法
+5. 針對非同步或反應式端點測試，請改用 `WebTestClient`

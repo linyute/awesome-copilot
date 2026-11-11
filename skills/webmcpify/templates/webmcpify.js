@@ -1,5 +1,5 @@
 /**
- * webmcpify 執行階段（JavaScript 變體）— 擷取自 https://github.com/TueJon/webmcpify
+ * webmcpify runtime (JavaScript variant) — vendored from https://github.com/TueJon/webmcpify
  *
  * MIT License
  * Copyright (c) 2026 Jonas Tüchler
@@ -25,25 +25,25 @@
  *
  * Full text: https://github.com/TueJon/webmcpify/blob/main/LICENSE
  *
- * 圍繞 WebMCP API (document.modelContext) 符合規格的輔助程式。請直接納入此檔案；
- * 不要將其新增為相依套件。所有內容皆透過功能偵測：在沒有 WebMCP 的瀏覽器中，
- * 每個函式都是安全的不執行作業 (no-op)。此檔案是一個 ES 模組
- * (`export`) — 請透過打包工具或 `<script type="module">` 載入；對於
- * CommonJS/傳統指令碼專案，請改為轉譯或納入 TS 變體。
+ * 遵循規格定義的 WebMCP API (document.modelContext) 包裝協助程式。請以 vendored 方式引入
+ * 此檔案；切勿將其作為相依套件新增。所有功能皆採特性偵測：在沒有
+ * WebMCP 的瀏覽器中，每個函式都是安全的無操作 (no-op)。此檔案為 ES 模組
+ * (`export`) — 請透過打包工具或 `<script type="module">` 載入；針對
+ * CommonJS/傳統指令碼專案，請改為轉譯或 vendor 其 TS 版本。
  */
 
 /**
  * @typedef {(() => void) & { ready: Promise<boolean> }} ToolScopeHandle
- * 可呼叫處置控制代碼：呼叫以進行處置（中止註冊訊號，
- * 釋放索引鍵）。當所有註冊皆已確認且範疇仍處於作用狀態時，`ready` 解析為 true；
- * 在無 WebMCP / 索引鍵已在使用 / 註冊失敗（已復原）/ 先被處置時為 false。
- * 絕不會拒絕 — 失敗會傳遞至 onError。
+ * 可呼叫的釋放控制代碼: 呼叫它即可釋放 (中止註冊信號，
+ * 釋放鍵)。當所有註冊完成且範圍仍處於使用中狀態時，`ready` 會解析為 true；
+ * 若無 WebMCP / 鍵已處於使用中 / 註冊失敗 (已復原) /
+ * 優先被釋放，則解析為 false。絕不拒絕 (reject) — 失敗會傳至 onError。
  */
 
-/** 唯一引用原始 API 的地方 — 規格變更只需修改此單一檔案。 */
+/** 唯一參照原始 API 的地方 — 規格變更只需修改此單一檔案。 */
 export function getModelContext() {
   if (typeof document !== 'undefined' && document.modelContext) return document.modelContext;
-  // Chrome 149 原生試用所使用的已棄用層面；過時後將移除。
+  // Chrome 149 origin trial 使用的已淘汰介面；廢棄後即可移除。
   if (typeof navigator !== 'undefined' && navigator.modelContext) return navigator.modelContext;
   return undefined;
 }
@@ -53,6 +53,7 @@ export function isWebMCPAvailable() {
 }
 
 const scopes = new Map();
+let warnedMissingModelContext = false;
 
 /**
  * @param {() => void} dispose
@@ -64,19 +65,21 @@ function makeHandle(dispose, ready) {
 }
 
 /**
- * 在單一範疇索引鍵下註冊一組工具。回傳帶有 `ready: Promise<boolean>`
- * 的可呼叫處置控制代碼（參見 ToolScopeHandle）。
+ * 在一個範圍鍵下註冊一組工具。傳回帶有 `ready: Promise<boolean>` 的可呼叫釋放控制代碼
+ * (參見 ToolScopeHandle)。
  *
- * - AbortSignal 是規格中唯一的取消註冊機制 — 處置會中止該訊號。
- * - 驗證在任何註冊之前執行，因此不良協定永遠不會留下半註冊的範疇。
- * - 註冊失敗 — 包含拒絕以及同步拋出例外的 registerTool 實作
- *   （2026-07 之前的 Chromium）— 都會復原整個範疇，將 `ready` 解析為
- *   false，並透過 `onError` 回報（預設：console.error）；
- *   索引鍵絕不會滯留。若在註冊完成前已處置範疇，則不會呼叫 `onError`。
- * - 在註冊完成前進行處置（例如 React StrictMode 卸載）會以無提示方式
+ * - AbortSignal 是規格中唯一的取消註冊機制 — dispose 會將其中止。
+ * - 驗證在任何註冊之前執行，因此不良合約絕不會留下
+ *   半註冊的範圍。
+ * - 註冊失敗 — 包括 rejection 以及同步拋出例外的 registerTool
+ *   實作 (2026-07 之前的 Chromium) — 會復原整個範圍，將
+ *   `ready` 解析為 false，並透過 `onError` 回報 (預設: console.error)；
+ *   鍵絕不會被遺棄。當範圍在註冊完成前被釋放時，
+ *   不會呼叫 `onError`。
+ * - 在註冊完成前釋放 (例如 React StrictMode 取消掛載) 會以無訊息方式
  *   復原：`ready` 解析為 false 且不會呼叫 `onError`。
- * - 使用已處於作用狀態的索引鍵呼叫時，會回傳一個不執行作業的控制代碼
- *   (`ready` → false) 且保留現有範疇不變。
+ * - 使用已處於使用中狀態的鍵進行呼叫會傳回無操作控制代碼
+ *   (`ready` → false) 且現有的範圍維持不變。
  *
  * @param {string} key
  * @param {Array<object>} tools
@@ -85,10 +88,20 @@ function makeHandle(dispose, ready) {
  */
 export function createToolScope(key, tools, options) {
   const mc = getModelContext();
-  if (!mc) return makeHandle(() => {}, Promise.resolve(false));
+  const validate = shouldValidate(options);
+  if (!mc) {
+    if (validate && !warnedMissingModelContext) {
+      warnedMissingModelContext = true;
+      console.warn(
+        `webmcpify: WebMCP is unavailable for scope "${key}". Check window.isSecureContext, the verification origin, current Chrome, and the WebMCP feature flag. Registration remains a safe no-op.`,
+      );
+    }
+    return makeHandle(() => {}, Promise.resolve(false));
+  }
   if (scopes.has(key)) return makeHandle(() => {}, Promise.resolve(false));
 
-  if (shouldValidate(options)) for (const tool of tools) validateTool(tool);
+  if (validate) for (const tool of tools) validateTool(tool);
+  const guardedTools = tools.map((tool) => guardToolResult(tool, validate));
 
   const controller = new AbortController();
   scopes.set(key, controller);
@@ -106,15 +119,17 @@ export function createToolScope(key, tools, options) {
 
   let registrations;
   try {
-    // 舊版 registerTool 實作會同步拋出例外而非拒絕 — 進行正規化
-    // 使下方的復原路徑能涵蓋兩者。
-    registrations = Promise.all(tools.map((tool) => mc.registerTool(tool, registerOptions)));
+    // 舊版 registerTool 實作會同步拋出例外而非
+    // reject — 在此進行標準化以便下方的復原路徑可同時涵蓋兩者。
+    registrations = Promise.all(
+      guardedTools.map((tool) => mc.registerTool(tool, registerOptions)),
+    );
   } catch (error) {
     registrations = Promise.reject(error);
   }
 
   const ready = registrations.then(
-    () => scopes.get(key) === controller, // 若在敲定前已處置則為 false
+    () => scopes.get(key) === controller, // 在完成前釋放時為 false
     (error) => {
       rollback();
       if (!disposed) {
@@ -134,40 +149,77 @@ export function createToolScope(key, tools, options) {
 }
 
 /**
- * 將 execute() 橋接至應用程式本身的事件/狀態流程。派送的 detail
- * 攜帶 `{ ...detail, requestId, signal }` — `signal` 是一個在逾時時會中止的 AbortSignal；
- * 處理常式應將其傳遞給 fetch()，並在中止後跳過狀態確認和完成派送。
- * 僅在元件透過派送帶有 `detail: { ok: boolean, message?: string, error?: string }`
- * 的 `tool-completion-<requestId>` 確認結果後才進行解析 — 且必須在非同步作業真正完成
- * （等待 fetch/狀態確認/轉譯）之後執行，因為 Agent 會根據畫面上的內容進行規劃。
+ * 命令式工具絕不能向 Chrome 傳回模糊的缺失結果。
+ * @param {object & { name: string, execute: (input: Record<string, unknown>, options?: { signal: AbortSignal }) => unknown }} tool
+ * @param {boolean} reportInDevelopment
+ * @returns {object}
+ */
+function guardToolResult(tool, reportInDevelopment) {
+  return {
+    ...tool,
+    async execute(input, options) {
+      const result = await tool.execute(input, options);
+      if (result !== null && result !== undefined) return result;
+      const error =
+        `Tool "${tool.name}" returned ${result === null ? 'null' : 'undefined'}. ` +
+        'Return a JSON-safe structured result before any route-changing UI action.';
+      if (reportInDevelopment) console.error(`webmcpify: ${error}`);
+      return { ok: false, error };
+    },
+  };
+}
+
+/**
+ * 將 execute() 銜接至應用程式本身的事件/狀態流程。派送的 detail
+ * 帶有 `{ ...detail, requestId, signal }` — `signal` 是一個在逾時或呼叫端取消時會中止的 AbortSignal；
+ * 處理常式應將其傳遞給 fetch() 並在中止後略過狀態認可及完成派送。
+ * 只有在元件透過派送帶有
+ * `detail: { ok: boolean, message?: string, error?: string }` 的 `tool-completion-<requestId>`
+ * 確認結果後才會解析 — 且必須在非同步工作真正完成後
+ * (已 await fetch/狀態認可/轉譯)，
+ * 因為代理人是依據螢幕上的內容進行規劃。
  *
- * 完成協定採用失敗閉合 (fails closed)：`ok === true` 解析訊息，
- * `ok === false` 解析為 `"ERROR: <error>"`，其他任何情況（缺少或非布林值的 `ok`、
- * 無 detail）皆解析為回報未知結果的 ERROR 字串。逾時亦解析為 ERROR 字串。
- * 絕不拒絕 — 模型可以在 execute() 內無未處理拒絕的情況下進行自我修正。
+ * 完成合約採預設失敗原則: `ok === true` 會解析為訊息，
+ * `ok === false` 會解析為 `"ERROR: <error>"`，其他任何狀況 (缺少或
+ * 非布林值的 `ok`、沒有 detail) 都會解析為回報未知結果的 ERROR
+ * 字串。逾時也會解析為 ERROR 字串。絕不 reject — 模型可在
+ * execute() 內部自我修正而不會產生未處理的 rejection。
  *
  * @param {string} eventName
  * @param {Record<string, unknown>} [detail]
  * @param {number} [timeoutMs]
+ * @param {AbortSignal} [callerSignal]
  * @returns {Promise<string>}
  */
-export function dispatchAndWait(eventName, detail = {}, timeoutMs = 10000) {
+export function dispatchAndWait(eventName, detail = {}, timeoutMs = 10000, callerSignal) {
   return new Promise((resolve) => {
     const requestId = Math.random().toString(36).slice(2, 12);
     const completionEvent = `tool-completion-${requestId}`;
     const abort = new AbortController();
+    let settled = false;
     const cleanup = () => {
       clearTimeout(timer);
       window.removeEventListener(completionEvent, onDone);
+      callerSignal?.removeEventListener('abort', onCancel);
     };
-    const timer = setTimeout(() => {
+    const cancel = (message, reason) => {
+      if (settled) return;
+      settled = true;
       cleanup();
-      abort.abort();
-      resolve(
-        'ERROR: The interface did not confirm this action in time. The request was signalled to cancel but may still be processing — check the current page state before retrying.',
-      );
-    }, timeoutMs);
+      // 在中止前先移除完成接聽程式：處理常式可能會同步回應。
+      abort.abort(reason);
+      resolve(message);
+    };
+    const onCancel = () => cancel(
+      'ERROR: This action was cancelled. The outcome is unknown and may still be processing — check the current page state before retrying.',
+      callerSignal?.reason,
+    );
+    const timer = setTimeout(() => cancel(
+      'ERROR: The interface did not confirm this action in time. The request was signalled to cancel but may still be processing — check the current page state before retrying.',
+    ), timeoutMs);
     const onDone = (event) => {
+      if (settled) return;
+      settled = true;
       cleanup();
       const result = event.detail ?? {};
       if (result.ok === true) {
@@ -180,19 +232,29 @@ export function dispatchAndWait(eventName, detail = {}, timeoutMs = 10000) {
         );
       }
     };
+    if (callerSignal?.aborted) {
+      onCancel();
+      return;
+    }
+    callerSignal?.addEventListener('abort', onCancel, { once: true });
     window.addEventListener(completionEvent, onDone);
-    window.dispatchEvent(
-      new CustomEvent(eventName, { detail: { ...detail, requestId, signal: abort.signal } }),
-    );
+    try {
+      window.dispatchEvent(
+        new CustomEvent(eventName, { detail: { ...detail, requestId, signal: abort.signal } }),
+      );
+    } catch {
+      cancel('ERROR: The interface could not dispatch this action. The outcome is unknown — check the current page state before retrying.');
+    }
   });
 }
 
 /**
- * 序列化工具的 execute()：當一次呼叫正在處理中時，後續的呼叫會立即解析為
- * 忙碌 ERROR 字串，而非競爭共享的使用者介面狀態。
+ * 序列化工具的 execute()：當一次呼叫正在執行時，後續的呼叫
+ * 會立即解析為忙碌的 ERROR 字串，而不是與共享的 UI 狀態競爭。
  *
  * ```js
- * execute: singleFlight(async (input) => dispatchAndWait('webmcp:save', input)),
+ * execute: singleFlight(async (input, options) =>
+ *   dispatchAndWait('webmcp:save', input, 10000, options?.signal)),
  * ```
  *
  * @template {unknown[]} A
@@ -218,13 +280,13 @@ export function singleFlight(
 
 /**
  * @param {{ validate?: boolean }} [options]
- * 預設值：當打包工具替換 `process.env.NODE_ENV`
- * （Vite/webpack 自動；esbuild 透過 `--define`）且其值不為 `'production'` 時啟用；
- * 未打包的專案預設為 false — 開發期間請傳遞 `validate: true`。
+ * 預設值: 當打包工具替換 `process.env.NODE_ENV`
+ * (Vite/webpack 自動；esbuild 透過 `--define`) 且不為 `'production'` 時啟用；
+ * 未打包專案預設為 false — 在開發期間請傳遞 `validate: true`。
  */
 function shouldValidate(options) {
   if (options?.validate !== undefined) return options.validate;
-  // 打包工具會替換常值；未打包時，直接引用會拋出例外 → false。
+  // 打包工具會替換字面常數；未打包時，直接參照會拋出例外 → false。
   try {
     return process.env.NODE_ENV !== 'production';
   } catch {
@@ -232,7 +294,7 @@ function shouldValidate(options) {
   }
 }
 
-/** 協定品質檢查（Google 建議的長度上限）。 */
+/** 合約品質檢查 (Google 建議的預算限制)。 */
 function validateTool(tool) {
   const problems = [];
   if (!/^[a-zA-Z0-9_.-]{1,30}$/.test(tool.name)) {

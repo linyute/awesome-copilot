@@ -1,6 +1,6 @@
 {
   "name": "pr-artifact-explorer",
-  "description": "瀏覽提取要求並安全地探索 GitHub Actions 成品，包含測試結果、靜態網站、終端機錄製和原始程式碼檔案。",
+  "description": "瀏覽拉取請求與工作流程執行（包括沒有 PR 的排程及手動執行），並安全地探索 GitHub Actions 成品，包括測試結果、靜態網站、終端機錄影及原始碼檔案。",
   "version": "1.0.0",
   "author": {
     "name": "David Pine",
@@ -20,6 +20,9 @@
       "logo": "assets/preview.png"
     },
     "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/pr-artifact-explorer/"
+      ],
       "extensions": [
         "./extensions/pr-artifact-explorer"
       ]

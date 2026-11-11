@@ -1,32 +1,32 @@
 # Python MCP 伺服器開發外掛程式
 
-使用官方 SDK 搭配 FastMCP 在 Python 中建構 Model Context Protocol (MCP) 伺服器的完整工具包。包含最佳做法指示、產生伺服器的提示，以及提供指引的專家聊天模式。
+使用官方 MCP Python SDK v2（MCPServer）以 Python 建置 Model Context Protocol (MCP) 伺服器。包含可產生伺服器專案的技能，以及提供指引的專家代理程式。
 
 ## 安裝
 
 ```bash
-# Using Copilot CLI
+# 使用 Copilot CLI
 copilot plugin install python-mcp-development@awesome-copilot
 ```
 
-## 包含內容
+## 內容
 
-### 命令 (斜線命令)
+### 命令（斜線命令）
 
-| 命令 | 描述 |
+| Command | Description |
 |---------|-------------|
-| `/python-mcp-development:python-mcp-server-generator` | 在 Python 中產生具備工具、資源與適當設定的完整 MCP 伺服器專案 |
+| `/python-mcp-development:python-mcp-server-generator` | 使用 MCP Python SDK v2（MCPServer）產生 Python MCP 伺服器專案，包含具型別的工具、記憶體內測試及用戶端設定 |
 
-### Agents
+### 代理程式
 
-| Agent | 描述 |
+| Agent | Description |
 |-------|-------------|
-| `python-mcp-expert` | 在 Python 中開發 Model Context Protocol (MCP) 伺服器的專家助理 |
+| `python-mcp-expert` | 協助以 Python 開發 Model Context Protocol (MCP) 伺服器的專家助手 |
 
-## 來源
+## 原始碼
 
-此外掛程式為 [Awesome Copilot](https://github.com/github/awesome-copilot) 的一部分，這是一個社群驅動的 GitHub Copilot 擴充功能集合。
+此外掛程式屬於 [Awesome Copilot](https://github.com/github/awesome-copilot)，這是由社群共同維護的 GitHub Copilot 擴充功能集合。
 
-## 授權
+## 授權條款
 
 MIT

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "chronicle-stats",
+  "description": "依日期、模型與工作階段檢視您本機的 Copilot Token 使用量，並取得更具效率的使用提示。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Julia Muiruri",
+    "url": "https://github.com/juliamuiruri4"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "ai-usage",
+    "canvas",
+    "chronicle",
+    "copilot-extension",
+    "cost-awareness",
+    "insights",
+    "productivity",
+    "token-usage"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/chronicle-stats"
+      ]
+    }
+  }
+}

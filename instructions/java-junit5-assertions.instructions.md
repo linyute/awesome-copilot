@@ -5,7 +5,9 @@ applyTo: "**/*Test.java, **/*IT.java, **/*Steps.java, **/*StepDefs.java"
 
 # JUnit 5 斷言最佳實踐
 
-在編寫、審查或重構使用 JUnit Jupiter (JUnit 5) 的 Java 測試程式碼時，請遵循以下最佳實踐。這些規則專注於測試準確性、效能（延遲求值）以及利用現代 Jupiter 功能。
+撰寫、審查或重構使用 JUnit Jupiter（JUnit 5 和 JUnit 6；兩者使用相同的 `org.junit.jupiter.api.Assertions` API）的 Java 測試程式碼時，請遵循這些最佳實踐。這些規則著重於測試準確性、效能（延遲求值），以及善用 Jupiter 的現代功能。
+
+如果專案已採用 AssertJ 作為標準，新增斷言時請遵循該標準，並將這些規則保留給使用 Jupiter 風格的測試。絕不要只為了符合本文件而改寫專案現有的斷言風格。更完整的測試指引請參閱 `java-junit` skill。
 
 ## 1. 匯入 (Imports)
 

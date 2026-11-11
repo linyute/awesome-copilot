@@ -1,68 +1,71 @@
 ---
-description: '建立 Spring Boot 基礎應用程式的指南'
-applyTo: '**/*.java, **/*.kt'
+description: '建構 Spring Boot 基礎應用程式的指引'
+applyTo: '**/*.java'
 ---
 
 # Spring Boot 開發
 
-## 一般說明
+僅在專案使用 Spring Boot 時套用這些指示。若為 Kotlin 專案，請參閱 `kotlin-springboot`。
 
-- 在審查程式碼更改時，只提出高度自信的建議。
-- 編寫具有良好可維護性實踐的程式碼，包括對某些設計決策原因的註釋。
-- 處理邊緣情況並編寫清晰的異常處理。
-- 對於函式庫或外部依賴項，在註釋中提及它們的用法和目的。
+## 一般指示
 
-## Spring Boot 說明
+- 審查程式碼變更時，僅提出具高信賴度的建議。
+- 編寫具備良好可維護性實踐的程式碼，包括說明為何做出特定設計決策的註解。
+- 處理邊界案例並編寫清楚的例外狀況處理。
+- 對於函式庫或外部相依性，請在註解中提及它們的用法與目的。
 
-### 依賴注入
+## Spring Boot 指示
 
-- 對於所有必需的依賴項，使用建構函式注入。
-- 將依賴項欄位宣告為 `private final`。
+### 相依性插入
 
-### 配置
+- 對所有必要相依性使用建構函式插入。
+- 將相依性欄位宣告為 `private final`。
 
-- 使用 YAML 檔案 (`application.yml`) 進行外部化配置。
-- 環境設定檔：為不同的環境 (開發、測試、生產) 使用 Spring 設定檔。
-- 配置屬性：使用 @ConfigurationProperties 進行類型安全的配置綁定。
-- 密鑰管理：使用環境變數或密鑰管理系統外部化密鑰。
+### 組態
+
+- 使用 `application.properties` 或 `application.yml` 進行外部化組態，與專案已使用的格式保持一致。
+- 環境設定檔（Profiles）：針對不同環境（dev、test、prod）使用 Spring profiles
+- 組態屬性：使用 @ConfigurationProperties 進行型別安全的組態繫結
+- 機密管理：使用環境變數或機密管理系統外部化機密資訊
 
 ### 程式碼組織
 
-- 套件結構：按功能/領域組織，而不是按層次組織。
-- 關注點分離：保持控制器精簡，服務專注，儲存庫簡單。
-- 公用程式類別：使公用程式類別為 final 並帶有私有建構函式。
+- 套件結構：依功能/領域組織，而非依架構分層
+- 關注點分離：保持 controller 精簡、service 專注、repository 簡潔
+- 工具類別：將工具類別設為 final 並使用 private 建構函式
 
 ### 服務層
 
-- 將業務邏輯放在 `@Service` 註解的類別中。
-- 服務應該是無狀態且可測試的。
-- 透過建構函式注入儲存庫。
-- 服務方法簽名應使用領域 ID 或 DTO，除非必要，否則不要直接公開儲存庫實體。
+- 將商務邏輯置於帶有 `@Service` 註釋的類別中。
+- 服務應為無狀態且可測試。
+- 透過建構函式插入 repository。
+- 服務方法簽章應使用領域識別碼（ID）或 DTO，除非必要，否則不要直接公開 repository 實體。
 
-### 日誌記錄
+### 記錄
 
-- 對於所有日誌記錄，使用 SLF4J (`private static final Logger logger = LoggerFactory.getLogger(MyClass.class);`)。
-- 不要直接使用具體實作 (Logback, Log4j2) 或 `System.out.println()`。
-- 使用參數化日誌記錄：`logger.info("使用者 {} 已登入", userId);`。
+- 所有記錄均使用 SLF4J（`private static final Logger logger = LoggerFactory.getLogger(MyClass.class);`）。
+- 請勿直接使用具體實作（Logback、Log4j2）或 `System.out.println()`。
+- 使用參數化記錄：`logger.info("User {} logged in", userId);`。
 
-### 安全與輸入處理
+### 安全性與輸入處理
 
-- 使用參數化查詢 | 始終使用 Spring Data JPA 或 `NamedParameterJdbcTemplate` 來防止 SQL 注入。
-- 使用 JSR-380 (`@NotNull`、`@Size` 等) 註解和 `BindingResult` 驗證請求主體和參數。
+- 使用參數化查詢 | 始終使用 Spring Data JPA 或 `NamedParameterJdbcTemplate` 以防止 SQL 隱碼攻擊。
+- 使用 Bean Validation（`@Valid`、`@NotNull`、`@Size` 等）註釋驗證請求本文與參數，並在 `@RestControllerAdvice` 中處理 `MethodArgumentNotValidException`
 
 ## 建構與驗證
 
-- 在添加或修改程式碼後，驗證專案是否繼續成功建構。
-- 如果專案使用 Maven，執行 `mvn clean package`。
-- 如果專案使用 Gradle，執行 `./gradlew build` (或在 Windows 上執行 `gradlew.bat build`)。
-- 確保所有測試作為建構的一部分通過。
+- 新增或修改程式碼後，驗證專案是否能繼續建構成功。
+- 若專案使用 Maven，請執行 `./mvnw verify`（使用 wrapper）。`package` 會略過 Failsafe 整合測試（`*IT`）。
+- 若專案使用 Gradle，請執行 `./gradlew build`（或在 Windows 上執行 `gradlew.bat build`）。
+- 確保所有測試皆作為建構的一部分通過。
+- 僅將 `package` 或 `test` 作為專注、更快速的指令，而非作為驗證關卡。
 
-## 有用的命令
+## 實用指令
 
-| Gradle 命令            | Maven 命令                     | 描述                                   |
+| Gradle 指令               | Maven 指令                        | 說明                                          |
 |:--------------------------|:----------------------------------|:----------------------------------------------|
-| `./gradlew bootRun`       |`./mvnw spring-boot:run`           | 執行應用程式。                          |
-| `./gradlew build`         |`./mvnw package`                   | 建構應用程式。                        |
+| `./gradlew bootRun`       |`./mvnw spring-boot:run`           | 執行應用程式。                                |
+| `./gradlew build`         |`./mvnw verify`                    | 建構並執行所有測試。                          |
 | `./gradlew test`          |`./mvnw test`                      | 執行測試。                                    |
-| `./gradlew bootJar`       |`./mvnw spring-boot:repackage`     | 將應用程式打包為 JAR。             |
-| `./gradlew bootBuildImage`|`./mvnw spring-boot:build-image`   | 將應用程式打包為容器映像。 |
+| `./gradlew bootJar`       |`./mvnw spring-boot:repackage`     | 將應用程式封裝為 JAR。                        |
+| `./gradlew bootBuildImage`|`./mvnw spring-boot:build-image`   | 將應用程式封裝為容器映像檔。                  |

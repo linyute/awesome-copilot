@@ -1,0 +1,30 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ai-credits-breakdown",
+  "description": "精確檢視您自己的 GitHub Copilot AI 額度消耗去向：依日期、存放庫、模型、呼叫類型以及提示快取狀態統計費用，完全由您電腦上的 Copilot 遙測資料在私密環境下建構。",
+  "version": "1.0.0",
+  "author": {
+    "name": "Roza Jiang",
+    "url": "https://github.com/rozajay"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "keywords": [
+    "ai-credits",
+    "canvas",
+    "copilot-extension",
+    "cost-tracking",
+    "token-usage",
+    "usage-analytics"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/ai-credits-breakdown"
+      ]
+    }
+  }
+}

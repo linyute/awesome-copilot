@@ -1,15 +1,19 @@
 ---
 name: copilot-sdk
-description: '使用 GitHub Copilot SDK 建構代理型應用程式。在應用程式中嵌入 AI 代理人、建立自訂工具、實作串流回應、管理工作階段、連線至 MCP 伺服器或建立自訂代理人時使用。可由 Copilot SDK、GitHub SDK、agentic app、embed Copilot、programmable agent、MCP server、custom agent 等關鍵字觸發。'
+description: 使用 Microsoft Copilot SDK 建置代理應用程式，並從 GitHub Copilot SDK 過渡。適用於將 AI 代理嵌入應用程式、建立自訂工具、實作串流回應、管理工作階段、連線至 MCP 伺服器，或建立自訂代理。觸發詞包括 Copilot SDK、Microsoft Copilot SDK、GitHub Copilot SDK、agentic app、embed Copilot、programmable agent、MCP server、custom agent。
 ---
 
-# GitHub Copilot SDK
+# Microsoft Copilot SDK
 
-使用 Python、TypeScript、Go 或 .NET 將 Copilot 的代理型工作流程嵌入至任何應用程式中。
+使用 Python、TypeScript、Go 或 .NET，將 Copilot 的代理工作流程嵌入任何應用程式。
 
-## 概觀
+## 概覽
 
-GitHub Copilot SDK 公開了 Copilot CLI 背後的相同引擎：一個經過正式環境考驗的代理人執行階段，可透過程式設計方式呼叫。無需建構自己的協調機制 — 由你定義代理人行為，Copilot 負責規劃、工具呼叫、檔案編輯等作業。
+Microsoft Copilot SDK 正從 GitHub Copilot SDK 過渡而來，並將成為 Microsoft Copilot 執行框架的可程式化介面。此執行框架是 Microsoft 和 GitHub 產品共用的代理基礎。這項過渡將分階段進行，現有使用者目前不需要立即變更。在過渡期間，套件名稱、命名空間及部分文件可能仍會使用 GitHub 品牌。
+
+本指南範例沿用目前已發布的套件名稱和匯入方式。請參閱[官方過渡公告](https://github.blog/changelog/2026-10-28-github-copilot-sdk-is-becoming-microsoft-copilot-sdk/)，以取得遷移更新。
+
+此 SDK 提供經過正式環境驗證、可透過程式呼叫的代理執行階段。您可定義代理行為，而 Copilot 會處理規劃、工具呼叫、檔案編輯等工作。
 
 ## 先決條件
 

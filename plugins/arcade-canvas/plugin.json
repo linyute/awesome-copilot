@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "arcade-canvas",
-  "description": "在 Agent 運作時，於 Copilot 畫布中暢玩五款復古 Phaser 迷你遊戲。",
-  "version": "1.0.2",
+  "description": "在 Agent 運作時，於 Copilot 畫布中暢玩六款復古 Phaser 迷你遊戲。",
+  "version": "1.1.0",
   "author": {
     "name": "Dan Wahlin",
     "url": "https://github.com/DanWahlin"

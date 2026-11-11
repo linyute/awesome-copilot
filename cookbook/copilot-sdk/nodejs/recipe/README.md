@@ -80,5 +80,5 @@ npm run build
 
 - [TypeScript 文件](https://www.typescriptlang.org/docs/)
 - [Node.js 文件](https://nodejs.org/docs/latest/api/)
-- [GitHub Copilot SDK for Node.js](https://github.com/github/copilot-sdk/blob/main/nodejs/README.md)
+- [Microsoft Copilot SDK for Node.js 文件](https://github.com/github/copilot-sdk/blob/main/nodejs/README.md)
 - [上層 Cookbook](../README.md)

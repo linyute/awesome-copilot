@@ -1,0 +1,24 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "github-security",
+  "version": "0.2.2",
+  "description": "檢閱您工作階段的變更以找出弱點，並修復程式碼掃描警示",
+  "keywords": [
+    "security",
+    "code-scanning",
+    "canvas",
+    "ghas",
+    "alert",
+    "finding"
+  ],
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/github-security"
+      ]
+    }
+  }
+}

@@ -1,10 +1,10 @@
 # MockMvcTester
 
-用於 Spring MVC 控制器測試的 AssertJ 風格測試 (Spring Boot 3.2+)。
+適用於 Spring MVC 控制器的 AssertJ 風格測試（Spring Boot 3.2+）。
 
-## 總覽
+## 概觀
 
-MockMvcTester 為 Web 層測試提供流暢且具備 AssertJ 風格的斷言。與傳統的 MockMvc 相比，它具備更高的可讀性且更符合型別安全。
+MockMvcTester 為 Web 層測試提供流暢的 AssertJ 風格斷言。比傳統 MockMvc 更具可讀性且具型別安全性。
 
 **建議模式**：將 JSON 轉換為真實物件並使用 AssertJ 進行斷言：
 
@@ -24,16 +24,16 @@ assertThat(mvc.get().uri("/orders/1"))
 ```java
 @WebMvcTest(OrderController.class)
 class OrderControllerTest {
-  
+
   @Autowired
   private MockMvcTester mvc;
-  
+
   @MockitoBean
   private OrderService orderService;
 }
 ```
 
-## 推薦：物件轉換模式 (Object Conversion Pattern)
+## 建議：物件轉換模式
 
 ### 單一物件回應
 
@@ -41,7 +41,7 @@ class OrderControllerTest {
 @Test
 void shouldGetOrder() {
   given(orderService.findById(1L)).willReturn(new Order(1L, "PENDING", 99.99));
-  
+
   assertThat(mvc.get().uri("/orders/1"))
     .hasStatus(HttpStatus.OK)
     .bodyJson()
@@ -54,7 +54,7 @@ void shouldGetOrder() {
 }
 ```
 
-### 清單回應 (List Response)
+### 列表回應
 
 ```java
 @Test
@@ -63,7 +63,7 @@ void shouldGetAllOrders() {
     new Order(1L, "PENDING"),
     new Order(2L, "COMPLETED")
   ));
-  
+
   assertThat(mvc.get().uri("/orders"))
     .hasStatus(HttpStatus.OK)
     .bodyJson()
@@ -113,13 +113,13 @@ void shouldCalculateOrderTotal() {
 
 ## HTTP 方法
 
-### 帶有請求本文的 POST
+### 帶有請求主體的 POST
 
 ```java
 @Test
 void shouldCreateOrder() {
   given(orderService.create(any())).willReturn(1L);
-  
+
   assertThat(mvc.post().uri("/orders")
     .contentType(MediaType.APPLICATION_JSON)
     .content("{\"product\": \"Laptop\", \"quantity\": 2}"))
@@ -164,7 +164,7 @@ assertThat(mvc.get().uri("/orders/1"))
   .hasStatus(HttpStatus.CREATED);   // 201
 ```
 
-## 內容類型 (Content Type) 斷言
+## 內容類型斷言
 
 ```java
 assertThat(mvc.get().uri("/orders/1"))
@@ -172,7 +172,7 @@ assertThat(mvc.get().uri("/orders/1"))
   .hasContentTypeCompatibleWith(MediaType.APPLICATION_JSON);
 ```
 
-## 標頭 (Header) 斷言
+## 標頭斷言
 
 ```java
 assertThat(mvc.post().uri("/orders"))
@@ -180,9 +180,9 @@ assertThat(mvc.post().uri("/orders"))
   .hasHeader("X-Request-Id", matchesPattern("[a-z0-9-]+"));
 ```
 
-## 替代方案：JSON Path (謹慎使用)
+## 替代方案：JSON Path（謹慎使用）
 
-僅在無法轉換為具型別的物件時使用：
+僅在無法轉換為具型別物件時使用：
 
 ```java
 assertThat(mvc.get().uri("/orders/1"))
@@ -196,21 +196,21 @@ assertThat(mvc.get().uri("/orders/1"))
 ## 請求參數
 
 ```java
-// 查詢參數 (Query parameters)
+// 查詢參數
 assertThat(mvc.get().uri("/orders?status=PENDING&page=0"))
   .hasStatusOk();
 
-// 路徑參數 (Path parameters)
+// 路徑參數
 assertThat(mvc.get().uri("/orders/{id}", 1L))
   .hasStatusOk();
 
-// 標頭 (Headers)
+// 標頭
 assertThat(mvc.get().uri("/orders/1")
   .header("X-Api-Key", "secret"))
   .hasStatusOk();
 ```
 
-## 使用 JacksonTester 處理請求本文
+## 搭配 JacksonTester 的請求主體
 
 ```java
 @Autowired
@@ -219,7 +219,7 @@ private JacksonTester<OrderRequest> json;
 @Test
 void shouldCreateOrder() {
   OrderRequest request = new OrderRequest("Laptop", 2);
-  
+
   assertThat(mvc.post().uri("/orders")
     .contentType(MediaType.APPLICATION_JSON)
     .content(json.write(request).getJson()))
@@ -231,10 +231,10 @@ void shouldCreateOrder() {
 
 ```java
 @Test
-void shouldReturnOrderNotFound() {
+void shouldReturnValidationErrors() {
   given(orderService.findById(999L))
     .willThrow(new OrderNotFoundException(999L));
-  
+
   assertThat(mvc.get().uri("/orders/999"))
     .hasStatus(HttpStatus.NOT_FOUND)
     .bodyJson()
@@ -246,13 +246,13 @@ void shouldReturnOrderNotFound() {
 }
 ```
 
-## 驗證錯誤測試 (Validation Error Testing)
+## 驗證錯誤測試
 
 ```java
 @Test
 void shouldRejectInvalidOrder() {
   OrderRequest invalidRequest = new OrderRequest("", -1);
-  
+
   assertThat(mvc.post().uri("/orders")
     .contentType(MediaType.APPLICATION_JSON)
     .content(json.write(invalidRequest).getJson()))
@@ -268,19 +268,19 @@ void shouldRejectInvalidOrder() {
 }
 ```
 
-## 比較：MockMvcTester vs 經典版 MockMvc
+## 比較：MockMvcTester 與傳統 MockMvc
 
-| 功能 | MockMvcTester | 經典版 MockMvc |
+| 功能 | MockMvcTester | 傳統 MockMvc |
 | ------- | ------------- | --------------- |
-| 風格 | AssertJ 流暢風格 | MockMvc 比對器 |
-| 可讀性 | 高 | 中 |
+| 風格 | AssertJ 流暢語法 | MockMvc 匹配器 |
+| 可讀性 | 高 | 中等 |
 | 型別安全 | 較佳 | 較差 |
 | IDE 支援 | 優異 | 良好 |
-| 物件轉換 | 內建支援 | 手動處理 |
+| 物件轉換 | 原生 | 手動 |
 
-## 從經典版 MockMvc 遷移
+## 從傳統 MockMvc 遷移
 
-### 之前 (經典版)
+### 之前（傳統）
 
 ```java
 mvc.perform(get("/orders/1"))
@@ -289,7 +289,7 @@ mvc.perform(get("/orders/1"))
   .andExpect(jsonPath("$.totalToPay").value(99.99));
 ```
 
-### 之後 (使用物件轉換的 Tester)
+### 之後（使用物件轉換的 Tester）
 
 ```java
 assertThat(mvc.get().uri("/orders/1"))
@@ -302,10 +302,10 @@ assertThat(mvc.get().uri("/orders/1"))
   });
 ```
 
-## 關鍵要點
+## 重點摘要
 
-1. **優先使用 `convertTo()` 而非 `extractingPath()`** - 型別安全且易於重構
-2. **使用 `satisfies()` 進行多重斷言** - 保持測試程式碼的可讀性
+1. **優先使用 `convertTo()` 而非 `extractingPath()`** - 型別安全、可重構
+2. **多個斷言使用 `satisfies()`** - 保持測試的可讀性
 3. **靜態匯入 `org.assertj.core.api.Assertions.assertThat`**
-4. **透過 `TypeReference` 支援泛型** - 例如用於 `List<T>` 回應
-5. **對 IDE 重構友善** - 重新命名欄位時，IDE 會同步更新測試
+4. **透過 `TypeReference` 支援泛型** - 適用於 `List<T>` 回應
+5. **對 IDE 重構友善** - 重新命名欄位時，IDE 會自動更新測試

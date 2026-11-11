@@ -5,6 +5,8 @@ applyTo: '**/*.java,**/pom.xml,**/build.gradle,**/application*.properties'
 
 # 將 Spring JPA 專案轉換為 Spring Data Cosmos
 
+> **防護條件：**僅在使用者明確要求遷移至 Azure Cosmos DB 時，才套用本指南。僅偵測到專案使用 JPA，並不代表已獲授權進行遷移。否則，請遵循 `java-hibernate-jpa` 和 Spring Boot 指引。
+
 本通用指南適用於任何 JPA 到 Spring Data Cosmos DB 轉換專案。
 
 ## 高階計畫
@@ -838,7 +840,7 @@ public Set<RelatedEntity> getRelatedEntities() {
        return StreamSupport.stream(this.findAll().spliterator(), false)
                .collect(Collectors.toList());
    }
-   
+
    ```
 
 2. **BigDecimal 相容性 (Java 17+)**：

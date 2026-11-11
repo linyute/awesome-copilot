@@ -1,0 +1,32 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "globestudio",
+  "description": "製作點陣世界地圖與 3D 動畫地球儀並將其放入網站中。搭售 globestudio 技能（將設計撰寫為單一設定並嵌入為 iframe、React 元件或 Web 元件）以及託管的 Globestudio MCP 伺服器（提供預設集、分享連結與嵌入程式碼）。免費、MIT 授權、無需 API 金鑰。",
+  "version": "1.0.0",
+  "keywords": [
+    "globe",
+    "maps",
+    "dotted-map",
+    "3d-globe",
+    "data-visualization",
+    "embed",
+    "react",
+    "web-component",
+    "mcp",
+    "design"
+  ],
+  "author": {
+    "name": "Alejandro Vizio",
+    "url": "https://github.com/alevizio"
+  },
+  "homepage": "https://globestudio.app",
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/globestudio/"
+      ]
+    }
+  }
+}

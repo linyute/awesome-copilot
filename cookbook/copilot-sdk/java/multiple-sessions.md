@@ -1,5 +1,8 @@
 # 使用多個工作階段
 
+> **示範權限：** 這些範例僅在隔離且可信任的示範環境中使用 `PermissionHandler.APPROVE_ALL`。
+> 在使用不可信任的提示或工作區之前，請將其替換為限制更嚴格的權限處理常式。
+
 同時管理多個獨立對話。
 
 > **可執行的範例：** [recipe/MultipleSessions.java](recipe/MultipleSessions.java)
@@ -16,10 +19,10 @@
 
 ```java
 ///usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
+//DEPS com.github:copilot-sdk-java:1.0.21
 
-import com.github.copilot.sdk.*;
-import com.github.copilot.sdk.json.*;
+import com.github.copilot.*;
+import com.github.copilot.rpc.*;
 
 public class MultipleSessions {
     public static void main(String[] args) throws Exception {

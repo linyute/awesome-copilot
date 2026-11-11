@@ -1,6 +1,11 @@
-# GitHub Copilot SDK 食譜 — Java
+# Microsoft Copilot SDK 食譜 — Java
 
-此資料夾收錄了使用 GitHub Copilot SDK 搭配 Java 的簡短且實用的食譜。每個食譜都力求簡潔、可直接複製貼上，並指向更完整的範例和測試。所有範例都可以使用 [JBang](https://www.jbang.dev/) 直接執行。
+此資料夾收錄簡短實用的食譜，介紹如何使用 [Microsoft Copilot SDK for Java](https://github.com/github/copilot-sdk/tree/main/java)。SDK 正逐步從 GitHub 名稱轉換，因此套件名稱與程式碼範例會採用目前發布的識別名稱。每篇食譜都簡潔且可直接複製貼上，並提供更完整範例與測試的參考連結。所有範例皆可透過 [JBang](https://www.jbang.dev/) 直接執行。
+
+範例適用於官方 SDK 1.0.21 與 Java 17 或更新版本。SDK 1.x 使用
+`com.github.copilot` 作為用戶端套件、`com.github.copilot.generated` 作為事件套件，以及
+`com.github.copilot.rpc` 作為設定套件，取代封存 SDK 的
+`com.github.copilot.sdk` 套件。
 
 ## 食譜
 
@@ -11,6 +16,7 @@
 - [PR 視覺化](pr-visualization.md)：使用 GitHub MCP Server 產生互動式 PR 帳齡圖表。
 - [持續性工作階段](persisting-sessions.md)：跨重新啟動儲存並恢復工作階段。
 - [協助工具報告](accessibility-report.md)：使用 Playwright MCP server 產生 WCAG 協助工具報告。
+- [處理程序內執行階段](in-process-runtime.md)：將原生 Copilot 執行階段程式庫載入 JVM 程序中，而非另行啟動獨立的執行階段程序。
 
 ## 貢獻
 

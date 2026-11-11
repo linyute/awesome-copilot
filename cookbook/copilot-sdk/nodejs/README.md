@@ -1,6 +1,6 @@
-# GitHub Copilot SDK 食譜 — Node.js / TypeScript
+# Microsoft Copilot SDK 食譜 — Node.js / TypeScript
 
-此資料夾收錄了使用 GitHub Copilot SDK 搭配 Node.js/TypeScript 的簡短且實用的食譜。每個食譜都力求簡潔、可直接複製貼上，並指向更完整的範例和測試。
+此資料夾收錄使用 Node.js/TypeScript 搭配 Microsoft Copilot SDK 的簡短實用食譜。套件名稱與程式碼範例反映目前從 GitHub Copilot SDK 分階段轉換的進度。
 
 ## 食譜
 

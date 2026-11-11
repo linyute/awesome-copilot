@@ -1,0 +1,27 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "foundry-hosted-agent-copilotkit",
+  "description": "在 Microsoft Foundry 託管代理人（Microsoft Agent Framework）上建構 CopilotKit + AG-UI Web 應用程式：串接、Foundry 原生基元、真人介入核准、azd 部署與偵錯 — 並使用 Microsoft Learn 與 Foundry MCP 伺服器進行即時基礎資料支援。",
+  "version": "1.0.0",
+  "keywords": [
+    "copilotkit",
+    "ag-ui",
+    "microsoft-foundry",
+    "hosted-agents",
+    "agent-framework",
+    "human-in-the-loop",
+    "azure"
+  ],
+  "author": {
+    "name": "Sunil Sattiraju"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "skills": [
+        "./skills/foundry-hosted-agent-copilotkit/"
+      ]
+    }
+  }
+}

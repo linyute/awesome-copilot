@@ -1,8 +1,10 @@
 ---
 applyTo: "**.py, pyproject.toml, setup.py"
-description: '本檔案提供使用 GitHub Copilot SDK 建立 Python 應用程式的指引。'
-name: 'GitHub Copilot SDK Python 指引'
+description: '本檔案提供使用 Microsoft Copilot SDK 建立 Python 應用程式的指引。'
+name: 'Microsoft Copilot SDK Python 指引'
 ---
+
+Microsoft Copilot SDK 正分階段從 GitHub Copilot SDK 轉型。目前無需立即變更；以下套件名稱和範例使用目前已發布的識別名稱。請參閱[官方轉型公告](https://github.blog/changelog/2026-10-28-github-copilot-sdk-is-becoming-microsoft-copilot-sdk/)。
 
 ## 核心原則
 

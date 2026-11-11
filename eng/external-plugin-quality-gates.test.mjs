@@ -6,11 +6,17 @@ import { spawnSync } from "child_process";
 import { after, test } from "node:test";
 import {
   formatQualityGateLog,
+  inspectAgentPluginSpecCompliance,
   runCanvasStructureGate,
   runRefShaConsistencyGate,
+  runVallyLintGate,
   runVersionMatchGate,
+  toOverallStatus,
 } from "./external-plugin-quality-gates.mjs";
-import { runExternalPluginPrQualityGates } from "./external-plugin-pr-quality-gates.mjs";
+import {
+  aggregateResultStatus,
+  runExternalPluginPrQualityGates,
+} from "./external-plugin-pr-quality-gates.mjs";
 
 const tempDirs = [];
 
@@ -23,7 +29,7 @@ after(() => {
 function runGit(repoDir, ...args) {
   const result = spawnSync("git", args, { cwd: repoDir, encoding: "utf8" });
   if (result.status !== 0) {
-    throw new Error(`git ${args.join(" ")} 失敗: ${result.stdout}\n${result.stderr}`);
+    throw new Error(`git ${args.join(" ")} failed: ${result.stdout}\n${result.stderr}`);
   }
   return String(result.stdout ?? "").trim();
 }
@@ -44,7 +50,165 @@ function commitAll(repoDir, message) {
   return runGit(repoDir, "rev-parse", "HEAD");
 }
 
-test("formatQualityGateLog 對產出物保留完整的 vally 輸出", () => {
+function createPluginFixture() {
+  const pluginRoot = fs.mkdtempSync(path.join(os.tmpdir(), "external-plugin-lint-"));
+  tempDirs.push(pluginRoot);
+  fs.writeFileSync(path.join(pluginRoot, "plugin.json"), JSON.stringify({
+    $schema: "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+    name: "example-plugin",
+    version: "1.0.0",
+    description: "An example plugin for quality gate tests.",
+  }));
+  return pluginRoot;
+}
+
+function writeSkillFixture(pluginRoot, { name = "example-skill", body = "Follow these instructions." } = {}) {
+  const skillRoot = path.join(pluginRoot, "skills", "example-skill");
+  fs.mkdirSync(skillRoot, { recursive: true });
+  fs.writeFileSync(path.join(skillRoot, "SKILL.md"), [
+    "---",
+    `name: ${name}`,
+    "description: 'An example skill for quality gate tests.'",
+    "---",
+    body,
+    "",
+  ].join("\n"));
+}
+
+test("manifest compliance passes for an Agent Plugins v1.0.0 manifest", () => {
+  const result = inspectAgentPluginSpecCompliance(createPluginFixture());
+  assert.equal(result.status, "pass", result.output);
+});
+
+function writeLegacyManifests(pluginRoot, content) {
+  for (const segments of [[".github", "plugin"], [".plugin"]]) {
+    const dir = path.join(pluginRoot, ...segments);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, "plugin.json"), content);
+  }
+}
+
+for (const [name, content] of [
+  ["legacy fields", JSON.stringify({ name: "legacy", version: "0.9.0", skills: "./legacy-skills" })],
+  ["invalid JSON", "{"],
+]) {
+  test(`manifest compliance prefers the root over nested manifests with ${name}`, () => {
+    const pluginRoot = createPluginFixture();
+    writeLegacyManifests(pluginRoot, content);
+    const result = inspectAgentPluginSpecCompliance(pluginRoot);
+    assert.equal(result.status, "pass", result.output);
+    assert.match(result.output, /passed for plugin\.json/);
+  });
+}
+
+test("manifest compliance does not fall back from an invalid root to valid nested manifests", () => {
+  const pluginRoot = createPluginFixture();
+  writeLegacyManifests(pluginRoot, fs.readFileSync(path.join(pluginRoot, "plugin.json"), "utf8"));
+  fs.writeFileSync(path.join(pluginRoot, "plugin.json"), "{");
+  const result = inspectAgentPluginSpecCompliance(pluginRoot);
+  assert.equal(result.status, "fail", result.output);
+  assert.match(result.output, /not valid JSON/);
+});
+
+for (const [name, update, expectedOutput] of [
+  ["missing manifest", (root) => fs.unlinkSync(path.join(root, "plugin.json")), /No plugin.json found/],
+  ["legacy manifest location", (root) => {
+    fs.mkdirSync(path.join(root, ".github", "plugin"), { recursive: true });
+    fs.renameSync(path.join(root, "plugin.json"), path.join(root, ".github", "plugin", "plugin.json"));
+  }, /expected "plugin.json" at plugin root/],
+  ["invalid JSON", (root) => fs.writeFileSync(path.join(root, "plugin.json"), "{"), /not valid JSON/],
+  ["invalid manifest type", (root) => fs.writeFileSync(path.join(root, "plugin.json"), "null"), /must be a JSON object/],
+  ["noncompliant fields", (root) => fs.writeFileSync(path.join(root, "plugin.json"), JSON.stringify({
+    name: "Invalid Name",
+    skills: ["./skills"],
+  })), /manifest errors/],
+]) {
+  test(`manifest compliance blocks ${name} instead of warning`, () => {
+    const pluginRoot = createPluginFixture();
+    update(pluginRoot);
+    const result = inspectAgentPluginSpecCompliance(pluginRoot);
+    assert.equal(result.status, "fail", result.output);
+    assert.match(result.output, expectedOutput);
+  });
+}
+
+const passingQualityResult = {
+  spec_compliance_status: "pass",
+  vally_lint_status: "pass",
+  smoke_status: "pass",
+  version_match_status: "pass",
+  ref_sha_consistency_status: "not_run",
+  canvas_structure_status: "not_run",
+};
+
+test("overall quality passes when all applicable gates pass", () => {
+  assert.equal(toOverallStatus(passingQualityResult), "pass");
+});
+
+for (const gate of Object.keys(passingQualityResult)) {
+  for (const status of ["fail", "warning", "infra_error"]) {
+    test(`overall quality blocks ${gate}=${status}`, () => {
+      assert.equal(
+        toOverallStatus({ ...passingQualityResult, [gate]: status }),
+        status === "infra_error" ? "infra_error" : "fail",
+      );
+    });
+  }
+}
+
+test("overall quality does not pass when every gate was skipped", () => {
+  assert.equal(toOverallStatus(Object.fromEntries(
+    Object.keys(passingQualityResult).map((gate) => [gate, "not_run"]),
+  )), "not_run");
+});
+
+test("vally lint passes for compliant bundled skills", async () => {
+  const pluginRoot = createPluginFixture();
+  writeSkillFixture(pluginRoot);
+  const result = await runVallyLintGate(pluginRoot);
+  assert.equal(result.status, "pass", result.output);
+});
+
+test("vally lint blocks Agent Skills spec violations", async () => {
+  const pluginRoot = createPluginFixture();
+  writeSkillFixture(pluginRoot, { name: "Invalid-Name" });
+  const result = await runVallyLintGate(pluginRoot);
+  assert.equal(result.status, "fail", result.output);
+  assert.match(result.logOutput, /spec-compliance/);
+});
+
+test("vally lint uses root skills rather than legacy manifest skill targets", async () => {
+  const pluginRoot = createPluginFixture();
+  writeSkillFixture(pluginRoot, { name: "Invalid-Name" });
+  const legacySkillsRoot = path.join(pluginRoot, "legacy-skills");
+  fs.mkdirSync(legacySkillsRoot);
+  fs.writeFileSync(path.join(legacySkillsRoot, "SKILL.md"), [
+    "---",
+    "name: legacy-skills",
+    "description: A valid legacy skill for quality gate tests.",
+    "---",
+    "Follow these instructions.",
+  ].join("\n"));
+  writeLegacyManifests(pluginRoot, JSON.stringify({ skills: "./legacy-skills" }));
+  const result = await runVallyLintGate(pluginRoot);
+  assert.equal(result.status, "fail", result.output);
+  assert.match(result.logOutput, /spec-compliance/);
+});
+
+test("vally lint blocks broken skill file references", async () => {
+  const pluginRoot = createPluginFixture();
+  writeSkillFixture(pluginRoot, { body: "Read [the reference](references/missing.md)." });
+  const result = await runVallyLintGate(pluginRoot);
+  assert.equal(result.status, "fail", result.output);
+  assert.match(result.logOutput, /missing/);
+});
+
+test("vally lint allows plugins without skills", async () => {
+  const result = await runVallyLintGate(createPluginFixture());
+  assert.equal(result.status, "pass", result.output);
+});
+
+test("formatQualityGateLog preserves full vally output for artifacts", () => {
   const fullVallyOutput = `lint failure\n${"x".repeat(13000)}`;
   const log = formatQualityGateLog(
     { name: "example-plugin" },
@@ -66,7 +230,7 @@ test("formatQualityGateLog 對產出物保留完整的 vally 輸出", () => {
   assert.equal(log.includes("truncated output"), false);
 });
 
-test("runExternalPluginPrQualityGates 為驗證失敗寫入日誌", async () => {
+test("runExternalPluginPrQualityGates writes logs for validation failures", async () => {
   const logsDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "external-plugin-pr-logs-"));
   tempDirs.push(logsDirectory);
 
@@ -84,7 +248,7 @@ test("runExternalPluginPrQualityGates 為驗證失敗寫入日誌", async () => 
   );
 });
 
-test("runCanvasStructureGate 在具名擴充功能存在時通過", () => {
+test("runCanvasStructureGate passes when a named extension exists", () => {
   const repoDir = createTempRepo();
   fs.mkdirSync(path.join(repoDir, "com.github.copilot", "extensions", "canvas-plugin"), { recursive: true });
   fs.writeFileSync(
@@ -108,7 +272,7 @@ test("runCanvasStructureGate 在具名擴充功能存在時通過", () => {
   assert.match(result.output, /found "com\.github\.copilot\/extensions"/);
 });
 
-test("runCanvasStructureGate 在擴充功能入口點僅位於存放庫根目錄時失敗", () => {
+test("runCanvasStructureGate fails when extension entrypoint is only at repo root", () => {
   const repoDir = createTempRepo();
   fs.writeFileSync(path.join(repoDir, "extension.mjs"), "export default {};\n");
   const sha = commitAll(repoDir, "Add root extension entrypoint");
@@ -128,7 +292,7 @@ test("runCanvasStructureGate 在擴充功能入口點僅位於存放庫根目錄
   assert.match(result.output, /missing required canvas extension directory "com\.github\.copilot\/extensions"/);
 });
 
-test("runCanvasStructureGate 在具名擴充功能入口點路徑為目錄時失敗", () => {
+test("runCanvasStructureGate fails when the named extension entrypoint path is a directory", () => {
   const repoDir = createTempRepo();
   fs.mkdirSync(path.join(repoDir, "com.github.copilot", "extensions", "canvas-plugin", "extension.mjs"), { recursive: true });
   fs.writeFileSync(
@@ -152,7 +316,7 @@ test("runCanvasStructureGate 在具名擴充功能入口點路徑為目錄時失
   assert.match(result.output, /"com\.github\.copilot\/extensions\/<extension>\/extension\.mjs" must be a file/);
 });
 
-test("runCanvasStructureGate 在缺少 Copilot 命名空間時失敗", () => {
+test("runCanvasStructureGate fails when the Copilot namespace is missing", () => {
   const repoDir = createTempRepo();
   fs.mkdirSync(path.join(repoDir, "extensions", "modernize-dashboard"), { recursive: true });
   fs.writeFileSync(path.join(repoDir, "extensions", "modernize-dashboard", "extension.mjs"), "export default {};\n");
@@ -173,7 +337,7 @@ test("runCanvasStructureGate 在缺少 Copilot 命名空間時失敗", () => {
   assert.match(result.output, /missing required canvas extension directory "com\.github\.copilot\/extensions"/);
 });
 
-test("runCanvasStructureGate 在具名目錄中沒有 extension.mjs 時失敗", () => {
+test("runCanvasStructureGate fails when no extension.mjs exists in a named directory", () => {
   const repoDir = createTempRepo();
   fs.mkdirSync(path.join(repoDir, "com.github.copilot", "extensions", "modernize-dashboard"), { recursive: true });
   fs.writeFileSync(
@@ -197,11 +361,11 @@ test("runCanvasStructureGate 在具名目錄中沒有 extension.mjs 時失敗", 
   assert.match(result.output, /missing required canvas extension entry point/);
 });
 
-test("runCanvasStructureGate 能找到列在傳統輸出上限之外的巢狀擴充功能", () => {
+test("runCanvasStructureGate finds a nested extension listed past the legacy output cap", () => {
   const repoDir = createTempRepo();
-  // 許多同層目錄會把真正的擴充功能推到約 12 KB 的標準輸出上限之外，而該上限正是
-  // 先前會截斷的實作所施加的，它會使真正的擴充功能在清單中靜默遺失。
-  // 較長的名稱會膨脹每筆 git ls-tree 記錄，因此只需較少的目錄即可超過上限。
+  // 眾多同級目錄會將真正的延伸模組推過先前截斷實作所套用的約 12 KB
+  // stdout 上限，該實作會無訊息地將其從清單中丟棄。
+  // 長名稱會擴增每筆 git ls-tree 記錄，因此需要較少的目錄即可超出上限。
   for (let index = 0; index < 160; index += 1) {
     const filler = path.join(
       repoDir,
@@ -234,11 +398,11 @@ test("runCanvasStructureGate 能找到列在傳統輸出上限之外的巢狀擴
   assert.match(result.output, /entry point "com\.github\.copilot\/extensions\/zzz-real-extension\/extension\.mjs"/);
 });
 
-// 針對問題 #2397 的回歸測試：標籤名稱的定位器（例如 "v1.0.0"）必須
-// 能被版本比對（version-match）與畫布結構（canvas-structure）品質閘門讀取。`git fetch origin <tag>`
-// 只會更新 FETCH_HEAD，絕不在本地建立 `refs/tags/<tag>`，因此透過
-// `git show <tag>:...` 讀取時，過去會以 "fatal: invalid object name" 失敗，
-// 並向上滾動成假的 infra_error/fail，即使被引用的內容本身是有效的。
+// issue #2397 的迴歸測試：標籤名稱定位點（例如 "v1.0.0"）必須
+// 能被 version-match 與 canvas-structure 品質閘門讀取。`git fetch origin <tag>`
+// 僅會更新 FETCH_HEAD 且絕不建立本機 `refs/tags/<tag>`，因此透過
+// `git show <tag>:...` 讀取過去會以 "fatal: invalid object name" 失敗並歸總為
+// 虛假的 infra_error/fail，即使所引用的內容其實有效。
 
 function initRemoteRepo() {
   const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), "external-plugin-quality-remote-"));
@@ -246,7 +410,7 @@ function initRemoteRepo() {
   runGit(repoDir, "init", "-q");
   runGit(repoDir, "config", "user.name", "Copilot Test");
   runGit(repoDir, "config", "user.email", "copilot@example.com");
-  // 模擬 github.com：允許送審存放庫以 shallow-fetch 抓取任意 SHA。
+  // 鏡像 github.com：允許提交存放庫淺層擷取任意 SHA。
   runGit(repoDir, "config", "uploadpack.allowAnySHA1InWant", "true");
   return repoDir;
 }
@@ -264,9 +428,9 @@ function writeValidPluginContent(repoDir) {
   );
 }
 
-// 模擬 external-plugin-quality-gates.mjs 中的 cloneSubmissionRepository：只抓取
-// 主要定位器，並將 HEAD 分離（detach）到其上。刻意不在本地建立 tag 參照，
-// 以重現 CI 環境中 `git show <tag>:...` 會失敗的情況。
+// 鏡像 external-plugin-quality-gates.mjs 中的 cloneSubmissionRepository：僅擷取
+// 主要定位點並將 HEAD 切換分離至其上。本機刻意不建立標籤 ref，
+// 以重現 `git show <tag>:...` 失敗的 CI 環境。
 function cloneSubmissionRepo(remoteDir, primaryFetchSpec) {
   const repoDir = fs.mkdtempSync(path.join(os.tmpdir(), "external-plugin-quality-sub-"));
   tempDirs.push(repoDir);
@@ -277,7 +441,25 @@ function cloneSubmissionRepo(remoteDir, primaryFetchSpec) {
   return repoDir;
 }
 
-test("runVersionMatchGate 在 tag 參照與 sha 並存時通過", () => {
+for (const [version, expectedStatus] of [["1.0.0", "pass"], ["2.0.0", "fail"]]) {
+  test(`runVersionMatchGate uses the root version when nested manifests coexist (${expectedStatus})`, () => {
+    const repoDir = createTempRepo();
+    const pluginPath = path.join(".github", "plugins", "example-plugin");
+    const pluginRoot = path.join(repoDir, pluginPath);
+    fs.mkdirSync(pluginRoot, { recursive: true });
+    fs.writeFileSync(path.join(pluginRoot, "plugin.json"), JSON.stringify({ version }));
+    writeLegacyManifests(pluginRoot, JSON.stringify({ version: "1.0.0" }));
+    const sha = commitAll(repoDir, "Add modern and legacy manifests");
+    const result = runVersionMatchGate(repoDir, {
+      version: "1.0.0",
+      source: { sha, path: pluginPath.split(path.sep).join("/") },
+    }, sha);
+    assert.equal(result.status, expectedStatus, result.output);
+    assert.match(result.output, /\.github\/plugins\/example-plugin\/plugin\.json/);
+  });
+}
+
+test("runVersionMatchGate passes for a tag ref alongside a sha", () => {
   const remoteDir = initRemoteRepo();
   writeValidPluginContent(remoteDir);
   const sha = commitAll(remoteDir, "Add plugin manifest");
@@ -292,12 +474,12 @@ test("runVersionMatchGate 在 tag 參照與 sha 並存時通過", () => {
 
   const result = runVersionMatchGate(repoDir, plugin, sha);
   assert.equal(result.status, "pass", result.output);
-  // tag 參照與 sha 兩者都必須被驗證。
+  // 標籤 ref 與 sha 兩者都必須經過驗證。
   assert.match(result.output, /- v1\.0\.0: matched version "1\.0\.0"/);
   assert.match(result.output, new RegExp(`- ${sha}: matched version "1\\.0\\.0"`));
 });
 
-test("runCanvasStructureGate 在 tag 參照與 sha 並存時通過", () => {
+test("runCanvasStructureGate passes for a tag ref alongside a sha", () => {
   const remoteDir = initRemoteRepo();
   writeValidPluginContent(remoteDir);
   const sha = commitAll(remoteDir, "Add canvas extension container");
@@ -316,7 +498,7 @@ test("runCanvasStructureGate 在 tag 參照與 sha 並存時通過", () => {
   assert.match(result.output, new RegExp(`- ${sha}: found "com\\.github\\.copilot/extensions"`));
 });
 
-test("runVersionMatchGate 在主要定位器為 tag 參照時通過", () => {
+test("runVersionMatchGate passes when the primary locator is a tag ref", () => {
   const remoteDir = initRemoteRepo();
   writeValidPluginContent(remoteDir);
   commitAll(remoteDir, "Add plugin manifest");
@@ -334,7 +516,7 @@ test("runVersionMatchGate 在主要定位器為 tag 參照時通過", () => {
   assert.match(result.output, /- v1\.0\.0: matched version "1\.0\.0"/);
 });
 
-test("runCanvasStructureGate 在主要定位器為 tag 參照時通過", () => {
+test("runCanvasStructureGate passes when the primary locator is a tag ref", () => {
   const remoteDir = initRemoteRepo();
   writeValidPluginContent(remoteDir);
   commitAll(remoteDir, "Add canvas extension container");
@@ -352,7 +534,7 @@ test("runCanvasStructureGate 在主要定位器為 tag 參照時通過", () => {
   assert.match(result.output, /- v1\.0\.0: found "com\.github\.copilot\/extensions"/);
 });
 
-test("runRefShaConsistencyGate 在 ref 與 sha 指向不同提交時失敗", () => {
+test("runRefShaConsistencyGate fails when ref and sha point to different commits", () => {
   const remoteDir = initRemoteRepo();
   writeValidPluginContent(remoteDir);
   const firstSha = commitAll(remoteDir, "Add plugin manifest v1");
@@ -371,7 +553,7 @@ test("runRefShaConsistencyGate 在 ref 與 sha 指向不同提交時失敗", () 
   assert.match(result.output, new RegExp(`resolves to "${firstSha}"`));
 });
 
-test("runRefShaConsistencyGate 在 ref 與 sha 指向同一提交時通過", () => {
+test("runRefShaConsistencyGate passes when ref and sha point to the same commit", () => {
   const remoteDir = initRemoteRepo();
   writeValidPluginContent(remoteDir);
   const sha = commitAll(remoteDir, "Add plugin manifest");
@@ -385,4 +567,32 @@ test("runRefShaConsistencyGate 在 ref 與 sha 指向同一提交時通過", () 
 
   const result = runRefShaConsistencyGate(repoDir, plugin, sha);
   assert.equal(result.status, "pass", result.output);
+});
+
+test("aggregateResultStatus requires every changed plugin to pass", () => {
+  const entry = (status) => ({ quality: { overall_status: status } });
+
+  assert.deepEqual(aggregateResultStatus([]), { overallStatus: "not_run", failureClass: "none" });
+  assert.deepEqual(aggregateResultStatus([entry("pass"), entry("pass")]), {
+    overallStatus: "pass",
+    failureClass: "none",
+  });
+  assert.deepEqual(aggregateResultStatus([entry("pass"), entry("fail")]), {
+    overallStatus: "fail",
+    failureClass: "submitter_fixes",
+  });
+  assert.deepEqual(aggregateResultStatus([entry("pass"), entry("infra_error")]), {
+    overallStatus: "infra_error",
+    failureClass: "infra",
+  });
+  assert.deepEqual(aggregateResultStatus([entry("fail"), entry("infra_error")]), {
+    overallStatus: "fail",
+    failureClass: "submitter_fixes",
+  });
+  for (const status of ["warning", "not_run", undefined]) {
+    assert.deepEqual(aggregateResultStatus([entry("pass"), entry(status)]), {
+      overallStatus: "fail",
+      failureClass: "submitter_fixes",
+    });
+  }
 });

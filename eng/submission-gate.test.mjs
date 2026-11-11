@@ -11,6 +11,7 @@ import {
   classifyRisk,
   computeState,
   evaluateApprovals,
+  gateConclusion,
   evaluateCheck,
   evaluateSubmission,
   globToRegExp,
@@ -32,6 +33,7 @@ import {
   STATUS_MARKER,
   summarizeChecks,
   syncPullRequestStatus,
+  touchedDomains,
 } from "./submission-gate.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -46,9 +48,9 @@ const review = (login, state, submitted_at = "2026-09-29T10:00:00Z", extra = {})
   ...extra,
 });
 
-// --- 萬用字元 ---------------------------------------------------------------
+// --- globs -----------------------------------------------------------------
 
-test("globToRegExp 遵循 GitHub 路徑篩選語義", () => {
+test("globToRegExp follows GitHub path filter semantics", () => {
   assert.ok(globToRegExp("skills/**").test("skills/a/SKILL.md"));
   assert.ok(globToRegExp("*.js").test("index.js"));
   assert.ok(!globToRegExp("*.js").test("eng/index.js"));
@@ -58,43 +60,43 @@ test("globToRegExp 遵循 GitHub 路徑篩選語義", () => {
   assert.ok(!globToRegExp("docs/**").test("docsx/a.md"));
 });
 
-// --- 設定漂移 --------------------------------------------------------------
+// --- config drift ------------------------------------------------------------
 
-test("check 路徑與分支篩選器與其 workflow 觸發條件保持一致", () => {
+test("check path and branch filters mirror their workflow triggers", () => {
   for (const check of config.gate.checks.filter((candidate) => candidate.workflow)) {
     const workflowPath = path.join(repoRoot, ".github", "workflows", check.workflow);
-    assert.ok(fs.existsSync(workflowPath), `${check.id}: ${check.workflow} 不存在`);
+    assert.ok(fs.existsSync(workflowPath), `${check.id}: ${check.workflow} does not exist`);
     const workflow = yaml.load(fs.readFileSync(workflowPath, "utf8"));
     const on = workflow.on ?? workflow[true];
     const trigger = on?.pull_request;
-    assert.ok(on && Object.prototype.hasOwnProperty.call(on, "pull_request"), `${check.id}: ${check.workflow} 必須在 pull_request 時觸發`);
-    // 沒有路徑篩選的 workflow 會回報每個 PR，因此 gate 可以縮窄其適用範圍。
+    assert.ok(on && Object.prototype.hasOwnProperty.call(on, "pull_request"), `${check.id}: ${check.workflow} must trigger on pull_request`);
+    // 沒有路徑篩選器的工作流程會對每個 PR 回報，因此閘門可能會縮小其套用範圍。
     if (trigger?.paths) {
-      assert.deepEqual([...(check.paths || [])].sort(), [...trigger.paths].sort(), `${check.id}: paths 已與 ${check.workflow} 漂移`);
+      assert.deepEqual([...(check.paths || [])].sort(), [...trigger.paths].sort(), `${check.id}: paths drifted from ${check.workflow}`);
     }
-    // validate-agentic-workflows-pr.yml 拒絕任何 `.github/**` 變更，因此它無法因自身檔案而觸發。
+    // validate-agentic-workflows-pr.yml 會拒絕任何 `.github/**` 變更，因此無法由它自己的檔案觸發。
     const selfPathExempt = ["validate-submission-gate.yml", "validate-agentic-workflows-pr.yml"];
     if (check.paths && !selfPathExempt.includes(check.workflow)) {
       assert.ok(
         check.paths.includes(`.github/workflows/${check.workflow}`),
-        `${check.id}: paths 應包含其自身的 workflow 檔案`
+        `${check.id}: paths should include its own workflow file`
       );
     }
-    assert.deepEqual(check.branches || [], trigger?.branches || [], `${check.id}: branches 已與 ${check.workflow} 漂移`);
+    assert.deepEqual(check.branches || [], trigger?.branches || [], `${check.id}: branches drifted from ${check.workflow}`);
   }
 });
 
-test("每個 check 都有唯一的 id，以及 workflow 或 check 名稱", () => {
+test("every check has a unique id and a workflow or check name", () => {
   const ids = new Set();
   for (const check of config.gate.checks) {
-    assert.ok(check.id && !ids.has(check.id), `重複或缺失的 id ${check.id}`);
+    assert.ok(check.id && !ids.has(check.id), `duplicate or missing id ${check.id}`);
     ids.add(check.id);
-    assert.ok(check.workflow || check.check_name, `${check.id} 需要 workflow 或 check_name`);
+    assert.ok(check.workflow || check.check_name, `${check.id} needs workflow or check_name`);
   }
   assert.ok(config.gate.checks.some((check) => check.check_name === "canvas-smoke-test" && check.optional));
 });
 
-test("selectApplicableChecks 遵循路徑與基底分支", () => {
+test("selectApplicableChecks honors paths and base branch", () => {
   const ids = (files, base = "main") => selectApplicableChecks(config.gate.checks, files, base).map((check) => check.id);
   const docs = ids([file("docs/README.skills.md")]);
   assert.ok(docs.includes("line-endings"));
@@ -111,16 +113,16 @@ test("selectApplicableChecks 遵循路徑與基底分支", () => {
   assert.ok(canvas.includes("canvas-smoke-test"));
 
   const renamed = ids([file("docs/x.md", { status: "renamed", previous_filename: "skills/x/SKILL.md" })]);
-  assert.ok(renamed.includes("skill-validation"), "前一個檔案名稱也計入路徑篩選");
+  assert.ok(renamed.includes("skill-validation"), "previous filename counts for path filters");
 
   const otherBase = ids([file("skills/foo/SKILL.md")], "staged");
   assert.ok(!otherBase.includes("skill-validation"));
   assert.ok(otherBase.includes("contributor-reputation"));
 });
 
-// --- 風險等級 ------------------------------------------------------------------
+// --- risk tiers ---------------------------------------------------------------
 
-test("文件與產生的輸出屬於低風險", () => {
+test("documentation and generated output are low risk", () => {
   const result = classifyRisk({
     files: [file("docs/README.skills.md", { changes: 400 }), file(".github/plugin/marketplace.json", { changes: 90 })],
     tiers,
@@ -128,12 +130,18 @@ test("文件與產生的輸出屬於低風險", () => {
   assert.equal(result.tier, "low");
 });
 
-test("對現有資源的小幅修改屬於低風險", () => {
+test("generated plugin marketplace output is owned by the plugin domain", () => {
+  assert.deepEqual(touchedDomains([file(".github/plugin/marketplace.json")], tiers.domains), [
+    { id: "plugin", pools: ["plugin"] },
+  ]);
+});
+
+test("small modification of an existing resource is low risk", () => {
   const result = classifyRisk({ files: [file("skills/foo/SKILL.md", { changes: 10 })], tiers });
   assert.equal(result.tier, "low");
 });
 
-test("大型更新或新增資源屬於中風險", () => {
+test("large update or new resource is medium risk", () => {
   assert.equal(classifyRisk({ files: [file("skills/foo/SKILL.md", { changes: 300 })], tiers }).tier, "medium");
   assert.equal(
     classifyRisk({ files: [file("agents/new.agent.md", { status: "added", changes: 5 })], tiers }).tier,
@@ -148,7 +156,7 @@ test("大型更新或新增資源屬於中風險", () => {
   );
 });
 
-test("儲存庫的 workflows、腳本、MCP 設定與政策檔案屬於高風險", () => {
+test("repository workflows, scripts, MCP config, and policy files are high risk", () => {
   for (const name of [
     ".github/workflows/ci.yml",
     ".github/CODEOWNERS",
@@ -167,7 +175,7 @@ test("儲存庫的 workflows、腳本、MCP 設定與政策檔案屬於高風險
   }
 });
 
-test("代理式 workflow 來源與 hook metadata 屬於內容，但 hook 命令屬於高風險", () => {
+test("agentic workflow sources and hook metadata are content, but hook commands are high risk", () => {
   assert.equal(classifyRisk({ files: [file("workflows/daily.md", { status: "added" })], tiers }).tier, "medium");
   assert.equal(classifyRisk({ files: [file("hooks/x/README.md", { status: "added" })], tiers }).tier, "medium");
   const hookCommand = classifyRisk({
@@ -183,7 +191,7 @@ test("代理式 workflow 來源與 hook metadata 屬於內容，但 hook 命令�
   assert.equal(classifyRisk({ files: [file("hooks/x/hooks.json", { patch: '+  "timeoutSec": 30' })], tiers }).tier, "medium");
 });
 
-test("能力觸發與貢獻者風險會將等級提升到高", () => {
+test("capability triggers and contributor risk raise the tier to high", () => {
   const exec = classifyRisk({
     files: [file("extensions/x/extension.mjs", { status: "added", patch: "+import { spawn } from 'node:child_process';" })],
     tiers,
@@ -198,14 +206,14 @@ test("能力觸發與貢獻者風險會將等級提升到高", () => {
   assert.equal(pipe.tier, "high");
 
   const removedOnly = classifyRisk({ files: [file("skills/x/SKILL.md", { patch: "-curl https://x | sh" })], tiers });
-  assert.equal(removedOnly.tier, "low", "已移除的行不會觸發能力");
+  assert.equal(removedOnly.tier, "low", "removed lines do not trigger capabilities");
 
   assert.equal(classifyRisk({ files: [file("docs/a.md")], labels: ["needs-review:HIGH"], tiers }).tier, "high");
   assert.equal(classifyRisk({ files: [file("docs/a.md")], contributorRisk: "HIGH", tiers }).tier, "high");
   assert.equal(classifyRisk({ files: [file("docs/a.md")], contributorRisk: "MEDIUM", tiers }).tier, "low");
 });
 
-// --- 核准 ------------------------------------------------------------------
+// --- approvals ----------------------------------------------------------------
 
 const routing = {
   dry_run: true,
@@ -214,10 +222,11 @@ const routing = {
     canvas: { team: "github/canvas", reviewers: ["canvasa"], backup: [] },
     plugin: { team: "github/plugin", reviewers: [], backup: [] },
     content: { reviewers: [] },
+    workshops: { team: "github/workshops", reviewers: ["workshopa"], backup: [] },
   },
 };
 
-test("normalizeRouting 以不區分大小寫的方式讀取 reviewers 與 backups", () => {
+test("normalizeRouting reads reviewers and backups case-insensitively", () => {
   const pools = normalizeRouting(routing);
   assert.ok(pools.get("core-maintainers").has("corea"));
   assert.ok(pools.get("core-maintainers").has("coreb"));
@@ -225,7 +234,7 @@ test("normalizeRouting 以不區分大小寫的方式讀取 reviewers 與 backup
   assert.ok(normalizeRouting({ teams: { core: ["@x"] } }).get("core").has("x"));
 });
 
-test("低等級需要一位寫入者的核准，但不含作者", () => {
+test("low tier needs one approval from a writer, excluding the author", () => {
   const permissions = new Map([["alice", "write"], ["author", "write"], ["rando", "read"]]);
   const base = { tier: "low", tiers, author: "author", permissions, files: [file("docs/a.md")] };
   assert.equal(evaluateApprovals({ ...base, reviews: [review("author", "APPROVED")] }).satisfied, false);
@@ -233,7 +242,7 @@ test("低等級需要一位寫入者的核准，但不含作者", () => {
   assert.equal(evaluateApprovals({ ...base, reviews: [review("alice", "APPROVED")] }).satisfied, true);
 });
 
-test("最新的 review 狀態生效，且要求變更會阻擋", () => {
+test("latest review state wins and changes requested blocks", () => {
   const permissions = new Map([["alice", "write"], ["bob", "write"]]);
   const base = { tier: "low", tiers, author: "author", permissions, files: [file("docs/a.md")] };
   const dismissed = evaluateApprovals({
@@ -254,40 +263,59 @@ test("最新的 review 狀態生效，且要求變更會阻擋", () => {
   assert.deepEqual(blocked.changesRequestedBy, ["bob"]);
 });
 
-test("中等級在 pool 有人手配置時需要領域 reviewer", () => {
-  const permissions = new Map([["alice", "write"], ["canvasa", "write"]]);
+test("medium tier requires a domain reviewer when the pool is staffed", () => {
+  const permissions = new Map([
+    ["alice", "write"],
+    ["canvasa", "write"],
+    ["workshopa", "write"],
+  ]);
   const files = [file("extensions/x/extension.mjs", { status: "added" })];
   const base = { tier: "medium", tiers, author: "author", permissions, routing, files };
   assert.equal(evaluateApprovals({ ...base, reviews: [review("alice", "APPROVED")] }).satisfied, false);
   assert.equal(evaluateApprovals({ ...base, reviews: [review("canvasa", "APPROVED")] }).satisfied, true);
-  assert.equal(evaluateApprovals({ ...base, reviews: [review("corea", "APPROVED")] }).satisfied, true, "core 算作領域");
+  assert.equal(evaluateApprovals({ ...base, reviews: [review("corea", "APPROVED")] }).satisfied, true, "core counts as domain");
 
   const unstaffed = evaluateApprovals({
     ...base,
     files: [file("plugins/p/README.md", { status: "added" })],
     reviews: [review("alice", "APPROVED")],
   });
-  assert.equal(unstaffed.satisfied, true, "領域 pool 為空時回落到任何寫入者");
+  assert.equal(unstaffed.satisfied, true, "falls back to any writer when the domain pool is empty");
   assert.ok(unstaffed.notes.length > 0);
+
+  const workshop = evaluateApprovals({
+    ...base,
+    files: [file("website/src/content/docs/learning-hub/copilot-workshops/lesson.md", { status: "added" })],
+    reviews: [review("workshopa", "APPROVED")],
+  });
+  assert.equal(workshop.satisfied, true);
 
   const noRouting = evaluateApprovals({ ...base, routing: null, reviews: [review("alice", "APPROVED")] });
   assert.equal(noRouting.satisfied, true);
 });
 
-test("高等級需要包含一位核心維護者在內的兩個核准", () => {
+test("high tier requires one approval from a core maintainer", () => {
   const permissions = new Map([["alice", "write"], ["bob", "write"], ["corea", "write"], ["admin1", "admin"]]);
   const files = [file(".github/workflows/x.yml")];
   const base = { tier: "high", tiers, author: "author", permissions, routing, files };
-  assert.equal(evaluateApprovals({ ...base, reviews: [review("corea", "APPROVED")] }).satisfied, false);
+  assert.equal(evaluateApprovals({ ...base, reviews: [review("corea", "APPROVED")] }).satisfied, true);
   assert.equal(evaluateApprovals({ ...base, reviews: [review("alice", "APPROVED"), review("bob", "APPROVED")] }).satisfied, false);
-  assert.equal(evaluateApprovals({ ...base, reviews: [review("alice", "APPROVED"), review("corea", "APPROVED")] }).satisfied, true);
 
   const fallback = { ...base, routing: null };
-  assert.equal(evaluateApprovals({ ...fallback, reviews: [review("alice", "APPROVED"), review("bob", "APPROVED")] }).satisfied, false);
-  assert.equal(evaluateApprovals({ ...fallback, reviews: [review("alice", "APPROVED"), review("admin1", "APPROVED")] }).satisfied, true);
+  assert.equal(evaluateApprovals({ ...fallback, reviews: [review("alice", "APPROVED")] }).satisfied, false);
+  assert.equal(evaluateApprovals({ ...fallback, reviews: [review("admin1", "APPROVED")] }).satisfied, true);
 });
 
-// --- 檢查（checks）--------------------------------------------------------------
+test("gateConclusion reports a PR that only awaits review as action_required", () => {
+  const clean = { contributionFailures: [], infrastructureFailures: [], pending: [] };
+  const waiting = { satisfied: false, changesRequestedBy: [] };
+  assert.equal(gateConclusion({ passed: true, automation: clean, approvals: { satisfied: true, changesRequestedBy: [] } }), "success");
+  assert.equal(gateConclusion({ passed: false, automation: clean, approvals: waiting }), "action_required");
+  assert.equal(gateConclusion({ passed: false, automation: clean, approvals: { ...waiting, changesRequestedBy: ["bob"] } }), "failure");
+  assert.equal(gateConclusion({ passed: false, automation: { ...clean, contributionFailures: [{}] }, approvals: waiting }), "failure");
+});
+
+// --- checks -------------------------------------------------------------------
 
 const readmeCheck = config.gate.checks.find((check) => check.id === "readme");
 const infraSteps = config.gate.infrastructure_steps;
@@ -302,7 +330,7 @@ const failedJob = (stepName) => [
   },
 ];
 
-test("失敗的步驟會分類為貢獻失敗或基礎設施失敗", () => {
+test("failed steps are classified as contribution or infrastructure failures", () => {
   assert.equal(classifyFailure(readmeCheck, failedJob("Fail workflow if files need updating"), infraSteps).category, "contribution");
   assert.equal(classifyFailure(readmeCheck, failedJob("Install dependencies"), infraSteps).category, "infrastructure");
   assert.equal(classifyFailure(readmeCheck, failedJob("Checkout code"), infraSteps).category, "infrastructure");
@@ -312,7 +340,7 @@ test("失敗的步驟會分類為貢獻失敗或基礎設施失敗", () => {
   assert.equal(classifyFailure(readmeCheck, [], infraSteps).category, "infrastructure");
 });
 
-test("evaluateCheck 將執行狀態映射到 gate 結果", () => {
+test("evaluateCheck maps run states to gate outcomes", () => {
   const check = { id: "x", title: "X", hint: "fix it" };
   assert.equal(evaluateCheck(check, { found: false }).outcome, "pending");
   assert.equal(evaluateCheck(check, { found: false }, { gaveUp: true }).category, "infrastructure");
@@ -321,22 +349,22 @@ test("evaluateCheck 將執行狀態映射到 gate 結果", () => {
   assert.equal(evaluateCheck(check, { found: true, status: "in_progress" }, { gaveUp: true }).category, "infrastructure");
   assert.equal(evaluateCheck(check, { found: true, status: "completed", conclusion: "success" }).outcome, "pass");
   const skipped = evaluateCheck(check, { found: true, status: "completed", conclusion: "skipped" });
-  assert.equal(skipped.outcome, "failure", "被跳過的必需 check 什麼都沒驗證");
+  assert.equal(skipped.outcome, "failure", "a skipped required check validated nothing");
   assert.equal(skipped.category, "infrastructure");
   const skippedOk = { found: true, status: "completed", conclusion: "skipped" };
   assert.equal(evaluateCheck({ ...check, allow_skip: true }, skippedOk).outcome, "skipped");
   assert.equal(evaluateCheck({ ...check, optional: true }, skippedOk).outcome, "skipped");
   assert.equal(evaluateCheck({ ...check, required: false }, skippedOk).outcome, "skipped");
-  assert.equal(config.gate.checks.find((c) => c.id === "contributor-reputation").allow_skip, true, "bot 作者的跳過");
+  assert.equal(config.gate.checks.find((c) => c.id === "contributor-reputation").allow_skip, true, "skips for bot authors");
   assert.equal(evaluateCheck(check, { found: true, status: "completed", conclusion: "cancelled" }).category, "infrastructure");
   assert.equal(evaluateCheck(check, { found: true, status: "completed", conclusion: "action_required" }).category, "infrastructure");
   const advisory = evaluateCheck({ ...check, required: false, failure_kind: "infrastructure" }, { found: true, status: "completed", conclusion: "failure" });
   assert.equal(advisory.required, false);
   assert.equal(summarizeChecks([advisory]).warnings.length, 1);
-  assert.equal(summarizeChecks([advisory]).infrastructureFailures.length, 0, "建議性失敗永遠不會阻擋");
+  assert.equal(summarizeChecks([advisory]).infrastructureFailures.length, 0, "advisory failures never block");
 });
 
-test("狀態機優先順序", () => {
+test("state machine precedence", () => {
   const approvals = { changesRequestedBy: [], satisfied: false, reviewers: [] };
   const automation = (overrides = {}) => ({ contributionFailures: [], pending: [], infrastructureFailures: [], ...overrides });
   assert.equal(computeState({ automation: automation({ contributionFailures: [{}], pending: [{}] }), approvals }), "requires-submitter-fixes");
@@ -348,7 +376,7 @@ test("狀態機優先順序", () => {
   assert.equal(computeState({ automation: automation(), approvals }), "ready-for-review");
 });
 
-test("latestRunsByWorkflow 對每個 workflow 保留最新的 PR 觸發執行", () => {
+test("latestRunsByWorkflow keeps the newest PR-triggered run per workflow", () => {
   const latest = latestRunsByWorkflow([
     { id: 1, path: ".github/workflows/a.yml", event: "pull_request", created_at: "2026-09-29T10:00:00Z" },
     { id: 2, path: ".github/workflows/a.yml", event: "pull_request", created_at: "2026-09-29T11:00:00Z" },
@@ -358,31 +386,31 @@ test("latestRunsByWorkflow 對每個 workflow 保留最新的 PR 觸發執行", 
   assert.ok(!latest.has("b.yml"));
 });
 
-// --- 命令與渲染 ------------------------------------------------------------
+// --- commands and rendering ------------------------------------------------------
 
-test("parsePrCommand 只接受留言開頭的支援命令", () => {
+test("parsePrCommand only accepts supported commands at the start of the comment", () => {
   assert.deepEqual(parsePrCommand("/rerun-checks"), { command: "rerun-checks" });
   assert.deepEqual(parsePrCommand("/Request-Review please\nthanks"), { command: "request-review" });
-  assert.equal(parsePrCommand("\n/rerun-checks"), null, "符合 workflow 的 startsWith 篩選");
+  assert.equal(parsePrCommand("\n/rerun-checks"), null, "matches the workflow's startsWith filter");
   assert.equal(parsePrCommand("  /rerun-checks"), null);
   assert.equal(parsePrCommand("please /rerun-checks"), null);
   assert.equal(parsePrCommand("/rerun-checksx"), null);
   assert.equal(parsePrCommand(""), null);
 });
 
-test("canRunPrCommand 只允許作者與寫入者", () => {
+test("canRunPrCommand allows the author and writers only", () => {
   assert.ok(canRunPrCommand({ commenter: "Author", prAuthor: "author", permission: "read" }));
   assert.ok(canRunPrCommand({ commenter: "m", prAuthor: "author", permission: "maintain" }));
   assert.ok(!canRunPrCommand({ commenter: "x", prAuthor: "author", permission: "triage" }));
   assert.ok(!canRunPrCommand({ commenter: "", prAuthor: "", permission: "read" }));
 });
 
-test("sanitize 會中和提及、HTML 與表格換行", () => {
+test("sanitize neutralizes mentions, HTML, and table breaks", () => {
   assert.equal(sanitize("@team <b>|x"), "@\u200bteam &lt;b&gt;\\|x");
   assert.equal(sanitize("a".repeat(10), 5).length, 5);
 });
 
-// --- 使用假定的 GitHub 用戶端進行協調 ---------------------------------------
+// --- orchestration with a fake GitHub client --------------------------------------
 
 function fakeGithub({ pr, files = [], reviews = [], runs = [], jobs = {}, checkRuns = [], comments = [], reactions = [], permissions = {} }) {
   const calls = [];
@@ -477,7 +505,7 @@ const run = (id, workflow, conclusion, status = "completed") => ({
   html_url: `https://example.test/runs/${id}`,
 });
 
-test("checks 通過且核准存在時，evaluateSubmission 達到 approved", async () => {
+test("evaluateSubmission reaches approved when checks pass and approvals exist", async () => {
   const github = fakeGithub({
     pr: basePr,
     files: [file("docs/a.md")],
@@ -502,7 +530,7 @@ test("checks 通過且核准存在時，evaluateSubmission 達到 approved", asy
   assert.equal(evaluation.risk.tier, "low");
   assert.equal(evaluation.state, "approved");
   assert.equal(evaluation.passed, true);
-  assert.equal(evaluation.automation.warnings.length, 1, "重複掃描的基礎設施失敗屬於建議性");
+  assert.equal(evaluation.automation.warnings.length, 1, "duplicate-scan infra failure is advisory");
   assert.equal(evaluation.reviewAssignment.due, "2026-10-01");
 
   await syncPullRequestStatus(github, { owner: "github", repo: "awesome-copilot", evaluation });
@@ -514,7 +542,7 @@ test("checks 通過且核准存在時，evaluateSubmission 達到 approved", asy
   assert.ok(created.params.body.startsWith(STATUS_MARKER));
 });
 
-test("evaluateSubmission 區分貢獻失敗與基礎設施失敗", async () => {
+test("evaluateSubmission separates contribution and infrastructure failures", async () => {
   const github = fakeGithub({
     pr: basePr,
     files: [file("skills/x/SKILL.md", { status: "added" })],
@@ -554,7 +582,7 @@ test("evaluateSubmission 區分貢獻失敗與基礎設施失敗", async () => {
   assert.match(body, /2026-10-01/);
 });
 
-test("evaluateSubmission 在 gate 模式下等待暫止中的 checks", async () => {
+test("evaluateSubmission waits for pending checks in gate mode", async () => {
   let clock = 0;
   let polls = 0;
   const runs = [
@@ -590,7 +618,7 @@ test("evaluateSubmission 在 gate 模式下等待暫止中的 checks", async () 
   assert.equal(evaluation.state, "ready-for-review");
 });
 
-test("未回報的必需 checks 在寬限期後成為基礎設施失敗", async () => {
+test("unreported required checks become infrastructure failures after the grace period", async () => {
   let clock = 0;
   const github = fakeGithub({ pr: basePr, files: [file("LICENSE")], runs: [run(3, "contributor-check.yml", "success")] });
   const evaluation = await evaluateSubmission(github, {
@@ -611,7 +639,7 @@ test("未回報的必需 checks 在寬限期後成為基礎設施失敗", async 
   assert.ok(clock < config.gate.wait.timeout_minutes * 60_000);
 });
 
-test("rerunChecks 重新執行失敗的 workflows 與 gate，但略過受核准把關的執行", async () => {
+test("rerunChecks re-runs failed workflows and the gate but skips approval-gated runs", async () => {
   const github = fakeGithub({
     pr: basePr,
     runs: [
@@ -628,7 +656,7 @@ test("rerunChecks 重新執行失敗的 workflows 與 gate，但略過受核准�
   assert.ok(github.calls.some((call) => call.name === "actions.reRunWorkflow" && call.params.run_id === 4));
 });
 
-test("syncPullRequestStatus 將狀態 labels 留給外部 plugin 接收，並就地更新留言", async () => {
+test("syncPullRequestStatus leaves state labels to external plugin intake and updates the comment in place", async () => {
   const pr = { ...basePr, labels: [{ name: "external-plugin" }, { name: "ready-for-review" }] };
   const github = fakeGithub({
     pr,
@@ -655,7 +683,7 @@ test("syncPullRequestStatus 將狀態 labels 留給外部 plugin 接收，並就
   assert.ok(!github.calls.some((call) => call.name === "issues.createComment"));
 });
 
-test("resolvePullRequestForWorkflowRun 需要精確的 head 相符", async () => {
+test("resolvePullRequestForWorkflowRun requires an exact head match", async () => {
   const github = fakeGithub({ pr: basePr });
   const workflowRun = {
     head_sha: basePr.head.sha,
@@ -674,31 +702,31 @@ test("resolvePullRequestForWorkflowRun 需要精確的 head 相符", async () =>
   );
 });
 
-// --- 審查強化 ------------------------------------------------------------
+// --- review hardening ------------------------------------------------------------
 
-test("沒有可掃描 diff 的文字檔案或被截斷的檔案清單會 fail closed 為高", () => {
+test("text files without a scannable diff or a truncated file list fail closed to high", () => {
   const noPatch = classifyRisk({ files: [file("extensions/x/extension.mjs", { patch: undefined })], tiers });
   assert.equal(noPatch.tier, "high");
   assert.match(noPatch.reasons.join("\n"), /no diff available/);
   assert.equal(classifyRisk({ files: [file("skills/x/guide.pdf", { patch: undefined, status: "added" })], tiers }).tier, "medium");
-  assert.equal(classifyRisk({ files: [file("docs/a.md", { patch: undefined })], tiers }).tier, "low", "超出能力範圍");
+  assert.equal(classifyRisk({ files: [file("docs/a.md", { patch: undefined })], tiers }).tier, "low", "outside capability scope");
   assert.equal(classifyRisk({ files: [file("docs/a.md")], tiers, incompleteFiles: true }).tier, "high");
 });
 
-test("低等級需要變更資源的 owner 核准", () => {
+test("low tier requires an approval from an owner of the changed resource", () => {
   const permissions = new Map([["alice", "write"], ["canvasa", "write"], ["corea", "write"]]);
   const base = { tier: "low", tiers, author: "author", permissions, routing };
   const canvas = { ...base, files: [file("extensions/x/README.md")] };
   assert.equal(evaluateApprovals({ ...canvas, reviews: [review("alice", "APPROVED")] }).satisfied, false);
   assert.equal(evaluateApprovals({ ...canvas, reviews: [review("canvasa", "APPROVED")] }).satisfied, true);
   const docs = { ...base, files: [file("docs/a.md")] };
-  assert.equal(evaluateApprovals({ ...docs, reviews: [review("alice", "APPROVED")] }).satisfied, false, "core pools 擁有 docs");
+  assert.equal(evaluateApprovals({ ...docs, reviews: [review("alice", "APPROVED")] }).satisfied, false, "core pools own docs");
   assert.equal(evaluateApprovals({ ...docs, reviews: [review("corea", "APPROVED")] }).satisfied, true);
   const unstaffed = evaluateApprovals({ ...base, files: [file("skills/x/SKILL.md")], reviews: [review("alice", "APPROVED")] });
-  assert.equal(unstaffed.satisfied, true, "未配置人手的內容 pool 回落到任何寫入者");
+  assert.equal(unstaffed.satisfied, true, "unstaffed content pool falls back to any writer");
 });
 
-test("無法讀取 reviewer 權限時，核准會 fail closed", async () => {
+test("approvals fail closed when a reviewer's permission can't be read", async () => {
   const github = fakeGithub({ pr: basePr, files: [file("docs/a.md")], reviews: [review("alice", "APPROVED", undefined, { author_association: "COLLABORATOR" })] });
   github.rest.repos.getCollaboratorPermissionLevel = async () => {
     throw Object.assign(new Error("forbidden"), { status: 403 });
@@ -707,7 +735,7 @@ test("無法讀取 reviewer 權限時，核准會 fail closed", async () => {
   assert.deepEqual(evaluation.approvals.approvers, []);
 });
 
-test("GitHub 截斷變更檔案清單時，evaluateSubmission 會阻擋", async () => {
+test("evaluateSubmission blocks when GitHub truncates the changed file list", async () => {
   const github = fakeGithub({ pr: { ...basePr, changed_files: 3001 }, files: [file("docs/a.md")] });
   const evaluation = await evaluateSubmission(github, { owner: "github", repo: "awesome-copilot", pullNumber: 7, config, finalized: true, readContributorRisk: () => null });
   assert.equal(evaluation.risk.tier, "high");
@@ -716,7 +744,7 @@ test("GitHub 截斷變更檔案清單時，evaluateSubmission 會阻擋", async 
   assert.equal(evaluation.passed, false);
 });
 
-test("head 與預期或重新讀取的 head 不同時，evaluateSubmission 會過期", async () => {
+test("evaluateSubmission is stale when the head differs from the expected or re-read head", async () => {
   const expected = await evaluateSubmission(fakeGithub({ pr: basePr }), {
     owner: "github", repo: "awesome-copilot", pullNumber: 7, config, expectedHeadSha: "b".repeat(40), readContributorRisk: () => null,
   });
@@ -733,7 +761,7 @@ test("head 與預期或重新讀取的 head 不同時，evaluateSubmission 會�
   assert.notEqual(moved.passed, true);
 });
 
-test("非 writer 發佈的 submission-gate check 會被標記為竄改", async () => {
+test("a submission-gate check not published by the writer is flagged as tampering", async () => {
   const github = fakeGithub({
     pr: basePr,
     files: [file("docs/a.md")],
@@ -754,7 +782,7 @@ test("非 writer 發佈的 submission-gate check 會被標記為竄改", async (
   assert.equal(created.params.conclusion, "failure");
 });
 
-test("publishGateCheck 更新 writer 的 check 執行，並將 pending 報告為進行中", async () => {
+test("publishGateCheck updates the writer's check run and reports pending as in progress", async () => {
   const ours = { id: 42, name: "submission-gate", external_id: GATE_CHECK_EXTERNAL_ID };
   const github = fakeGithub({ pr: basePr, checkRuns: [ours] });
   const evaluation = {
@@ -779,7 +807,7 @@ test("publishGateCheck 更新 writer 的 check 執行，並將 pending 報告為
   assert.equal(created.params.conclusion, undefined);
 });
 
-test("head 或 reviews 變更時，syncPullRequestStatus 不會寫入", async () => {
+test("syncPullRequestStatus does not write when the head or reviews changed", async () => {
   const evaluation = {
     pr: basePr,
     headSha: "b".repeat(40),
@@ -810,7 +838,7 @@ test("head 或 reviews 變更時，syncPullRequestStatus 不會寫入", async ()
   assert.ok(!reviewed.calls.some((call) => /addLabels|checks\.create/.test(call.name)));
 });
 
-test("即使 label 或留言寫入失敗，syncPullRequestStatus 仍會發佈 gate check", async () => {
+test("syncPullRequestStatus publishes the gate check even when label or comment writes fail", async () => {
   const evaluation = {
     pr: basePr,
     headSha: basePr.head.sha,
@@ -834,10 +862,10 @@ test("即使 label 或留言寫入失敗，syncPullRequestStatus 仍會發佈 ga
     syncPullRequestStatus(github, { owner: "github", repo: "awesome-copilot", evaluation, publishCheck: true }),
     /labels: Resource not accessible; status comment: Server Error/
   );
-  assert.ok(github.calls.some((call) => call.name === "checks.create"), "check 在 label 與留言寫入之前已發佈");
+  assert.ok(github.calls.some((call) => call.name === "checks.create"), "check is published before label and comment writes");
 });
 
-test("成功但無法讀取產出物的 contributor check 會 fail closed", async () => {
+test("a successful contributor check with an unreadable artifact fails closed", async () => {
   const runs = [
     run(1, "check-line-endings.yml", "success"),
     run(90, "codespell.yml", "success"),
@@ -858,11 +886,11 @@ test("成功但無法讀取產出物的 contributor check 會 fail closed", asyn
     fakeGithub({ pr: basePr, files: [file("docs/a.md")], runs, jobs: { 3: [{ name: "pr-check", conclusion: "skipped" }] }, ...approved }),
     options
   );
-  assert.equal(skipped.automation.infrastructureFailures.length, 0, "被跳過的 PR job 不帶有任何訊號");
+  assert.equal(skipped.automation.infrastructureFailures.length, 0, "a skipped PR job carries no signal");
   assert.equal(skipped.passed, true);
 });
 
-test("基底分支或風險 labels 變更時，評估結果與最終寫入會被捨棄", async () => {
+test("evaluation and final write are discarded when the base branch or risk labels change", async () => {
   const github = fakeGithub({ pr: basePr, files: [file("docs/a.md")] });
   let gets = 0;
   github.rest.pulls.get = async ({ pull_number }) => {
@@ -888,7 +916,7 @@ test("基底分支或風險 labels 變更時，評估結果與最終寫入會被
   assert.equal(riskLabelSignature(["b", "needs-review:HIGH", "a"], ["needs-review:HIGH"]), "needs-review:HIGH");
 });
 
-test("publishGateCheck 會修正 writer 的 check 副本對失敗評估宣稱 success 的情況", async () => {
+test("publishGateCheck corrects copies of the writer's check that claim success for a failing evaluation", async () => {
   const older = { id: 10, name: "submission-gate", external_id: GATE_CHECK_EXTERNAL_ID, conclusion: "failure" };
   const forged = { id: 11, name: "submission-gate", external_id: GATE_CHECK_EXTERNAL_ID, conclusion: "success" };
   const github = fakeGithub({ pr: basePr, checkRuns: [older, forged] });
@@ -904,11 +932,11 @@ test("publishGateCheck 會修正 writer 的 check 副本對失敗評估宣稱 su
   await publishGateCheck(github, { owner: "github", repo: "awesome-copilot", evaluation, log: (line) => logs.push(line) });
   const updates = github.calls.filter((call) => call.name === "checks.update");
   assert.deepEqual(updates.map((call) => call.params.check_run_id), [11]);
-  assert.equal(updates[0].params.conclusion, "failure");
+  assert.equal(updates[0].params.conclusion, "action_required");
   assert.ok(logs.some((line) => /Correcting 1/.test(line)));
 });
 
-test("validatePrCommandRequest 只接受來自觸發執行且格式正確的請求", () => {
+test("validatePrCommandRequest only accepts well-formed requests from the triggering run", () => {
   const request = { schema_version: PR_COMMAND_SCHEMA, pr_number: 7, comment_id: 55, run_id: "123" };
   assert.deepEqual(validatePrCommandRequest(request, { workflowRunId: 123 }), { prNumber: 7, commentId: 55 });
   assert.throws(() => validatePrCommandRequest({ ...request, run_id: "124" }, { workflowRunId: 123 }), /run_id/);
@@ -927,7 +955,7 @@ const commandComment = (body, login = "author", extra = {}) => ({
 });
 const commandOptions = { owner: "github", repo: "awesome-copilot", prNumber: 7, commentId: 55, config };
 
-test("runPrCommand 在寫入前重新讀取留言、PR 與權限", async () => {
+test("runPrCommand re-reads the comment, PR, and permission before writing", async () => {
   const request = fakeGithub({ pr: basePr, comments: [commandComment("/request-review")] });
   assert.deepEqual(await runPrCommand(request, commandOptions), { status: "handled", command: "request-review" });
   assert.deepEqual(request.calls.find((call) => call.name === "issues.addLabels").params.labels, ["needs-reviewer"]);
@@ -937,15 +965,15 @@ test("runPrCommand 在寫入前重新讀取留言、PR 與權限", async () => {
   assert.ok(request.calls.some((call) => call.name === "reactions.createForIssueComment"));
   assert.ok(request.calls.some((call) => call.name === "issues.createComment"));
   const order = request.calls.map((call) => (call.name === "reactions.createForIssueComment" ? `reaction:${call.params.content}` : call.name));
-  assert.ok(order.indexOf("reaction:eyes") < order.indexOf("issues.addLabels"), "認領標記先於動作寫入");
-  assert.ok(order.indexOf("reaction:rocket") > order.indexOf("issues.createComment"), "完成標記在回覆之後寫入");
+  assert.ok(order.indexOf("reaction:eyes") < order.indexOf("issues.addLabels"), "claim marker is written before acting");
+  assert.ok(order.indexOf("reaction:rocket") > order.indexOf("issues.createComment"), "done marker is written after the reply");
 
   const rerun = fakeGithub({ pr: basePr, comments: [commandComment("/rerun-checks", "maint")], permissions: { maint: "maintain" } });
   assert.equal((await runPrCommand(rerun, commandOptions)).command, "rerun-checks");
   assert.equal(rerun.calls.find((call) => call.name === "actions.createWorkflowDispatch").params.workflow_id, "submission-gate-writer.yml");
 });
 
-test("runPrCommand 會忽略局外人、已關閉的 PR、編輯、重放與不符的留言", async () => {
+test("runPrCommand ignores outsiders, closed PRs, edits, replays, and mismatched comments", async () => {
   const writes = /addLabels|createComment|createForIssueComment|createWorkflowDispatch|reRun/;
 
   const outsider = fakeGithub({ pr: basePr, comments: [commandComment("/rerun-checks", "stranger")] });
@@ -975,7 +1003,7 @@ test("runPrCommand 會忽略局外人、已關閉的 PR、編輯、重放與不�
   });
   await assert.rejects(runPrCommand(elsewhere, commandOptions), /does not belong/);
 });
-test("runPrCommand 會重試已被認領但從未完成的命令", async () => {
+test("runPrCommand retries a command that was claimed but never completed", async () => {
   const claimedOnly = fakeGithub({
     pr: basePr,
     comments: [commandComment("/request-review")],
@@ -989,10 +1017,10 @@ test("runPrCommand 會重試已被認領但從未完成的命令", async () => {
   };
   await assert.rejects(runPrCommand(failing, commandOptions), /boom/);
   const reactionsWritten = failing.calls.filter((call) => call.name === "reactions.createForIssueComment").map((call) => call.params.content);
-  assert.deepEqual(reactionsWritten, ["eyes"], "失敗的執行只留下認領標記，因此可以重試");
+  assert.deepEqual(reactionsWritten, ["eyes"], "a failed run leaves only the claim marker, so it can be retried");
 });
 
-test("仍暫止中的建議性 checks 不會擋住 gate", () => {
+test("advisory checks that are still pending do not hold the gate", () => {
   const advisory = evaluateCheck({ id: "quality", required: false }, { found: true, status: "in_progress" });
   const required = evaluateCheck({ id: "build" }, { found: true, status: "completed", conclusion: "success" });
   const automation = summarizeChecks([advisory, required]);
@@ -1005,14 +1033,14 @@ test("仍暫止中的建議性 checks 不會擋住 gate", () => {
   assert.equal(computeState({ automation: requiredPending, approvals }), "awaiting-automation");
 });
 
-test("無法解析的 review-routing.yml 會讓 loadGateConfig fail closed，但容忍檔案缺失", () => {
+test("loadGateConfig fails closed on an unparsable review-routing.yml but tolerates a missing one", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gate-config-"));
   try {
     fs.mkdirSync(path.join(dir, ".github"));
     for (const name of ["submission-gate.yml", "risk-tiers.yml"]) {
       fs.copyFileSync(path.join(repoRoot, ".github", name), path.join(dir, ".github", name));
     }
-    assert.equal(loadGateConfig(dir).routing, null, "routing 檔案缺失時回退");
+    assert.equal(loadGateConfig(dir).routing, null, "missing routing file falls back");
 
     const routingPath = path.join(dir, ".github", "review-routing.yml");
     fs.writeFileSync(routingPath, "pools: [unclosed\n");

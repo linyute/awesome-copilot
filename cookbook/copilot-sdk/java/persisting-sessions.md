@@ -1,5 +1,8 @@
 # 工作階段持續性與恢復
 
+> **示範權限：** 這些範例僅在隔離且可信任的示範環境中使用 `PermissionHandler.APPROVE_ALL`。
+> 在使用不可信任的提示或工作區之前，請改用限制較嚴格的權限處理常式。
+
 在應用程式重新啟動時儲存並還原對話工作階段。
 
 > **可執行的範例：** [recipe/PersistingSessions.java](recipe/PersistingSessions.java)
@@ -15,12 +18,12 @@
 ## 建立具有自訂 ID 的工作階段
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
-import com.github.copilot.sdk.events.AssistantMessageEvent;
-import com.github.copilot.sdk.json.MessageOptions;
-import com.github.copilot.sdk.json.PermissionHandler;
-import com.github.copilot.sdk.json.SessionConfig;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
+import com.github.copilot.generated.AssistantMessageEvent;
+import com.github.copilot.rpc.MessageOptions;
+import com.github.copilot.rpc.PermissionHandler;
+import com.github.copilot.rpc.SessionConfig;
 
 public class CreateSessionWithId {
     public static void main(String[] args) throws Exception {
@@ -55,12 +58,12 @@ public class CreateSessionWithId {
 ## 恢復工作階段
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
-import com.github.copilot.sdk.events.AssistantMessageEvent;
-import com.github.copilot.sdk.json.MessageOptions;
-import com.github.copilot.sdk.json.PermissionHandler;
-import com.github.copilot.sdk.json.ResumeSessionConfig;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
+import com.github.copilot.generated.AssistantMessageEvent;
+import com.github.copilot.rpc.MessageOptions;
+import com.github.copilot.rpc.PermissionHandler;
+import com.github.copilot.rpc.ResumeSessionConfig;
 
 public class ResumeSession {
     public static void main(String[] args) throws Exception {
@@ -91,8 +94,8 @@ public class ResumeSession {
 ## 列出可用的工作階段
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
 
 public class ListSessions {
     public static void main(String[] args) throws Exception {
@@ -111,8 +114,8 @@ public class ListSessions {
 ## 永久刪除工作階段
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
 
 public class DeleteSession {
     public static void main(String[] args) throws Exception {
@@ -130,12 +133,12 @@ public class DeleteSession {
 ## 取得工作階段歷程紀錄
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
-import com.github.copilot.sdk.events.AssistantMessageEvent;
-import com.github.copilot.sdk.events.UserMessageEvent;
-import com.github.copilot.sdk.json.PermissionHandler;
-import com.github.copilot.sdk.json.ResumeSessionConfig;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
+import com.github.copilot.generated.AssistantMessageEvent;
+import com.github.copilot.generated.UserMessageEvent;
+import com.github.copilot.rpc.PermissionHandler;
+import com.github.copilot.rpc.ResumeSessionConfig;
 
 public class SessionHistory {
     public static void main(String[] args) throws Exception {
@@ -170,10 +173,10 @@ public class SessionHistory {
 這個互動式範例讓您能從命令列建立、恢復或列出工作階段。
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
-import com.github.copilot.sdk.events.AssistantMessageEvent;
-import com.github.copilot.sdk.json.*;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
+import com.github.copilot.generated.AssistantMessageEvent;
+import com.github.copilot.rpc.*;
 import java.util.Scanner;
 
 public class SessionManager {
@@ -255,7 +258,7 @@ public class SessionManager {
             if (input.equalsIgnoreCase("exit")) break;
 
             // 使用無反射方法：將其轉型為工作階段類別
-            var s = (com.github.copilot.sdk.CopilotSession) session;
+            var s = (com.github.copilot.CopilotSession) session;
             s.sendAndWait(new MessageOptions().setPrompt(input)).get();
         }
     }
@@ -265,9 +268,9 @@ public class SessionManager {
 ## 檢查工作階段是否存在
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
-import com.github.copilot.sdk.json.*;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
+import com.github.copilot.rpc.*;
 
 public class CheckSession {
     public static boolean sessionExists(CopilotClient client, String sessionId) {

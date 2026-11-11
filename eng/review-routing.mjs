@@ -1,9 +1,9 @@
-// 為 pull request 提供評審員路由（reviewer routing）與 SLA 升級機制。
+// PR 的檢閱者路由與 SLA 呈報。
 //
-// 設定檔位於 .github/review-routing.yml。純規畫（planning）
-// 函式（planRouting、planEscalation、工作天輔助函式）在
-// review-routing.test.mjs 中進行單元測試；非同步執行器會以
-// Review Routing 與 Review Escalation 工作流所發出的 GitHub REST 呼叫來包裝這些函式。
+// 設定檔位於 .github/review-routing.yml。純規劃
+// 函式 (planRouting, planEscalation, 工作天協助程式) 在 review-routing.test.mjs
+// 中進行單元測試；非同步執行程式將其封裝至 Review Routing 與 Review Escalation
+// 工作流程所執行的 GitHub REST 呼叫中。
 
 import fs from "node:fs";
 import path from "node:path";
@@ -23,6 +23,7 @@ export const INTENT_LABELS = Object.freeze([
   "new-submission",
   "plugin",
   "skills",
+  "workshops",
   "website-update",
   "workflow",
 ]);
@@ -40,19 +41,19 @@ const TEAM_PATTERN = /^[A-Za-z0-9][A-Za-z0-9-]*\/[A-Za-z0-9][A-Za-z0-9._-]*$/;
 const DATE_KEY_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const DUE_LABEL_RETENTION_DAYS = 14;
 
-/** GitHub Actions 每個 matrix 最多允許 256 個 job。 */
+/** GitHub Actions 每個矩陣最多允許 256 個作業。 */
 export const MAX_MATRIX_TARGETS = 256;
 
 /**
- * 將 sweep 目標上限設為單一 matrix 可執行的數量；剩餘的部分
- * 會由下一次排程執行接手（規畫具冪等性），因此不會有任何遺漏。
+ * Cap sweep targets to what one matrix can run. The remainder is picked up by
+ * the next scheduled run (planning is idempotent), so nothing is lost.
  */
 export function limitTargets(targets, max = MAX_MATRIX_TARGETS) {
   return { targets: targets.slice(0, max), deferred: Math.max(0, targets.length - max) };
 }
 
 // ---------------------------------------------------------------------------
-// 設定（Configuration）
+// 設定
 // ---------------------------------------------------------------------------
 
 function isPlainObject(value) {
@@ -62,13 +63,13 @@ function isPlainObject(value) {
 function validateLoginList(value, where, errors) {
   if (value === undefined || value === null) return [];
   if (!Array.isArray(value)) {
-    errors.push(`${where} 必須是 GitHub 登入名的清單`);
+    errors.push(`${where} must be a list of GitHub logins`);
     return [];
   }
   const logins = [];
   for (const entry of value) {
     if (typeof entry !== "string" || !LOGIN_PATTERN.test(entry)) {
-      errors.push(`${where} 包含無效的 GitHub 登入名：${JSON.stringify(entry)}`);
+      errors.push(`${where} contains an invalid GitHub login: ${JSON.stringify(entry)}`);
       continue;
     }
     logins.push(entry);
@@ -77,31 +78,31 @@ function validateLoginList(value, where, errors) {
 }
 
 /**
- * 驗證並正規化已解析的 review-routing.yml 文件。
+ * Validate and normalize a parsed review-routing.yml document.
  * @returns {{ config: object|null, errors: string[] }}
  */
 export function normalizeReviewRoutingConfig(raw) {
   const errors = [];
   if (!isPlainObject(raw)) {
-    return { config: null, errors: ["設定檔必須是 YAML mapping"] };
+    return { config: null, errors: ["configuration must be a YAML mapping"] };
   }
-  if (raw.version !== 1) errors.push("version 必須是 1");
+  if (raw.version !== 1) errors.push("version must be 1");
 
   const sla = isPlainObject(raw.sla) ? raw.sla : {};
-  if (!isPlainObject(raw.sla)) errors.push("sla 必須是 mapping");
+  if (!isPlainObject(raw.sla)) errors.push("sla must be a mapping");
   const firstReviewBusinessDays = sla.first_review_business_days;
   const escalationBusinessDays = sla.escalation_business_days;
   if (!Number.isInteger(firstReviewBusinessDays) || firstReviewBusinessDays < 1) {
-    errors.push("sla.first_review_business_days 必須是正整數");
+    errors.push("sla.first_review_business_days must be a positive integer");
   }
   if (!Number.isInteger(escalationBusinessDays) || escalationBusinessDays <= firstReviewBusinessDays) {
-    errors.push("sla.escalation_business_days 必須是介於 sla.first_review_business_days 以上的整數");
+    errors.push("sla.escalation_business_days must be an integer greater than sla.first_review_business_days");
   }
   const holidays = [];
   for (const holiday of sla.holidays ?? []) {
     const key = holiday instanceof Date ? holiday.toISOString().slice(0, 10) : holiday;
     if (typeof key !== "string" || !DATE_KEY_PATTERN.test(key)) {
-      errors.push(`sla.holidays 包含無效的日期：${JSON.stringify(holiday)}`);
+      errors.push(`sla.holidays contains an invalid date: ${JSON.stringify(holiday)}`);
     } else {
       holidays.push(key);
     }
@@ -116,21 +117,21 @@ export function normalizeReviewRoutingConfig(raw) {
   };
   for (const [key, value] of Object.entries(labels)) {
     if (typeof value !== "string" || value.trim() === "") {
-      errors.push(`labels.${key} 必須是非空字串`);
+      errors.push(`labels.${key} must be a non-empty string`);
     }
   }
 
   const pools = {};
   if (!isPlainObject(raw.pools) || Object.keys(raw.pools).length === 0) {
-    errors.push("pools 必須是非空的 mapping");
+    errors.push("pools must be a non-empty mapping");
   } else {
     for (const [name, pool] of Object.entries(raw.pools)) {
       if (!isPlainObject(pool)) {
-        errors.push(`pools.${name} 必須是 mapping`);
+        errors.push(`pools.${name} must be a mapping`);
         continue;
       }
       if (pool.team !== undefined && pool.team !== null && (typeof pool.team !== "string" || !TEAM_PATTERN.test(pool.team))) {
-        errors.push(`pools.${name}.team 必須使用 "<org>/<team-slug>" 格式`);
+        errors.push(`pools.${name}.team must use the "<org>/<team-slug>" form`);
       }
       pools[name] = {
         name,
@@ -143,20 +144,20 @@ export function normalizeReviewRoutingConfig(raw) {
 
   const escalationPool = raw.escalation_pool;
   const defaultPool = raw.default_pool;
-  if (!pools[escalationPool]) errors.push("escalation_pool 必須指定一個已設定的池");
-  if (!pools[defaultPool]) errors.push("default_pool 必須指定一個已設定的池");
+  if (!pools[escalationPool]) errors.push("escalation_pool must name a configured pool");
+  if (!pools[defaultPool]) errors.push("default_pool must name a configured pool");
 
   const routes = [];
   if (!Array.isArray(raw.routes)) {
-    errors.push("routes 必須是清單");
+    errors.push("routes must be a list");
   } else {
     raw.routes.forEach((route, index) => {
       if (!isPlainObject(route) || typeof route.label !== "string" || route.label.trim() === "") {
-        errors.push(`routes[${index}] 必須包含 label`);
+        errors.push(`routes[${index}] must have a label`);
         return;
       }
       if (!pools[route.pool]) {
-        errors.push(`routes[${index}]（${route.label}）參考了未知的池 ${JSON.stringify(route.pool)}`);
+        errors.push(`routes[${index}] (${route.label}) references unknown pool ${JSON.stringify(route.pool)}`);
         return;
       }
       routes.push({ label: route.label, pool: route.pool });
@@ -165,11 +166,11 @@ export function normalizeReviewRoutingConfig(raw) {
 
   const skipLabels = Array.isArray(raw.skip_labels) ? raw.skip_labels.filter((label) => typeof label === "string") : [];
   if (raw.skip_labels !== undefined && raw.skip_labels !== null && !Array.isArray(raw.skip_labels)) {
-    errors.push("skip_labels 必須是清單");
+    errors.push("skip_labels must be a list");
   }
 
   if (typeof raw.dry_run !== "boolean") {
-    errors.push("dry_run 必須是 true 或 false");
+    errors.push("dry_run must be true or false");
   }
 
   const config = {
@@ -193,19 +194,19 @@ export function loadReviewRoutingConfig(filePath = REVIEW_ROUTING_CONFIG_PATH) {
   const raw = yaml.load(fs.readFileSync(filePath, "utf8"));
   const { config, errors } = normalizeReviewRoutingConfig(raw);
   if (!config) {
-    throw new Error(`無效的評審路由設定（${filePath}）：\n- ${errors.join("\n- ")}`);
+    throw new Error(`Invalid review routing configuration (${filePath}):\n- ${errors.join("\n- ")}`);
   }
   return config;
 }
 
 // ---------------------------------------------------------------------------
-// 工作天運算（UTC 日期以 YYYY-MM-DD 作為 key）
+// 工作天計算（以 YYYY-MM-DD 為索引鍵的 UTC 日期）
 // ---------------------------------------------------------------------------
 
 export function toDateKey(value) {
   if (typeof value === "string" && DATE_KEY_PATTERN.test(value)) return value;
   const date = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(date.getTime())) throw new Error(`無效的日期：${value}`);
+  if (Number.isNaN(date.getTime())) throw new Error(`Invalid date: ${value}`);
   return date.toISOString().slice(0, 10);
 }
 
@@ -222,8 +223,8 @@ export function isBusinessDay(value, holidays = []) {
 }
 
 /**
- * 從 `start` 起移動 `days` 個工作天（負值則向前移動）。
- * 週末與已設定的假期會被略過。回傳 YYYY-MM-DD key。
+ * Move `days` business days from `start` (negative values move backwards).
+ * Weekends and configured holidays are skipped. Returns a YYYY-MM-DD key.
  */
 export function addBusinessDays(start, days, holidays = []) {
   let key = toDateKey(start);
@@ -237,11 +238,11 @@ export function addBusinessDays(start, days, holidays = []) {
 }
 
 /**
- * 針對 review-due 標籤為 `dueDate` 的 PR 的 SLA 里程標。
- * - routedOn：PR 被路由的工作天（dueDate - first_review_business_days）
- * - dueDate：首次審查的最後一個工作天
- * - overdueOn：dueDate 之後的第一個工作天（請求備援評審員）
- * - escalateOn：routedOn + escalation_business_days（請求核心池）
+ * SLA milestones for a PR whose review-due label is `dueDate`.
+ * - routedOn: business day the PR was routed (dueDate - first_review_business_days)
+ * - dueDate: last business day for a first review
+ * - overdueOn: first business day after dueDate (backup reviewer requested)
+ * - escalateOn: routedOn + escalation_business_days (core pool requested)
  */
 export function slaMilestones(dueDate, config) {
   const { firstReviewBusinessDays, escalationBusinessDays, holidays } = config.sla;
@@ -255,7 +256,7 @@ export function slaMilestones(dueDate, config) {
 }
 
 // ---------------------------------------------------------------------------
-// 標籤、評審員與審查的輔助函式
+// 標籤、檢閱者與檢閱協助程式
 // ---------------------------------------------------------------------------
 
 const lower = (value) => String(value ?? "").toLowerCase();
@@ -282,9 +283,9 @@ export function parseDueLabels(names, config) {
 }
 
 /**
- * 用於路由決策的標籤。當 `intentLabels` 是陣列（來自
- * Label PR Intent artifact）時，它為權威來源：現有的 intent 標籤
- * 會被它取代，即使它是空陣列也一樣。`null` 表示「使用目前的標籤」。
+ * Labels used for routing decisions. When `intentLabels` is an array (from a
+ * Label PR Intent artifact) it is authoritative: current intent labels are
+ * replaced by it, even when it is empty. `null` means "use current labels".
  */
 export function effectiveLabelNames(currentLabels, intentLabels = null) {
   const current = labelNames(currentLabels);
@@ -306,7 +307,7 @@ function isTeamRequested(pr, slug) {
   return Boolean(slug) && (pr.requested_teams ?? []).some((team) => lower(team?.slug) === lower(slug));
 }
 
-/** 統計各評審員（以小寫登入名計）在所有開啟 PR 上的未完成審查請求數。 */
+/** 計算所有開啟中 PR 每個檢閱者（小寫帳號）的待處理檢閱請求數。 */
 export function computeReviewLoad(openPulls = []) {
   const load = new Map();
   for (const pull of openPulls) {
@@ -319,8 +320,8 @@ export function computeReviewLoad(openPulls = []) {
 }
 
 /**
- * 選出未完成審查請求數最少的合格候選人。
- * 平手時依 `seed`（PR 編號）輪替，使指派分散於整個池。
+ * Pick the eligible candidate with the fewest open review requests.
+ * Ties rotate by `seed` (the PR number) so assignments spread across the pool.
  */
 export function pickReviewer(candidates, { exclude = new Set(), load = new Map(), seed = 0 } = {}) {
   const seen = new Set();
@@ -345,8 +346,8 @@ function isAfterBoundary(submittedAt, since) {
 }
 
 /**
- * 當作者以外的任何人（且非 bot）在 `since`（ISO 時間戳記，
- * 或 YYYY-MM-DD 日期 key）或之後提交過審查時，回傳 true。
+ * True when someone other than the author (and not a bot) submitted a review
+ * at or after `since` (an ISO timestamp, or a YYYY-MM-DD date key).
  */
 export function hasHumanReview(reviews = [], author, since = null) {
   return reviews.some((review) => {
@@ -358,7 +359,7 @@ export function hasHumanReview(reviews = [], author, since = null) {
   });
 }
 
-/** 已提交非 PENDING 審查的登入名（不含作者與 bot）。 */
+/** 提交非 pending 檢閱的使用者帳號（作者與機器人除外）。 */
 function submittedReviewers(reviews, author) {
   return reviews
     .filter((review) => review?.state !== "PENDING")
@@ -367,9 +368,9 @@ function submittedReviewers(reviews, author) {
 }
 
 /**
- * 能滿足某個池的個人：該池的評審員與備援人員，外加可審查
- * 任何 PR 的升級（核心）池。對 `unavailable` 評審員的
- * PENDING 請求不計入；但其已提交的審查則計入。
+ * Individuals who can satisfy a pool: its reviewers and backups, plus the
+ * escalation (core) pool, who may review anything. A pending request for an
+ * `unavailable` reviewer does not count; a review they already submitted does.
  */
 export function coveringReviewers(pr, reviews, poolName, config) {
   const pool = config.pools[poolName];
@@ -409,8 +410,8 @@ function commonSkip(pr, names, config) {
 }
 
 /**
- * 為某個池選擇要請求誰：先選池的評審員，再選池的備援人員，
- * 接著是升級池，最後是池的團隊（除非已被請求）。
+ * Choose who to request for a pool: pool reviewers, then pool backups, then
+ * the escalation pool, then the pool team (unless already requested).
  */
 function pickPoolRequest(pr, poolName, config, load, alsoExclude = []) {
   const pool = config.pools[poolName];
@@ -434,16 +435,16 @@ function pickPoolRequest(pr, poolName, config, load, alsoExclude = []) {
 const hasRequest = (plan) => plan.reviewers.length > 0 || plan.teamReviewers.length > 0;
 
 // ---------------------------------------------------------------------------
-// 規畫（Planning）
+// 規劃
 // ---------------------------------------------------------------------------
 
 /**
- * 決定 PR 的路由方式。純函式：不執行任何 I/O。
+ * Decide how to route a PR. Pure: performs no I/O.
  * @param {object} args
- * @param {object} args.pr        Pull request（REST 形狀：number、state、draft、user、labels、requested_reviewers、requested_teams）
- * @param {object[]} args.reviews 該 PR 上的審查
- * @param {Map} args.load         各評審員未完成的審查請求數（見 computeReviewLoad）
- * @param {string[]|null} args.intentLabels 來自 Label PR Intent artifact 的權威 intent 標籤，或 null
+ * @param {object} args.pr        Pull request (REST shape: number, state, draft, user, labels, requested_reviewers, requested_teams)
+ * @param {object[]} args.reviews Reviews on the PR
+ * @param {Map} args.load         Open review requests per reviewer (see computeReviewLoad)
+ * @param {string[]|null} args.intentLabels Authoritative intent labels from a Label PR Intent artifact, or null
  */
 export function planRouting({ pr, reviews = [], load = new Map(), config, now = new Date(), intentLabels = null }) {
   const names = effectiveLabelNames(pr?.labels, intentLabels);
@@ -458,14 +459,14 @@ export function planRouting({ pr, reviews = [], load = new Map(), config, now = 
 
   if (!reviewRequested && !routed && hasHumanReview(reviews, author)) return skipped(pr, "already-reviewed", { pool: poolName });
 
-  // needs-reviewer 永遠請求一位新的評審員（目前未被請求、
-  // 也尚未審查過的人）；否則，任何已涵蓋目標池的個人
-  // （已被請求或已審查）即已足夠。
+  // needs-reviewer 總是要求一位新的檢閱者（目前未被
+  // 請求且尚未檢閱的人員）；否則一位已經涵蓋目標集區的
+  // 個人（已被請求或已檢閱）就足夠了。
   let request;
   if (reviewRequested) {
     request = pickPoolRequest(pr, poolName, config, load, submittedReviewers(reviews, author));
-    // 沒有可請求的新人：保留 needs-reviewer 與目前的 SLA，
-    // 以便稍後有評審員可用時，下一次執行能重試。
+    // 無法請求任何新檢閱者：保留 needs-reviewer 與目前的 SLA，
+    // 以便稍後有可用的檢閱者時再次重試。
     if (!hasRequest(request)) return skipped(pr, "no-reviewer-available", { pool: poolName });
   } else {
     const covering = coveringReviewers(pr, reviews, poolName, config);
@@ -473,9 +474,9 @@ export function planRouting({ pr, reviews = [], load = new Map(), config, now = 
   }
 
   if (routed && !reviewRequested) {
-    // 已路由：僅在目標池改變且未被涵蓋時才採取動作。
-    // SLA（due 標籤）維持原狀。若未設定任何個人，
-    // 任何人的審查都算數，因此不會反覆重新請求團隊。
+    // 已完成路由：僅在目標集區已變更且未被涵蓋時才動作。
+    // SLA（due 標籤）保持不變。在未設定個人的情況下，
+    // 任何人的檢閱皆計入，因此不會重複請求團隊。
     if (!hasRequest(request)) return skipped(pr, "already-routed", { pool: poolName });
     if (request.reviewers.length === 0 && hasHumanReview(reviews, author)) return skipped(pr, "already-routed", { pool: poolName });
     return {
@@ -494,8 +495,8 @@ export function planRouting({ pr, reviews = [], load = new Map(), config, now = 
   const dueLabel = dueLabelName(dueDate, config);
   const removeLabels = [];
   if (reviewRequested) {
-    // 重新加上之前，先移除所有 due 標籤（即使是日期相同的那個），
-    // 以便該標籤的 `labeled` 事件標記新 SLA 週期的開始。
+    // 在重新新增之前移除所有 due 標籤（甚至是具相同日期的標籤），
+    // 讓該標籤的 `labeled` 事件標記新 SLA 循環的開始。
     removeLabels.push(...dueLabels.map((label) => label.name));
     const prLabels = new Set(labelNames(pr.labels));
     for (const label of [config.labels.needsReviewer, config.labels.overdue, config.labels.escalated]) {
@@ -519,11 +520,11 @@ function mention(login) {
   return `@${login}`;
 }
 
-const FOOTER = "_由 Review Escalation 工作流自動執行 — 請參閱 `docs/maintainers/review-routing.md`。_";
+const FOOTER = "_Automated by the Review Escalation workflow — see `docs/maintainers/review-routing.md`._";
 
 /**
- * 決定一個已路由的 PR 是否逾期或必須升級。純函式：不執行任何 I/O。
- * @param {string|null} args.routedAt 目前 due 標籤被加上時的 ISO 時間戳記（SLA 週期的開始）
+ * Decide whether a routed PR is overdue or must escalate. Pure: performs no I/O.
+ * @param {string|null} args.routedAt ISO timestamp when the current due label was added (start of the SLA cycle)
  */
 export function planEscalation({ pr, reviews = [], load = new Map(), config, now = new Date(), routedAt = null }) {
   const names = new Set(labelNames(pr?.labels));
@@ -539,8 +540,8 @@ export function planEscalation({ pr, reviews = [], load = new Map(), config, now
   const hasOverdue = names.has(config.labels.overdue);
   const hasEscalated = names.has(config.labels.escalated);
   const base = { prNumber: pr.number, ...milestones, routedAt };
-  // due 標籤只隱含一個工作天；顯示時優先採用實際的路由時間
-  // （例如週末或假期）。
+  // due 標籤僅暗示一個工作日；顯示時偏好實際的路由時間
+  // （例如週末或假日）。
   const routedOnDisplay = routedAt ? toDateKey(routedAt) : milestones.routedOn;
 
   if (hasHumanReview(reviews, author, routedAt ?? milestones.routedOn)) {
@@ -568,13 +569,13 @@ export function planEscalation({ pr, reviews = [], load = new Map(), config, now
     const requested = [...reviewers.map(mention), ...(teamReviewers.length > 0 ? [mention(escalationTeam)] : [])];
     const body = [
       COMMENT_MARKERS.escalated,
-      "### 🚨 審查已升級",
+      "### 🚨 Review escalated",
       "",
-      `此 pull request 已於 ${routedOnDisplay} 路由至 **${poolName}** 評審員池，且在 ${config.sla.escalationBusinessDays} 個工作天內未收到審查。`,
+      `This pull request was routed to the **${poolName}** reviewer pool on ${routedOnDisplay} and has not received a review within ${config.sla.escalationBusinessDays} business days.`,
       "",
       requested.length > 0
-        ? `正在升級至 **${config.escalationPool}** 池：已請求 ${requested.join(", ")}。`
-        : `正在升級至 **${config.escalationPool}** 池${escalationTeam ? ` (${mention(escalationTeam)})` : ""}。其評審員已遭請求或不可用，因此未額外請求評審員。`,
+        ? `Escalating to the **${config.escalationPool}** pool: requested ${requested.join(", ")}.`
+        : `Escalating to the **${config.escalationPool}** pool${escalationTeam ? ` (${mention(escalationTeam)})` : ""}. Its reviewers are already requested or unavailable, so no additional reviewer was requested.`,
       "",
       FOOTER,
     ].join("\n");
@@ -599,19 +600,19 @@ export function planEscalation({ pr, reviews = [], load = new Map(), config, now
     }
     const currentlyRequested = (pr.requested_reviewers ?? []).map((reviewer) => reviewer?.login).filter((login) => login && !isBotLogin(login));
     let assignment;
-    if (backup) assignment = `正在請求備援評審員 ${mention(backup)}。`;
-    else if (fallbackTeam) assignment = `沒有可用的個別備援評審員；正在請求 ${mention(fallbackTeam)} 團隊。`;
-    else assignment = "沒有可用的額外評審員：已設定的備援人員與團隊已遭請求或不可用。";
+    if (backup) assignment = `Requesting backup reviewer ${mention(backup)}.`;
+    else if (fallbackTeam) assignment = `No individual backup reviewer is available; requesting the ${mention(fallbackTeam)} team.`;
+    else assignment = "No additional reviewer is available: the configured backups and teams are already requested or unavailable.";
     const body = [
       COMMENT_MARKERS.overdue,
-      "### ⏰ 審查已逾期",
+      "### ⏰ Review overdue",
       "",
-      `此 pull request 已於 ${routedOnDisplay} 路由至 **${poolName}** 評審員池；首次審查的期限為 ${milestones.dueDate}。`,
+      `This pull request was routed to the **${poolName}** reviewer pool on ${routedOnDisplay}; a first review was due by ${milestones.dueDate}.`,
       "",
-      currentlyRequested.length > 0 ? `目前已請求：${currentlyRequested.map(mention).join(", ")}。` : "目前沒有已請求的個別評審員。",
+      currentlyRequested.length > 0 ? `Currently requested: ${currentlyRequested.map(mention).join(", ")}.` : "No individual reviewer is currently requested.",
       assignment,
       "",
-      `若仍未收到審查，此 pull request 將於 ${milestones.escalateOn} 升級至 **${config.escalationPool}** 池。`,
+      `If no review arrives, this pull request escalates to the **${config.escalationPool}** pool on ${milestones.escalateOn}.`,
       "",
       FOOTER,
     ].join("\n");
@@ -632,7 +633,7 @@ function createActions({ github, owner, repo, config, log }) {
 
   async function ensureDueLabel(name) {
     try {
-      await github.rest.issues.createLabel({ owner, repo, name, color: "C5DEF5", description: "首次審查目標日期（評審路由）" });
+      await github.rest.issues.createLabel({ owner, repo, name, color: "C5DEF5", description: "First review target date (review routing)" });
     } catch (error) {
       if (error.status !== 422) throw error;
     }
@@ -640,13 +641,13 @@ function createActions({ github, owner, repo, config, log }) {
 
   return {
     /**
-     * 套用一份規畫。先執行評審員請求；若失敗，則不變更任何
-     * 標籤或評論，以便下一次執行重試。失敗時回傳 false。
+     * Apply a plan. Reviewer requests happen first; if they fail, no labels or
+     * comments are changed so the next run retries. Returns false on failure.
      */
     async apply(plan) {
       const prefix = `${dryRun ? "[dry-run] " : ""}PR #${plan.prNumber}`;
       if (plan.reviewers?.length || plan.teamReviewers?.length) {
-        say(`${prefix}：請求評審員=${plan.reviewers.join(",") || "-"} 團隊=${plan.teamReviewers.join(",") || "-"}`);
+        say(`${prefix}: request reviewers=${plan.reviewers.join(",") || "-"} teams=${plan.teamReviewers.join(",") || "-"}`);
         if (!dryRun) {
           try {
             await github.rest.pulls.requestReviewers({
@@ -658,13 +659,13 @@ function createActions({ github, owner, repo, config, log }) {
             });
           } catch (error) {
             plan.requestError = error.message;
-            warn(`${prefix}：評審員請求失敗；標籤維持不變，以便下一次執行重試：${error.message}`);
+            warn(`${prefix}: reviewer request failed; labels left unchanged so the next run retries: ${error.message}`);
             return false;
           }
         }
       }
       for (const name of plan.removeLabels ?? []) {
-        say(`${prefix}：移除標籤 ${name}`);
+        say(`${prefix}: remove label ${name}`);
         if (dryRun) continue;
         try {
           await github.rest.issues.removeLabel({ owner, repo, issue_number: plan.prNumber, name });
@@ -673,7 +674,7 @@ function createActions({ github, owner, repo, config, log }) {
         }
       }
       if (plan.addLabels?.length) {
-        say(`${prefix}：新增標籤 ${plan.addLabels.join(", ")}`);
+        say(`${prefix}: add labels ${plan.addLabels.join(", ")}`);
         if (!dryRun) {
           for (const name of plan.addLabels) {
             if (name.startsWith(config.labels.duePrefix)) await ensureDueLabel(name);
@@ -682,7 +683,7 @@ function createActions({ github, owner, repo, config, log }) {
         }
       }
       if (plan.comment) {
-        say(`${prefix}：發佈 ${plan.action} 評論`);
+        say(`${prefix}: post ${plan.action} comment`);
         if (!dryRun) await github.rest.issues.createComment({ owner, repo, issue_number: plan.prNumber, body: plan.comment });
       }
       return true;
@@ -698,7 +699,7 @@ async function listReviews(github, owner, repo, pullNumber) {
   return github.paginate(github.rest.pulls.listReviews, { owner, repo, pull_number: pullNumber, per_page: 100 });
 }
 
-/** 該 PR 上 `labelName` 最近一次 `labeled` 事件的時間戳記，或 null。 */
+/** PR 上 `labelName` 最新 `labeled` 事件的時間戳記，若無則傳回 null。 */
 export async function findLabelAddedAt(github, owner, repo, issueNumber, labelName) {
   const events = await github.paginate(github.rest.issues.listEvents, { owner, repo, issue_number: issueNumber, per_page: 100 });
   let latest = null;
@@ -717,14 +718,14 @@ async function currentRoutedAt(github, owner, repo, pr, config) {
 }
 
 /**
- * 路由單一 PR（讀取、規畫、套用）。呼叫者必須對每個 PR 串行化。
- * @param {string[]|null} intentLabels 來自 Label PR Intent artifact 的權威 intent 標籤
- * @param {string|null} expectedHeadSha 若 PR head 在 artifact 產生後已移動，則略過
+ * Route a single PR (read, plan, apply). Callers must serialize this per PR.
+ * @param {string[]|null} intentLabels Authoritative intent labels from a Label PR Intent artifact
+ * @param {string|null} expectedHeadSha Skip if the PR head moved since the artifact was produced
  */
 export async function routePullRequest({ github, owner, repo, config, prNumber, intentLabels = null, expectedHeadSha = null, now = new Date(), log }) {
   const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
   if (expectedHeadSha && pr.head?.sha !== expectedHeadSha) {
-    log?.info?.(`PR #${prNumber}：已略過（head 已移動；較新的 intent 執行會路由它）`);
+    log?.info?.(`PR #${prNumber}: skipped (head moved; a newer intent run will route it)`);
     return skipped(pr, "stale-head");
   }
   const [reviews, openPulls] = await Promise.all([listReviews(github, owner, repo, prNumber), listOpenPulls(github, owner, repo)]);
@@ -732,12 +733,12 @@ export async function routePullRequest({ github, owner, repo, config, prNumber, 
   if (plan.action === "route") {
     await createActions({ github, owner, repo, config, log }).apply(plan);
   } else {
-    log?.info?.(`PR #${prNumber}：已略過（${plan.reason}）`);
+    log?.info?.(`PR #${prNumber}: skipped (${plan.reason})`);
   }
   return plan;
 }
 
-/** 唯讀：為每個開啟的 PR 規畫路由。用於決定一次 sweep 應路由哪些 PR。 */
+/** 唯讀：為每個開啟中 PR 規劃路由。用於挑選批次排程應該路由的 PR。 */
 export async function planRoutingSweep({ github, owner, repo, config, now = new Date() }) {
   const openPulls = await listOpenPulls(github, owner, repo);
   const load = computeReviewLoad(openPulls);
@@ -750,7 +751,7 @@ export async function planRoutingSweep({ github, owner, repo, config, now = new 
   return plans;
 }
 
-/** 對單一已路由的 PR 強制執行 SLA（讀取、規畫、套用）。呼叫者必須對每個 PR 串行化。 */
+/** 對單一已路由 PR 強制執行 SLA（讀取、規劃、套用）。呼叫端必須針對每個 PR 依序執行此操作。 */
 export async function escalatePullRequest({ github, owner, repo, config, prNumber, now = new Date(), log }) {
   const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
   const [reviews, openPulls, routedAt] = await Promise.all([
@@ -762,12 +763,12 @@ export async function escalatePullRequest({ github, owner, repo, config, prNumbe
   if (["reviewed", "overdue", "escalate"].includes(plan.action)) {
     await createActions({ github, owner, repo, config, log }).apply(plan);
   } else {
-    log?.info?.(`PR #${prNumber}：無動作（${plan.reason ?? plan.state}）`);
+    log?.info?.(`PR #${prNumber}: no action (${plan.reason ?? plan.state})`);
   }
   return plan;
 }
 
-/** 唯讀：為每個已路由的開啟 PR 規畫 SLA 強制執行。 */
+/** 唯讀：為每個已路由的開啟中 PR 規劃 SLA 強制執行。 */
 export async function planEscalationSweep({ github, owner, repo, config, now = new Date() }) {
   const openPulls = await listOpenPulls(github, owner, repo);
   const load = computeReviewLoad(openPulls);
@@ -780,7 +781,7 @@ export async function planEscalationSweep({ github, owner, repo, config, now = n
   return plans;
 }
 
-/** 刪除已超過保留期限、且沒有任何開啟 PR 使用的 `review-due:*` 標籤。 */
+/** 刪除超過保留期且無任何開啟中 PR 使用的 `review-due:*` 標籤。 */
 export async function cleanupStaleDueLabels({ github, owner, repo, config, now = new Date(), log }) {
   const openPulls = await listOpenPulls(github, owner, repo);
   const active = new Set(openPulls.flatMap((pr) => parseDueLabels(labelNames(pr.labels), config).map((label) => label.name)));
@@ -789,7 +790,7 @@ export async function cleanupStaleDueLabels({ github, owner, repo, config, now =
   const deleted = [];
   for (const { name, date } of parseDueLabels(labelNames(repoLabels), config)) {
     if (date >= cutoff || active.has(name)) continue;
-    log?.info?.(`${config.dryRun ? "[dry-run] " : ""}刪除陳舊標籤 ${name}`);
+    log?.info?.(`${config.dryRun ? "[dry-run] " : ""}delete stale label ${name}`);
     deleted.push(name);
     if (config.dryRun) continue;
     try {
@@ -802,30 +803,30 @@ export async function cleanupStaleDueLabels({ github, owner, repo, config, now =
 }
 
 // ---------------------------------------------------------------------------
-// workflow_run artifact 驗證
+// workflow_run 成品驗證
 // ---------------------------------------------------------------------------
 
 /**
- * 驗證 reader workflow 的 artifact，並確認它屬於一個開啟的 PR，
- * 且其 head 與觸發該 workflow_run 的一致。對照
- * label-pr-intent-writer.yml 中的檢查項目。
+ * Validate a reader-workflow artifact and confirm it belongs to an open PR
+ * whose head matches the triggering workflow_run. Mirrors the checks in
+ * label-pr-intent-writer.yml.
  * @returns {Promise<{ prNumber: number, headSha: string, intentLabels: string[]|null } | { skip: string }>}
- *   對 Label PR Intent artifact 而言 intentLabels 是陣列，對 needs-reviewer 請求而言為 null。
+ *   intentLabels is an array for Label PR Intent artifacts and null for needs-reviewer requests.
  */
 export async function resolveWorkflowRunArtifact({ github, owner, repo, workflowRun, artifact }) {
   const fail = (message) => {
-    throw new Error(`無效的評審路由 artifact：${message}`);
+    throw new Error(`Invalid review routing artifact: ${message}`);
   };
 
-  if (!isPlainObject(artifact)) fail("artifact 必須是物件");
+  if (!isPlainObject(artifact)) fail("artifact must be an object");
   const schema = artifact.schema_version;
-  if (schema !== INTENT_ARTIFACT_SCHEMA && schema !== ROUTING_REQUEST_ARTIFACT_SCHEMA) fail("schema_version 不符預期");
-  if (artifact.event !== "pull_request") fail("event 不符預期");
-  if (!Number.isInteger(artifact.pr_number) || artifact.pr_number < 1) fail("pr_number 無效");
-  if (!/^[0-9a-f]{40}$/i.test(String(artifact.head_sha || ""))) fail("head_sha 無效");
-  if (workflowRun?.event !== "pull_request") fail("workflow_run event 不符預期");
-  if (String(artifact.run_id || "") !== String(workflowRun.id)) fail("run_id 與 workflow_run 不符");
-  if (artifact.head_sha !== workflowRun.head_sha) fail("head_sha 與 workflow_run 不符");
+  if (schema !== INTENT_ARTIFACT_SCHEMA && schema !== ROUTING_REQUEST_ARTIFACT_SCHEMA) fail("unexpected schema_version");
+  if (artifact.event !== "pull_request") fail("unexpected event");
+  if (!Number.isInteger(artifact.pr_number) || artifact.pr_number < 1) fail("invalid pr_number");
+  if (!/^[0-9a-f]{40}$/i.test(String(artifact.head_sha || ""))) fail("invalid head_sha");
+  if (workflowRun?.event !== "pull_request") fail("unexpected workflow_run event");
+  if (String(artifact.run_id || "") !== String(workflowRun.id)) fail("run_id did not match workflow_run");
+  if (artifact.head_sha !== workflowRun.head_sha) fail("head_sha did not match workflow_run");
 
   let intentLabels = null;
   if (schema === INTENT_ARTIFACT_SCHEMA) {
@@ -834,22 +835,22 @@ export async function resolveWorkflowRunArtifact({ github, owner, repo, workflow
 
   const prNumber = artifact.pr_number;
   const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: prNumber });
-  if (pr.state !== "open") return { skip: `PR #${prNumber} 未處於開啟狀態` };
+  if (pr.state !== "open") return { skip: `PR #${prNumber} is not open` };
 
   const expectedBase = `${owner}/${repo}`.toLowerCase();
-  if (lower(pr.base?.repo?.full_name) !== expectedBase) fail(`PR #${prNumber} 並非指向這個儲存庫`);
-  if (pr.head?.sha !== workflowRun.head_sha) return { skip: `PR #${prNumber} 的 artifact 已過期` };
+  if (lower(pr.base?.repo?.full_name) !== expectedBase) fail(`PR #${prNumber} does not target this repository`);
+  if (pr.head?.sha !== workflowRun.head_sha) return { skip: `stale artifact for PR #${prNumber}` };
 
   const runHeadRepository = String(workflowRun.head_repository?.full_name || "");
   const [headOwner, headName] = runHeadRepository.split("/");
   const runHeadRef = String(workflowRun.head_branch || "");
   if (!headOwner || !headName || !runHeadRef || lower(pr.head?.repo?.full_name) !== lower(runHeadRepository) || String(pr.head?.ref || "") !== runHeadRef) {
-    fail(`PR #${prNumber} 的 head 與 workflow_run 不符`);
+    fail(`PR #${prNumber} head did not match workflow_run`);
   }
 
   const runPulls = Array.isArray(workflowRun.pull_requests) ? workflowRun.pull_requests : [];
   if (runPulls.length > 0) {
-    if (!runPulls.some((pull) => pull.number === prNumber)) fail(`PR #${prNumber} 不存在於 workflow_run.pull_requests 中`);
+    if (!runPulls.some((pull) => pull.number === prNumber)) fail(`PR #${prNumber} was not present in workflow_run.pull_requests`);
   } else {
     const candidates = await github.paginate(github.rest.pulls.list, {
       owner,
@@ -865,35 +866,35 @@ export async function resolveWorkflowRunArtifact({ github, owner, repo, workflow
         lower(candidate.head?.repo?.full_name) === lower(runHeadRepository) &&
         lower(candidate.base?.repo?.full_name) === expectedBase
     );
-    if (matches.length !== 1 || matches[0].number !== prNumber) fail(`PR #${prNumber} 無法與 workflow_run 唯一對應`);
+    if (matches.length !== 1 || matches[0].number !== prNumber) fail(`PR #${prNumber} could not be uniquely associated with workflow_run`);
   }
 
   return { prNumber, headSha: artifact.head_sha, intentLabels };
 }
 
-/** 驗證 intent 標籤清單；遇到未知標籤時透過 `fail`（預設為 Error）擲出例外。 */
+/** 驗證意圖標籤清單；若遇到未知標籤則透過 `fail`（預設：Error）拋出例外。 */
 export function validateIntentLabels(value, fail = (message) => { throw new Error(message); }) {
-  if (!Array.isArray(value)) fail("desired_labels 無效");
+  if (!Array.isArray(value)) fail("invalid desired_labels");
   for (const label of value) {
-    if (!INTENT_LABELS.includes(label)) fail(`預料之外的 desired label：${label}`);
+    if (!INTENT_LABELS.includes(label)) fail(`unexpected desired label ${label}`);
   }
   return [...value];
 }
 
 // ---------------------------------------------------------------------------
-// 報告（Reporting）
+// 報告
 // ---------------------------------------------------------------------------
 
 export function formatResultsSummary(results, { title, dryRun }) {
-  const lines = [`## ${title}${dryRun ? "（dry run）" : ""}`, ""];
+  const lines = [`## ${title}${dryRun ? " (dry run)" : ""}`, ""];
   if (results.length === 0) {
-    lines.push("_沒有需要處理的 pull request。_");
+    lines.push("_No pull requests needed action._");
     return lines.join("\n");
   }
-  lines.push("| PR | 操作 | 池 | 評審員 | 新增的標籤 | 移除的標籤 | 備註 |", "|---:|---|---|---|---|---|---|");
+  lines.push("| PR | Action | Pool | Reviewers | Labels added | Labels removed | Notes |", "|---:|---|---|---|---|---|---|");
   for (const result of results) {
     const reviewers = [...(result.reviewers ?? []), ...(result.teamReviewers ?? []).map((team) => `team:${team}`)].join(", ");
-    const notes = [result.reason, result.source, result.state, result.requestError && `請求失敗：${result.requestError}`].filter(Boolean).join("; ");
+    const notes = [result.reason, result.source, result.state, result.requestError && `request failed: ${result.requestError}`].filter(Boolean).join("; ");
     lines.push(
       `| #${result.prNumber} | ${result.action} | ${result.pool ?? ""} | ${reviewers} | ${(result.addLabels ?? []).join(", ")} | ${(result.removeLabels ?? []).join(", ")} | ${notes} |`
     );
@@ -902,21 +903,21 @@ export function formatResultsSummary(results, { title, dryRun }) {
 }
 
 // ---------------------------------------------------------------------------
-// CLI：`node eng/review-routing.mjs validate [path]`
+// CLI: `node eng/review-routing.mjs validate [path]`
 // ---------------------------------------------------------------------------
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [command = "validate", filePath = REVIEW_ROUTING_CONFIG_PATH] = process.argv.slice(2);
   if (command !== "validate") {
-    console.error("用法：node eng/review-routing.mjs validate [config-path]");
+    console.error("Usage: node eng/review-routing.mjs validate [config-path]");
     process.exit(2);
   }
   try {
     const config = loadReviewRoutingConfig(filePath);
     const pools = Object.values(config.pools)
-      .map((pool) => `${pool.name}：${pool.reviewers.length} 位評審員、${pool.backup.length} 位備援`)
+      .map((pool) => `${pool.name}: ${pool.reviewers.length} reviewer(s), ${pool.backup.length} backup(s)`)
       .join("\n  ");
-    console.log(`✓ ${path.relative(process.cwd(), filePath)} 是有效的${config.dryRun ? "（已啟用 dry_run）" : ""}\n  ${pools}`);
+    console.log(`✓ ${path.relative(process.cwd(), filePath)} is valid${config.dryRun ? " (dry_run enabled)" : ""}\n  ${pools}`);
   } catch (error) {
     console.error(error.message);
     process.exit(1);

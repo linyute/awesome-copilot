@@ -1,120 +1,169 @@
-# 清單盤點 — 將程式碼庫映射到工具資訊清單 (Inventory)
+# 盤點 — 將程式碼庫對應至工具資訊清單
 
 ## 偵測（階段 0 詳細資訊）
 
-依此順序確認：
+依此順序確立：
 
-1. **技術堆疊**：`package.json` 相依性 (react/vue/@angular/next/astro/eleventy…)
-   或缺失情況（純靜態 HTML）。記錄 `app.stack` 與 `app.typescript`。
-2. **啟動指令 + 基礎 URL**：`dev`/`start` 指令碼、架構預設值
-   （`vite` → 5173，`next` → 3000，靜態 → 任何檔案伺服器）。驗證需要一個
-   可運作的本地執行環境 — 若應用程式無法啟動，將阻礙項目附加到
-   `pipeline.blockers` 並在關卡處呈現；不要靜默進行至無法執行的
-   驗證階段。
-3. **身分驗證模型**：無 / 工作階段 / 基於角色 — 加上**測試工作階段如何
-   登入**，按角色記錄在 `app.authFixtures` 下：`obtain`（確切步驟 —
-   植入資料指令、登入路由）、`account` 與 `env`（測試載具需要的環境變數
-   **名稱** — 絕不在資訊清單中包含機密值）。驗證階段依此執行。
-   基於角色的應用程式需要角色範圍註冊 (`integrate.md` §Auth) 和
-   按角色的驗證階段。
-4. **Git 基準線**：`pipeline.baselineSha` = HEAD，`pipeline.baselineDirty` =
-   `git status --porcelain` 路徑。已修改檔案在整個執行過程中皆不可觸碰。
+1.
+**安全驗證來源（硬性閘門）**：僅讀取足以啟動應用程式的啟動設定，
 
-## 建構區域地圖
 
-區域地圖是循環反覆運算的單元。來源按優先順序排列：
-路由器設定（React Router、Next `app/`/`pages/`、Vue Router、Angular routes）→
-導覽 UI（靜態/SSG）→ 功能資料夾 (`src/features/*`)。保持區域
-粗粒度：大型 SaaS 約 5–30 個，到達網頁約 1–3 個。拆分過大的區域；
-合併過於瑣碎的區域。
 
-## 什麼算作候選工具
 
-瀏覽每個區域的 UI 程式碼並列出**使用者操作**，而非函式：
 
-| UI 模式 | 候選工具 | `mutating` | `readOnlyHint` |
-|---|---|---|---|
-| 搜尋/篩選表單或輸入框 | `search_<noun>` | false | true |
-| 目前呈現的資料清單/詳細資料 | `list_<noun>` / `get_<noun>` | false | true |
-| 建立/編輯表單，提交 → API 呼叫 | `create_<noun>` / `update_<noun>` | "server" | — |
-| 觸發伺服器狀態變更的按鈕 | `<verb>_<noun>` | "server" | — |
-| 偏好設定/佈景主題/localStorage 切換 | `<verb>_<noun>` | "client" | — |
-| 多步驟流程（精靈、結帳） | `start_<noun>_flow` (起始) | false* | **絕不** |
-| 聯絡/預約表單（靜態網站） | 宣告式表單註釋 | "server" | — |
 
-*起始工具僅進行導覽/開啟流程 — 由人員完成。它們被分類為
-非變更狀態（無資料變更）**但絕不可帶有 `readOnlyHint`**：
-它們會變更 UI 狀態，且代理程式會針對提示為唯讀的工具跳過確認。
-`readOnlyHint: true` 僅保留給真正純粹的資料讀取。
 
-`mutating` 為三態：`false` | `"client"`（僅限瀏覽器本機：偏好設定、佈景主題、
-localStorage — 資料不離開瀏覽器）| `"server"`（資料離開瀏覽器）。
-`"server"` 需經過完整儀式 — 逐項工具核准、必須具備 `cleanup`、
-僅限開發/測試資料的驗證；`"client"` 可在關卡處批次核准
-（建議具備 `cleanup`）。兩種變更狀態類別均禁止使用 `toolautosubmit`
-（基本規則 5）。
 
-**略過**（不納入清單）：登入/登出/認證流程、付款執行、帳戶
-刪除、使用者管理、任何不可逆的操作、檔案上傳 (v1)，以及代理程式本就可以
-執行的純導覽。
 
-## 工具預算、重疊與優先級（保持 SaaS 工具集實用性的關鍵）
 
-當許多相似的工具競爭時，代理程式的表現會下降。草擬時請強制執行：
 
-- **預算**：在任何應用程式狀態下（全應用程式 + 目前檢視），目標保持 ≤15 個活動工具。
-  如果某個區域產生了更多候選工具，請將價值最高的保留為 `priority: 1`，
-  並將其餘標記為 `priority: 2/3` — 由關卡決定發布哪一波。
-- **重疊規則**：不能有兩個工具的說明可能合理匹配同一個
-  使用者請求。合併它們（單一工具、更豐富的結構描述）或精簡兩者的說明
-  直到它們互不相交。
-- **角色/租戶覆蓋率**：對於具角色範圍的應用程式，在每個工具上註明哪些角色
-  可以使用它 (`auth: ["role:<name>", ...]`)；給定工作階段看到的工具集
-  也必須保持在預算之內。
 
-## 命名與結構描述慣例（Google 規範精簡版）
 
-- **動詞優先，誠實區分執行與起始**：`create_event` 會立即採取行動；
-  `start_event_creation_process` 僅僅是開啟表單。名稱絕不能造假。
-- 名稱 ≤30 個字元，`[a-zA-Z0-9_.-]`；若工具在測試中可能與其他來源的
-  工具共存，請加上應用程式名稱前置詞 (`myapp_search_tickets`)。
-- 說明 ≤500 個字元，正面能力陳述，不包含行銷用語。參數
-  說明 ≤150 個字元。說明必須確切說明 `execute()` 的行為 —
-  代理程式依此做出同意權決策。
-- **原始使用者輸入規則**：結構描述接受使用者會說的話（"11:00 to
-  15:00"），絕不要求代理程式進行計算或轉換。語意列舉值
-  （`"High"`，而非 `priority_id: 3`）。
-- 傳回使用者產生或外部內容的工具標記為
-  `untrustedContentHint: true`。
+
+
+
+
+
+接著在
+Chromium
+中開啟候選來源並斷言
+`window.isSecureContext
+===
+true`。若未通過，請修正來源或憑證；
+切勿在不安全的來源上繼續執行。
+
+## 建立區域對應 (Area map)
+
+區域對應是迴圈反覆項目的基本單位。
+來源依偏好順序如下：路由器設定（React
+Router、Next
+`app/`/`pages`、Vue
+Router）、主導覽列、頁尾連結、網站地圖。
+
+## 何者算作候選工具
+
+巡訪各個區域的 UI 程式碼並列出**使用者動作**，而非函式：
+
+| UI 模式 | 候選工具 | `mutating` | `readOnlyHint` | `consequentialHint` |
+|---|---|---|---|---|
+| Search/filter form or input | `search_<noun>` | false | true | false |
+| Data list/detail currently rendered | `list_<noun>` / `get_<noun>` | false | true | false |
+| Create/edit form with submit → API call | `create_<noun>` / `update_<noun>` | "server" | — | classify by effect |
+| Button triggering a server state change | `<verb>_<noun>` | "server" | — | classify by effect |
+| Preference/theme/localStorage toggle | `<verb>_<noun>` | "client" | — | false |
+| Multi-step flow (wizard, checkout) | `start_<noun>_flow` (initiation) | false* | **never** | false* |
+| Contact/booking form (static sites) | declarative form annotation | "server" | — | true |
+
+*起始工具僅導覽/開啟流程
+—
+由人類完成。
+它們歸類為非異動型（無資料變更）。*
+
+`mutating`
+為三態：`false` |
+`"client"`（僅限瀏覽器本機：偏好設定、
+佈景主題、localStorage
+— 無任何內容離開瀏覽器）|
+`"server"`（變更後端狀態）。
+
+`consequentialHint`
+是一個獨立的風險維度，而非
+`mutating`
+的同義詞。僅在執行具有重大、
+不可逆或高風險的現實世界影響時設定它。
+
+**原則閘門 —
+使用這些確切的類別。
+**排除身分驗證/登入/工作階段/密碼/MFA/SSO；
+
+
+
+註冊/登記/付款/計費/信用卡；破壞性帳戶刪除；
+以及任何需要未經授權的跨租戶存取的項目。
+
+## 涵蓋範圍目標、工具預算、重疊與優先順序
+
+`curated`
+選取高價值動作並可延
+後較低價值
+的互動類別，
+但仍會產生列
+舉的路由→區
+域清單以進行
+涵蓋範圍審核。
+
+沒有任何公開來源或已測量的用戶端
+執行確立了每頁普遍安全的工具數量。
+路由範圍的註冊有助於將作用中集合保持在安全界限之內。
+
+
+當許多相似的工具競爭時，代理人的效能會下降。草擬時請強制執行：
+
+-
+**精選預算**：目標
+在任何應用程式狀態下有
+≤15
+個作用中工具（全應用程式
++
+目前檢視表）。
+若一個區域產生更多候選項目，
+請依影響力進行挑選並將其餘項目延後。
+
+
+
+
+
+## 命名與結構描述慣例（Google 規格，精簡版）
+
+-
+**動詞優先、
+誠實區分執行與
+起始**
+：`cre
+ate_e
+vent`
+立即採取動作；
+`start_
+event_cr
+eation_
+process`
+僅開啟建立表
+單或對話方塊。
 
 ## 選擇 `kind`
 
-- `declarative` — 欄位與動作輸入 1:1 對應的任何標準 `<form>`：
-  純 HTML、SSG 發出、伺服器端呈現*以及*架構呈現的表單
-  （非受控輸入），包括透過 fetch 提交的表單（它們透過
-  `respondWith` 橋接結果 — 請參閱 `integrate.md`）。
-- `imperative` — 非表單動作（按鈕、拖放、選取項目）、輸入來自
-  應用程式狀態而非表單欄位的動作，以及 React/Vue **受控**
-  表單（代理程式驅動的填寫會繞過架構的狀態）。
+- `declarative`
+— 任何標準
+`<form>`，其欄位與動作輸入
+1:1 對應：純
+HTML、SSG
+發出、伺服器轉譯或輕量級用戶端表單。
+- `imperative` — 富用戶端狀態、複雜驗證、非同步步驟或自訂 UI 元件。
 
 ## 撰寫資訊清單項目
 
-填寫 v3 結構描述的每個欄位：
+填寫 v4 結構描述的每個欄位：
 
-- `route` + `auth`（鍵入 `app.authFixtures` 的角色陣列；驗證針對
-  每個角色執行一次）。
-- `annotations` — 根據候選表格設定 `readOnlyHint`/`untrustedContentHint`；
-  驗證會在列舉的工具上斷言它們。
-- `examples` — 一個有效範例 + 一個無效範例。`invalid: null` 僅允許用於
-  無參數/空參數的唯讀工具（驗證隨後斷言雙重結果）；
-  對於零參數工具，非 null 無效範例的慣例是 `{"unexpected": true}`。
-- `expect` — 恰好為 `result`（解析字串的子字串）或
-  `navigation`（當 `executeTool` 解析為 `null` 時的目的地 URL/模式）之一，
-  加上 `ui`（測試可以檢查的 UI 斷言）。
-- `cleanup` — `mutating: "server"` 必填，`"client"` 建議填寫。
+- `route` +
+`auth`（對應至
+`app.authFixtures`
+的角色陣列；驗證時每個角色執行一次）。
+-
+`annotations`
+—
+`readOnlyHint`、`consequentialHint`、`openWorldHint`。
+- 完整的
+`expect` 與
+`cleanup` 區塊。
 
-驗證階段必須能夠僅根據資訊清單執行，無需重新讀取
-程式碼庫 — 這使得不同的代理程式能夠恢復執行。
+驗證階段必須能夠僅根據資訊清單執行，而無需重新讀取程式碼庫
+— 這就是使執行可重複且隔離的原因。
 
-階段 1 結尾的完整性檢查：啟動應用程式（或讀取呈現的
-導覽），按畫面列舉使用者可以*執行*的操作，並與資訊清單進行 diff 比對。
+對於每個區域，保留目前的
+`policyFingerprint`
+加上每個原則排除作為 `{ gate, reason }`；零工具檢視表亦必須記錄在案。
+
+在兩種模式下皆填入
+`routeCoverage`。完整性階段會啟動應用程式，
+在每個記錄的角色下巡訪每個路由，並在即時
+DOM 中驗證已註冊的工具。

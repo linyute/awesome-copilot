@@ -1,0 +1,33 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "adobe-illustrator",
+  "description": "Adobe Illustrator 指令碼撰寫、擴充功能與外掛程式開發、MCP 和命令列自動化，以及 Creative Cloud 資產管理，由 Adobe Creative Cloud 專家技術美術代理人主導。",
+  "version": "1.0.0",
+  "keywords": [
+    "adobe-illustrator",
+    "illustrator",
+    "extendscript",
+    "cep",
+    "uxp",
+    "creative-cloud",
+    "graphic-design",
+    "automation",
+    "mcp"
+  ],
+  "author": {
+    "name": "Awesome Copilot Community"
+  },
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.awesome-copilot": {
+      "agents": [
+        "./agents/adobe-creative-cloud.md"
+      ],
+      "skills": [
+        "./skills/adobe-illustrator-integrations/",
+        "./skills/adobe-illustrator-scripting/"
+      ]
+    }
+  }
+}

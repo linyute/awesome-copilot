@@ -5,7 +5,7 @@
 ## 先決條件 (Prerequisites)
 
 - .NET 10.0 或更高版本
-- GitHub Copilot SDK 套件 (自動引用)
+- Microsoft Copilot SDK NuGet 套件，目前以 `GitHub.Copilot.SDK` 發佈（會自動參照）
 
 ## 執行範例 (Running Examples)
 
@@ -185,5 +185,5 @@ dotnet run pr-visualization.cs -- --repo github/copilot-sdk
 ## 學習資源 (Learning Resources)
 
 - [.NET 基於文件的應用程式文件](https://learn.microsoft.com/en-us/dotnet/core/sdk/file-based-apps)
-- [GitHub Copilot SDK 文件](https://github.com/github/copilot-sdk/blob/main/dotnet/README.md)
+- [Microsoft Copilot SDK for .NET 文件](https://github.com/github/copilot-sdk/blob/main/dotnet/README.md)
 - [父級食譜 (Parent Cookbook)](../README.md)

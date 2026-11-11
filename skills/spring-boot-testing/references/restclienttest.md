@@ -2,23 +2,23 @@
 
 使用 MockRestServiceServer 隔離測試 REST 用戶端。
 
-## 總覽
+## 概觀
 
-`@RestClientTest` 自動設定：
+`@RestClientTest` 自動配置：
 
-- 具有 mock 伺服器支援的 RestTemplate/RestClient
-- Jackson ObjectMapper
-- MockRestServiceServer
+- 支援模擬伺服器的 RestTemplate/RestClient
+- Jackson/JSON 序列化支援
+- 專為待測試用戶端載入的最小應用程式上下文
 
 ## 基本設定
 
 ```java
 @RestClientTest(WeatherService.class)
 class WeatherServiceTest {
-  
+
   @Autowired
   private WeatherService weatherService;
-  
+
   @Autowired
   private MockRestServiceServer server;
 }
@@ -29,13 +29,13 @@ class WeatherServiceTest {
 ```java
 @RestClientTest(WeatherService.class)
 class WeatherServiceTest {
-  
+
   @Autowired
   private WeatherService weatherService;
-  
+
   @Autowired
   private MockRestServiceServer server;
-  
+
   @Test
   void shouldFetchWeather() {
     // Given
@@ -45,10 +45,10 @@ class WeatherServiceTest {
       .andRespond(withSuccess()
         .contentType(MediaType.APPLICATION_JSON)
         .body("{\"temperature\": 22, \"condition\": \"Sunny\"}"));
-    
+
     // When
     Weather weather = weatherService.getCurrentWeather("Berlin");
-    
+
     // Then
     assertThat(weather.getTemperature()).isEqualTo(22);
     assertThat(weather.getCondition()).isEqualTo("Sunny");
@@ -61,21 +61,21 @@ class WeatherServiceTest {
 ```java
 @RestClientTest(WeatherService.class)
 class WeatherServiceTest {
-  
+
   @Autowired
   private WeatherService weatherService;
-  
+
   @Autowired
   private MockRestServiceServer server;
-  
+
   @Test
   void shouldFetchWeatherWithRestClient() {
     server.expect(requestTo("https://api.weather.com/v1/current"))
       .andRespond(withSuccess()
         .body("{\"temperature\": 22}"));
-    
+
     Weather weather = weatherService.getCurrentWeather("Berlin");
-    
+
     assertThat(weather.getTemperature()).isEqualTo(22);
   }
 }
@@ -126,7 +126,7 @@ server.expect(requestTo("https://api.example.com/users"))
 
 ## 回應類型
 
-### 成功且包含主體
+### 帶有主體的成功回應
 
 ```java
 server.expect(requestTo("/users/1"))
@@ -135,7 +135,7 @@ server.expect(requestTo("/users/1"))
     .body("{\"id\": 1, \"name\": \"John\"}"));
 ```
 
-### 從資源成功
+### 來自資源檔的成功回應
 
 ```java
 server.expect(requestTo("/users/1"))
@@ -143,7 +143,7 @@ server.expect(requestTo("/users/1"))
     .body(new ClassPathResource("user-response.json")));
 ```
 
-### 已建立
+### 已建立 (Created)
 
 ```java
 server.expect(requestTo("/users"))
@@ -174,14 +174,14 @@ void shouldCallApi() {
   server.expect(ExpectedCount.once(), 
     requestTo("https://api.example.com/data"))
     .andRespond(withSuccess());
-  
+
   service.fetchData();
-  
-  server.verify(); // 驗證是否符合所有預期
+
+  server.verify(); // Verify all expectations met
 }
 ```
 
-## 忽略多餘的請求
+## 忽略額外請求
 
 ```java
 @Test
@@ -189,15 +189,15 @@ void shouldHandleMultipleCalls() {
   server.expect(ExpectedCount.manyTimes(),
     requestTo(matchesPattern("/api/.*")))
     .andRespond(withSuccess());
-  
-  // 允許多次呼叫
+
+  // Multiple calls allowed
   service.callApi();
   service.callApi();
   service.callApi();
 }
 ```
 
-## 在測試之間重設
+## 測試之間重設
 
 ```java
 @BeforeEach
@@ -217,11 +217,11 @@ server.expect(requestTo("/slow-endpoint"))
 // 測試逾時處理
 ```
 
-## 最佳實務
+## 最佳實踐
 
-1. 務必在測試結束時執行 `server.verify()`
-2. 對於大型 JSON 回應使用資源檔案
-3. 針對最小集合的請求屬性進行比對
-4. 在 @BeforeEach 中重設伺服器
-5. 測試錯誤回應，而不僅僅是成功
-6. 驗證 POST/PUT 呼叫的請求主體
+1. 永遠在測試結束時調用 `server.verify()` 進行驗證
+2. 保持回應酬載最小化，僅包含測試所需的欄位
+3. 對外部 API 依賴項測試錯誤狀態碼與逾時
+4. 針對大型或重複的 JSON 酬載使用 `withSuccess(resource, ...)`
+5. 若要模擬服務之間的真實 HTTP 流量，請改用 WireMock
+6. 將 `@RestClientTest` 用於單元層級的用戶端測試，WireMock 用於整合測試

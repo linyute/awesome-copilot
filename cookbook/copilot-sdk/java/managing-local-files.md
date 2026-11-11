@@ -1,5 +1,8 @@
 # 依據 Metadata 進行檔案分組
 
+> **示範權限：**這些範例僅在隔離且可信任的示範環境中使用 `PermissionHandler.APPROVE_ALL`。
+> 在使用不可信任的提示或工作區之前，請改用限制較嚴格的權限處理常式。
+
 使用 Copilot 根據檔案的 Metadata，智慧地組織資料夾中的檔案。
 
 > **可執行的範例：** [recipe/ManagingLocalFiles.java](recipe/ManagingLocalFiles.java)
@@ -25,15 +28,15 @@ jbang recipe/ManagingLocalFiles.java
 
 **程式碼：**
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
-import com.github.copilot.sdk.events.AssistantMessageEvent;
-import com.github.copilot.sdk.events.SessionIdleEvent;
-import com.github.copilot.sdk.events.ToolExecutionCompleteEvent;
-import com.github.copilot.sdk.events.ToolExecutionStartEvent;
-import com.github.copilot.sdk.json.MessageOptions;
-import com.github.copilot.sdk.json.PermissionHandler;
-import com.github.copilot.sdk.json.SessionConfig;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
+import com.github.copilot.generated.AssistantMessageEvent;
+import com.github.copilot.generated.SessionIdleEvent;
+import com.github.copilot.generated.ToolExecutionCompleteEvent;
+import com.github.copilot.generated.ToolExecutionStartEvent;
+import com.github.copilot.rpc.MessageOptions;
+import com.github.copilot.rpc.PermissionHandler;
+import com.github.copilot.rpc.SessionConfig;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 
@@ -152,12 +155,12 @@ session.send(new MessageOptions().setPrompt(prompt));
 ## 互動式檔案組織
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
-import com.github.copilot.sdk.CopilotClient;
-import com.github.copilot.sdk.events.AssistantMessageEvent;
-import com.github.copilot.sdk.json.MessageOptions;
-import com.github.copilot.sdk.json.PermissionHandler;
-import com.github.copilot.sdk.json.SessionConfig;
+//DEPS com.github:copilot-sdk-java:1.0.21
+import com.github.copilot.CopilotClient;
+import com.github.copilot.generated.AssistantMessageEvent;
+import com.github.copilot.rpc.MessageOptions;
+import com.github.copilot.rpc.PermissionHandler;
+import com.github.copilot.rpc.SessionConfig;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 

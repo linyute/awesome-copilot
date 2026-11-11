@@ -2,6 +2,9 @@
 
 在您的 Copilot SDK 應用程式中優雅地處理錯誤。
 
+> **示範權限：** 這些範例僅在隔離且可信任的示範環境中使用
+> `PermissionHandler.APPROVE_ALL`。在使用不受信任的提示或工作區之前，請改用限制較嚴格的權限處理器。
+
 > **可執行的範例：** [recipe/ErrorHandling.java](recipe/ErrorHandling.java)
 >
 > ```bash
@@ -17,10 +20,10 @@
 Java 的 `try-with-resources` 可確保即使發生例外狀況，用戶端也始終會被清理。
 
 ```java
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
+//DEPS com.github:copilot-sdk-java:1.0.21
 
-import com.github.copilot.sdk.*;
-import com.github.copilot.sdk.json.*;
+import com.github.copilot.*;
+import com.github.copilot.rpc.*;
 
 public class BasicErrorHandling {
     public static void main(String[] args) {
@@ -128,6 +131,8 @@ Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 }));
 ```
 
+`client.stop()` 會回傳 `CompletableFuture`；請觀察其結果，以捕捉 SDK 回報的錯誤，而不要只依賴會隱藏清理錯誤的 `close()`。程序內 FFI 清理也可能記錄錯誤或以非同步方式繼續執行，因此 stop 完成並不代表所有原生資源的清理階段都已成功。如果優雅停止超出應用程式的關閉期限，請使用 `client.forceStop()` 在本機終止連線與工作階段。
+
 ## Try-with-resources (巢狀)
 
 處理多個工作階段時，請巢狀化 `try-with-resources` 區塊，以保證每個資源都已關閉。
@@ -148,12 +153,50 @@ try (var client = new CopilotClient()) {
 } // 用戶端在這裡關閉
 ```
 
+## 標記訊息來源
+
+使用 `MessageOptions.setSource(...)`，在診斷非預期回合時區分歸因於使用者的訊息、
+應用程式內容或其他代理程式的訊息：
+
+```java
+import com.github.copilot.rpc.MessageSource;
+
+session.sendAndWait(new MessageOptions()
+    .setPrompt("上一個版本有哪些變更？")
+    .setSource(MessageSource.USER)).get();
+
+session.sendAndWait(new MessageOptions()
+    .setPrompt("重新執行失敗的步驟並回報結果。")
+    .setSource(MessageSource.SYSTEM)).get();
+
+session.sendAndWait(new MessageOptions()
+    .setPrompt("摘要目前尚未結案的事件。")
+    .setSource(MessageSource.agent("incident-bot"))).get();
+```
+
+省略 `source` 時會交由所選的執行階段處理；SDK 1.0.21 隨附的執行階段會將其視為使用者來源，
+等同於 `MessageSource.USER`。此歸因並不能證明訊息確實由真人輸入。
+`MessageSource.agent(id)` 會序列化為 `"agent-<id>"`；傳入識別碼時請勿加上此前綴。
+此工廠僅拒絕 `null`，不會正規化前綴，也不會驗證空白值、格式或長度限制。請驗證跨越信任邊界的識別碼。
+來源值和代理程式 ID 可能出現在事件、歷史記錄、佇列快照及診斷資訊中，因此請勿在其中放入機密資料。
+
+來源是呼叫端提供、會影響行為的來源資訊，不是經過驗證的身分。執行階段可能會將其用於佇列處理與導引、
+可見性與篩選、代理程式間路由、對話／內容重建，以及真人授權證據的分類。來源本身無法授予、拒絕或回應權限要求，
+但來源分類可能間接影響自動核准。切勿只依據來源值授權操作。
+
+`MessageSource.SYSTEM` 並非模型的 system 角色訊息：它不會變更模型可見的角色、修改工作階段的 system prompt，
+也不會提高指令優先級。獨立的傳遞 `mode` 用來控制佇列接納（預設為 `enqueue`），
+或嘗試導引進行中的回合（`immediate`）；它與來源彼此獨立，但來源仍可能影響執行階段的處理方式。
+
+`send(...)` 和 `sendAndWait(...)` 會保留相同的來源值。非使用者歸因會保存在持久化的 `user.message` 事件中，
+並在重播時還原。使用者來源會以未設定來源的形式儲存，因此明確指定 `USER` 與省略來源在持久化後無法區分。
+
 ## 處理工具錯誤
 
 定義工具時，請回傳一個錯誤字串來向模型發出失敗訊號，而不是拋出例外狀況。
 
 ```java
-import com.github.copilot.sdk.json.ToolDefinition;
+import com.github.copilot.rpc.ToolDefinition;
 import java.util.concurrent.CompletableFuture;
 
 var readFileTool = ToolDefinition.create(

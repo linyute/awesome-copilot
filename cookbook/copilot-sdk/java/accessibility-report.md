@@ -1,5 +1,8 @@
 # 產生協助工具報告
 
+> **示範權限：**這些範例僅在隔離且可信任的示範環境中使用 `PermissionHandler.APPROVE_ALL`。
+> 在使用不可信任的提示或工作區之前，請改用限制較嚴格的權限處理常式。
+
 建構一個 CLI 工具，使用 Playwright MCP server 分析網頁協助工具，並產生詳細的 WCAG 相容報告，且可選擇產生測試。
 
 > **可執行的範例：** [recipe/AccessibilityReport.java](recipe/AccessibilityReport.java)
@@ -35,11 +38,11 @@ jbang recipe/AccessibilityReport.java
 
 ```java
 ///usr/bin/env jbang "$0" "$@" ; exit $?
-//DEPS com.github:copilot-sdk-java:0.2.1-java.1
+//DEPS com.github:copilot-sdk-java:1.0.21
 
-import com.github.copilot.sdk.*;
-import com.github.copilot.sdk.events.*;
-import com.github.copilot.sdk.json.*;
+import com.github.copilot.*;
+import com.github.copilot.generated.*;
+import com.github.copilot.rpc.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -67,12 +70,10 @@ public class AccessibilityReport {
             client.start().get();
 
             // 設定 Playwright MCP server 以進行瀏覽器自動化
-            Map<String, Object> mcpConfig = Map.of(
-                "type", "local",
-                "command", "npx",
-                "args", List.of("@playwright/mcp@latest"),
-                "tools", List.of("*")
-            );
+            var mcpConfig = new McpStdioServerConfig()
+                .setCommand("npx")
+                .setArgs(List.of("@playwright/mcp@latest"))
+                .setTools(List.of("*"));
 
             var session = client.createSession(
                 new SessionConfig()
@@ -168,12 +169,10 @@ public class AccessibilityReport {
 此食譜設定了一個與工作階段並行執行的本地 MCP server：
 
 ```java
-Map<String, Object> mcpConfig = Map.of(
-    "type", "local",
-    "command", "npx",
-    "args", List.of("@playwright/mcp@latest"),
-    "tools", List.of("*")
-);
+var mcpConfig = new McpStdioServerConfig()
+    .setCommand("npx")
+    .setArgs(List.of("@playwright/mcp@latest"))
+    .setTools(List.of("*"));
 
 var session = client.createSession(
     new SessionConfig()

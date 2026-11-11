@@ -1,6 +1,6 @@
-# AssertJ 基礎
+# AssertJ 基礎知識
 
-流暢的斷言，提供可讀性高且易於維護的測試。
+用於具可讀性、可維護性測試的流暢斷言（Fluent assertions）。
 
 ## 基本斷言
 
@@ -26,7 +26,7 @@ assertThat(order.getDescription())
   .matches("[A-Za-z ]+");
 ```
 
-### 數字斷言
+### 數值斷言
 
 ```java
 assertThat(order.getAmount())
@@ -69,15 +69,15 @@ assertThat(maybeOrder)
 assertThat(orderService.findById(999L)).isEmpty();
 ```
 
-## 例外斷言
+## 例外狀況斷言
 
-### JUnit 5 例外處理
+### JUnit 5 例外狀況處理
 
 ```java
 @Test
 void shouldThrowException() {
   OrderService service = new OrderService();
-  
+
   assertThatThrownBy(() -> service.findById(999L))
     .isInstanceOf(OrderNotFoundException.class)
     .hasMessage("Order 999 not found")
@@ -85,7 +85,7 @@ void shouldThrowException() {
 }
 ```
 
-### AssertJ 例外處理
+### AssertJ 例外狀況處理
 
 ```java
 @Test
@@ -96,21 +96,21 @@ void shouldThrowExceptionWithCause() {
 }
 ```
 
-## 自定義斷言
+## 自訂斷言
 
-為可重複使用的測試程式碼建立領域特定的斷言：
+為可重複使用的測試程式碼建立領域專屬斷言：
 
 ```java
 public class OrderAssert extends AbstractAssert<OrderAssert, Order> {
-  
+
   public static OrderAssert assertThat(Order actual) {
     return new OrderAssert(actual);
   }
-  
+
   private OrderAssert(Order actual) {
     super(actual, OrderAssert.class);
   }
-  
+
   public OrderAssert isPending() {
     isNotNull();
     if (!"PENDING".equals(actual.getStatus())) {
@@ -118,7 +118,7 @@ public class OrderAssert extends AbstractAssert<OrderAssert, Order> {
     }
     return this;
   }
-  
+
   public OrderAssert hasTotal(BigDecimal expected) {
     isNotNull();
     if (!expected.equals(actual.getTotal())) {
@@ -137,15 +137,15 @@ OrderAssert.assertThat(order)
   .hasTotal(new BigDecimal("99.99"));
 ```
 
-## 軟斷言 (Soft Assertions)
+## 軟斷言（Soft Assertions）
 
-在失敗前收集多個失敗資訊：
+在判定失敗前收集多個失敗：
 
 ```java
 @Test
 void shouldValidateOrder() {
   Order order = orderService.findById(1L);
-  
+
   SoftAssertions.assertSoftly(softly -> {
     softly.assertThat(order.getId()).isEqualTo(1L);
     softly.assertThat(order.getStatus()).isEqualTo("PENDING");
@@ -165,21 +165,21 @@ assertThat(order)
   });
 ```
 
-## 在 Spring 中使用
+## 搭配 Spring 使用
 
 ```java
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 class OrderServiceTest {
-  
+
   @Autowired
   private OrderService orderService;
-  
+
   @Test
   void shouldCreateOrder() {
     Order order = orderService.create(new OrderRequest("Product", 2));
-    
+
     assertThat(order)
       .isNotNull()
       .extracting(Order::getId, Order::getStatus)
@@ -190,7 +190,7 @@ class OrderServiceTest {
 
 ## 靜態匯入
 
-務必使用靜態匯入以確保斷言簡潔：
+始終使用靜態匯入以保持斷言簡潔：
 
 ```java
 import static org.assertj.core.api.Assertions.assertThat;
@@ -198,10 +198,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 ```
 
-## 關鍵優點
+## 主要優勢
 
-1. **可讀性高**：類似句子的結構
-2. **型別安全**：IDE 自動完成功能可正常運作
-3. **豐富的 API**：提供許多內建斷言
-4. **可擴充性**：可為您的領域自定義斷言
-5. **更好的錯誤資訊**：清晰的失敗訊息
+1. **具可讀性**：如句子般的結構
+2. **型別安全**：IDE 自動完成可正常運作
+3. **豐富 API**：許多內建斷言
+4. **具擴充性**：針對您領域的自訂斷言
+5. **更佳錯誤**：清晰的失敗訊息
