@@ -4,23 +4,43 @@
 
 ## 目錄
 
-- [我們接受的內容](#我們接受的內容)
-- [我們不接受的內容](#我們不接受的內容)
-- [品質指引](#品質指引)
-- [如何進行貢獻](#如何進行貢獻)
-  - [新增 Instructions](#新增-instructions)
-  - [新增 Agents](#新增-agent)
-  - [新增 Skills](#新增-skills)
-  - [新增 Canvas 擴充功能](#新增-canvas-擴充功能)
-  - [新增外掛程式](#新增外掛程式)
-  - [新增 Hooks](#新增-hooks)
-  - [新增 Agentic 工作流程](#新增-agentic-工作流程)
-- [提交您的貢獻](#提交您的貢獻)
-  - [在您提出 Pull Request 之後](#在您提出-pull-request-之後)
-- [貢獻者表彰](#貢獻者表彰)
-  - [貢獻類型](#貢獻類型)
-- [行為準則](#行為準則)
-- [授權條款](#授權條款)
+- [貢獻至 Awesome GitHub Copilot](#貢獻至-awesome-github-copilot)
+  - [目錄](#目錄)
+  - [我們接受的內容](#我們接受的內容)
+  - [我們不接受的內容](#我們不接受的內容)
+  - [品質指引](#品質指引)
+  - [如何進行貢獻](#如何進行貢獻)
+    - [新增 Instructions](#新增-instructions)
+      - [Instruction 格式範例](#instruction-格式範例)
+    - [新增 Agent](#新增-agent)
+      - [Agent 格式範例](#agent-格式範例)
+    - [新增 Skills](#新增-skills)
+    - [新增 Canvas 擴充功能](#新增-canvas-擴充功能)
+    - [新增外掛程式](#新增外掛程式)
+      - [建立外掛程式](#建立外掛程式)
+      - [外掛程式結構](#外掛程式結構)
+      - [plugin.json 範例](#pluginjson-範例)
+      - [外掛程式指引](#外掛程式指引)
+      - [新增外部外掛程式](#新增外部外掛程式)
+        - [提交欄位](#提交欄位)
+        - [審查工作流程](#審查工作流程)
+        - [透過 PR 更新已列出的外部外掛程式](#透過-pr-更新已列出的外部外掛程式)
+        - [網站 README](#網站-readme)
+        - [維護者審查職責](#維護者審查職責)
+        - [審查頻率與標籤語意](#審查頻率與標籤語意)
+    - [新增 Hooks](#新增-hooks)
+      - [Hook 結構範例](#hook-結構範例)
+      - [README.md frontmatter 範例](#readmemd-frontmatter-範例)
+      - [Hook 指引](#hook-指引)
+    - [新增 Agentic 工作流程](#新增-agentic-工作流程)
+      - [工作流程檔案範例](#工作流程檔案範例)
+      - [工作流程指引](#工作流程指引)
+  - [提交您的貢獻](#提交您的貢獻)
+    - [在您提出 Pull Request 之後](#在您提出-pull-request-之後)
+  - [貢獻者表彰](#貢獻者表彰)
+    - [貢獻類型](#貢獻類型)
+  - [行為準則](#行為準則)
+  - [授權條款](#授權條款)
 
 ## 我們接受的內容
 
@@ -236,7 +256,7 @@ plugins/my-plugin-id/
 - 給審查者的附加備註（選填）
 - 確認核取方塊，確認儲存庫為公開、提交的 ref 與／或 sha 是不可變動的、提交符合此儲存庫的政策，且該外掛程式不是重複清單
 
-儲存庫的標準驗證規則位於 `eng/external-plugin-validation.mjs`。建構指令碼會重複使用該模組的 `marketplace` 策略，而 issue 接收自動化則使用更嚴格的 `publicSubmission` 策略，以使 JSON 協定與工作流程檢查保持一致。
+儲存庫的標準驗證規則位於 `.github/scripts/external-plugins/external-plugin-validation.mjs`。建構指令碼會重複使用該模組的 `marketplace` 策略，而 issue 接收自動化則使用更嚴格的 `publicSubmission` 策略，以使 JSON 協定與工作流程檢查保持一致。
 
 對於提交至 `plugins/external.json` 的項目，目前市集驗證需要：
 
@@ -297,7 +317,7 @@ plugins/my-plugin-id/
 
 下載限制為 GitHub 的原始內容主機，一次最多六個外掛程式，每個請求逾時時間為十秒，每個 README 限制為 512 KiB。遺失的 README 或下載／轉譯錯誤將會被記錄，並在頁面上留下來源儲存庫連結，而不是使整個網站建構失敗。
 
-請執行 `node --test eng/lib/external-plugin-readme.test.mjs` 以檢查擷取功能。
+請執行 `node --test .github/scripts/lib/external-plugin-readme.test.mjs` 以檢查擷取功能。
 在 `npm run website:build` 之後，執行 `node --test website/scripts/external-plugin-readme.test.mjs` 以檢查遠端 Markdown 轉譯、相對 URL、清理作業以及產生的外掛程式頁面。
 
 ##### 維護者審查職責
@@ -491,7 +511,7 @@ Create a daily summary of open issues for the team.
 
 - **Low（低）：** 文件，以及對現有資源的小幅編輯。
 - **Medium（中）：** 新資源，包括 agentic 工作流程與 hooks。
-- **High（高）：** 隨附指令碼、hook 指令、MCP 設定、儲存庫自動化 (`.github/`、`eng/`) 或審查政策檔案。
+- **High（高）：** 隨附指令碼、hook 指令、MCP 設定、儲存庫自動化 (`.github/`、包含 `.github/scripts/`) 或審查政策檔案。
 
 **指令。** 身為 PR 作者，您可以在留言開頭使用下列指令之一：
 

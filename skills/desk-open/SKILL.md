@@ -23,6 +23,11 @@ desks/<desk-name>/
   .signals/        # 結構化訊號輸出 (JSON) — 儀表板會讀取此內容
 ```
 
+`desks/` 是預設位置。工作桌也可以位於群組資料夾中：任何名稱以 `-desks`
+結尾的頂層資料夾（例如 `team-desks/<desk-name>/`）。只有在操作員要求使用
+該群組時才使用；如果群組資料夾不存在，請建立它，並在以下步驟中將
+`desks/` 視為該群組資料夾。
+
 ## 如何使用
 
 1. **選擇名稱。** 簡短、具描述性、kebab-case。該名稱是
@@ -57,7 +62,10 @@ desks/<desk-name>/
 會話工作流程：
 
 1. 操作員（或 TA）啟動會話並說「在 `<desk-name>` 工作桌就座」
-2. 會話讀取 `desks/<desk-name>/journal.md` 以載入先驗資訊
+2. 工作階段會讀取工作桌的 `journal.md` 以載入先前資訊。若要尋找工作桌，請先查看
+   `desks/<desk-name>/`，再查看每個
+   `<group>-desks/<desk-name>/`；如果有多個同名工作桌，請詢問要使用哪一個
+   （以 `<group>-desks/<desk-name>` 的格式指稱）。
 3. 進行工作 — 會話使用 `signal-write` 發出訊號，
    並在結束時使用 `desk-journal` 保留狀態
 4. 下一個會話從步驟 2 重複進行

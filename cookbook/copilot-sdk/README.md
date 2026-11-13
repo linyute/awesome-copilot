@@ -65,6 +65,8 @@
 
 ## 執行範例
 
+請從儲存庫根目錄執行以下命令。
+
 執行範例前，請先參閱您所使用語言之食譜 README 中的先決條件：
 
  - [.NET](dotnet/recipe/README.md#prerequisites)
@@ -76,14 +78,14 @@
 ### .NET
 
 ```bash
-cd dotnet/cookbook/recipe
+cd cookbook/copilot-sdk/dotnet/recipe
 dotnet run <filename>.cs
 ```
 
 ### Node.js
 
 ```bash
-cd nodejs/cookbook/recipe
+cd cookbook/copilot-sdk/nodejs/recipe
 npm install
 npx tsx <filename>.ts
 ```
@@ -91,7 +93,7 @@ npx tsx <filename>.ts
 ### Python
 
 ```bash
-cd python/cookbook/recipe
+cd cookbook/copilot-sdk/python/recipe
 pip install -r requirements.txt
 python <filename>.py
 ```
@@ -99,14 +101,14 @@ python <filename>.py
 ### Go
 
 ```bash
-cd go/cookbook/recipe
+cd cookbook/copilot-sdk/go/recipe
 go run <filename>.go
 ```
 
 ### Java
 
 ```bash
-cd java/recipe
+cd cookbook/copilot-sdk/java/recipe
 jbang <FileName>.java
 ```
 

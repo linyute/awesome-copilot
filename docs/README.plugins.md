@@ -57,6 +57,7 @@
 | [csharp-dotnet-development](../plugins/csharp-dotnet-development/README.md) | 適用於 C# 與 .NET 開發的基本提示詞、指示與聊天模式，包含測試、文件與最佳做法。 | 10 個項目 | csharp, dotnet, aspnet, testing |
 | [database-data-management](../plugins/database-data-management/README.md) | 適用於 PostgreSQL、SQL Server 的資料庫管理、SQL 最佳化與資料管理工具，以及一般資料庫開發的最佳做法。 | 6 個項目 | database, sql, postgresql, sql-server, dba, optimization, queries, data-management |
 | [dataverse-sdk-for-python](../plugins/dataverse-sdk-for-python/README.md) | 用於建構與 Microsoft Dataverse 的正式環境就緒 Python 整合之完整集合。包含官方文件、最佳做法、進階功能、檔案操作與程式碼產生提示詞。 | 4 個項目 | dataverse, python, integration, sdk |
+| [demotivational-calendar](../plugins/demotivational-calendar/README.md) | 一個具備日期感知功能的消極日曆畫布，為每個月與每一天提供原創的每日沮喪金句。 | 1 個項目 | calendar, daily, demotivation, humor, offline |
 | [devops-oncall](../plugins/devops-oncall/README.md) | 一組專注的提示詞、指示與聊天模式，協助分流事件並使用 DevOps 工具與 Azure 資源迅速回應。 | 3 個項目 | devops, incident-response, oncall, azure |
 | [diagram-viewer](../plugins/diagram-viewer/README.md) | 轉譯圖表、按一下節點以向下深入探研，並直接在畫布中檢視 Agent 產生的說明。 | 1 個項目 | architecture-mapping, canvas-navigation, exploratory-analysis, interactive-diagrams, node-drilldown, relationship-visualization |
 | [doublecheck](../plugins/doublecheck/README.md) | AI 輸出的三層驗證管線。擷取主張、尋找來源並標記幻覺風險，以便人員在採取行動前進行驗證。 | 2 個項目 | verification, hallucination, fact-check, source-citation, trust, safety |

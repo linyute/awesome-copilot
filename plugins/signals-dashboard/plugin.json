@@ -1,7 +1,7 @@
 {
   "name": "signals-dashboard",
   "description": "即時 Workshop 儀表板，具備代理人訊號、誠實度校準、成本感知工作台設定檔，以及預設關閉的本地委派。",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": {
     "name": "jennyf19",
     "url": "https://github.com/jennyf19"

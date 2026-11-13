@@ -46,7 +46,8 @@ description: '發出結構化的代理程式訊號 — hands-up、blocked、done
 ### 1. 將 JSON 訊號檔案寫入 `.signals/`
 
 這是主要輸出 — 它是儀表板讀取的內容。
-建立 `desks/<desk-name>/.signals/<timestamp>.json`：
+建立 `desks/<desk-name>/.signals/<timestamp>.json`
+（若工作桌位於群組資料夾中，則使用 `<group>-desks/<desk-name>/.signals/<timestamp>.json`）：
 
 ```json
 {

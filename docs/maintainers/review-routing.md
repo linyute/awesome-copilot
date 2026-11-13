@@ -13,7 +13,7 @@
 | `/plugins/` | `@github/awesome-copilot-plugin-reviewers` |
 | `/.github/plugin/` | `@github/awesome-copilot-plugin-reviewers` |
 | `/agents/`, `/instructions/`, `/skills/`, `/hooks/`, `/workflows/` | `@github/awesome-copilot-content-reviewers` |
-| `/.github/`（包含 GitHub Actions 工作流程）、`/eng/` | `@github/awesome-copilot-core-maintainers` |
+| `/.github/`（包含 GitHub Actions 工作流程）、`/.github/scripts/` | `@github/awesome-copilot-core-maintainers` |
 | `/website/` 下的 Copilot 工作坊內容 | `@github/awesome-copilot-workshop-reviewers` |
 
 GitHub 會套用**最後一個**相符的規則，因此工作坊項目與 `/.github/plugin/` 項目會覆寫其路徑上較廣泛的規則。手動編輯 `CODEOWNERS` 時：
@@ -57,7 +57,7 @@ GitHub 會套用**最後一個**相符的規則，因此工作坊項目與 `/.gi
 ### 更新集區
 
 1. 編輯 `.github/review-routing.yml`。每個集區至少保留三位檢閱者，並涵蓋各個時區。
-2. 使用 `node eng/review-routing.mjs validate` 驗證檔案，然後使用 `node --test eng/review-routing.test.mjs` 執行單元測試。
+2. 使用 `node .github/scripts/review/review-routing.mjs validate` 驗證檔案，然後使用 `node --test .github/scripts/review/review-routing.test.mjs` 執行單元測試。
 3. 開啟 PR。該檔案由 core-maintainer 團隊擁有。
 
 若要暫時將檢閱者移出輪替，請將其帳號新增至 `unavailable`，而非將其從每個集區中移除。
@@ -120,7 +120,7 @@ GitHub 會套用**最後一個**相符的規則，因此工作坊項目與 `/.gi
 - 由拉取請求觸發的工作流程（**Label PR Intent** 與 **Review Routing Request**）以唯讀權限執行，且僅上傳小型 JSON 成品。
 - **Review Routing** 從 `workflow_run`、`workflow_dispatch` 或 `schedule` 執行。它僅簽出預設分支，針對觸發的執行驗證成品，且絕不簽出或執行 PR 程式碼。此做法與 `label-pr-intent-writer.yml` 相同。
 - 在 Review Routing 與 Review Escalation 中，`plan` 作業皆具備唯讀權限。只有個別 PR 作業可以寫入 issue 與拉取請求。
-- 所有檢閱者邏輯皆位於 `eng/review-routing.mjs` 中，並由 `eng/review-routing.test.mjs` 涵蓋測試。
+- 所有檢閱者邏輯皆位於 `.github/scripts/review/review-routing.mjs` 中，並由 `.github/scripts/review/review-routing.test.mjs` 涵蓋測試。
 
 ## 啟用路由
 

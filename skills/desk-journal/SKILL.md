@@ -17,7 +17,9 @@ description: '撰寫、附加或讀取工作桌日誌條目。日誌是持久記
 
 ## 如何撰寫日誌條目
 
-附加至 `desks/<desk-name>/journal.md`。每個條目都是一個章節：
+將內容附加至 `desks/<desk-name>/journal.md`（若工作桌位於群組資料夾，
+則使用 `<group>-desks/<desk-name>/journal.md` — 先查看 `desks/`，再依序查看
+各個 `*-desks/` 資料夾）。每個條目都是一個章節：
 
 ```markdown
 ## <date> — <short summary>

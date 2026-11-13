@@ -23,8 +23,7 @@ Awesome GitHub Copilot 儲存庫是一個由社群驅動的集合，包含用於
 ├── plugins/          # 可安裝的 plugin 套件（含 plugin.json 的資料夾）
 ├── extensions/       # 可重複使用的 canvas 延伸來源（extension.mjs 與資產）
 ├── docs/             # 不同資源類型的文件
-├── eng/              # 建構與自動化腳本
-└── scripts/          # 工具腳本
+└── .github/scripts/  # 依用途分類的建置、驗證與儲存庫自動化指令碼
 ```
 
 ## 設定指令
@@ -202,7 +201,7 @@ Frontmatter 必須是有效的 YAML，並符合下列中繼資料要求。任何
 1. 不要開啟直接編輯 `plugins/external.json` 的 PR 來提交公開的第三方 plugin
 2. 公開的外部 plugin 提交使用 [CONTRIBUTING.md](CONTRIBUTING.md#adding-external-plugins) 中記載的外部 plugin issue 工作流
 3. 在 v1 中，公開提交僅接受 GitHub 託管的 plugins，使用公開儲存庫加上不可變的 `ref`、`sha` 或兩者
-4. `eng/external-plugin-validation.mjs` 中的共用驗證器是外部 plugin 資料規則的正式來源；重複使用它，而不是在腳本或工作流中重複檢查
+4. `.github/scripts/external-plugins/external-plugin-validation.mjs` 中的共用驗證器是外部 plugin 資料規則的正式來源；重複使用它，而不是在腳本或工作流中重複檢查
 5. 提交 issue 會經過 `external-plugin` + `awaiting-review`，然後根據自動化品質閘門移至 `ready-for-review` 或 `requires-submitter-fixes`
 6. 在提交 issue 開啟期間，issue 作者或維護者可留言 `/rerun-intake` 來重新執行自動化的接收與品質閘門。被維護者拒絕的 issue 是終止狀態；處理拒絕回饋的貢獻者必須開啟新的提交 issue
 7. 維護者可透過 `/mark-ready-for-review [optional reason]` 明確覆寫品質閘門阻擋，將 issue 移至 `ready-for-review`
@@ -222,7 +221,7 @@ npm run skill:validate
 npm run build
 
 # 修正換行字元（提交前必要）
-bash eng/fix-line-endings.sh
+bash .github/scripts/maintenance/fix-line-endings.sh
 ```
 
 提交前：
@@ -230,7 +229,7 @@ bash eng/fix-line-endings.sh
 - 確認所有 markdown front matter 格式正確
 - 確認檔名遵循小寫加連字號的慣例
 - 執行 `npm run build` 來更新 README
-- **務必執行 `bash eng/fix-line-endings.sh`** 來正規化換行字元（CRLF → LF）
+- **務必執行 `bash .github/scripts/maintenance/fix-line-endings.sh`** 來正規化換行字元（CRLF → LF）
 - 檢查你的新資源是否正確出現在 `docs/README.<type>.md` 中
 
 ## 程式碼風格指引
@@ -244,7 +243,7 @@ bash eng/fix-line-endings.sh
 
 ### JavaScript/Node.js 腳本
 
-- 位於 `eng/` 與 `scripts/` 目錄
+- 位於 `.github/scripts/` 目錄
 - 遵循 Node.js ES module 慣例（`.mjs` 副檔名）
 - 使用清晰、具描述性的函式與變數名稱
 
@@ -258,7 +257,7 @@ bash eng/fix-line-endings.sh
 2. **Front matter 驗證**：確認所有 markdown 檔案都有必要的 front matter 欄位
 3. **檔案命名**：確認所有新檔案遵循小寫加連字號的命名慣例
 4. **建構檢查**：提交前執行 `npm run build` 以驗證 README 產生
-5. **換行字元**：**務必執行 `bash eng/fix-line-endings.sh`** 來將換行字元正規化為 LF（Unix 風格）
+5. **換行字元**：**務必執行 `bash .github/scripts/maintenance/fix-line-endings.sh`** 來將換行字元正規化為 LF（Unix 風格）
 6. **描述**：提供清晰的描述，說明你的 agent/instruction 的作用
 7. **測試**：若新增 plugin，執行 `npm run plugin:validate` 以確保有效性
 
@@ -268,7 +267,7 @@ bash eng/fix-line-endings.sh
 
 - [ ] 執行 `npm install`（或 `npm ci`）來安裝相依套件
 - [ ] 執行 `npm run build` 來產生更新後的 `docs/README.<type>.md`
-- [ ] 執行 `bash eng/fix-line-endings.sh` 來正規化換行字元
+- [ ] 執行 `bash .github/scripts/maintenance/fix-line-endings.sh` 來正規化換行字元
 - [ ] 確認所有新檔案都有正確的 front matter
 - [ ] 測試你的貢獻可與 GitHub Copilot 正常運作
 - [ ] 確認檔名遵循命名慣例

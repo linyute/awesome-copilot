@@ -1,10 +1,12 @@
 ---
 name: Power Platform 連接器結構描述開發說明
 description: 'Power Platform 自訂連接器使用 JSON 結構描述定義的綜合開發指南。涵蓋 API 定義 (Swagger 2.0)、API 屬性和使用 Microsoft 擴充功能的設定組態。'
-applyTo: '**/*.{json,md}'
+applyTo: '**/apiDefinition.swagger.json, **/apiProperties.json'
 ---
 
 # Power Platform 連接器結構描述開發說明
+
+這些指示會自動套用至標準連接器定義與屬性檔案名稱。處理連接器的 `settings.json`、結構描述檔案，或使用其他名稱的文件時，請明確附加這些指示；通用的 `settings.json` 檔名也會出現在不相關的專案中。請維持 [自訂連接器匯入工具](https://learn.microsoft.com/en-us/connectors/custom-connectors/define-openapi-definition) 所要求的 Swagger 2.0 格式。
 
 ## 專案概觀
 此工作區包含 Power Platform 自訂連接器的 JSON 結構描述定義，特別是針對 `paconn` (Power Apps 連接器) 工具。這些結構描述驗證並提供以下項目的 IntelliSense：

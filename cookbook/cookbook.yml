@@ -25,6 +25,10 @@ cookbooks:
         name: Go
         icon: "\uE626"
         extension: .go
+      - id: java
+        name: Java
+        icon: "\uE738"
+        extension: .java
     recipes:
       - id: error-handling
         name: 錯誤處理 (Error Handling)
@@ -69,6 +73,32 @@ cookbooks:
           - playwright
           - mcp
           - wcag
+      - id: in-process-runtime
+        name: 程序內執行階段 (In-Process Runtime)
+        description: 在應用程式內執行 Copilot 執行階段，無需另外啟動 CLI 程序
+        tags:
+          - runtime
+          - deployment
+      - id: ralph-loop
+        name: Ralph 循環 (Ralph Loop)
+        description: 建立自主任務循環，每次迭代皆使用全新上下文並進行驗證
+        tags:
+          - agents
+          - automation
+      - id: error-recovery-hooks
+        name: 錯誤復原掛鉤 (Error Recovery Hooks)
+        description: 分類工具失敗，並使用 SDK 掛鉤引導復原
+        tags:
+          - errors
+          - hooks
+          - reliability
+      - id: pyinstaller-frozen-build
+        name: PyInstaller 凍結建置 (PyInstaller Frozen Builds)
+        description: 封裝 Python SDK 應用程式，處理凍結建置所需的 CLI 尋址與憑證
+        tags:
+          - python
+          - deployment
+          - packaging
 
   - id: community-samples
     name: 社群範例 (Community Samples)

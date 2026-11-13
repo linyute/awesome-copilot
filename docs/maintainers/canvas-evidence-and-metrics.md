@@ -17,7 +17,7 @@
 
 - **略過（成功）**：當 PR 未變更任何 canvas 延伸模組或包含延伸模組的外掛程式路徑時（包括一般的純外掛程式變更與純檢查器／工作流程變更）。
 - **通過（已接受移除）**：當延伸模組目錄與其外掛程式皆已刪除時。若僅刪除 `extension.mjs`，或保留仍參考已刪除延伸模組（或曾為其直接外掛程式）的外掛程式，則會失敗。
-- **通過或失敗**：在其他情況下，由 `eng/canvas-smoke-test.mjs` 判定。
+- **通過或失敗**：在其他情況下，由 `.github/scripts/canvas/canvas-smoke-test.mjs` 判定。
 
 針對每個受影響的延伸模組，檢查器會執行：
 
@@ -26,7 +26,7 @@
 | 模組圖 | 剖析 `extension.mjs` 與每個可連線的本地模組**而不執行它** (`vm.SourceTextModule` / `vm.compileFunction`)。連線能力依循靜態匯入、常值動態 `import()` 呼叫以及常值 CommonJS `require()` 呼叫（字串、範本常值與正規表示式內具呼叫形式的文字會被忽略）。`package.json` 的 `imports` 別名 (`#name`) 透過相同的檢查進行解析；檢查器無法分析的別名形式會失敗。每個可連線的參考都必須解析至延伸模組內部的檔案、Node.js 內建功能、主機提供的 `@github/copilot-sdk` 或執行階段相依性 (`dependencies`、`optionalDependencies`、`peerDependencies`)。遠端 (`http:`/`https:`)、`data:`、絕對路徑、`..`、缺少、僅限 `devDependencies` 以及未宣告的參考均會失敗。無法從 `extension.mjs` 連線的模組（通常是提供給 canvas webview 的瀏覽器資產）則會產生警告。 |
 | 檔案 | 缺少被參考的檔案、不安全的路徑（`..`、絕對路徑、`file:` URL）、符號連結、已認可的 `node_modules`、原生二進位檔（ELF、PE、Mach-O、`.node`、`.dll`、`.so`、WebAssembly）、可執行的 Git 模式以及超過 5 MB 的檔案均會失敗。Shell、批次檔、PowerShell、Python、Ruby 與 Perl 指令碼、shebang 檔案以及無法識別的二進位檔會回報為給檢閱者的警告。 |
 | 預覽 | `assets/preview.png` 必須存在、能解碼為真正的 PNG（簽章、區塊 CRC、`IHDR`、調色盤、`IEND`、解壓縮影像資料與篩選器位元組）、大小最多 5 MB、解碼後最多 256 MiB 的影像資料（在解壓縮前檢查），並符合最小尺寸。 |
-| 外掛程式 | 在暫存複本中以 `eng/materialize-plugins.mjs` 實體化外掛程式，針對 Agent Plugins 結構描述驗證所提供的 `plugin.json`，並確認 `com.github.copilot/extensions/<id>/extension.mjs` 存在。 |
+| 外掛程式 | 在暫存複本中以 `.github/scripts/catalog/materialize-plugins.mjs` 實體化外掛程式，針對 Agent Plugins 結構描述驗證所提供的 `plugin.json`，並確認 `com.github.copilot/extensions/<id>/extension.mjs` 存在。 |
 | 安裝 | 使用 GitHub Copilot CLI 從暫時本地市集安裝已實體化的外掛程式，在移除所有權杖的隔離 `COPILOT_HOME` 中執行，並透過 `copilot plugin list --json` 進行驗證。CI 使用 `--install require`。 |
 | 功能宣告 | 摘要延伸模組所使用的功能（例如檔案系統、子處理程序、網路、`process.env`、動態程式碼），讓檢閱者能與宣告的用途進行比對。 |
 
@@ -41,9 +41,9 @@
 ### 在本機執行
 
 ```bash
-node eng/canvas-smoke-test.mjs --all --install never          # 每個延伸模組，不進行 CLI 安裝
-node eng/canvas-smoke-test.mjs --changed-files changed.txt   # 僅限 diff 涉及的內容
-node --test eng/canvas-smoke-test.test.mjs
+node .github/scripts/canvas/canvas-smoke-test.mjs --all --install never          # 每個延伸模組，不進行 CLI 安裝
+node .github/scripts/canvas/canvas-smoke-test.mjs --changed-files changed.txt   # 僅限 diff 涉及的內容
+node --test .github/scripts/canvas/canvas-smoke-test.test.mjs
 ```
 
 結束代碼：`0` 通過或略過，`1` 貢獻問題，`2` 基礎結構錯誤。
@@ -104,15 +104,15 @@ canvas URL 片段中傳遞，而非透過 HTTP 提供的 HTML 或指令碼傳遞
 與完全相符的已註冊 Host 一致，同時連線仍限制在 loopback。
 權杖絕不包含在診斷提示中，並在 canvas 關閉時過期。
 
-實作位於 `eng/canvas-error-handoff/runtime.mjs` 中。每個適用的
+實作位於 `.github/scripts/canvas/error-handoff/runtime.mjs` 中。每個適用的
 存放庫本地 canvas 皆包含一份產生的 `error-handoff.mjs` 複本，以使其
 延伸模組保持自包含。同步指令碼僅針對
 `.github/extensions/`。在規範標準模組中進行變更，然後重新產生：
 
 ```bash
-node eng/sync-canvas-error-handoff.mjs
-node eng/sync-canvas-error-handoff.mjs --check
-node --test eng/canvas-error-handoff.test.mjs
+node .github/scripts/canvas/sync-canvas-error-handoff.mjs
+node .github/scripts/canvas/sync-canvas-error-handoff.mjs --check
+node --test .github/scripts/canvas/canvas-error-handoff.test.mjs
 ```
 
 Canvas 進入點使用其支援的 SDK `createCanvas` 與 `joinSession` 函式來設定協助程式；
@@ -135,7 +135,7 @@ CSP（包含僅限 nonce 與僅限行內的指令碼原則）均予以保留。
 
 ## 每週營運指標
 
-`.github/workflows/review-metrics.yml` 於每週一 14:00 UTC 以及隨選執行。`eng/review-metrics.mjs` 收集唯讀資料，然後：
+`.github/workflows/review-metrics.yml` 於每週一 14:00 UTC 以及隨選執行。`.github/scripts/review/review-metrics.mjs` 收集唯讀資料，然後：
 
 - 將報告寫入作業摘要並上傳 `review-metrics` 成品（`metrics.json` 與 `report.md`，保留 90 天）；
 - 更新標有 `review-metrics` 的追蹤 issue 內容，首次執行時會建立並置頂它；
@@ -161,8 +161,8 @@ CSP（包含僅限 nonce 與僅限行內的指令碼原則）均予以保留。
 ### 在本機執行
 
 ```bash
-node eng/review-metrics.mjs --repo github/awesome-copilot --dry-run --output-dir ./metrics
-node --test eng/review-metrics.test.mjs
+node .github/scripts/review/review-metrics.mjs --repo github/awesome-copilot --dry-run --output-dir ./metrics
+node --test .github/scripts/review/review-metrics.test.mjs
 ```
 
 ## 延後實施：自動合併
@@ -179,9 +179,9 @@ node --test eng/review-metrics.test.mjs
 | `.github/review-routing.yml` | 1 | 複製並編輯 | 檢閱者集區、目標、呈報 |
 | `.github/risk-tiers.yml` | 2 | 複製並編輯 | 路徑與風險分類規則 |
 | `submission-gate` 檢查 | 2 | 複製工作流程與指令碼 | 各層級的必要檢查；僅在存在 canvas 延伸模組之處納入 `canvas-smoke-test` |
-| `canvas-smoke-test` (`eng/canvas-smoke-test.mjs`, `canvas-smoke-test.yml`, `canvas-smoke-test-comment.yml`) | 3 | 在存放庫提供 canvas 延伸模組與 `eng/materialize-plugins.mjs` 的情況下原樣複製 | `CANVAS_PREVIEW_MIN_WIDTH` 與 `CANVAS_PREVIEW_MIN_HEIGHT` 變數 |
-| `.github/review-metrics.yml`, `eng/review-metrics.mjs`, `.github/workflows/review-metrics.yml` | 3 | 原樣複製 | 狀態與風險標籤、自動化工作流程清單、追蹤 issue 標題 |
-| `eng/lib/review-automation-github.mjs` | 3 | 原樣複製 | 無（使用 `GITHUB_TOKEN` 或 `gh` CLI） |
+| `canvas-smoke-test` (`.github/scripts/canvas/canvas-smoke-test.mjs`, `canvas-smoke-test.yml`, `canvas-smoke-test-comment.yml`) | 3 | 在存放庫提供 canvas 延伸模組與 `.github/scripts/catalog/materialize-plugins.mjs` 的情況下原樣複製 | `CANVAS_PREVIEW_MIN_WIDTH` 與 `CANVAS_PREVIEW_MIN_HEIGHT` 變數 |
+| `.github/review-metrics.yml`, `.github/scripts/review/review-metrics.mjs`, `.github/workflows/review-metrics.yml` | 3 | 原樣複製 | 狀態與風險標籤、自動化工作流程清單、追蹤 issue 標題 |
+| `.github/scripts/review/lib/review-automation-github.mjs` | 3 | 原樣複製 | 無（使用 `GITHUB_TOKEN` 或 `gh` CLI） |
 
 第 3 階段指令碼僅依賴 Node.js 22 與 `js-yaml`。工作流程將自動執行限制在 `github.repository_owner == 'github'`；移植時請更新該條件。`.github/workflows/setup-labels.yml` 會建立 `review-metrics` 標籤。
 

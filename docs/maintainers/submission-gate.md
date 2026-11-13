@@ -12,13 +12,13 @@
 | 閘門等待的檢查 | [`.github/submission-gate.yml`](../../.github/submission-gate.yml) |
 | 風險層級與核准政策 | [`.github/risk-tiers.yml`](../../.github/risk-tiers.yml) |
 | 檢閱者集區（第 1 階段） | `.github/review-routing.yml` |
-| 邏輯與測試 | [`eng/submission-gate.mjs`](../../eng/submission-gate.mjs)、[`eng/submission-gate.test.mjs`](../../eng/submission-gate.test.mjs) |
+| 邏輯與測試 | [`.github/scripts/review/submission-gate.mjs`](../../.github/scripts/review/submission-gate.mjs), [`.github/scripts/review/submission-gate.test.mjs`](../../.github/scripts/review/submission-gate.test.mjs) |
 
 ## 閘門運作方式
 
 1. **Submission Gate** 在每個 PR（`opened`、`synchronize`、`reopened`、`ready_for_review` 與涵蓋基準分支變更的 `edited`）以及每次檢閱（`submitted`、`edited`、`dismissed`）時執行。它沒有路徑篩選器，因此一律會執行。其作業名稱為 `evaluate` 且絕不失敗：它是一個唯讀預覽，其作業摘要會顯示狀態表格。
 2. 它會簽出**基準 commit**而非 PR，並從該處載入其邏輯與政策。唯一的例外是引入閘門的啟動引導 PR：此時基準尚無閘門，因此會使用來自 PR 的閘門並記錄警告。
-3. 它會列出 PR 變更的檔案，並挑選 `.github/submission-gate.yml` 中 `branches` 與 `paths` 相符的檢查。這些篩選器鏡像每個工作流程自己的 `pull_request` 觸發條件，且每個篩選器均包含工作流程檔案本身及其執行的 `eng/` 指令碼，因此檢查實作的變更會重新執行該檢查。唯一的例外是 `validate-agentic-workflows-pr.yml`，它會拒絕任何 `.github/**` 變更，因此無法由其自己的檔案觸發。若兩者出現偏差，`eng/submission-gate.test.mjs` 會失敗。
+3. 它會列出 PR 變更的檔案，並挑選 `.github/submission-gate.yml` 中 `branches` 與 `paths` 相符的檢查。這些篩選器鏡像每個工作流程自己的 `pull_request` 觸發條件，且每個篩選器均包含工作流程檔案本身及其執行的 `.github/scripts/` 指令碼，因此檢查實作的變更會重新執行該檢查。唯一的例外是 `validate-agentic-workflows-pr.yml`，它會拒絕任何 `.github/**` 變更，因此無法由其自己的檔案觸發。若兩者出現偏差，`.github/scripts/review/submission-gate.test.mjs` 會失敗。
 4. 它會輪詢 PR head commit 的 Actions 執行，每 30 秒輪詢一次，最多 40 分鐘。若必要檢查回報貢獻失敗，它會提早停止。
 5. 當它開始與完成時，**Submission Gate Writer** 會透過 `workflow_run` 以預設分支程式碼執行。它會從 GitHub API 重建評估：將合併風險層級分類、針對該層級的核准政策評估檢閱，並計算 PR 狀態。
 6. 寫入端透過 Checks API 在 PR head commit 上發布 **`submission-gate` 檢查執行**。當檢查處於擱置狀態時，該檢查為 `in_progress`，且**僅在狀態為 `approved` 時才會成功**，這表示每個必要檢查皆已通過且符合該層級的核准。否則該檢查失敗，其摘要會列出原因。在寫入端確認 head、基準、風險標籤與檢閱皆未變更之後、更新標籤與狀態評論之前，會立即發布該檢查，因此失敗的標籤或評論寫入絕不會留下過時的綠色通過檢查。
@@ -56,7 +56,7 @@
 - **建議性質**的檢查絕不封鎖。若它們失敗，狀態評論會顯示警告。
 - **Canvas／外掛程式冒煙測試**是一個依檢查執行名稱比對的可外掛插槽。#4184 的第 3 階段提供了此功能。若沒有此類檢查回報，閘門會略過它。
 
-若要新增檢查，請在 `.github/submission-gate.yml` 中新增項目。精確複製工作流程的 `branches` 與 `paths`，然後執行 `node --test eng/submission-gate.test.mjs`。
+若要新增檢查，請在 `.github/submission-gate.yml` 中新增項目。精確複製工作流程的 `branches` 與 `paths`，然後執行 `node --test .github/scripts/review/submission-gate.test.mjs`。
 
 ## 基礎結構失敗 vs 貢獻失敗
 
@@ -97,7 +97,7 @@
 
 - **任何變更的檔案符合高風險路徑：**
   - 檢閱政策與自動化機制：`.github/**`（包含工作流程、`CODEOWNERS`、`.github/review-routing.yml`、`.github/risk-tiers.yml`、`.github/submission-gate.yml`）、`CODEOWNERS`、`docs/CODEOWNERS`
-  - 建置與存放庫指令碼：`eng/**`、`scripts/**`、`package.json`、`package-lock.json`
+  - 建置與存放庫指令碼：`.github/scripts/**`、`scripts/**`、`package.json`、`package-lock.json`
   - MCP 設定：`**/mcp.json`、`**/.mcp.json`
   - 隨附的可執行檔，包含隨 hook 一起發布的指令碼：`**/*.sh`、`**/*.bash`、`**/*.ps1`、`**/*.psm1`、`**/*.bat`、`**/*.cmd`、`**/*.py`、`skills/**/scripts/**`、`plugins/**/scripts/**`
   - 外部程式碼來源：`plugins/external.json`
@@ -148,7 +148,7 @@
 | 外掛程式 | `plugins/**` | `plugin` |
 | 內容 | `agents/**`、`instructions/**`、`skills/**`、`workflows/**`、`hooks/**` | `content` |
 
-核心集區為 `core-maintainers`。其成員亦可滿足領域與資源擁有者需求。所有領域之外的檔案（例如存放庫本身的 `.github/workflows/**`、`eng/**`、檢閱政策與 `docs/**`）歸核心集區所屬。
+核心集區為 `core-maintainers`。其成員亦可滿足領域與資源擁有者需求。所有領域之外的檔案（例如存放庫本身的 `.github/workflows/**`、`.github/scripts/**`、檢閱政策與 `docs/**`）歸核心集區所屬。
 
 若路由機制尚未配置人員，閘門會採取遞補措施而非直接封鎖：
 

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "demotivational-calendar",
+  "description": "一個具備日期感知功能的消極日曆畫布，為每個月與每一天提供原創的每日沮喪金句。",
+  "version": "1.0.0",
+  "keywords": [
+    "calendar",
+    "daily",
+    "demotivation",
+    "humor",
+    "offline"
+  ],
+  "repository": "https://github.com/github/awesome-copilot",
+  "license": "MIT",
+  "extensions": {
+    "com.github.copilot": {
+      "logo": "assets/preview.png"
+    },
+    "com.github.awesome-copilot": {
+      "extensions": [
+        "./extensions/demotivational-calendar"
+      ]
+    }
+  }
+}

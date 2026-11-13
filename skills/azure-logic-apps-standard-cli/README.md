@@ -34,7 +34,7 @@ Azure CLI 擴充功能與特定工作相關的執行階段／測試相依性為�
    個字元)、選用的相容性說明 (最多 500 個字元)、各引用的資產
    小於 5 MB、相對連結，且不得含有秘密或私有機器路徑。
 4. 執行 `npm run skill:validate`，接著執行 `npm run build` 以重新產生清單。依照該存放庫的要求，
-   使用 `bash eng/fix-line-endings.sh` 規格化換行符號。
+   使用 `bash .github/scripts/maintenance/fix-line-endings.sh`` 規格化換行符號。
    驗證產生的變更確實屬於本次貢獻。請勿手動維護清單。
 5. 執行具代表性的工作：離線編寫絕對不可啟動主機；連接器
    相關工作必須載入連線程序；重放操作需要核准；原生測試
@@ -101,5 +101,5 @@ Microsoft Learn 命令標籤標示為正式推出 (GA)，仍請保留預覽狀�
 - [Azure CLI Logic Apps 參考](https://learn.microsoft.com/en-us/cli/azure/logicapp?view=azure-cli-latest)
 - [Awesome Copilot 貢獻指南](https://github.com/github/awesome-copilot/blob/main/CONTRIBUTING.md#adding-skills)
 - [Awesome Copilot 存放庫慣例](https://github.com/github/awesome-copilot/blob/main/AGENTS.md)
-- [Awesome Copilot Skill 驗證器](https://github.com/github/awesome-copilot/blob/main/eng/validate-skills.mjs)
+- [Awesome Copilot Skill 驗證器](https://github.com/github/awesome-copilot/blob/main/.github/scripts/catalog/validate-skills.mjs)
 - [Agent Skills 規格](https://agentskills.io/specification)

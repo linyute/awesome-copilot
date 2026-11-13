@@ -68,7 +68,7 @@ const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 **API 限制或注意事項**
 ```javascript
 // 良好：說明外部限制
-// GitHub API 速率限制：認證用戶每小時 5000 次
+// 遵循 GitHub 回應中的速率限制與重設標頭
 await rateLimiter.wait();
 const response = await fetch(githubApiUrl);
 ```
@@ -87,7 +87,7 @@ const response = await fetch(githubApiUrl);
 ```javascript
 /**
  * 使用標準公式計算複利。
- * 
+ *
  * @param {number} principal - 初始投資金額
  * @param {number} rate - 年利率（小數，如 0.05 代表 5%）
  * @param {number} time - 年數
@@ -102,8 +102,8 @@ function calculateCompoundInterest(principal, rate, time, compoundFrequency = 1)
 ### 設定與常數
 ```javascript
 // 良好：說明來源或原因
-const MAX_RETRIES = 3;  // 依據網路可靠性研究
-const API_TIMEOUT = 5000;  // AWS Lambda 超時 15s，留緩衝
+const MAX_RETRIES = 3;  // 限制上游服務中斷時重試造成的負載放大
+const API_TIMEOUT = 5000;  // 避免上游服務停滯時無限期等待
 ```
 
 ### 標註

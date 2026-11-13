@@ -2,7 +2,7 @@
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "the-workshop",
   "description": "不再充當 AI Agent 之間的總機 — 直接指導團隊。The Workshop 將長時間執行的 AI Agent (工作桌) 放在同一個空間中處理相同工作，各自擁有記憶體與歷程記錄，並共享同一個工作區，讓您直接指導工作而非轉達。",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "jennyf19"
   },
